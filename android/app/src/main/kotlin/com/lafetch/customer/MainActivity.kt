@@ -1,0 +1,6 @@
+package com.lafetch.customer
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
