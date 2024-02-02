@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/util/constants.dart';
+import 'package:lafetch/utils/constants.dart';
 
 getSnackBar(message, {SnackPosition? snackPosition}) {
   return Get.snackbar(
