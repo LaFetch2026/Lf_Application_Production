@@ -3,31 +3,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/doublebtn.dart';
 import 'package:lafetch/commonwidget/welcomewidgets/welcomebackground.dart';
-import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 
-class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<WelcomeScreen> createState() => WelcomeScreenState();
+  State<LoginScreen> createState() => LoginScreenState();
 }
 
-class WelcomeScreenState extends State<WelcomeScreen> {
+class LoginScreenState extends State<LoginScreen> {
   String? token;
   String? name;
 
   onPressCreateAccount() {
     print("back");
-    // Navigator.of(context).pop();
   }
 
   onPressSignInButton() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
-    );
+    /*  Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+          builder: (BuildContext context) => const WelcomeScreen()),
+    ); */
   }
 
   @override
@@ -70,18 +68,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                         color: whiteTextColor,
                         fontSize: 14.sp,
                       ),
-                    ),
-                    DoubleButton(
-                      firstText: "Create Account",
-                      secondText: "Sign In",
-                      firstTextColor: whiteTextColor,
-                      secondTextColor: btnTextColor,
-                      firstBackgroundColor: blackColor,
-                      secondBackgroundColor: whiteBorderColor,
-                      firstBorderColor: whiteBorderColor,
-                      secondBorderColor: whiteBorderColor,
-                      onPressedFirst: onPressCreateAccount,
-                      onPressedSecond: onPressSignInButton,
                     ),
                   ],
                 ),
