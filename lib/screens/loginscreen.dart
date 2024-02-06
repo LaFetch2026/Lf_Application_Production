@@ -26,16 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    print("Login open");
     super.initState();
-  }
-
-  onPressContinue() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.to(
-        () => const OTPVerficationScreen(),
-      );
-    });
   }
 
   @override
@@ -145,7 +136,11 @@ class LoginScreenState extends State<LoginScreen> {
                                   label: "Continue",
                                   textColor: whiteTextColor,
                                   borderColor: colorPrimary,
-                                  onPressed: onPressContinue(),
+                                  onPressed: () {
+                                    Get.to(
+                                      () => const OTPVerficationScreen(),
+                                    );
+                                  },
                                   fontSize: 14.sp,
                                   backgroundColor: colorPrimary),
                             ),
@@ -216,7 +211,11 @@ class LoginScreenState extends State<LoginScreen> {
                                   label: "Continue",
                                   textColor: whiteTextColor,
                                   borderColor: colorPrimary,
-                                  onPressed: onPressContinue(),
+                                  onPressed: () {
+                                    Get.to(
+                                      () => const OTPVerficationScreen(),
+                                    );
+                                  },
                                   fontSize: 14.sp,
                                   backgroundColor: colorPrimary),
                             ),

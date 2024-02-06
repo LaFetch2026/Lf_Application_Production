@@ -17,20 +17,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> {
-  onPressCreateAccount() {
-    print("back");
-    // Navigator.of(context).pop();
-  }
-
-  onPressSignInButton() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.to(
-        () => const LoginScreen(),
-      );
-      print("Login call");
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,8 +67,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       secondBackgroundColor: whiteBorderColor,
                       firstBorderColor: whiteBorderColor,
                       secondBorderColor: whiteBorderColor,
-                      onPressedFirst: onPressCreateAccount,
-                      onPressedSecond: onPressSignInButton,
+                      onPressedFirst: () {},
+                      onPressedSecond: () {
+                        Get.to(
+                          () => const LoginScreen(),
+                        );
+                      },
                     ),
                   ],
                 ),

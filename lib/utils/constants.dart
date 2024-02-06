@@ -22,3 +22,4 @@ const backImage = 'assets/images/back_image.png';
 const appNameImage = 'assets/images/app_name_image.png';
 const googleImage = 'assets/images/google.png';
 const facebookImage = 'assets/images/facebook.png';
+const otpImage = 'assets/images/otp_image.png';
