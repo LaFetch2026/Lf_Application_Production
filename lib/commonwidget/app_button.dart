@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:lafetch/utils/constants.dart';
 
 class AppButton extends StatelessWidget {
   final String label;
   final double roundness;
   final FontWeight fontWeight;
+  final double fontSize;
+  final String fontFamily;
   final EdgeInsets padding;
+  final Color textColor;
+  final Color backgroundColor;
   final Widget? trailingWidget;
   final Function? onPressed;
 
   const AppButton({
     Key? key,
     required this.label,
-    this.roundness = 18,
+    required this.textColor,
+    required this.backgroundColor,
+    this.fontSize = 14,
+    this.roundness = 1,
     this.fontWeight = FontWeight.bold,
-    this.padding = const EdgeInsets.symmetric(vertical: 24),
+    this.fontFamily = "Franklin Gothic",
+    this.padding = const EdgeInsets.symmetric(vertical: 10),
     this.trailingWidget,
     this.onPressed,
   }) : super(key: key);
@@ -33,10 +40,10 @@ class AppButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(roundness),
           ),
           elevation: 0,
-          backgroundColor: colorSecondary,
+          backgroundColor: backgroundColor,
           textStyle: TextStyle(
-            color: Colors.white,
-            //  fontFamily: Theme.of(context).textTheme.bodyText1?.fontFamily,
+            color: textColor,
+            fontFamily: fontFamily,
             fontWeight: fontWeight,
           ),
           padding: padding,
@@ -50,7 +57,7 @@ class AppButton extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: fontSize,
                   fontWeight: fontWeight,
                 ),
               ),

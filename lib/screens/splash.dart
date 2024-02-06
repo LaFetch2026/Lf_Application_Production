@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lafetch/screens/welcomescreen.dart';
+import 'package:lafetch/utils/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,19 +22,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void nextScreen() {
-    /*  if (token != null) {
-      if (token!.isNotEmpty) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              builder: (BuildContext context) => const HomeScreen()),
-        );
-      }
-    } else { */
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
           builder: (BuildContext context) => const WelcomeScreen()),
     );
-    //  }
   }
 
   @override
@@ -42,10 +34,11 @@ class _SplashScreenState extends State<SplashScreen> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
-        image: DecorationImage(
+        color: blackColor,
+        /* image: DecorationImage(
           image: AssetImage("assets/splash.gif"),
           fit: BoxFit.fill,
-        ),
+        ), */
       ),
     );
   }

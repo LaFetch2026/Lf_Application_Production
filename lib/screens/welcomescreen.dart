@@ -25,7 +25,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   onPressSignInButton() {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
     );
   }
