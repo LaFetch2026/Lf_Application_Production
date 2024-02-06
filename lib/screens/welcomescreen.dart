@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/doublebtn.dart';
 import 'package:lafetch/commonwidget/welcomewidgets/welcomebackground.dart';
@@ -16,18 +17,18 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> {
-  String? token;
-  String? name;
-
   onPressCreateAccount() {
     print("back");
     // Navigator.of(context).pop();
   }
 
   onPressSignInButton() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (BuildContext context) => const LoginScreen()),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.to(
+        () => const LoginScreen(),
+      );
+      print("Login call");
+    });
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lafetch/utils/constants.dart';
 
 class AppButton extends StatelessWidget {
   final String label;
