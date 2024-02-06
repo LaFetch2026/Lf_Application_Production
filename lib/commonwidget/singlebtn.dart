@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:lafetch/utils/constants.dart';
 
-class AppButton extends StatelessWidget {
+class SingleButton extends StatelessWidget {
   final String label;
   final double roundness;
   final FontWeight fontWeight;
   final double fontSize;
   final String fontFamily;
-  final String image;
   final EdgeInsets padding;
   final Color textColor;
   final Color borderColor;
@@ -15,13 +13,12 @@ class AppButton extends StatelessWidget {
   final Widget? trailingWidget;
   final Function? onPressed;
 
-  const AppButton({
+  const SingleButton({
     Key? key,
     required this.label,
     required this.textColor,
     required this.backgroundColor,
     required this.borderColor,
-    required this.image,
     this.fontSize = 14,
     this.roundness = 1,
     this.fontWeight = FontWeight.bold,
@@ -53,25 +50,12 @@ class AppButton extends StatelessWidget {
               onPressed: () {
                 onPressed?.call();
               },
-              child: Row(
-                children: [
-                  Image.asset(
-                    image,
-                    height: 22,
-                    width: 22,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                            color: textColor,
-                            fontFamily: fontFamily,
-                            fontSize: fontSize),
-                      ),
-                    ),
-                  ),
-                ],
+              child: Text(
+                label,
+                style: TextStyle(
+                    color: textColor,
+                    fontFamily: fontFamily,
+                    fontSize: fontSize),
               ))),
     );
   }
