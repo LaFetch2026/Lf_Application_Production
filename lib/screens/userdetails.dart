@@ -141,13 +141,13 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
             child: SingleButton(
                 label: "Continue",
                 textColor: greyTextColor,
-                backgroundColor: greyColor,
+                backgroundColor: colorSecondary,
                 onPressed: () {
                   Get.to(
                     () => const BottomNavScreen(),
                   );
                 },
-                borderColor: greyColor),
+                borderColor: colorSecondary),
           )
         ],
       ),

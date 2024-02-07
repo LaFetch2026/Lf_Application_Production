@@ -26,22 +26,6 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,
-      /* appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: btnTextColor,
-            child: IconButton(
-              onPressed: () {},
-              icon: Image.asset(boltIcon),
-            ),
-          ),
-        ),
-        centerTitle: true,
-        title: const Text("Social Teams"),
-        automaticallyImplyLeading: false,
-        backgroundColor: whiteTextColor,
-      ), */
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -66,23 +50,31 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   _currentIndex = 0;
                 });
               },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const ImageIcon(
-                      AssetImage(homeIcon),
-                      size: 22,
-                    ),
-                    Text(
-                      "Home",
-                      style: TextStyle(
-                          color: bottomnavBack,
-                          fontSize: 10.sp,
-                          fontFamily: "Franklin Gothic"),
-                    )
-                  ],
+              child: Container(
+                color: _currentIndex == 0 ? colorSecondary : bottomnavBack,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 10, top: 5, left: 5, right: 5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ImageIcon(
+                        const AssetImage(homeIcon),
+                        color:
+                            _currentIndex == 0 ? bottomnavBack : colorSecondary,
+                        size: 22,
+                      ),
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                            color: _currentIndex == 0
+                                ? bottomnavBack
+                                : colorSecondary,
+                            fontSize: 10.sp,
+                            fontFamily: "Franklin Gothic"),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -92,20 +84,31 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   _currentIndex = 1;
                 });
               },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const ImageIcon(
-                      AssetImage(brandsIcon),
-                      size: 22,
-                    ),
-                    Text(
-                      "Brands",
-                      style: TextStyle(color: bottomnavBack, fontSize: 10.sp),
-                    )
-                  ],
+              child: Container(
+                color: _currentIndex == 1 ? colorSecondary : bottomnavBack,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 10, top: 5, left: 5, right: 5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ImageIcon(
+                        const AssetImage(brandsIcon),
+                        color:
+                            _currentIndex == 1 ? bottomnavBack : colorSecondary,
+                        size: 22,
+                      ),
+                      Text(
+                        "Brands",
+                        style: TextStyle(
+                            color: _currentIndex == 1
+                                ? bottomnavBack
+                                : colorSecondary,
+                            fontSize: 10.sp,
+                            fontFamily: "Franklin Gothic"),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -115,20 +118,31 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   _currentIndex = 2;
                 });
               },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const ImageIcon(
-                      AssetImage(wishlistIcon),
-                      size: 22,
-                    ),
-                    Text(
-                      "Wishlist",
-                      style: TextStyle(color: bottomnavBack, fontSize: 10.sp),
-                    )
-                  ],
+              child: Container(
+                color: _currentIndex == 2 ? colorSecondary : bottomnavBack,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 10, top: 5, left: 5, right: 5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ImageIcon(
+                        const AssetImage(wishlistIcon),
+                        color:
+                            _currentIndex == 2 ? bottomnavBack : colorSecondary,
+                        size: 22,
+                      ),
+                      Text(
+                        "Wishlist",
+                        style: TextStyle(
+                            color: _currentIndex == 2
+                                ? bottomnavBack
+                                : colorSecondary,
+                            fontSize: 10.sp,
+                            fontFamily: "Franklin Gothic"),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -138,20 +152,31 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   _currentIndex = 3;
                 });
               },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const ImageIcon(
-                      AssetImage(accountIcon),
-                      size: 22,
-                    ),
-                    Text(
-                      "Account",
-                      style: TextStyle(color: bottomnavBack, fontSize: 10.sp),
-                    )
-                  ],
+              child: Container(
+                color: _currentIndex == 3 ? colorSecondary : bottomnavBack,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 10, top: 5, left: 5, right: 5),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ImageIcon(
+                        const AssetImage(accountIcon),
+                        color:
+                            _currentIndex == 3 ? bottomnavBack : colorSecondary,
+                        size: 22,
+                      ),
+                      Text(
+                        "Account",
+                        style: TextStyle(
+                            color: _currentIndex == 3
+                                ? bottomnavBack
+                                : colorSecondary,
+                            fontSize: 10.sp,
+                            fontFamily: "Franklin Gothic"),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

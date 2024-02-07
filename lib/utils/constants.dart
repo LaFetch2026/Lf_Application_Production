@@ -9,7 +9,6 @@ const Color whiteBorderColor = Color(0xFFF7F7F5);
 const Color btnTextColor = Color(0xFF261939);
 const Color greyTextColor = Color(0xFF66625C);
 const Color deepGreytextColor = Color(0xFF4F445F);
-const Color greyColor = Color(0xFFE6E4E1);
 const Color textHintColor = Color(0xFF86827D);
 const Color blackColor = Color(0xFF000000);
 const Color whiteColor = Color(0xFFffffff);
@@ -17,6 +16,7 @@ const Color lightText = Color(0xFFB6B3AF);
 const Color blue = Color(0xFF1877F2);
 const Color loginText = Color(0xFF2A2723);
 const Color bottomnavBack = Color(0xFF1C1A18);
+const Color greyBack = Color(0xFFDCDFEF);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
