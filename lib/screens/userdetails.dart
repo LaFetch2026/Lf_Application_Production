@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
@@ -143,7 +144,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                 backgroundColor: greyColor,
                 onPressed: () {
                   Get.to(
-                    () => const UserDetailsScreen(),
+                    () => const BottomNavScreen(),
                   );
                 },
                 borderColor: greyColor),

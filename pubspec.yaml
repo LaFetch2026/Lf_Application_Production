@@ -96,8 +96,8 @@ flutter:
           weight: 500
     - family: Franklin Gothic Medium
       fonts:
-        - asset: fonts/Franklin Gothic Medium.ttf
-          weight: 500
+        - asset: fonts/franklin-gothic-medium.ttf
+          weight: 400
     - family: Franklin Gothic Light
       fonts:
         - asset: fonts/FranklinGothic-Light.ttf
@@ -106,5 +106,9 @@ flutter:
       fonts:
         - asset: fonts/FranklinGothic.ttf
           weight: 500
+    - family: Franklin Gothic Regular
+      fonts:
+        - asset: fonts/FranklinATFBQ-Regular.ttf
+          weight: 300
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
