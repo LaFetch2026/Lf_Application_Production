@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lafetch/commonwidget/womenwidget/lafetch_card.dart';
 import 'package:lafetch/commonwidget/womenwidget/sale_card.dart';
 
 import '../../commonwidget/app_text.dart';
@@ -51,6 +52,7 @@ class _WomenScreenState extends State<WomenScreen> {
                 fontSize: 16.sp,
               ),
             ),
+            const LafetchCardWidget(),
           ],
         ),
       ),

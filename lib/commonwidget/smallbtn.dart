@@ -8,6 +8,7 @@ class SmallButton extends StatelessWidget {
   final String fontFamily;
   final EdgeInsets padding;
   final Color textColor;
+  final double width;
   final Color borderColor;
   final Color backgroundColor;
   final Widget? trailingWidget;
@@ -19,6 +20,7 @@ class SmallButton extends StatelessWidget {
     required this.textColor,
     required this.backgroundColor,
     required this.borderColor,
+    required this.width,
     this.fontSize = 14,
     this.roundness = 1,
     this.fontWeight = FontWeight.bold,
@@ -33,7 +35,7 @@ class SmallButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
-          width: 105,
+          width: width,
           height: 40,
           child: ElevatedButton(
               style: ButtonStyle(

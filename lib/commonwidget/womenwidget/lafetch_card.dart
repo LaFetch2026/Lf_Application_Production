@@ -5,8 +5,8 @@ import '../../utils/constants.dart';
 import '../app_text.dart';
 import '../smallbtn.dart';
 
-class SaleCardWidget extends StatelessWidget {
-  const SaleCardWidget({super.key});
+class LafetchCardWidget extends StatelessWidget {
+  const LafetchCardWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,28 +15,23 @@ class SaleCardWidget extends StatelessWidget {
       child: Container(
         height: 220,
         decoration: BoxDecoration(
-            color: greyBack, borderRadius: BorderRadius.circular(4)),
+            color: colorPrimary, borderRadius: BorderRadius.circular(0)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 20),
-              child: AppText(
-                text: "The Sale is Big!",
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
-                color: bottomnavBack,
-                fontSize: 11.sp,
-              ),
+              child: Image.asset(appNameImage,
+                  height: 16, width: 50, fit: BoxFit.cover),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: AppText(
-                text: "Upto 50% Off",
+                text: "Insider Access",
                 fontFamily: "Franklin Gothic",
                 fontWeight: FontWeight.w500,
-                color: bottomnavBack,
+                color: whiteBorderColor,
                 fontSize: 28.sp,
               ),
             ),
@@ -44,11 +39,10 @@ class SaleCardWidget extends StatelessWidget {
               padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
               child: Center(
                 child: AppText(
-                  text:
-                      "Get your favorite pieces - choose from over 10,000+ styles now ",
+                  text: "Be the first to access exclusive discounts!",
                   fontFamily: "Franklin Gothic",
                   fontWeight: FontWeight.w500,
-                  color: bottomnavBack,
+                  color: whiteBorderColor,
                   maxLines: 2,
                   fontSize: 12.sp,
                 ),
@@ -57,12 +51,12 @@ class SaleCardWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: SmallButton(
-                  label: "Shop Now",
-                  width: 105,
+                  label: "Get Access",
                   textColor: whiteBorderColor,
+                  width: 225,
                   backgroundColor: colorPrimary,
                   onPressed: () {},
-                  borderColor: colorPrimary),
+                  borderColor: whiteBorderColor),
             )
           ],
         ),
