@@ -39,3 +39,6 @@ const cartImage = 'assets/images/cart_icon.png';
 const truckImage = 'assets/images/truck_icon.png';
 const question1Image = 'assets/images/question_mark.png';
 const question2Image = 'assets/images/question.png';
+const image = 'assets/images/image.png';
+const logoImage = 'assets/images/logo.png';
+const logoBackImage = 'assets/images/black_circle.png';

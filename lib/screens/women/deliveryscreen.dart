@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lafetch/commonwidget/womenwidget/question_card.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/womenwidget/lafetch_card.dart';
 import '../../commonwidget/womenwidget/sale_card.dart';
@@ -22,6 +25,43 @@ class DeliveryScreenState extends State<DeliveryScreen> {
     "400",
     "400",
   ];
+  List<String> images = [
+    image,
+    backImage,
+    otpImage,
+  ];
+
+  int _currentPage = 0;
+
+  Timer? timer;
+  final PageController _pageController = PageController(
+    initialPage: 0,
+  );
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
+      if (_currentPage < 2) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeIn,
+      );
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -336,107 +376,94 @@ class DeliveryScreenState extends State<DeliveryScreen> {
                     }),
               ),
             ),
-            const LafetchCardWidget(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Container(
-                height: 70,
-                decoration: BoxDecoration(
-                  color: whiteBorderColor,
-                  borderRadius: BorderRadius.circular(1),
-                  border: Border.all(color: btnTextColor, width: 1),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const ImageIcon(
-                        AssetImage(question1Image),
-                        color: expressText,
-                        size: 36,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                height: 210,
+                child: PageView.builder(
+                  scrollDirection: Axis.horizontal,
+                  // onPageChanged: callOnchanged,
+                  controller: _pageController,
+                  itemCount: images.length,
+                  itemBuilder: (context, int index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(images[index]),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      Column(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: AppText(
-                              text: "FAQs",
-                              color: colorPrimary,
-                              fontSize: 14.sp,
+                              text: "Flat ₹500 OFF*",
+                              color: whiteBorderColor,
+                              fontSize: 25.sp,
                               fontFamily: "Franklin Gothic",
                               fontWeight: FontWeight.w400,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10, top: 5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
                             child: AppText(
-                              text: "Your questions answered",
-                              color: nameText,
-                              fontSize: 11.sp,
+                              text: "on Chanel Handbags",
+                              color: whiteBorderColor,
+                              fontSize: 14.sp,
                               fontFamily: "Franklin Gothic",
                               fontWeight: FontWeight.w400,
                             ),
-                          )
+                          ),
                         ],
-                      )
-                    ],
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                height: 70,
-                decoration: BoxDecoration(
-                  color: whiteBorderColor,
-                  borderRadius: BorderRadius.circular(1),
-                  border: Border.all(color: btnTextColor, width: 1),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const ImageIcon(
-                        AssetImage(question1Image),
-                        color: expressText,
-                        size: 36,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              child: SizedBox(
+                width: double.infinity,
+                child: /* SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: */
+                    Row(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: AppText(
-                              text: "Need Help?",
-                              color: colorPrimary,
-                              fontSize: 14.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10, top: 5),
-                            child: AppText(
-                              text: "Contact customer service",
-                              color: nameText,
-                              fontSize: 11.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w400,
-                            ),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                        children:
+                            List<Widget>.generate(images.length, (int index) {
+                          return AnimatedContainer(
+                              duration: const Duration(milliseconds: 400),
+                              height: 6,
+                              width: 40,
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                  color: (index == _currentPage)
+                                      ? colorPrimary
+                                      : colorSecondary));
+                        })),
+                //  ),
               ),
             ),
+            const LafetchCardWidget(),
+            QuestionCardWidget(
+                text1: "FAQs",
+                text2: "Your questions answered",
+                onPressed: () {},
+                icon: question1Image),
+            QuestionCardWidget(
+                text1: "Need Help?",
+                text2: "Contact customer service",
+                onPressed: () {},
+                icon: question2Image),
           ],
         ),
       ),
