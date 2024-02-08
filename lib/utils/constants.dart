@@ -17,6 +17,8 @@ const Color blue = Color(0xFF1877F2);
 const Color loginText = Color(0xFF2A2723);
 const Color bottomnavBack = Color(0xFF1C1A18);
 const Color greyBack = Color(0xFFDCDFEF);
+const Color nameText = Color(0xFF38342F);
+const Color expressText = Color(0xFF404662);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
@@ -34,3 +36,6 @@ const whiteDropDown = 'assets/images/white_dropdown.png';
 const saveIcon = 'assets/images/save_icon.png';
 const searchImage = 'assets/images/search_icon.png';
 const cartImage = 'assets/images/cart_icon.png';
+const truckImage = 'assets/images/truck_icon.png';
+const question1Image = 'assets/images/question_mark.png';
+const question2Image = 'assets/images/question.png';
