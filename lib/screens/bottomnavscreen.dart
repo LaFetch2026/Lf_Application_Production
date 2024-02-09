@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/screens/accountscreen.dart';
-import 'package:lafetch/screens/boltscreen.dart';
+import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/homescreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -30,7 +30,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => const BoltScreen()));
+              builder: (BuildContext context) =>
+                  const ExpressShoppingScreen()));
         },
         backgroundColor: btnTextColor,
         foregroundColor: whiteBorderColor,

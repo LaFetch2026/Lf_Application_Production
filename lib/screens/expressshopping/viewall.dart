@@ -1,0 +1,152 @@
+// ignore_for_file: avoid_print
+
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../commonwidget/app_text.dart';
+import '../../utils/constants.dart';
+
+class ViewAllScreen extends StatefulWidget {
+  const ViewAllScreen({super.key});
+
+  @override
+  State<ViewAllScreen> createState() => ViewAllScreenState();
+}
+
+class ViewAllScreenState extends State<ViewAllScreen> {
+  List<String> items = [
+    "100",
+    "200",
+    "300",
+    "400",
+    "400",
+  ];
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: whiteTextColor,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 16),
+              child: AppText(
+                text: "Express Delivery",
+                fontFamily: "Franklin Gothic",
+                fontWeight: FontWeight.w500,
+                color: blackColor,
+                fontSize: 16.sp,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: SizedBox(
+                width: double.infinity,
+                height: 250,
+                child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: items.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (ctx, index) {
+                      return Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: const EdgeInsets.only(right: 5),
+                              width: 122,
+                              height: 240,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.asset(backImage,
+                                      height: 150,
+                                      width: 122,
+                                      fit: BoxFit.cover),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    child: AppText(
+                                      text:
+                                          "Topman super skinny suit jacket and trousers in light blue",
+                                      color: nameText,
+                                      maxLines: 2,
+                                      fontSize: 11.sp,
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, left: 10, right: 10),
+                                    child: Row(
+                                      children: [
+                                        AppText(
+                                          text: "\u{20B9} ${items[index]}",
+                                          color: deepGreytextColor,
+                                          maxLines: 2,
+                                          fontSize: 11.sp,
+                                          fontFamily: "Franklin Gothic",
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 10),
+                                          child: AppText(
+                                            text: "\u{20B9} ${items[index]}",
+                                            color: textHintColor,
+                                            maxLines: 2,
+                                            fontSize: 11.sp,
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, left: 10, right: 10),
+                                    child: Row(
+                                      children: [
+                                        const ImageIcon(
+                                          AssetImage(truckImage),
+                                          color: expressText,
+                                          size: 14,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          child: AppText(
+                                            text: "Express",
+                                            color: expressText,
+                                            maxLines: 2,
+                                            fontSize: 11.sp,
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

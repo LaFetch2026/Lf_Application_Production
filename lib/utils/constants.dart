@@ -42,3 +42,4 @@ const question2Image = 'assets/images/question.png';
 const image = 'assets/images/image.png';
 const logoImage = 'assets/images/logo.png';
 const logoBackImage = 'assets/images/black_circle.png';
+const shopImage = 'assets/images/shop_icon.png';
