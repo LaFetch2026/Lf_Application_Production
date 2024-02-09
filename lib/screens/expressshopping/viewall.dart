@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../commonwidget/app_text.dart';
+import '../../commonwidget/doublebtn.dart';
 import '../../utils/constants.dart';
 
 class ViewAllScreen extends StatefulWidget {
@@ -37,48 +38,62 @@ class ViewAllScreenState extends State<ViewAllScreen> {
               padding: const EdgeInsets.only(top: 10, left: 16),
               child: AppText(
                 text: "Express Delivery",
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w400,
                 color: blackColor,
                 fontSize: 16.sp,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 250,
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: items.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 122,
-                              height: 240,
+            Stack(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    scrollDirection: Axis.vertical,
+                    padding: EdgeInsets.zero,
+                    childAspectRatio: 0.5,
+                    physics: const ScrollPhysics(),
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 0,
+                    children: List.generate(
+                      items.length,
+                      (index) {
+                        return Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {},
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Image.asset(backImage,
-                                      height: 150,
-                                      width: 122,
+                                      height: 190,
+                                      width: 152,
                                       fit: BoxFit.cover),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 5),
+                                    child: AppText(
+                                      text: "Jack & Jones Core ",
+                                      color: nameText,
+                                      maxLines: 2,
+                                      fontSize: 12.sp,
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     child: AppText(
                                       text:
                                           "Topman super skinny suit jacket and trousers in light blue",
                                       color: nameText,
                                       maxLines: 2,
                                       fontSize: 11.sp,
-                                      fontFamily: "Franklin Gothic",
+                                      fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -103,7 +118,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                             color: textHintColor,
                                             maxLines: 2,
                                             fontSize: 11.sp,
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -128,7 +144,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                             color: expressText,
                                             maxLines: 2,
                                             fontSize: 11.sp,
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -138,11 +155,32 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
-              ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 330),
+                  child: DoubleButton(
+                    firstText: "Sort By",
+                    secondText: "Filters",
+                    firstTextColor: deepGreytextColor,
+                    secondTextColor: deepGreytextColor,
+                    firstBackgroundColor: whiteBorderColor,
+                    secondBackgroundColor: whiteBorderColor,
+                    firstBorderColor: deepGreytextColor,
+                    secondBorderColor: deepGreytextColor,
+                    onPressedFirst: () {},
+                    onPressedSecond: () {
+                      /*  Get.to(
+                            () => const LoginScreen(),
+                          ); */
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),

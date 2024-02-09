@@ -19,6 +19,8 @@ const Color bottomnavBack = Color(0xFF1C1A18);
 const Color greyBack = Color(0xFFDCDFEF);
 const Color nameText = Color(0xFF38342F);
 const Color expressText = Color(0xFF404662);
+const Color appbarText = Color(0xFF1F1C21);
+//const Color backArrOW = Color(0xFF);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
@@ -43,3 +45,4 @@ const image = 'assets/images/image.png';
 const logoImage = 'assets/images/logo.png';
 const logoBackImage = 'assets/images/black_circle.png';
 const shopImage = 'assets/images/shop_icon.png';
+const backArrowImage = 'assets/images/back_arrow.png';
