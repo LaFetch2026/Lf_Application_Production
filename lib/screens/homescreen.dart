@@ -90,7 +90,7 @@ class HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: AppText(
                           text: "Select Your Location",
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Franklin Gothic Regular",
                           maxLines: 2,
                           fontWeight: FontWeight.w500,
                           color: colorSecondary,

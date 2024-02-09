@@ -43,7 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
               child: AppText(
                 text: "Skip",
                 textAlign: TextAlign.right,
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: whiteTextColor,
                 fontSize: 14,
@@ -66,7 +66,7 @@ class LoginScreenState extends State<LoginScreen> {
                         "Sign In",
                         style: TextStyle(
                             fontSize: 16.sp,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400),
                       )),
                       Tab(
@@ -74,7 +74,7 @@ class LoginScreenState extends State<LoginScreen> {
                         "I’m new here",
                         style: TextStyle(
                             fontSize: 16.sp,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400),
                       ))
                     ]),
@@ -102,6 +102,7 @@ class LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.only(top: 40),
                               child: AppButton(
                                   label: "Continue with Facebook",
+                                  fontFamily: "Franklin Gothic Regular",
                                   image: facebookImage,
                                   textColor: whiteColor,
                                   borderColor: blue,
@@ -112,6 +113,7 @@ class LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               child: AppButton(
                                   label: "Continue with Gmail",
+                                  fontFamily: "Franklin Gothic Regular",
                                   image: googleImage,
                                   textColor: greyTextColor,
                                   borderColor: colorSecondary,
@@ -123,7 +125,7 @@ class LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.only(top: 20, left: 16),
                               child: AppText(
                                 text: "Let’s quickly verify it’s you",
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
                                 color: loginText,
                                 fontSize: 14.sp,
@@ -178,6 +180,7 @@ class LoginScreenState extends State<LoginScreen> {
                               child: AppButton(
                                   label: "Continue with Facebook",
                                   image: facebookImage,
+                                  fontFamily: "Franklin Gothic Regular",
                                   textColor: whiteColor,
                                   borderColor: blue,
                                   fontSize: 14.sp,
@@ -187,6 +190,7 @@ class LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               child: AppButton(
                                   label: "Continue with Gmail",
+                                  fontFamily: "Franklin Gothic Regular",
                                   image: googleImage,
                                   textColor: greyTextColor,
                                   borderColor: colorSecondary,
@@ -198,7 +202,7 @@ class LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.only(top: 20, left: 16),
                               child: AppText(
                                 text: "Let’s quickly verify it’s you",
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
                                 color: loginText,
                                 fontSize: 14.sp,

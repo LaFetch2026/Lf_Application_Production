@@ -24,7 +24,7 @@ class SaleCardWidget extends StatelessWidget {
               padding: const EdgeInsets.only(top: 20),
               child: AppText(
                 text: "The Sale is Big!",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w500,
                 color: bottomnavBack,
                 fontSize: 11.sp,
@@ -46,7 +46,7 @@ class SaleCardWidget extends StatelessWidget {
                 child: AppText(
                   text:
                       "Get your favorite pieces - choose from over 10,000+ styles now ",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w500,
                   color: bottomnavBack,
                   maxLines: 2,

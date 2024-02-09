@@ -95,7 +95,10 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                 child: Text(
                                   item,
                                   style: const TextStyle(
-                                      fontSize: 14, color: Colors.black),
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontFamily: "Franklin Gothic Regular",
+                                  ),
                                 ),
                               ))
                           .toList(),

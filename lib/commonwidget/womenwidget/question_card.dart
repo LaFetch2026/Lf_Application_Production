@@ -53,7 +53,7 @@ class QuestionCardWidget extends StatelessWidget {
                         text: text1,
                         color: colorPrimary,
                         fontSize: 14.sp,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -63,7 +63,7 @@ class QuestionCardWidget extends StatelessWidget {
                         text: text2,
                         color: nameText,
                         fontSize: 11.sp,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     )

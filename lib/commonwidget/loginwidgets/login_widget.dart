@@ -24,7 +24,7 @@ class LoginWidget extends StatelessWidget {
           padding: const EdgeInsets.only(top: 20, left: 16),
           child: AppText(
             text: text1,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: btnTextColor,
             fontSize: 25.sp,
@@ -35,7 +35,7 @@ class LoginWidget extends StatelessWidget {
           child: AppText(
             text: text2,
             maxLines: 2,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: textColor,
             fontSize: 14.sp,

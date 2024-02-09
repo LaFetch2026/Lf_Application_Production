@@ -42,7 +42,7 @@ class NumberWidget extends StatelessWidget {
                 children: [
                   AppText(
                     text: "+91",
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Franklin Gothic Regular",
                     fontWeight: FontWeight.w400,
                     color: greyTextColor,
                     fontSize: 14.sp,

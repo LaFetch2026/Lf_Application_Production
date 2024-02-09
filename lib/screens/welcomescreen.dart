@@ -51,7 +51,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       child: AppText(
                         text:
                             "In Delhi? Get your order delivered in just 6-hours. Quick, hassle-free checkouts & so much more’s waiting for you on the other side.",
-                        fontFamily: "Franklin Gothic Medium",
+                        fontFamily: "Franklin Gothic Regular",
                         maxLines: 3,
                         fontWeight: FontWeight.w400,
                         color: whiteTextColor,

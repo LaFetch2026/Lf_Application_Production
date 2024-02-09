@@ -27,7 +27,7 @@ class ORWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: AppText(
               text: "OR",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: lightText,
               fontSize: 11.sp,

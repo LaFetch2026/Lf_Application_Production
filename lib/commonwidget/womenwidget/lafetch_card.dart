@@ -40,7 +40,7 @@ class LafetchCardWidget extends StatelessWidget {
               child: Center(
                 child: AppText(
                   text: "Be the first to access exclusive discounts!",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w500,
                   color: whiteBorderColor,
                   maxLines: 2,

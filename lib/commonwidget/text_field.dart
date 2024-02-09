@@ -17,7 +17,10 @@ class TextFieldWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: TextField(
         textCapitalization: TextCapitalization.words,
-        style: const TextStyle(color: textColor),
+        style: const TextStyle(
+          color: textColor,
+          fontFamily: "Franklin Gothic Regular",
+        ),
         controller: controller,
         keyboardType: TextInputType.text,
         maxLength: 25,
