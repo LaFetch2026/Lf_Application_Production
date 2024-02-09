@@ -20,10 +20,13 @@ class CatalogDetailsScreen extends StatefulWidget {
 
 class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   List<String> items = [
-    "New In",
-    "Clothing",
-    "Accessories",
+    "Suits",
+    "Skirt",
+    "Top",
+    "Dresses",
+    "jacket",
     "Footwear",
+    "Jeans",
     "Sales Discount",
   ];
   @override
@@ -80,13 +83,41 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
-              child: AppText(
-                text: "Explore Catalog",
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
-                color: appbarText,
-                fontSize: 25.sp,
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: SizedBox(
+                height: 500,
+                child: ListView.builder(
+                    physics: const ScrollPhysics(),
+                    itemCount: items.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (ctx, index) {
+                      return Column(
+                        children: [
+                          GestureDetector(
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      AppText(
+                                        text: items[index],
+                                        color: greyTextColor,
+                                        fontSize: 14.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )),
+                        ],
+                      );
+                    }),
               ),
             ),
           ],

@@ -2,8 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import '../commonwidget/app_text.dart';
+import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
+import 'catalogscreen.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -21,6 +24,11 @@ class AccountScreenState extends State<AccountScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            HomeAppbar(
+              onPressedCatalog: () {
+                Get.to(const CatalogScreen());
+              },
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
               child: AppText(

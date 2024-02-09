@@ -2,8 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
+import 'catalogscreen.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -21,6 +24,11 @@ class WishlistScreenState extends State<WishlistScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            HomeAppbar(
+              onPressedCatalog: () {
+                Get.to(const CatalogScreen());
+              },
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
               child: AppText(

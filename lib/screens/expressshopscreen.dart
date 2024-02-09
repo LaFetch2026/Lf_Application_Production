@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
+import 'catalogscreen.dart';
 
 class ExpressShoppingScreen extends StatefulWidget {
   const ExpressShoppingScreen({super.key});
@@ -36,52 +39,10 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width,
-              color: colorPrimary,
-              child: Column(children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image.asset(appNameImage,
-                          height: 28, width: 70, fit: BoxFit.cover),
-                      const Expanded(
-                        child: SizedBox(
-                          height: 0,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: ImageIcon(
-                          AssetImage(searchImage),
-                          color: textHintColor,
-                          size: 20,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: ImageIcon(
-                          AssetImage(saveIcon),
-                          color: textHintColor,
-                          size: 20,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: ImageIcon(
-                          AssetImage(cartImage),
-                          color: textHintColor,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
+            HomeAppbar(
+              onPressedCatalog: () {
+                Get.to(const CatalogScreen());
+              },
             ),
             Container(
               height: 40,

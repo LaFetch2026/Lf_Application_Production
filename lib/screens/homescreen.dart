@@ -8,6 +8,7 @@ import 'package:lafetch/screens/home/kidsscreen.dart';
 import 'package:lafetch/screens/home/menscreen.dart';
 import 'package:lafetch/screens/home/womenscreen.dart';
 import '../commonwidget/app_text.dart';
+import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,57 +29,16 @@ class HomeScreenState extends State<HomeScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            HomeAppbar(
+              onPressedCatalog: () {
+                Get.to(const CatalogScreen());
+              },
+            ),
             Container(
-              height: 140,
+              height: 40,
               width: MediaQuery.of(context).size.width,
               color: colorPrimary,
               child: Column(children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image.asset(appNameImage,
-                          height: 28, width: 70, fit: BoxFit.cover),
-                      const Expanded(
-                        child: SizedBox(
-                          height: 0,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: ImageIcon(
-                          AssetImage(searchImage),
-                          color: textHintColor,
-                          size: 20,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(const CatalogScreen());
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          child: ImageIcon(
-                            AssetImage(saveIcon),
-                            color: textHintColor,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: ImageIcon(
-                          AssetImage(cartImage),
-                          color: textHintColor,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -159,7 +119,7 @@ class HomeScreenState extends State<HomeScreen> {
               height: 1,
             ),
             const SizedBox(
-              height: 480,
+              height: 500,
               child: TabBarView(children: [
                 WomenScreen(),
                 MenScreen(),

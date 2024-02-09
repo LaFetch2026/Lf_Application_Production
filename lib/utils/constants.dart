@@ -47,3 +47,4 @@ const logoBackImage = 'assets/images/black_circle.png';
 const shopImage = 'assets/images/shop_icon.png';
 const backArrowImage = 'assets/images/back_arrow.png';
 const rightArrowImage = 'assets/images/right_arrow.png';
+const heartImage = 'assets/images/heart_icon.png';

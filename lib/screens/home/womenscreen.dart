@@ -98,7 +98,7 @@ class _WomenScreenState extends State<WomenScreen> {
           ),
           SizedBox(
             width: double.infinity,
-            height: 400,
+            height: 420,
             child: PageView.builder(
               itemCount: screen.length,
               controller: pageController,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
 import '../app_text.dart';
@@ -29,7 +30,7 @@ class CatalogAppbar extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  Get.back();
                 },
                 child: Image.asset(backArrowImage,
                     height: 16, width: 10, fit: BoxFit.cover),

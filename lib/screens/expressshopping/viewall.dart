@@ -68,10 +68,36 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Image.asset(backImage,
-                                      height: 190,
-                                      width: 152,
-                                      fit: BoxFit.cover),
+                                  Stack(
+                                    children: [
+                                      Image.asset(backImage,
+                                          height: 190,
+                                          width: 152,
+                                          fit: BoxFit.cover),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 10),
+                                        child: Align(
+                                          alignment: Alignment.topRight,
+                                          child: InkWell(
+                                            child: SizedBox(
+                                              height: 24,
+                                              width: 24,
+                                              child: CircleAvatar(
+                                                backgroundColor: whiteColor,
+                                                child: Image.asset(
+                                                  heartImage,
+                                                  height: 16,
+                                                  color: bottomnavBack,
+                                                  width: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 5),
