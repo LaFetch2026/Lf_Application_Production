@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/home/kidsscreen.dart';
 import 'package:lafetch/screens/home/menscreen.dart';
 import 'package:lafetch/screens/home/womenscreen.dart';
@@ -53,12 +55,17 @@ class HomeScreenState extends State<HomeScreen> {
                           size: 20,
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: ImageIcon(
-                          AssetImage(saveIcon),
-                          color: textHintColor,
-                          size: 20,
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(const CatalogScreen());
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: ImageIcon(
+                            AssetImage(saveIcon),
+                            color: textHintColor,
+                            size: 20,
+                          ),
                         ),
                       ),
                       const Padding(
