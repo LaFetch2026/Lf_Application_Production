@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
+import 'package:lafetch/screens/wishlist/boardscreen.dart';
+import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
 import 'catalogscreen.dart';
@@ -96,36 +98,41 @@ class WishlistScreenState extends State<WishlistScreen> {
                       Padding(
                         padding:
                             const EdgeInsets.only(top: 10, left: 16, right: 16),
-                        child: Row(
-                          children: [
-                            AppText(
-                              text: "6 boards",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: textHintColor,
-                              fontSize: 12.sp,
-                            ),
-                            const Expanded(
-                              child: SizedBox(
-                                width: 0,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.add,
-                              color: blackColor,
-                              size: 16,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: AppText(
-                                text: "New Board",
-                                color: blackColor,
-                                fontSize: 12.sp,
-                                fontFamily: "Franklin Gothic Bold",
+                        child: GestureDetector(
+                          onTap: () {
+                            Get.to(const NewBoardScreen());
+                          },
+                          child: Row(
+                            children: [
+                              AppText(
+                                text: "6 boards",
+                                fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
+                                color: textHintColor,
+                                fontSize: 12.sp,
                               ),
-                            ),
-                          ],
+                              const Expanded(
+                                child: SizedBox(
+                                  width: 0,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.add,
+                                color: blackColor,
+                                size: 16,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: AppText(
+                                  text: "New Board",
+                                  color: blackColor,
+                                  fontSize: 12.sp,
+                                  fontFamily: "Franklin Gothic Bold",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Padding(
@@ -144,7 +151,9 @@ class WishlistScreenState extends State<WishlistScreen> {
                             items.length,
                             (index) {
                               return GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Get.to(const BoardScreen());
+                                },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

@@ -32,33 +32,28 @@ class SmallButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SizedBox(
-          width: width,
-          height: 40,
-          child: ElevatedButton(
-              style: ButtonStyle(
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(1))),
-                  side: MaterialStateProperty.all(
-                    BorderSide(width: 1, color: borderColor),
-                  ),
-                  backgroundColor: MaterialStateProperty.all(backgroundColor),
-                  textStyle: MaterialStateProperty.all(TextStyle(
-                    color: textColor,
-                    fontSize: fontSize,
-                  ))),
-              onPressed: () {
-                onPressed?.call();
-              },
-              child: Text(
-                label,
-                style: TextStyle(
-                    color: textColor,
-                    fontFamily: fontFamily,
-                    fontSize: fontSize),
-              ))),
-    );
+    return SizedBox(
+        width: width,
+        height: 40,
+        child: ElevatedButton(
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(1))),
+                side: MaterialStateProperty.all(
+                  BorderSide(width: 1, color: borderColor),
+                ),
+                backgroundColor: MaterialStateProperty.all(backgroundColor),
+                textStyle: MaterialStateProperty.all(TextStyle(
+                  color: textColor,
+                  fontSize: fontSize,
+                ))),
+            onPressed: () {
+              onPressed?.call();
+            },
+            child: Text(
+              label,
+              style: TextStyle(
+                  color: textColor, fontFamily: fontFamily, fontSize: fontSize),
+            )));
   }
 }

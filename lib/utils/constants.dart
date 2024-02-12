@@ -49,3 +49,7 @@ const backArrowImage = 'assets/images/back_arrow.png';
 const rightArrowImage = 'assets/images/right_arrow.png';
 const heartImage = 'assets/images/heart_icon.png';
 const emptyBoxImage = 'assets/images/empty_box.png';
+const blackRightCircleImage = 'assets/images/black_right.png';
+const whiteCrossCircleImage = 'assets/images/white_cross.png';
+const starImage = 'assets/images/star_image.png';
+const threeDotImage = 'assets/images/three_dot.png';

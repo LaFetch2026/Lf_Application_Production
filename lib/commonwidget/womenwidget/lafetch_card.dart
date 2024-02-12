@@ -49,7 +49,7 @@ class LafetchCardWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
               child: SmallButton(
                   label: "Get Access",
                   textColor: whiteBorderColor,
