@@ -53,3 +53,5 @@ const blackRightCircleImage = 'assets/images/black_right.png';
 const whiteCrossCircleImage = 'assets/images/white_cross.png';
 const starImage = 'assets/images/star_image.png';
 const threeDotImage = 'assets/images/three_dot.png';
+const deleteImage = 'assets/images/delete.png';
+const shareImage = 'assets/images/share.png';

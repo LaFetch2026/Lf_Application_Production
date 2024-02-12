@@ -12,14 +12,22 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   String? token;
   String? name;
-
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(seconds: 2),
+    vsync: this,
+  )..repeat(reverse: true);
+  late final Animation<double> animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn,
+  );
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 4), () => nextScreen());
+    Timer(const Duration(seconds: 2), () => nextScreen());
   }
 
   void nextScreen() {
@@ -41,16 +49,19 @@ class _SplashScreenState extends State<SplashScreen> {
         color: whiteBorderColor,
       ),
       child: Center(
-          child: Container(
-              width: 100,
-              height: 100,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage(logoBackImage), fit: BoxFit.cover)),
-              child: Center(
-                child: Image.asset(logoImage,
-                    height: 50, width: 50, fit: BoxFit.cover),
-              ))),
+          child: ScaleTransition(
+        scale: animation,
+        child: Container(
+            width: 100,
+            height: 100,
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage(logoBackImage), fit: BoxFit.cover)),
+            child: Center(
+              child: Image.asset(logoImage,
+                  height: 50, width: 50, fit: BoxFit.cover),
+            )),
+      )),
     );
   }
 }
