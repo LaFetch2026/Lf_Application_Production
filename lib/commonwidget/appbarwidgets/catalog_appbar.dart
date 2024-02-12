@@ -60,10 +60,17 @@ class CatalogAppbar extends StatelessWidget {
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 5),
-                child: ImageIcon(
-                  AssetImage(cartImage),
-                  color: textHintColor,
-                  size: 20,
+                child: SizedBox(
+                  height: 28,
+                  width: 28,
+                  child: CircleAvatar(
+                    backgroundColor: blackColor,
+                    child: ImageIcon(
+                      AssetImage(cartImage),
+                      color: textHintColor,
+                      size: 20,
+                    ),
+                  ),
                 ),
               ),
             ],
