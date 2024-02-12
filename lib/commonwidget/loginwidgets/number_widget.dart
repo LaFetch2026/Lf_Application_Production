@@ -36,26 +36,29 @@ class NumberWidget extends StatelessWidget {
             /*   errorText: isValidate
                                                       ? 'Please enter number'
                                                       : null, */
-            prefix: SizedBox(
-              width: 50,
-              child: Row(
-                children: [
-                  AppText(
-                    text: "+91",
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: greyTextColor,
-                    fontSize: 14.sp,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Container(
-                      width: 1,
-                      color: textHintColor,
-                      height: 25,
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: SizedBox(
+                width: 50,
+                child: Row(
+                  children: [
+                    AppText(
+                      text: "+91",
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      color: greyTextColor,
+                      fontSize: 14.sp,
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Container(
+                        width: 1,
+                        color: textHintColor,
+                        height: 25,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             counterText: "",
