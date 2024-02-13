@@ -23,7 +23,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     "200",
     "300",
     "400",
-    "400",
+    "500",
   ];
   List<String> images = [
     image,

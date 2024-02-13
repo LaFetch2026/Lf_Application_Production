@@ -32,21 +32,21 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
       backgroundColor: whiteTextColor,
       body: Column(
         children: [
+          widget.btnText == ""
+              ? EditBoardAppbar(
+                  text: "Edit Board",
+                  onPressedDelete: () {},
+                  onPressedShare: () {},
+                )
+              : const BackButtonAppbar(
+                  text: "Add items to board",
+                  threeDot: false,
+                ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  widget.btnText == ""
-                      ? EditBoardAppbar(
-                          text: "Edit Board",
-                          onPressedDelete: () {},
-                          onPressedShare: () {},
-                        )
-                      : const BackButtonAppbar(
-                          text: "Add items to board",
-                          threeDot: false,
-                        ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 16, right: 16, top: 10),

@@ -6,14 +6,13 @@ import '../../utils/constants.dart';
 import '../app_text.dart';
 
 class CatalogAppbar extends StatelessWidget {
-  final Function? onPressed;
+  final Function? onPressedSearch;
+  final Function? onPressedCart;
   final String text;
 
-  const CatalogAppbar({
-    Key? key,
-    required this.text,
-    this.onPressed,
-  }) : super(key: key);
+  const CatalogAppbar(
+      {Key? key, required this.text, this.onPressedSearch, this.onPressedCart})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,25 +49,35 @@ class CatalogAppbar extends StatelessWidget {
                   height: 0,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: ImageIcon(
-                  AssetImage(searchImage),
-                  color: textHintColor,
-                  size: 20,
+              GestureDetector(
+                onTap: () {
+                  onPressedSearch?.call();
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: ImageIcon(
+                    AssetImage(searchImage),
+                    color: textHintColor,
+                    size: 20,
+                  ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 5),
-                child: SizedBox(
-                  height: 28,
-                  width: 28,
-                  child: CircleAvatar(
-                    backgroundColor: blackColor,
-                    child: ImageIcon(
-                      AssetImage(cartImage),
-                      color: textHintColor,
-                      size: 20,
+              GestureDetector(
+                onTap: () {
+                  onPressedCart?.call();
+                },
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: SizedBox(
+                    height: 28,
+                    width: 28,
+                    child: CircleAvatar(
+                      backgroundColor: blackColor,
+                      child: ImageIcon(
+                        AssetImage(cartImage),
+                        color: textHintColor,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
