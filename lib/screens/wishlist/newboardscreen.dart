@@ -9,7 +9,14 @@ import '../../commonwidget/singlebtn.dart';
 import '../../utils/constants.dart';
 
 class NewBoardScreen extends StatefulWidget {
-  const NewBoardScreen({super.key});
+  final String title;
+  final String boardName;
+  final String btnText;
+  const NewBoardScreen(
+      {required this.title,
+      required this.boardName,
+      required this.btnText,
+      super.key});
 
   @override
   State<NewBoardScreen> createState() => NewBoardScreenState();
@@ -29,14 +36,14 @@ class NewBoardScreenState extends State<NewBoardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const BackButtonAppbar(
-                    text: "New Board",
+                  BackButtonAppbar(
+                    text: widget.title,
                     threeDot: false,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 40),
                     child: TextFieldWidget(
-                      hint: "Name of the Board",
+                      hint: widget.boardName,
                       controller: boardNameController,
                     ),
                   ),
@@ -47,12 +54,14 @@ class NewBoardScreenState extends State<NewBoardScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: SingleButton(
-                label: "Next",
+                label: widget.btnText,
                 textColor: whiteBorderColor,
                 backgroundColor: btnTextColor,
                 onPressed: () {
                   Get.to(
-                    () => const CreateBoardScreen(),
+                    () => const CreateBoardScreen(
+                      btnText: "Create board",
+                    ),
                   );
                 },
                 borderColor: btnTextColor),

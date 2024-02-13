@@ -9,7 +9,8 @@ import '../../commonwidget/singlebtn.dart';
 import '../../utils/constants.dart';
 
 class CreateBoardScreen extends StatefulWidget {
-  const CreateBoardScreen({super.key});
+  final String btnText;
+  const CreateBoardScreen({required this.btnText, super.key});
 
   @override
   State<CreateBoardScreen> createState() => CreateBoardScreenState();
@@ -221,7 +222,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: SingleButton(
-                label: "Create board",
+                label: widget.btnText,
                 textColor: whiteBorderColor,
                 backgroundColor: btnTextColor,
                 onPressed: () {

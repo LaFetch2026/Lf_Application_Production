@@ -100,7 +100,11 @@ class WishlistScreenState extends State<WishlistScreen> {
                             const EdgeInsets.only(top: 10, left: 16, right: 16),
                         child: GestureDetector(
                           onTap: () {
-                            Get.to(const NewBoardScreen());
+                            Get.to(const NewBoardScreen(
+                              title: "New Board",
+                              boardName: "Name of the Board",
+                              btnText: "Next",
+                            ));
                           },
                           child: Row(
                             children: [

@@ -83,7 +83,9 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                         isDense: true,
                         contentPadding: const EdgeInsets.only(left: 16),
                         hintText: 'Gender',
-                        hintStyle: const TextStyle(fontSize: 14),
+                        hintStyle: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: "Franklin Gothic Regular"),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(1),
                         ),
