@@ -55,3 +55,5 @@ const starImage = 'assets/images/star_image.png';
 const threeDotImage = 'assets/images/three_dot.png';
 const deleteImage = 'assets/images/delete.png';
 const shareImage = 'assets/images/share.png';
+const upArrowIcon = 'assets/images/up_arrow.png';
+const brandback = 'assets/images/brand_back.png';

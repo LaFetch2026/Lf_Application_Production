@@ -11,6 +11,7 @@ import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
+import 'cartscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,6 +37,9 @@ class HomeScreenState extends State<HomeScreen> {
               },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
+              },
+              onPressedCart: () {
+                Get.to(const CartScreen());
               },
             ),
             Container(

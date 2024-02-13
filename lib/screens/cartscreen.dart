@@ -2,22 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
-import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
-import 'catalogscreen.dart';
 
-class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+class CartScreen extends StatefulWidget {
+  const CartScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => AccountScreenState();
+  State<CartScreen> createState() => CartScreenState();
 }
 
-class AccountScreenState extends State<AccountScreen> {
+class CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,21 +21,10 @@ class AccountScreenState extends State<AccountScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HomeAppbar(
-              onPressedSearch: () {
-                Get.to(const SearchScreen());
-              },
-              onPressedCatalog: () {
-                Get.to(const CatalogScreen());
-              },
-              onPressedCart: () {
-                Get.to(const CartScreen());
-              },
-            ),
             Padding(
               padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
               child: AppText(
-                text: "Account",
+                text: "CartScreen",
                 fontFamily: "Franklin Gothic",
                 maxLines: 2,
                 fontWeight: FontWeight.w500,

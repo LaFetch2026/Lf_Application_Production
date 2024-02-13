@@ -10,6 +10,7 @@ import 'package:lafetch/screens/wishlist/boardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
+import 'cartscreen.dart';
 import 'catalogscreen.dart';
 
 class WishlistScreen extends StatefulWidget {
@@ -41,6 +42,9 @@ class WishlistScreenState extends State<WishlistScreen> {
               },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
+              },
+              onPressedCart: () {
+                Get.to(const CartScreen());
               },
             ),
             items.isEmpty

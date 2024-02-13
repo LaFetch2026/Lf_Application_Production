@@ -8,6 +8,7 @@ import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
+import 'cartscreen.dart';
 import 'catalogscreen.dart';
 
 class ExpressShoppingScreen extends StatefulWidget {
@@ -46,6 +47,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
               },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
+              },
+              onPressedCart: () {
+                Get.to(const CartScreen());
               },
             ),
             Container(
