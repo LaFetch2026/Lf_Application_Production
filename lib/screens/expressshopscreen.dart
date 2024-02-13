@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
+import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
 import 'catalogscreen.dart';
@@ -40,6 +41,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HomeAppbar(
+              onPressedSearch: () {
+                Get.to(const SearchScreen());
+              },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
               },

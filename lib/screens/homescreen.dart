@@ -7,6 +7,7 @@ import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/home/kidsscreen.dart';
 import 'package:lafetch/screens/home/menscreen.dart';
 import 'package:lafetch/screens/home/womenscreen.dart';
+import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
@@ -30,6 +31,9 @@ class HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HomeAppbar(
+              onPressedSearch: () {
+                Get.to(const SearchScreen());
+              },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
               },

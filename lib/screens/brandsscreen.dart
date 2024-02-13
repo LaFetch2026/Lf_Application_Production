@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
@@ -25,6 +26,9 @@ class BrandsScreenState extends State<BrandsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HomeAppbar(
+              onPressedSearch: () {
+                Get.to(const SearchScreen());
+              },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
               },

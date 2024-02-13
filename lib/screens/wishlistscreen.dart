@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
+import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlist/boardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import '../commonwidget/app_text.dart';
@@ -35,6 +36,9 @@ class WishlistScreenState extends State<WishlistScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HomeAppbar(
+              onPressedSearch: () {
+                Get.to(const SearchScreen());
+              },
               onPressedCatalog: () {
                 Get.to(const CatalogScreen());
               },

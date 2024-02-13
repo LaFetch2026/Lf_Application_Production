@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lafetch/screens/women/deliveryscreen.dart';
+import 'package:lafetch/screens/women/discountscreen.dart';
 
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
@@ -20,10 +20,10 @@ class _WomenScreenState extends State<WomenScreen> {
     "Footwaer",
   ];
   final screen = [
-    const DeliveryScreen(),
-    const DeliveryScreen(),
-    const DeliveryScreen(),
-    const DeliveryScreen(),
+    const DiscountScreen(),
+    const DiscountScreen(),
+    const DiscountScreen(),
+    const DiscountScreen(),
   ];
 
   int current = 0;
