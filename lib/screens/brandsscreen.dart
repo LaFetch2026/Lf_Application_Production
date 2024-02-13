@@ -166,9 +166,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                     children: [
                                       GestureDetector(
                                         onTap: () {
-                                          Get.to(AllBrandScreen(
+                                          /*   Get.to(AllBrandScreen(
                                             title: items[index],
-                                          ));
+                                          )); */
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(

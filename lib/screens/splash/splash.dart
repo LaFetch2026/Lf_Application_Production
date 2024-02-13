@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:lafetch/screens/welcomescreen.dart';
+import 'package:lafetch/screens/splash/splashtwo.dart';
 import 'package:lafetch/utils/constants.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -30,14 +29,31 @@ class _SplashScreenState extends State<SplashScreen>
     Timer(const Duration(seconds: 2), () => nextScreen());
   }
 
+  Route scaleIn(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, page) {
+        var begin = 0.0;
+        var end = 1.0;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return ScaleTransition(
+          scale: animation.drive(tween),
+          child: page,
+        );
+      },
+    );
+  }
+
   void nextScreen() {
     /*  Navigator.of(context).pushReplacement(
       MaterialPageRoute(
           builder: (BuildContext context) => const WelcomeScreen()),
     ); */
-    Get.offAll(
-      () => const WelcomeScreen(),
-    );
+    Navigator.push(context, scaleIn(const SplashTwoScreen()));
   }
 
   @override
@@ -49,19 +65,22 @@ class _SplashScreenState extends State<SplashScreen>
         color: whiteBorderColor,
       ),
       child: Center(
-          child: ScaleTransition(
-        scale: animation,
-        child: Container(
-            width: 100,
-            height: 100,
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(logoBackImage), fit: BoxFit.cover)),
-            child: Center(
-              child: Image.asset(logoImage,
-                  height: 50, width: 50, fit: BoxFit.cover),
-            )),
-      )),
+        child:
+            /*    ScaleTransition(
+        scale: animation, 
+        child: */
+            Container(
+                width: 120,
+                height: 120,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(logoBackImage), fit: BoxFit.cover)),
+                child: Center(
+                  child: Image.asset(logoImage,
+                      height: 75, width: 50, fit: BoxFit.cover),
+                )),
+        // )
+      ),
     );
   }
 }

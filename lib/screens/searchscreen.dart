@@ -47,7 +47,7 @@ class SearchScreenState extends State<SearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            /*   Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -385,6 +385,7 @@ class SearchScreenState extends State<SearchScreen> {
                     }),
               ),
             ),
+         */
           ],
         ),
       ),
