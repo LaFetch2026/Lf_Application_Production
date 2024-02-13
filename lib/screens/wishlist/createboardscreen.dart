@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/singlebtn.dart';
@@ -36,10 +37,16 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const BackButtonAppbar(
-                    text: "Add items to board",
-                    threeDot: false,
-                  ),
+                  widget.btnText == ""
+                      ? EditBoardAppbar(
+                          text: "Edit Board",
+                          onPressedDelete: () {},
+                          onPressedShare: () {},
+                        )
+                      : const BackButtonAppbar(
+                          text: "Add items to board",
+                          threeDot: false,
+                        ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 16, right: 16, top: 10),
@@ -219,17 +226,21 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: SingleButton(
-                label: widget.btnText,
-                textColor: whiteBorderColor,
-                backgroundColor: btnTextColor,
-                onPressed: () {
-                  Get.close(2);
-                },
-                borderColor: btnTextColor),
-          )
+          widget.btnText == ""
+              ? const SizedBox(
+                  height: 0,
+                )
+              : Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: SingleButton(
+                      label: widget.btnText,
+                      textColor: whiteBorderColor,
+                      backgroundColor: btnTextColor,
+                      onPressed: () {
+                        Get.close(2);
+                      },
+                      borderColor: btnTextColor),
+                )
         ],
       ),
     );

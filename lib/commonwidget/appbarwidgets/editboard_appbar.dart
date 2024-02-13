@@ -5,17 +5,19 @@ import 'package:get/get.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
-class BackButtonAppbar extends StatelessWidget {
+class EditBoardAppbar extends StatelessWidget {
   final String text;
-  final bool threeDot;
-  final Function? onPressedThreeDot;
 
-  const BackButtonAppbar(
-      {Key? key,
-      required this.text,
-      required this.threeDot,
-      this.onPressedThreeDot})
-      : super(key: key);
+  final Function? onPressedDelete;
+
+  final Function? onPressedShare;
+
+  const EditBoardAppbar({
+    Key? key,
+    required this.text,
+    this.onPressedDelete,
+    this.onPressedShare,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +54,27 @@ class BackButtonAppbar extends StatelessWidget {
                   height: 0,
                 ),
               ),
-              Visibility(
-                visible: threeDot,
-                child: GestureDetector(
-                  onTap: () {
-                    onPressedThreeDot?.call();
-                  },
-                  child: const ImageIcon(
-                    AssetImage(threeDotImage),
+              GestureDetector(
+                onTap: () {
+                  onPressedDelete?.call();
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: ImageIcon(
+                    AssetImage(deleteImage),
                     color: appbarText,
                     size: 20,
                   ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  onPressedShare?.call();
+                },
+                child: const ImageIcon(
+                  AssetImage(shareImage),
+                  color: appbarText,
+                  size: 20,
                 ),
               ),
             ],

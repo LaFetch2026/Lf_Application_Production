@@ -48,7 +48,11 @@ class BoardScreenState extends State<BoardScreen> {
                 onPressedThreeDot: () {
                   scaffoldKey.currentState
                       ?.showBottomSheet((context) => BottomSheetBoard(
-                            onPressedEdit: () {},
+                            onPressedEdit: () {
+                              Get.to(const CreateBoardScreen(
+                                btnText: "",
+                              ));
+                            },
                             onPressedAddItem: () {
                               Get.back();
                               Get.to(const CreateBoardScreen(
