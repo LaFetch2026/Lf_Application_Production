@@ -57,3 +57,5 @@ const deleteImage = 'assets/images/delete.png';
 const shareImage = 'assets/images/share.png';
 const upArrowIcon = 'assets/images/up_arrow.png';
 const brandback = 'assets/images/brand_back.png';
+const menuImage = 'assets/images/menu_image.png';
+const outlineImage = 'assets/images/outline_image.png';

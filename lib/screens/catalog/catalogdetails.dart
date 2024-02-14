@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/catalog/productlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/catalog_appbar.dart';
 import '../../utils/constants.dart';
@@ -106,7 +107,9 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                             return Column(
                               children: [
                                 GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Get.to(const ProductListScreen());
+                                    },
                                     child: Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 10),
