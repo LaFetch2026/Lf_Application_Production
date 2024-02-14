@@ -5,14 +5,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 
-class ProductPageScreen extends StatefulWidget {
-  const ProductPageScreen({super.key});
+class ProductHorizontalScreen extends StatefulWidget {
+  const ProductHorizontalScreen({super.key});
 
   @override
-  State<ProductPageScreen> createState() => ProductPageScreenState();
+  State<ProductHorizontalScreen> createState() =>
+      ProductHorizontalScreenState();
 }
 
-class ProductPageScreenState extends State<ProductPageScreen> {
+class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   List<String> items = [
     "100",
     "200",

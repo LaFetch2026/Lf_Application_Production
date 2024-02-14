@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lafetch/screens/catalog/productlist/productpage.dart';
+import 'package:lafetch/screens/catalog/productlist/producthorizontal.dart';
+import 'package:lafetch/screens/catalog/productlist/productvertical.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/doublebtn.dart';
 import '../../../utils/constants.dart';
@@ -98,8 +99,8 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                     const SizedBox(
                       height: 500,
                       child: TabBarView(children: [
-                        ProductPageScreen(),
-                        ProductPageScreen(),
+                        ProductVerticalScreen(),
+                        ProductHorizontalScreen(),
                       ]),
                     ),
                   ],
