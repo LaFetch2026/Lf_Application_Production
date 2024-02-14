@@ -126,8 +126,7 @@ class HomeScreenState extends State<HomeScreen> {
               color: lightText,
               height: 1,
             ),
-            const SizedBox(
-              height: 500,
+            const Expanded(
               child: TabBarView(children: [
                 WomenScreen(),
                 MenScreen(),

@@ -58,21 +58,24 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                         fontSize: 14.sp,
                       ),
                     ),
-                    DoubleButton(
-                      firstText: "Create Account",
-                      secondText: "Sign In",
-                      firstTextColor: whiteTextColor,
-                      secondTextColor: btnTextColor,
-                      firstBackgroundColor: blackColor,
-                      secondBackgroundColor: whiteBorderColor,
-                      firstBorderColor: whiteBorderColor,
-                      secondBorderColor: whiteBorderColor,
-                      onPressedFirst: () {},
-                      onPressedSecond: () {
-                        Get.to(
-                          () => const LoginScreen(),
-                        );
-                      },
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: DoubleButton(
+                        firstText: "Create Account",
+                        secondText: "Sign In",
+                        firstTextColor: whiteTextColor,
+                        secondTextColor: btnTextColor,
+                        firstBackgroundColor: blackColor,
+                        secondBackgroundColor: whiteBorderColor,
+                        firstBorderColor: whiteBorderColor,
+                        secondBorderColor: whiteBorderColor,
+                        onPressedFirst: () {},
+                        onPressedSecond: () {
+                          Get.to(
+                            () => const LoginScreen(),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

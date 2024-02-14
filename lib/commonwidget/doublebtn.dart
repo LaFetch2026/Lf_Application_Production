@@ -35,7 +35,7 @@ class DoubleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 20),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
       child: Row(
         children: [
           Expanded(

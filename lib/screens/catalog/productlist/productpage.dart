@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/doublebtn.dart';
 import '../../../utils/constants.dart';
 
 class ProductPageScreen extends StatefulWidget {
@@ -185,6 +184,31 @@ class ProductPageScreenState extends State<ProductPageScreen> {
                                   ],
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 5, left: 10, right: 10),
+                                child: Row(
+                                  children: [
+                                    const ImageIcon(
+                                      AssetImage(truckImage),
+                                      color: expressText,
+                                      size: 14,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child: AppText(
+                                        text: "Express",
+                                        color: expressText,
+                                        maxLines: 2,
+                                        fontSize: 11.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),
