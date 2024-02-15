@@ -63,7 +63,11 @@ class NumberWidget extends StatelessWidget {
             ),
             counterText: "",
             hintText: "Mobile Number",
-            hintStyle: const TextStyle(fontSize: 14, color: textHintColor),
+            hintStyle: const TextStyle(
+              fontSize: 14,
+              color: textHintColor,
+              fontFamily: "Franklin Gothic Regular",
+            ),
           ),
         ),
       ),

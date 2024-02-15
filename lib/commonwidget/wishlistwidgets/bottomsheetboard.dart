@@ -24,7 +24,7 @@ class BottomSheetBoard extends StatelessWidget {
       height: 200,
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: whiteBorderColor,
+        color: whiteColor,
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
       ),
