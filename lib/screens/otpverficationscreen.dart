@@ -10,7 +10,8 @@ import 'package:lafetch/utils/constants.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OTPVerficationScreen extends StatefulWidget {
-  const OTPVerficationScreen({super.key});
+  final String phoneMunber;
+  const OTPVerficationScreen({required this.phoneMunber, super.key});
 
   @override
   State<OTPVerficationScreen> createState() => OTPVerficationScreenState();
@@ -65,7 +66,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           color: greyTextColor,
                         ),
                         AppText(
-                          text: "+91 123456789",
+                          text: widget.phoneMunber,
                           fontSize: 14.sp,
                           color: deepGreytextColor,
                         )

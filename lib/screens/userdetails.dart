@@ -73,7 +73,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       value: gender,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: whiteTextColor,
                         focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: borderColor)),
                         enabledBorder: OutlineInputBorder(
@@ -98,7 +98,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                   item,
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: Colors.black,
+                                    color: textColor,
                                     fontFamily: "Franklin Gothic Regular",
                                   ),
                                 ),
@@ -122,16 +122,13 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                         padding: EdgeInsets.only(right: 10),
                       ),
                       iconStyleData: const IconStyleData(
-                        icon: Icon(
-                          Icons.arrow_drop_down_sharp,
-                          color: textColor,
-                        ),
+                        icon: ImageIcon(AssetImage(dropdownImage)),
                         iconSize: 30,
                       ),
                       dropdownStyleData: DropdownStyleData(
                         maxHeight: 200,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: whiteTextColor,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),

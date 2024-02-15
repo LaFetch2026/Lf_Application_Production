@@ -59,3 +59,4 @@ const upArrowIcon = 'assets/images/up_arrow.png';
 const brandback = 'assets/images/brand_back.png';
 const menuImage = 'assets/images/menu_image.png';
 const outlineImage = 'assets/images/outline_image.png';
+const dropdownImage = 'assets/images/drop_down.png';

@@ -12,7 +12,7 @@ class WelcomeBackground extends StatelessWidget {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
-          height: 520,
+          height: 500,
           decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage(backImage), fit: BoxFit.cover),

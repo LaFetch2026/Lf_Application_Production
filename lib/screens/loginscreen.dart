@@ -15,7 +15,8 @@ import 'package:lafetch/utils/constants.dart';
 import '../commonwidget/app_text.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final int initialTab;
+  const LoginScreen({required this.initialTab, super.key});
 
   @override
   State<LoginScreen> createState() => LoginScreenState();
@@ -33,7 +34,7 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      initialIndex: 0,
+      initialIndex: widget.initialTab,
       child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -140,7 +141,10 @@ class LoginScreenState extends State<LoginScreen> {
                                   borderColor: colorPrimary,
                                   onPressed: () {
                                     Get.to(
-                                      () => const OTPVerficationScreen(),
+                                      () => OTPVerficationScreen(
+                                        phoneMunber:
+                                            "+91${phoneNumber.text.toString().trim()}",
+                                      ),
                                     );
                                   },
                                   fontSize: 14.sp,
@@ -217,7 +221,10 @@ class LoginScreenState extends State<LoginScreen> {
                                   borderColor: colorPrimary,
                                   onPressed: () {
                                     Get.to(
-                                      () => const OTPVerficationScreen(),
+                                      () => OTPVerficationScreen(
+                                        phoneMunber:
+                                            "+91${phoneNumber.text.toString().trim()}",
+                                      ),
                                     );
                                   },
                                   fontSize: 14.sp,
