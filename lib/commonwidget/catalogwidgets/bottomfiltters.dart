@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
 
 class BottomFilters extends StatefulWidget {
-  final Function? onPressedEdit;
+  final List<String>? list;
 
   const BottomFilters({
     Key? key,
-    this.onPressedEdit,
+    this.list,
   }) : super(key: key);
 
   @override
@@ -16,7 +17,31 @@ class BottomFilters extends StatefulWidget {
 }
 
 class BottomFiltersState extends State<BottomFilters> {
-  String? text1;
+  List<String> items = [
+    "Salwar Suits",
+    "Printed",
+    "Clothing",
+    "Duffle bags",
+    "Tuxedos",
+    "Salwar Suits",
+    "Printed",
+    "Clothing",
+    "Duffle bags",
+    "Tuxedos",
+    "Salwar Suits",
+    "Printed",
+    "Clothing",
+    "Duffle bags",
+    "Tuxedos",
+    "Salwar Suits",
+    "Printed",
+    "Clothing",
+    "Duffle bags",
+    "Tuxedos"
+  ];
+  Color colorChangeBack = backWhite;
+  Color textColor = bottomnavBack;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,177 +51,291 @@ class BottomFiltersState extends State<BottomFilters> {
         color: whiteColor,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 30, bottom: 20),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Filters",
+                        style: TextStyle(
+                          color: blackColor,
+                          fontSize: 14.sp,
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Expanded(
+                        child: SizedBox(
+                          width: 0,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Get.back();
+                        },
+                        child: Text(
+                          "Clear All",
+                          style: TextStyle(
+                            color: greyTextColor,
+                            fontSize: 12.sp,
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      color: backWhite,
+                      width: 150,
+                      height: MediaQuery.of(context).size.height - 110,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Price Range",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                colorChangeBack = btnTextColor;
+                                textColor = whiteBorderColor;
+                                setState(() {});
+                              },
+                              child: Container(
+                                color: colorChangeBack,
+                                width: 150,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 16),
+                                  child: Text(
+                                    "Brand",
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontSize: 14.sp,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Size",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Color",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Material",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Style",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Occasion",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Text(
+                                "Feature",
+                                style: TextStyle(
+                                  color: bottomnavBack,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    Container(
+                      color: whiteBorderColor,
+                      width: MediaQuery.of(context).size.width - 150,
+                      height: MediaQuery.of(context).size.height - 110,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Select All",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 11.sp,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height - 170,
+                                  child: ListView.builder(
+                                      physics: const ScrollPhysics(),
+                                      itemCount: items.length,
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (ctx, index) {
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                                onTap: () {},
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      const Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 10),
+                                                        child: ImageIcon(
+                                                          AssetImage(
+                                                              checkImage),
+                                                          color: textFilter,
+                                                          size: 14,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        items[index],
+                                                        style: TextStyle(
+                                                          color: textFilter,
+                                                          fontSize: 14.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )),
+                                          ],
+                                        );
+                                      }),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                GestureDetector(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Text(
+                    "Close",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: btnTextColor,
+                      fontSize: 14.sp,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Container(
+                    width: 1,
+                    color: borderColor,
+                    height: 30,
+                  ),
+                ),
                 Text(
-                  "Filters",
+                  "Show ${items.length} items",
                   style: TextStyle(
-                    color: blackColor,
+                    color: btnTextColor,
                     fontSize: 14.sp,
-                    fontFamily: "Franklin Gothic",
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Expanded(
-                  child: SizedBox(
-                    width: 0,
-                  ),
-                ),
-                Text(
-                  "Clear All",
-                  style: TextStyle(
-                    color: greyTextColor,
-                    fontSize: 12.sp,
-                    fontFamily: "Franklin Gothic",
-                    fontWeight: FontWeight.w500,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
           ),
-          Row(
-            children: [
-              Container(
-                color: backWhite,
-                width: 150,
-                height: MediaQuery.of(context).size.height - 160,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Price Range",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Brand",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Size",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Color",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Material",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Style",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Occasion",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Text(
-                          "Feature",
-                          style: TextStyle(
-                            color: bottomnavBack,
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ]),
-              ),
-              Container(
-                color: whiteBorderColor,
-                width: MediaQuery.of(context).size.width - 150,
-                height: MediaQuery.of(context).size.height - 160,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Select All",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 11.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ]),
-                ),
-              ),
-            ],
-          )
         ],
       ),
     );

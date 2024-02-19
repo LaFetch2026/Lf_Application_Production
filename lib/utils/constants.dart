@@ -22,6 +22,7 @@ const Color expressText = Color(0xFF404662);
 const Color appbarText = Color(0xFF1F1C21);
 const Color redColor = Color(0xFFD95656);
 const Color backWhite = Color(0xFFF2EEF7);
+const Color textFilter = Color(0xFF46413B);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
@@ -61,3 +62,4 @@ const brandback = 'assets/images/brand_back.png';
 const menuImage = 'assets/images/menu_image.png';
 const outlineImage = 'assets/images/outline_image.png';
 const dropdownImage = 'assets/images/drop_down.png';
+const checkImage = 'assets/images/check_image.png';

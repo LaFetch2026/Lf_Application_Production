@@ -130,8 +130,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                       ?.showBottomSheet((context) => const BottomSortBy());
                 },
                 onPressedSecond: () {
-                  scaffoldKey.currentState
-                      ?.showBottomSheet((context) => const BottomFilters());
+                  Get.to(const BottomFilters());
                 },
               ),
             ],

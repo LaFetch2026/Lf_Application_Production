@@ -42,16 +42,15 @@ class SaleCardWidget extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-              child: Center(
-                child: AppText(
-                  text:
-                      "Get your favorite pieces - choose from over 10,000+ styles now ",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w500,
-                  color: bottomnavBack,
-                  maxLines: 2,
-                  fontSize: 12.sp,
-                ),
+              child: AppText(
+                text:
+                    "Get your favorite pieces - choose from over 10,000+ styles now ",
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w500,
+                color: bottomnavBack,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                fontSize: 12.sp,
               ),
             ),
             Padding(
