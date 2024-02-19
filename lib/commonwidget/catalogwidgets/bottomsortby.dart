@@ -20,7 +20,7 @@ class _BottomSortByState extends State<BottomSortBy> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 280,
+      height: 300,
       width: double.infinity,
       decoration: const BoxDecoration(
         color: whiteColor,

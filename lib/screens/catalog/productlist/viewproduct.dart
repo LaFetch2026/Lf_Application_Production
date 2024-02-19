@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomfiltters.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
 import 'package:lafetch/screens/catalog/productlist/producthorizontal.dart';
 import 'package:lafetch/screens/catalog/productlist/productvertical.dart';
@@ -129,9 +130,8 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                       ?.showBottomSheet((context) => const BottomSortBy());
                 },
                 onPressedSecond: () {
-                  /*  Get.to(
-                                  () => const LoginScreen(),
-                                ); */
+                  scaffoldKey.currentState
+                      ?.showBottomSheet((context) => const BottomFilters());
                 },
               ),
             ],

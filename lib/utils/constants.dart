@@ -21,6 +21,7 @@ const Color nameText = Color(0xFF38342F);
 const Color expressText = Color(0xFF404662);
 const Color appbarText = Color(0xFF1F1C21);
 const Color redColor = Color(0xFFD95656);
+const Color backWhite = Color(0xFFF2EEF7);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
