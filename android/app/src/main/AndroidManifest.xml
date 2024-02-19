@@ -11,7 +11,7 @@
     </intent>
    </queries>
    <application
-        android:label="lafetch"
+        android:label="Lafetch"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
