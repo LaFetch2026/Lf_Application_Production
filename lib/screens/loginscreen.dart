@@ -91,73 +91,69 @@ class LoginScreenState extends State<LoginScreen> {
                   color: whiteBorderColor,
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const LoginWidget(
-                                text1: "Hey there,",
-                                text2:
-                                    "Lets set you up around, for a tailored shopping experience"),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 40),
-                              child: AppButton(
-                                  label: "Continue with Facebook",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  image: facebookImage,
-                                  textColor: whiteColor,
-                                  borderColor: blue,
-                                  fontSize: 14.sp,
-                                  backgroundColor: blue),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: AppButton(
-                                  label: "Continue with Gmail",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  image: googleImage,
-                                  textColor: greyTextColor,
-                                  borderColor: colorSecondary,
-                                  fontSize: 14.sp,
-                                  backgroundColor: whiteTextColor),
-                            ),
-                            const ORWidget(),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 16),
-                              child: AppText(
-                                text: "Let’s quickly verify it’s you",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: loginText,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            NumberWidget(controller: phoneNumber),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: SingleButton(
-                                  label: "Continue",
-                                  textColor: whiteTextColor,
-                                  borderColor: colorPrimary,
-                                  onPressed: () {
-                                    Get.to(
-                                      () => OTPVerficationScreen(
-                                        phoneMunber:
-                                            "+91${phoneNumber.text.toString().trim()}",
-                                      ),
-                                    );
-                                  },
-                                  fontSize: 14.sp,
-                                  backgroundColor: colorPrimary),
-                            ),
-                            MultipleTextWidget(
-                                fontSize: 11.sp,
-                                text1: "By continuing, I agree to the",
-                                text2: " Terms of Use",
-                                text3: " and",
-                                text4: " Privacy Policy")
-                          ],
+                        const LoginWidget(
+                            text1: "Hey there,",
+                            text2:
+                                "Lets set you up around, for a tailored shopping experience"),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40),
+                          child: AppButton(
+                              label: "Continue with Facebook",
+                              fontFamily: "Franklin Gothic Regular",
+                              image: facebookImage,
+                              textColor: whiteColor,
+                              borderColor: blue,
+                              fontSize: 14.sp,
+                              backgroundColor: blue),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: AppButton(
+                              label: "Continue with Gmail",
+                              fontFamily: "Franklin Gothic Regular",
+                              image: googleImage,
+                              textColor: greyTextColor,
+                              borderColor: colorSecondary,
+                              fontSize: 14.sp,
+                              backgroundColor: whiteTextColor),
+                        ),
+                        const ORWidget(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 16),
+                          child: AppText(
+                            text: "Let’s quickly verify it’s you",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: loginText,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        NumberWidget(controller: phoneNumber),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: SingleButton(
+                              label: "Continue",
+                              textColor: whiteTextColor,
+                              borderColor: colorPrimary,
+                              onPressed: () {
+                                Get.to(
+                                  () => OTPVerficationScreen(
+                                    phoneMunber:
+                                        "+91${phoneNumber.text.toString().trim()}",
+                                  ),
+                                );
+                              },
+                              fontSize: 14.sp,
+                              backgroundColor: colorPrimary),
+                        ),
+                        MultipleTextWidget(
+                            fontSize: 11.sp,
+                            text1: "By continuing, I agree to the",
+                            text2: " Terms of Use",
+                            text3: " and",
+                            text4: " Privacy Policy")
                       ],
                     ),
                   ),
@@ -172,86 +168,82 @@ class LoginScreenState extends State<LoginScreen> {
                   color: whiteBorderColor,
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const LoginWidget(
-                                text1: "Welcome Back!",
-                                text2: "We are so glad to have you back here"),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 40),
-                              child: AppButton(
-                                  label: "Continue with Facebook",
-                                  image: facebookImage,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  textColor: whiteColor,
-                                  borderColor: blue,
-                                  fontSize: 14.sp,
-                                  backgroundColor: blue),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: AppButton(
-                                  label: "Continue with Gmail",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  image: googleImage,
-                                  textColor: greyTextColor,
-                                  borderColor: colorSecondary,
-                                  fontSize: 14.sp,
-                                  backgroundColor: whiteTextColor),
-                            ),
-                            const ORWidget(),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20, left: 16),
-                              child: AppText(
-                                text: "Let’s quickly verify it’s you",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: loginText,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            NumberWidget(controller: phoneNumber),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              child: SingleButton(
-                                  label: "Continue",
-                                  textColor: whiteTextColor,
-                                  borderColor: colorPrimary,
-                                  onPressed: () {
-                                    Get.to(
-                                      () => OTPVerficationScreen(
-                                        phoneMunber:
-                                            "+91${phoneNumber.text.toString().trim()}",
-                                      ),
-                                    );
-                                  },
-                                  fontSize: 14.sp,
-                                  backgroundColor: colorPrimary),
-                            ),
-                            MultipleTextWidget(
-                              text1: "By continuing, I agree to the",
-                              text2: " Terms of Use",
-                              text3: " and",
-                              text4: "",
-                              fontSize: 12.sp,
-                            ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Center(
-                                child: Text(
-                                  "Privacy Policy",
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w400,
-                                    color: deepGreytextColor,
+                        const LoginWidget(
+                            text1: "Welcome Back!",
+                            text2: "We are so glad to have you back here"),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40),
+                          child: AppButton(
+                              label: "Continue with Facebook",
+                              image: facebookImage,
+                              fontFamily: "Franklin Gothic Regular",
+                              textColor: whiteColor,
+                              borderColor: blue,
+                              fontSize: 14.sp,
+                              backgroundColor: blue),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: AppButton(
+                              label: "Continue with Gmail",
+                              fontFamily: "Franklin Gothic Regular",
+                              image: googleImage,
+                              textColor: greyTextColor,
+                              borderColor: colorSecondary,
+                              fontSize: 14.sp,
+                              backgroundColor: whiteTextColor),
+                        ),
+                        const ORWidget(),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 16),
+                          child: AppText(
+                            text: "Let’s quickly verify it’s you",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: loginText,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        NumberWidget(controller: phoneNumber),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: SingleButton(
+                              label: "Continue",
+                              textColor: whiteTextColor,
+                              borderColor: colorPrimary,
+                              onPressed: () {
+                                Get.to(
+                                  () => OTPVerficationScreen(
+                                    phoneMunber:
+                                        "+91${phoneNumber.text.toString().trim()}",
                                   ),
-                                ),
+                                );
+                              },
+                              fontSize: 14.sp,
+                              backgroundColor: colorPrimary),
+                        ),
+                        MultipleTextWidget(
+                          text1: "By continuing, I agree to the",
+                          text2: " Terms of Use",
+                          text3: " and",
+                          text4: "",
+                          fontSize: 12.sp,
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Center(
+                            child: Text(
+                              "Privacy Policy",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w400,
+                                color: deepGreytextColor,
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
