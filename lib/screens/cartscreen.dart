@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../commonwidget/app_text.dart';
+import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
+import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../utils/constants.dart';
 
 class CartScreen extends StatefulWidget {
@@ -15,23 +15,26 @@ class CartScreen extends StatefulWidget {
 class CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: whiteTextColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
-              child: AppText(
-                text: "CartScreen",
-                fontFamily: "Franklin Gothic",
-                maxLines: 2,
-                fontWeight: FontWeight.w500,
-                color: blackColor,
-                fontSize: 28.sp,
-              ),
+            BackButtonAppbar(
+              text: "Shopping Bag",
+              threeDot: false,
             ),
+            /*  Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: CartWidget(
+                  image: shopBagImage,
+                  text1: "There is still room for more",
+                  text2:
+                      "Looking for items you previously saved? Sign in to pick up where you left out",
+                  btntext: "Continue Shopping",
+                  visible: true),
+            ) */
           ],
         ),
       ),

@@ -63,3 +63,7 @@ const menuImage = 'assets/images/menu_image.png';
 const outlineImage = 'assets/images/outline_image.png';
 const dropdownImage = 'assets/images/drop_down.png';
 const checkImage = 'assets/images/check_image.png';
+const orderSucessImage = 'assets/images/order_success.png';
+const paymentFailImage = 'assets/images/payment_fail.png';
+const errorImage = 'assets/images/error_image.png';
+const shopBagImage = 'assets/images/shop_bag.png';
