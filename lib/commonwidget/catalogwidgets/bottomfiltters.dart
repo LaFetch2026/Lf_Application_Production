@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/filterbutton.dart';
 
 import '../../utils/constants.dart';
 
@@ -296,46 +296,7 @@ class BottomFiltersState extends State<BottomFilters> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: Text(
-                    "Close",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: btnTextColor,
-                      fontSize: 14.sp,
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Container(
-                    width: 1,
-                    color: borderColor,
-                    height: 30,
-                  ),
-                ),
-                Text(
-                  "Show ${items.length} items",
-                  style: TextStyle(
-                    color: btnTextColor,
-                    fontSize: 14.sp,
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          FilterButton(list: items)
         ],
       ),
     );
