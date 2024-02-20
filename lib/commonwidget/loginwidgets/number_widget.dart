@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utils/constants.dart';
 import '../app_text.dart';
-import '../theme_helper.dart';
 
 class NumberWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -17,16 +16,16 @@ class NumberWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
-        height: 50,
-        decoration: ThemeHelper().inputBoxDecorationShaddow(),
         child: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           maxLength: 10,
           style: const TextStyle(color: textColor),
           decoration: InputDecoration(
+            filled: true,
+            fillColor: whiteTextColor,
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: borderColor)),
             enabledBorder: OutlineInputBorder(

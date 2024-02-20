@@ -3,12 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/accountwidgets/profilebottom.dart';
+import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
+import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
+import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/searchscreen.dart';
+import 'package:lafetch/screens/editprofilescreen.dart';
 import '../commonwidget/app_text.dart';
-import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
-import 'catalogscreen.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -26,28 +28,282 @@ class AccountScreenState extends State<AccountScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HomeAppbar(
-              onPressedSearch: () {
-                Get.to(const SearchScreen());
-              },
-              onPressedCatalog: () {
-                Get.to(const CatalogScreen());
-              },
-              onPressedCart: () {
-                Get.to(const CartScreen());
-              },
-            ),
             Padding(
-              padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
-              child: AppText(
-                text: "Account",
-                fontFamily: "Franklin Gothic",
-                maxLines: 2,
-                fontWeight: FontWeight.w500,
-                color: blackColor,
-                fontSize: 28.sp,
+              padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AppText(
+                    text: "Profile",
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: appbarText,
+                    fontSize: 22.sp,
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      height: 0,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(const CartScreen());
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        color: blackColor,
+                        child: const ImageIcon(
+                          AssetImage(cartImage),
+                          color: whiteBorderColor,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        text: "Jane Deo",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: blackColor,
+                        fontSize: 28.sp,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Row(
+                          children: [
+                            const ImageIcon(
+                              AssetImage(phoneImage),
+                              color: greyTextColor,
+                              size: 24,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              child: AppText(
+                                text: "+9178xxxxxx23",
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: greyTextColor,
+                                fontSize: 14.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      height: 0,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(const EditProfileScreen());
+                    },
+                    child: AppText(
+                      text: "Edit",
+                      fontFamily: "Franklin Gothic",
+                      fontWeight: FontWeight.w500,
+                      color: colorPrimary,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              color: greyCardBack,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 16, right: 16, top: 16, bottom: 16),
+                child: Row(
+                  children: [
+                    const ImageIcon(
+                      AssetImage(pointImage),
+                      color: btnTextColor,
+                      size: 24,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: AppText(
+                        text: "100 Lafetch points",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: btnTextColor,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 20, bottom: 20),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: whiteBorderColor,
+                        border: Border.all(color: profileBorder, width: 1)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Image.asset(rewardsImage,
+                              height: 40, width: 40, fit: BoxFit.cover),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: AppText(
+                              text: "Rewards",
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: btnTextColor,
+                              fontSize: 14.sp,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      width: 0,
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: whiteBorderColor,
+                        border: Border.all(color: profileBorder, width: 1)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Image.asset(mysteryBoxImage,
+                              height: 40, width: 40, fit: BoxFit.cover),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: AppText(
+                              text: "Mystery Box",
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: btnTextColor,
+                              fontSize: 14.sp,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+              child: AppText(
+                text: "My Account",
+                fontFamily: "Franklin Gothic Bold",
+                fontWeight: FontWeight.w700,
+                color: nameText,
+                fontSize: 18.sp,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+                child: AppText(
+                  text: "Orders & Exchanges",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+                child: AppText(
+                  text: "My Wishlist",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+                child: AppText(
+                  text: "Customer Care",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+                child: AppText(
+                  text: "Saved Addresses",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+                child: AppText(
+                  text: "Payments & Currencies",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            const SettingWidgets(),
+            const SupportWidgets(visibilty: true),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: SingleButton(
+                  label: "Logout",
+                  textColor: redColor,
+                  onPressed: () {},
+                  backgroundColor: whiteBorderColor,
+                  borderColor: redColor),
+            ),
+            const ProfileBottom(
+              version: " 1.2.1",
+            )
           ],
         ),
       ),
