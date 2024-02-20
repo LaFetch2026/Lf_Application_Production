@@ -9,6 +9,7 @@ import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
+import 'package:lafetch/screens/orderexchangescreen.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
 
@@ -226,7 +227,9 @@ class AccountScreenState extends State<AccountScreen> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.to(const OrderExchangeScreen());
+              },
               child: Padding(
                 padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
                 child: AppText(
