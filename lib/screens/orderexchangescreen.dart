@@ -3,8 +3,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/singleiconbtn.dart';
+import 'package:lafetch/screens/orderdetailsscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
@@ -211,76 +213,65 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 horizontal: 16, vertical: 5),
                             child: Column(
                               children: [
-                                Container(
-                                  color: whiteColor,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Image.asset(backImage,
-                                                  height: 85,
-                                                  width: 70,
-                                                  fit: BoxFit.cover),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      horizontal: 5,
-                                                    ),
-                                                    child: Text(
-                                                      //  "Topman super skinny suit jacket and trousers in light blue",
-                                                      "Topman super skinny suit jacket and",
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                        fontSize: 14.sp,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: nameText,
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(const OrderDetailsScreen());
+                                  },
+                                  child: Container(
+                                    color: whiteColor,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Image.asset(backImage,
+                                                      height: 85,
+                                                      width: 70,
+                                                      fit: BoxFit.cover),
+                                                ),
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 5,
+                                                        ),
+                                                        child: AppText(
+                                                          text:
+                                                              "Topman super skinny suit jacket and trousers in light blue",
+                                                          maxLines: 1,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 14.sp,
+                                                          color: nameText,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 5,
-                                                        vertical: 5),
-                                                    child: AppText(
-                                                      text: "Jack & Jones Core",
-                                                      color: greyTextColor,
-                                                      maxLines: 2,
-                                                      fontSize: 12.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 5,
-                                                        vertical: 5),
-                                                    child: Row(
-                                                      children: [
-                                                        AppText(
-                                                          text: "Size :M",
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 5,
+                                                                vertical: 5),
+                                                        child: AppText(
+                                                          text:
+                                                              "Jack & Jones Core",
                                                           color: greyTextColor,
                                                           maxLines: 2,
                                                           fontSize: 12.sp,
@@ -289,175 +280,209 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      5),
-                                                          child: AppText(
-                                                            text: "Qty :1",
-                                                            color:
-                                                                greyTextColor,
-                                                            maxLines: 2,
-                                                            fontSize: 12.sp,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 5,
+                                                                vertical: 5),
+                                                        child: Row(
+                                                          children: [
+                                                            AppText(
+                                                              text: "Size :M",
+                                                              color:
+                                                                  greyTextColor,
+                                                              maxLines: 2,
+                                                              fontSize: 12.sp,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                                child: AppText(
+                                                                  text:
+                                                                      "Qty :1",
+                                                                  color:
+                                                                      greyTextColor,
+                                                                  maxLines: 2,
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            AppText(
+                                                              text:
+                                                                  "\u{20B9} ${120.00}",
+                                                              color:
+                                                                  greyTextColor,
+                                                              fontSize: 12.sp,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .right,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ],
                                                         ),
-                                                        /*   const Expanded(
-                                                          child: SizedBox(
-                                                            width: 0,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
+                                              child: Row(
+                                                children: [
+                                                  AnimatedContainer(
+                                                    duration: const Duration(
+                                                        milliseconds: 300),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            right: 5),
+                                                    width: 135,
+                                                    height: 30,
+                                                    decoration: BoxDecoration(
+                                                      color: containerColor(
+                                                          items[index]),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      border: Border.all(
+                                                          color: textHintColor,
+                                                          width: 1),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 5),
+                                                      child: Row(
+                                                        children: [
+                                                          ImageIcon(
+                                                            AssetImage(
+                                                                selectedIcon(
+                                                                    items[
+                                                                        index])),
+                                                            color:
+                                                                selectedColor(
+                                                                    items[
+                                                                        index]),
+                                                            size: 14,
                                                           ),
-                                                        ), */
-                                                        AppText(
-                                                          text:
-                                                              "\u{20B9} ${120.00}",
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 5),
+                                                            child: AppText(
+                                                              text:
+                                                                  items[index],
+                                                              color:
+                                                                  selectedColor(
+                                                                      items[
+                                                                          index]),
+                                                              fontSize: 12.sp,
+                                                              fontFamily:
+                                                                  "Franklin Gothic",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Expanded(
+                                                    child: SizedBox(
+                                                      width: 0,
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 5,
+                                                                vertical: 5),
+                                                        child: AppText(
+                                                          text: "Delivered on",
                                                           color: greyTextColor,
-                                                          fontSize: 12.sp,
-                                                          textAlign:
-                                                              TextAlign.right,
+                                                          fontSize: 11.sp,
                                                           fontFamily:
                                                               "Franklin Gothic Regular",
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 5,
+                                                                vertical: 5),
+                                                        child: AppText(
+                                                          text:
+                                                              "Jul 24, at 3:30 PM",
+                                                          color: greyTextColor,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
                                                 ],
-                                              )
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                AnimatedContainer(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  margin: const EdgeInsets.only(
-                                                      right: 5),
-                                                  width: 135,
-                                                  height: 30,
-                                                  decoration: BoxDecoration(
-                                                    color: containerColor(
-                                                        items[index]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    border: Border.all(
-                                                        color: textHintColor,
-                                                        width: 1),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 5),
-                                                    child: Row(
-                                                      children: [
-                                                        ImageIcon(
-                                                          AssetImage(
-                                                              selectedIcon(
-                                                                  items[
-                                                                      index])),
-                                                          color: selectedColor(
-                                                              items[index]),
-                                                          size: 14,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 5),
-                                                          child: AppText(
-                                                            text: items[index],
-                                                            color:
-                                                                selectedColor(
-                                                                    items[
-                                                                        index]),
-                                                            fontSize: 12.sp,
-                                                            fontFamily:
-                                                                "Franklin Gothic",
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                const Expanded(
-                                                  child: SizedBox(
-                                                    width: 0,
-                                                  ),
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 5,
-                                                          vertical: 5),
-                                                      child: AppText(
-                                                        text: "Delivered on",
-                                                        color: greyTextColor,
-                                                        fontSize: 11.sp,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 5,
-                                                          vertical: 5),
-                                                      child: AppText(
-                                                        text:
-                                                            "Jul 24, at 3:30 PM",
-                                                        color: greyTextColor,
-                                                        fontSize: 11.sp,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                          DoubleIconButton(
-                                              firstText: "Exchange Item",
-                                              secondText: "Rate Order",
-                                              firstTextColor: btnTextColor,
-                                              secondTextColor: btnTextColor,
-                                              firstBackgroundColor:
-                                                  whiteBorderColor,
-                                              secondBackgroundColor:
-                                                  whiteBorderColor,
-                                              firstBorderColor: btnTextColor,
-                                              secondBorderColor: btnTextColor,
-                                              firstIcon: exchangeItemImage,
-                                              onPressedFirst: () {},
-                                              onPressedSecond: () {},
-                                              secondIcon: rateOrderImage),
-                                          /*  SingleIconButton(
-                                              label: "Track Order",
-                                              textColor: btnTextColor,
-                                              backgroundColor: whiteBorderColor,
-                                              onPressed: () {},
-                                              borderColor: btnTextColor,
-                                              icon: locationIcon) */
-                                        ]),
+                                            DoubleIconButton(
+                                                firstText: "Exchange Item",
+                                                secondText: "Rate Order",
+                                                firstTextColor: btnTextColor,
+                                                secondTextColor: btnTextColor,
+                                                firstBackgroundColor:
+                                                    whiteBorderColor,
+                                                secondBackgroundColor:
+                                                    whiteBorderColor,
+                                                firstBorderColor: btnTextColor,
+                                                secondBorderColor: btnTextColor,
+                                                firstIcon: exchangeItemImage,
+                                                onPressedFirst: () {},
+                                                onPressedSecond: () {},
+                                                secondIcon: rateOrderImage),
+                                            /*  SingleIconButton(
+                                                label: "Track Order",
+                                                textColor: btnTextColor,
+                                                backgroundColor: whiteBorderColor,
+                                                onPressed: () {},
+                                                borderColor: btnTextColor,
+                                                icon: locationIcon) */
+                                          ]),
+                                    ),
                                   ),
                                 )
                               ],

@@ -13,6 +13,7 @@ import 'package:lafetch/screens/otpverficationscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 
 import '../commonwidget/app_text.dart';
+import 'bottomnavscreen.dart';
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
@@ -39,15 +40,22 @@ class LoginScreenState extends State<LoginScreen> {
           appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: blackColor,
-            title: const Align(
+            title: Align(
               alignment: Alignment.topRight,
-              child: AppText(
-                text: "Skip",
-                textAlign: TextAlign.right,
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
-                color: whiteTextColor,
-                fontSize: 14,
+              child: GestureDetector(
+                onTap: () {
+                  Get.to(
+                    () => const BottomNavScreen(),
+                  );
+                },
+                child: const AppText(
+                  text: "Skip",
+                  textAlign: TextAlign.right,
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: whiteTextColor,
+                  fontSize: 14,
+                ),
               ),
             ),
             bottom: PreferredSize(

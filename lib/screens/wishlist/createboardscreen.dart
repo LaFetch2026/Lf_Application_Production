@@ -59,17 +59,18 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 10),
                     child: GridView.count(
                       shrinkWrap: true,
+                      primary: false,
                       crossAxisCount: 2,
                       scrollDirection: Axis.vertical,
                       padding: EdgeInsets.zero,
-                      childAspectRatio: 0.5,
+                      childAspectRatio: 0.6,
                       physics: const ScrollPhysics(),
                       crossAxisSpacing: 5,
-                      mainAxisSpacing: 0,
+                      mainAxisSpacing: 9,
                       children: List.generate(
                         items.length,
                         (index) {

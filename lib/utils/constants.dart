@@ -91,3 +91,4 @@ const rateOrderImage = 'assets/images/rate_order.png';
 const confirmOrderImage = 'assets/images/confirm_order.png';
 const cancelImage = 'assets/images/cancel_icon.png';
 const shippedImage = 'assets/images/ship_order.png';
+const orderDispatchImage = 'assets/images/order_dispatch.png';
