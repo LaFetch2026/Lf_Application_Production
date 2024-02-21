@@ -97,47 +97,45 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: SizedBox(
-                      height: 500,
-                      child: ListView.builder(
-                          physics: const ScrollPhysics(),
-                          itemCount: items.length,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (ctx, index) {
-                            return Column(
-                              children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      Get.to(const ProductListScreen());
-                                    },
+                    child: ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: items.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (ctx, index) {
+                          return Column(
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    Get.to(const ProductListScreen());
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
                                     child: Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 10),
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            AppText(
-                                              text: items[index],
-                                              color: greyTextColor,
-                                              fontSize: 14.sp,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ],
-                                        ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          AppText(
+                                            text: items[index],
+                                            color: greyTextColor,
+                                            fontSize: 14.sp,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ],
                                       ),
-                                    )),
-                              ],
-                            );
-                          }),
-                    ),
+                                    ),
+                                  )),
+                            ],
+                          );
+                        }),
                   ),
                 ],
               ),

@@ -67,54 +67,52 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 400,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: MasonryGridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 7,
-                        itemCount: gridList.length,
-                        itemBuilder: (context, index) {
-                          double ht = index % 2 == 0 ? 100 : 180;
-                          return GestureDetector(
-                            onTap: () {
-                              //  Get.to(const BoardScreen());
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  children: [
-                                    Image.asset(backImage,
-                                        height: ht,
-                                        width: 156,
-                                        fit: BoxFit.cover),
-                                    Positioned.fill(
-                                      child: Align(
-                                        alignment: Alignment.bottomLeft,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
-                                          child: AppText(
-                                            text: gridList[index],
-                                            color: whiteColor,
-                                            fontSize: 14.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: MasonryGridView.count(
+                      primary: false,
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 7,
+                      itemCount: gridList.length,
+                      itemBuilder: (context, index) {
+                        double ht = index % 2 == 0 ? 100 : 180;
+                        return GestureDetector(
+                          onTap: () {
+                            //  Get.to(const BoardScreen());
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
+                                children: [
+                                  Image.asset(backImage,
+                                      height: ht,
+                                      width: 156,
+                                      fit: BoxFit.cover),
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        child: AppText(
+                                          text: gridList[index],
+                                          color: whiteColor,
+                                          fontSize: 14.sp,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Padding(

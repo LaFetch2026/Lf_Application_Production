@@ -25,6 +25,14 @@ const Color backWhite = Color(0xFFF2EEF7);
 const Color textFilter = Color(0xFF46413B);
 const Color greyCardBack = Color(0xFFF2EEF7);
 const Color profileBorder = Color(0xFFDED9E4);
+const Color lightPurple = Color(0xFFECEEF9);
+const Color lightYellow = Color(0xFFF7E9B4);
+const Color lightback = Color(0xFFFFF5F5);
+const Color lightGreen = Color(0xFFCFE6E1);
+const Color deepPurple = Color(0xFF404662);
+const Color deeptYellow = Color(0xFF5B4802);
+const Color deepRed = Color(0xFF8E2B2B);
+const Color deepGreen = Color(0xFF26443E);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
