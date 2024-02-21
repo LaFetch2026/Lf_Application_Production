@@ -62,7 +62,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       Container(
                         alignment: Alignment.bottomCenter,
                         margin: const EdgeInsets.only(top: 70),
-                        child: Image.asset(otpImage,
+                        child: Image.asset(brandLogoImage,
                             height: 80, width: 80, fit: BoxFit.cover),
                       ),
                     ],

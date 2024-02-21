@@ -15,30 +15,33 @@ class TextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextField(
-        textCapitalization: TextCapitalization.words,
-        style: const TextStyle(
-          color: textColor,
-          fontFamily: "Franklin Gothic Regular",
-        ),
-        controller: controller,
-        keyboardType: TextInputType.text,
-        maxLength: 25,
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: whiteTextColor,
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: borderColor)),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(1),
+      child: SizedBox(
+        height: 44,
+        child: TextField(
+          textCapitalization: TextCapitalization.words,
+          style: const TextStyle(
+            color: textColor,
+            fontFamily: "Franklin Gothic Regular",
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(1),
-            borderSide: const BorderSide(color: borderColor),
+          controller: controller,
+          keyboardType: TextInputType.text,
+          maxLength: 25,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: whiteTextColor,
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: borderColor)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(1),
+              borderSide: const BorderSide(color: borderColor),
+            ),
+            counterText: "",
+            hintText: hint,
+            hintStyle: const TextStyle(fontSize: 14),
           ),
-          counterText: "",
-          hintText: hint,
-          hintStyle: const TextStyle(fontSize: 14),
         ),
       ),
     );

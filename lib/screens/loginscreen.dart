@@ -13,6 +13,7 @@ import 'package:lafetch/screens/otpverficationscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 
 import '../commonwidget/app_text.dart';
+import '../controller/login_controller.dart';
 import 'bottomnavscreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final phoneNumber = TextEditingController();
+  final loginController = Get.put(LoginController());
 
   @override
   void initState() {
@@ -39,7 +40,8 @@ class LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            backgroundColor: blackColor,
+            backgroundColor:
+                widget.initialTab == 0 ? colorPrimary : btnTextColor,
             title: Align(
               alignment: Alignment.topRight,
               child: GestureDetector(
@@ -101,12 +103,15 @@ class LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
                         const LoginWidget(
-                            text1: "Hey there,",
-                            text2:
-                                "Lets set you up around, for a tailored shopping experience"),
+                            text1: "Welcome Back!",
+                            fontfamily: "Franklin Gothic",
+                            text2: "We are so glad to have you back here"),
                         Padding(
-                          padding: const EdgeInsets.only(top: 40),
+                          padding: const EdgeInsets.only(top: 50),
                           child: AppButton(
                               label: "Continue with Facebook",
                               fontFamily: "Franklin Gothic Regular",
@@ -138,9 +143,13 @@ class LoginScreenState extends State<LoginScreen> {
                             fontSize: 14.sp,
                           ),
                         ),
-                        NumberWidget(controller: phoneNumber),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: NumberWidget(
+                              controller: loginController.phoneNumber),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40, bottom: 10),
                           child: SingleButton(
                               label: "Continue",
                               textColor: whiteTextColor,
@@ -149,19 +158,22 @@ class LoginScreenState extends State<LoginScreen> {
                                 Get.to(
                                   () => OTPVerficationScreen(
                                     phoneMunber:
-                                        "+91${phoneNumber.text.toString().trim()}",
+                                        "+91${loginController.phoneNumber.text.toString().trim()}",
                                   ),
                                 );
                               },
                               fontSize: 14.sp,
                               backgroundColor: colorPrimary),
                         ),
-                        MultipleTextWidget(
-                            fontSize: 11.sp,
-                            text1: "By continuing, I agree to the",
-                            text2: " Terms of Use",
-                            text3: " and",
-                            text4: " Privacy Policy")
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40),
+                          child: MultipleTextWidget(
+                              fontSize: 11.sp,
+                              text1: "By continuing, I agree to the",
+                              text2: " Terms of Use",
+                              text3: " and",
+                              text4: " Privacy Policy"),
+                        )
                       ],
                     ),
                   ),
@@ -178,11 +190,16 @@ class LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
                         const LoginWidget(
-                            text1: "Welcome Back!",
-                            text2: "We are so glad to have you back here"),
+                            fontfamily: "Franklin Gothic Regular",
+                            text1: "Hey there,",
+                            text2:
+                                "Lets set you up around, for a tailored shopping experience"),
                         Padding(
-                          padding: const EdgeInsets.only(top: 40),
+                          padding: const EdgeInsets.only(top: 50),
                           child: AppButton(
                               label: "Continue with Facebook",
                               image: facebookImage,
@@ -214,9 +231,13 @@ class LoginScreenState extends State<LoginScreen> {
                             fontSize: 14.sp,
                           ),
                         ),
-                        NumberWidget(controller: phoneNumber),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: NumberWidget(
+                              controller: loginController.phoneNumber),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40, bottom: 10),
                           child: SingleButton(
                               label: "Continue",
                               textColor: whiteTextColor,
@@ -225,7 +246,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 Get.to(
                                   () => OTPVerficationScreen(
                                     phoneMunber:
-                                        "+91${phoneNumber.text.toString().trim()}",
+                                        "+91${loginController.phoneNumber.text.toString().trim()}",
                                   ),
                                 );
                               },
@@ -239,16 +260,19 @@ class LoginScreenState extends State<LoginScreen> {
                           text4: "",
                           fontSize: 12.sp,
                         ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Center(
-                            child: Text(
-                              "Privacy Policy",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w400,
-                                color: deepGreytextColor,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40),
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: Center(
+                              child: Text(
+                                "Privacy Policy",
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w400,
+                                  color: deepGreytextColor,
+                                ),
                               ),
                             ),
                           ),

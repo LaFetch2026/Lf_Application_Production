@@ -44,6 +44,8 @@ class AppButton extends StatelessWidget {
                   side: MaterialStateProperty.all(
                     BorderSide(width: 1, color: borderColor),
                   ),
+                  elevation: MaterialStateProperty.all(0.0),
+                  shadowColor: MaterialStateProperty.all(Colors.transparent),
                   backgroundColor: MaterialStateProperty.all(backgroundColor),
                   textStyle: MaterialStateProperty.all(TextStyle(
                     color: textColor,

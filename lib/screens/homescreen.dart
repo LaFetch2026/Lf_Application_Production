@@ -43,12 +43,13 @@ class HomeScreenState extends State<HomeScreen> {
               },
             ),
             Container(
-              height: 40,
+              height: 55,
               width: MediaQuery.of(context).size.width,
               color: colorPrimary,
               child: Column(children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 16, bottom: 10),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,

@@ -69,67 +69,72 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 20),
-                    child: DropdownButtonFormField2(
-                      value: gender,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: whiteTextColor,
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: borderColor)),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(1),
-                          borderSide: const BorderSide(color: borderColor),
+                    child: Container(
+                      height: 44,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(1))),
+                      child: DropdownButtonFormField2(
+                        value: gender,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: whiteTextColor,
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: borderColor)),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(1),
+                            borderSide: const BorderSide(color: borderColor),
+                          ),
+                          isDense: true,
+                          contentPadding: const EdgeInsets.only(left: 16),
+                          hintText: 'Gender',
+                          hintStyle: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: "Franklin Gothic Regular"),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(1),
+                          ),
                         ),
-                        isDense: true,
-                        contentPadding: const EdgeInsets.only(left: 16),
-                        hintText: 'Gender',
-                        hintStyle: const TextStyle(
-                            fontSize: 14,
-                            fontFamily: "Franklin Gothic Regular"),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(1),
-                        ),
-                      ),
-                      isExpanded: true,
-                      items: genderList
-                          .map((item) => DropdownMenuItem<String>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: textColor,
-                                    fontFamily: "Franklin Gothic Regular",
+                        isExpanded: true,
+                        items: genderList
+                            .map((item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: textColor,
+                                      fontFamily: "Franklin Gothic Regular",
+                                    ),
                                   ),
-                                ),
-                              ))
-                          .toList(),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select Types.';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        gender = value;
-                        genderPos = genderList.indexOf(gender.toString());
-                        print(genderId[genderPos]);
-                        setState(() {});
-                      },
-                      onSaved: (value) {},
-                      buttonStyleData: const ButtonStyleData(
-                        height: 60,
-                        padding: EdgeInsets.only(right: 10),
-                      ),
-                      iconStyleData: const IconStyleData(
-                        icon: ImageIcon(AssetImage(dropdownImage)),
-                        iconSize: 30,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        maxHeight: 200,
-                        decoration: BoxDecoration(
-                          color: whiteTextColor,
-                          borderRadius: BorderRadius.circular(4),
+                                ))
+                            .toList(),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select Types.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          gender = value;
+                          genderPos = genderList.indexOf(gender.toString());
+                          print(genderId[genderPos]);
+                          setState(() {});
+                        },
+                        onSaved: (value) {},
+                        buttonStyleData: const ButtonStyleData(
+                          height: 60,
+                          padding: EdgeInsets.only(right: 10),
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: ImageIcon(AssetImage(dropdownImage)),
+                          iconSize: 30,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 200,
+                          decoration: BoxDecoration(
+                            color: whiteTextColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
                       ),
                     ),

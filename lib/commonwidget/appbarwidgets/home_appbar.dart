@@ -52,7 +52,7 @@ class HomeAppbar extends StatelessWidget {
                   onPressedCatalog?.call();
                 },
                 child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
                   child: ImageIcon(
                     AssetImage(saveIcon),
                     color: textHintColor,

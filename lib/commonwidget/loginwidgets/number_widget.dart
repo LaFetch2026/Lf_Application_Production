@@ -17,6 +17,7 @@ class NumberWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: SizedBox(
+        height: 44,
         width: double.infinity,
         child: TextField(
           controller: controller,

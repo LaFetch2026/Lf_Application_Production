@@ -14,10 +14,10 @@ class WomenScreen extends StatefulWidget {
 
 class _WomenScreenState extends State<WomenScreen> {
   List<String> items = [
-    "Discount",
+    "Discounts",
     "New Arrivals",
     "Clothing",
-    "Footwaer",
+    "Footwear",
   ];
   final screen = [
     const DiscountScreen(),

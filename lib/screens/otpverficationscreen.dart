@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
+import 'package:lafetch/controller/otpverify_controller.dart';
 import 'package:lafetch/screens/userdetails.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -18,8 +19,7 @@ class OTPVerficationScreen extends StatefulWidget {
 }
 
 class OTPVerficationScreenState extends State<OTPVerficationScreen> {
-  String otp = "";
-
+  final otpController = Get.put(OtpVerificationController());
   @override
   void initState() {
     super.initState();
@@ -62,11 +62,13 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                       children: [
                         AppText(
                           text: "We’ve sent a code to ",
+                          fontFamily: "Franklin Gothic Regular",
                           fontSize: 14.sp,
                           color: greyTextColor,
                         ),
                         AppText(
                           text: widget.phoneMunber,
+                          fontFamily: "Franklin Gothic",
                           fontSize: 14.sp,
                           color: deepGreytextColor,
                         )
@@ -83,7 +85,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                       numberOfFields: 4,
                       fieldWidth: (MediaQuery.sizeOf(context).width - 70) / 4,
                       textStyle:
-                          const TextStyle(color: textColor, fontSize: 14),
+                          const TextStyle(color: loginText, fontSize: 14),
                       focusedBorderColor: borderColor,
                       enabledBorderColor: borderColor,
                       //set to true to show as box or false to show as dash
@@ -94,38 +96,73 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                       },
                       //runs when every textfield is filled
                       onSubmit: (String verificationCode) {
-                        otp = verificationCode;
+                        otpController.otp.value = verificationCode;
+                        if (otpController.otp.value.length == 4) {
+                          otpController.showButton.value = true;
+                        }
                       },
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 16, top: 20),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: AppText(
-                        text: "00:30",
-                        fontSize: 14.sp,
-                        color: deepGreytextColor,
-                      ),
+                    padding:
+                        const EdgeInsets.only(right: 16, top: 20, left: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: AppText(
+                              text: "Resend Code",
+                              fontFamily: "Franklin Gothic",
+                              fontSize: 14.sp,
+                              color: btnTextColor,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: AppText(
+                            text: "00:30",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontSize: 14.sp,
+                            color: deepGreytextColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: SingleButton(
-                label: "Submit",
-                textColor: btnTextColor,
-                backgroundColor: whiteTextColor,
-                onPressed: () {
-                  Get.to(
-                    () => const UserDetailsScreen(),
-                  );
-                },
-                borderColor: btnTextColor),
-          )
+          Obx(() => otpController.showButton.value
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: SingleButton(
+                      label: "Submit",
+                      textColor: whiteBorderColor,
+                      backgroundColor: btnTextColor,
+                      onPressed: () {
+                        Get.to(
+                          () => const UserDetailsScreen(),
+                        );
+                      },
+                      borderColor: btnTextColor),
+                )
+              : Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: SingleButton(
+                      label: "Submit",
+                      textColor: greyTextColor,
+                      backgroundColor: colorSecondary,
+                      onPressed: () {
+                        Get.to(
+                          () => const UserDetailsScreen(),
+                        );
+                      },
+                      borderColor: colorSecondary),
+                ))
         ],
       ),
     );

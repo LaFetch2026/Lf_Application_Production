@@ -25,7 +25,7 @@ class MultipleTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
@@ -34,7 +34,7 @@ class MultipleTextWidget extends StatelessWidget {
             text1,
             style: TextStyle(
               fontSize: fontSize,
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: greyTextColor,
             ),
@@ -48,7 +48,7 @@ class MultipleTextWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: fontSize,
                 fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
                 color: deepGreytextColor,
               ),
             ),
@@ -57,7 +57,7 @@ class MultipleTextWidget extends StatelessWidget {
             text3,
             style: TextStyle(
               fontSize: fontSize,
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: greyTextColor,
             ),
@@ -71,7 +71,7 @@ class MultipleTextWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: fontSize,
                 fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
                 color: deepGreytextColor,
               ),
             ),

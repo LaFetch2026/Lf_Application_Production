@@ -7,11 +7,13 @@ import '../app_text.dart';
 class LoginWidget extends StatelessWidget {
   final String text1;
   final String text2;
+  final String fontfamily;
 
   const LoginWidget({
     Key? key,
     required this.text1,
     required this.text2,
+    required this.fontfamily,
   }) : super(key: key);
 
   @override
@@ -24,8 +26,8 @@ class LoginWidget extends StatelessWidget {
           padding: const EdgeInsets.only(top: 20, left: 16),
           child: AppText(
             text: text1,
-            fontFamily: "Franklin Gothic Regular",
-            fontWeight: FontWeight.w400,
+            fontFamily: fontfamily,
+            fontWeight: FontWeight.w500,
             color: btnTextColor,
             fontSize: 25.sp,
           ),

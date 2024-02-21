@@ -13,12 +13,13 @@ class SaleCardWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Container(
-        height: 220,
+        height: 230,
+        width: double.infinity,
         decoration: BoxDecoration(
             color: greyBack, borderRadius: BorderRadius.circular(4)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 20),
@@ -44,9 +45,9 @@ class SaleCardWidget extends StatelessWidget {
               padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
               child: AppText(
                 text:
-                    "Get your favorite pieces - choose from over 10,000+ styles now ",
+                    "Get your favorite pieces - choose\nfrom over 10,000+ styles now ",
                 fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
                 color: bottomnavBack,
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -54,10 +55,11 @@ class SaleCardWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                  top: 20, left: 16, right: 16, bottom: 10),
               child: SmallButton(
                   label: "Shop Now",
-                  width: 105,
+                  width: 115,
                   textColor: whiteBorderColor,
                   backgroundColor: colorPrimary,
                   onPressed: () {},
