@@ -60,7 +60,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ImageIcon(
-                        const AssetImage(homeIcon),
+                        AssetImage(
+                            _currentIndex == 0 ? homeIcon : homeUnselectImage),
                         color:
                             _currentIndex == 0 ? bottomnavBack : colorSecondary,
                         size: 22,
@@ -94,7 +95,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ImageIcon(
-                        const AssetImage(brandsIcon),
+                        AssetImage(
+                            _currentIndex == 1 ? brandSelectImage : brandsIcon),
                         color:
                             _currentIndex == 1 ? bottomnavBack : colorSecondary,
                         size: 22,
@@ -128,7 +130,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ImageIcon(
-                        const AssetImage(wishlistIcon),
+                        AssetImage(_currentIndex == 2
+                            ? wishlistSelectImage
+                            : wishlistIcon),
                         color:
                             _currentIndex == 2 ? bottomnavBack : colorSecondary,
                         size: 22,
@@ -162,7 +166,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ImageIcon(
-                        const AssetImage(accountIcon),
+                        AssetImage(_currentIndex == 3
+                            ? accountSelectImage
+                            : accountIcon),
                         color:
                             _currentIndex == 3 ? bottomnavBack : colorSecondary,
                         size: 22,

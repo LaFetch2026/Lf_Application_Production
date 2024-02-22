@@ -84,32 +84,32 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: OtpTextField(
-                        borderRadius: BorderRadius.circular(1),
-                        numberOfFields: 4,
-                        fieldWidth: (MediaQuery.sizeOf(context).width - 70) / 4,
-                        textStyle:
-                            const TextStyle(color: loginText, fontSize: 14),
-                        focusedBorderColor: borderColor,
-                        enabledBorderColor: borderColor,
-                        //set to true to show as box or false to show as dash
-                        showFieldAsBox: true,
-                        //runs when a code is typed in
-                        onCodeChanged: (String code) {
-                          //handle validation or checks here
-                        },
-                        //runs when every textfield is filled
-                        onSubmit: (String verificationCode) {
-                          otpController.otp.value = verificationCode;
-                          if (otpController.otp.value.length == 4) {
-                            otpController.showButton.value = true;
-                          }
-                        },
+                      child: Center(
+                        child: OtpTextField(
+                          borderRadius: BorderRadius.circular(1),
+                          numberOfFields: 4,
+                          fieldWidth: 69,
+                          textStyle: const TextStyle(
+                              color: loginText, fontSize: 16, height: 2),
+                          focusedBorderColor: borderColor,
+                          borderWidth: 1,
+                          enabledBorderColor: borderColor,
+                          showFieldAsBox: true,
+                          onCodeChanged: (String code) {
+                            //  otpController.showButton.value = true;
+                          },
+                          onSubmit: (String verificationCode) {
+                            otpController.otp.value = verificationCode;
+                            if (otpController.otp.value.length == 4) {
+                              otpController.showButton.value = true;
+                            }
+                          },
+                        ),
                       ),
                     ),
                     Padding(
                       padding:
-                          const EdgeInsets.only(right: 16, top: 20, left: 16),
+                          const EdgeInsets.only(right: 20, top: 20, left: 20),
                       child: Row(
                         children: [
                           Expanded(

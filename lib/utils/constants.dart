@@ -95,3 +95,7 @@ const orderDispatchImage = 'assets/images/order_dispatch.png';
 const brandLogoImage = 'assets/images/brand_logo.png';
 const chanelLogoImage = 'assets/images/chanel_logo.png';
 const tcLogoImage = 'assets/images/tc_logo.png';
+const homeUnselectImage = 'assets/images/home_unselect.png';
+const wishlistSelectImage = 'assets/images/wishlist_select.png';
+const brandSelectImage = 'assets/images/brand_select.png';
+const accountSelectImage = 'assets/images/account_select.png';
