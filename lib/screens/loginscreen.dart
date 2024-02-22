@@ -29,6 +29,11 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    if (widget.initialTab == 0) {
+      loginController.appbarColor = colorPrimary;
+    } else {
+      loginController.appbarColor = btnTextColor;
+    }
     super.initState();
   }
 
@@ -40,8 +45,7 @@ class LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            backgroundColor:
-                widget.initialTab == 0 ? colorPrimary : btnTextColor,
+            backgroundColor: loginController.appbarColor,
             title: Align(
               alignment: Alignment.topRight,
               child: GestureDetector(

@@ -93,3 +93,5 @@ const cancelImage = 'assets/images/cancel_icon.png';
 const shippedImage = 'assets/images/ship_order.png';
 const orderDispatchImage = 'assets/images/order_dispatch.png';
 const brandLogoImage = 'assets/images/brand_logo.png';
+const chanelLogoImage = 'assets/images/chanel_logo.png';
+const tcLogoImage = 'assets/images/tc_logo.png';

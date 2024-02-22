@@ -216,15 +216,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           left: 10),
-                                                  child: AppText(
-                                                    text:
-                                                        "\u{20B9} ${items[index]}",
-                                                    color: textHintColor,
-                                                    maxLines: 2,
-                                                    fontSize: 11.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
+                                                  child: Text(
+                                                    "\u{20B9} ${items[index]}",
+                                                    style: TextStyle(
+                                                      color: textHintColor,
+                                                      fontSize: 11.sp,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -370,15 +373,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           left: 10),
-                                                  child: AppText(
-                                                    text:
-                                                        "\u{20B9} ${items[index]}",
-                                                    color: textHintColor,
-                                                    maxLines: 2,
-                                                    fontSize: 11.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
+                                                  child: Text(
+                                                    "\u{20B9} ${items[index]}",
+                                                    style: TextStyle(
+                                                      color: textHintColor,
+                                                      fontSize: 11.sp,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
                                                 ),
                                               ],

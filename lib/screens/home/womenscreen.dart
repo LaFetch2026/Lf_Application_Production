@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lafetch/screens/women/discountscreen.dart';
+import 'package:lafetch/screens/home/women/discountscreen.dart';
 
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';

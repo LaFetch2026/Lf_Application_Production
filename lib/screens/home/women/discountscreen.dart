@@ -5,10 +5,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/womenwidget/question_card.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/womenwidget/lafetch_card.dart';
-import '../../commonwidget/womenwidget/sale_card.dart';
-import '../../utils/constants.dart';
+import '../../../commonwidget/app_text.dart';
+import '../../../commonwidget/womenwidget/lafetch_card.dart';
+import '../../../commonwidget/womenwidget/sale_card.dart';
+import '../../../utils/constants.dart';
 
 class DiscountScreen extends StatefulWidget {
   const DiscountScreen({super.key});
@@ -257,14 +257,17 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 10),
-                                          child: AppText(
-                                            text: "\u{20B9} ${items[index]}",
-                                            color: textHintColor,
-                                            maxLines: 2,
-                                            fontSize: 11.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
+                                          child: Text(
+                                            "\u{20B9} ${items[index]}",
+                                            style: TextStyle(
+                                              color: textHintColor,
+                                              fontSize: 11.sp,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -305,7 +308,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             onTap: () {},
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 5),
+                              margin: const EdgeInsets.only(right: 10),
                               width: 150,
                               height: 180,
                               child: Column(
@@ -321,7 +324,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     child: AppText(
                                       text: "Denim Jeans",
                                       color: greyTextColor,
-                                      fontSize: 14.sp,
+                                      fontSize: 10.sp,
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -336,23 +339,25 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 100,
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: items.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 4,
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.zero,
+                  childAspectRatio: 0.7,
+                  physics: const ScrollPhysics(),
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 1,
+                  children: List.generate(
+                    items.length,
+                    (index) {
                       return Column(
                         children: [
                           GestureDetector(
                             onTap: () {},
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 80,
+                            child: SizedBox(
                               height: 100,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -363,9 +368,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 5),
                                     child: AppText(
-                                      text: "Sneakers",
+                                      text: "Sneakers${index + 1}",
                                       color: greyTextColor,
-                                      fontSize: 14.sp,
+                                      fontSize: 10.sp,
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -376,7 +381,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                           ),
                         ],
                       );
-                    }),
+                    },
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -396,32 +403,61 @@ class DiscountScreenState extends State<DiscountScreen> {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: AppText(
-                              text: "Flat ₹500 OFF*",
-                              color: whiteBorderColor,
-                              fontSize: 25.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w400,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    child: Image.asset(chanelLogoImage,
+                                        height: 32,
+                                        width: 32,
+                                        fit: BoxFit.cover),
+                                  ),
+                                  const Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      height: 0,
+                                    ),
+                                  ),
+                                  AppText(
+                                    text: "Flat ₹500 OFF*",
+                                    color: whiteBorderColor,
+                                    fontSize: 25.sp,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: AppText(
+                                      text: "on Chanel Handbags",
+                                      color: whiteBorderColor,
+                                      fontSize: 14.sp,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            child: AppText(
-                              text: "on Chanel Handbags",
-                              color: whiteBorderColor,
-                              fontSize: 14.sp,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 20),
+                              child: Image.asset(tcLogoImage,
+                                  color: borderColor,
+                                  height: 10,
+                                  fit: BoxFit.cover),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -461,12 +497,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                 text1: "FAQs",
                 text2: "Your questions answered",
                 onPressed: () {},
-                icon: question1Image),
+                icon: question2Image),
             QuestionCardWidget(
                 text1: "Need Help?",
                 text2: "Contact customer service",
                 onPressed: () {},
-                icon: question2Image),
+                icon: question1Image),
           ],
         ),
       ),
