@@ -57,7 +57,7 @@ class CatalogAppbar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 15),
                   child: ImageIcon(
                     AssetImage(searchImage),
-                    color: textHintColor,
+                    color: nameText,
                     size: 20,
                   ),
                 ),
@@ -75,7 +75,7 @@ class CatalogAppbar extends StatelessWidget {
                       backgroundColor: blackColor,
                       child: ImageIcon(
                         AssetImage(cartImage),
-                        color: textHintColor,
+                        color: whiteBorderColor,
                         size: 20,
                       ),
                     ),

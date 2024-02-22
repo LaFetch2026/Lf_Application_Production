@@ -66,6 +66,7 @@ class BottomFiltersState extends State<BottomFilters> {
                         style: TextStyle(
                           color: blackColor,
                           fontSize: 14.sp,
+                          decoration: TextDecoration.none,
                           fontFamily: "Franklin Gothic",
                           fontWeight: FontWeight.w500,
                         ),
@@ -83,6 +84,7 @@ class BottomFiltersState extends State<BottomFilters> {
                           "Clear All",
                           style: TextStyle(
                             color: greyTextColor,
+                            decoration: TextDecoration.none,
                             fontSize: 12.sp,
                             fontFamily: "Franklin Gothic",
                             fontWeight: FontWeight.w500,
@@ -108,6 +110,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 "Price Range",
                                 style: TextStyle(
                                   color: bottomnavBack,
+                                  decoration: TextDecoration.none,
                                   fontSize: 14.sp,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
@@ -130,6 +133,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                     "Brand",
                                     style: TextStyle(
                                       color: textColor,
+                                      decoration: TextDecoration.none,
                                       fontSize: 14.sp,
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
@@ -145,6 +149,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 "Size",
                                 style: TextStyle(
                                   color: bottomnavBack,
+                                  decoration: TextDecoration.none,
                                   fontSize: 14.sp,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
@@ -159,6 +164,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 style: TextStyle(
                                   color: bottomnavBack,
                                   fontSize: 14.sp,
+                                  decoration: TextDecoration.none,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -172,6 +178,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 style: TextStyle(
                                   color: bottomnavBack,
                                   fontSize: 14.sp,
+                                  decoration: TextDecoration.none,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -184,6 +191,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 "Style",
                                 style: TextStyle(
                                   color: bottomnavBack,
+                                  decoration: TextDecoration.none,
                                   fontSize: 14.sp,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
@@ -197,6 +205,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 "Occasion",
                                 style: TextStyle(
                                   color: bottomnavBack,
+                                  decoration: TextDecoration.none,
                                   fontSize: 14.sp,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
@@ -211,6 +220,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 style: TextStyle(
                                   color: bottomnavBack,
                                   fontSize: 14.sp,
+                                  decoration: TextDecoration.none,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -233,6 +243,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 11.sp,
+                                  decoration: TextDecoration.none,
                                   fontFamily: "Franklin Gothic",
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -273,6 +284,9 @@ class BottomFiltersState extends State<BottomFilters> {
                                                         items[index],
                                                         style: TextStyle(
                                                           color: textFilter,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .none,
                                                           fontSize: 14.sp,
                                                           fontFamily:
                                                               "Franklin Gothic Regular",

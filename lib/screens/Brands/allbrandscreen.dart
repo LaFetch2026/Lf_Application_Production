@@ -87,10 +87,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             children: [
                               Stack(
                                 children: [
-                                  Image.asset(backImage,
-                                      height: ht,
-                                      width: 156,
-                                      fit: BoxFit.cover),
+                                  Center(
+                                    child: Image.asset(backImage,
+                                        height: ht,
+                                        width: 156,
+                                        fit: BoxFit.cover),
+                                  ),
                                   Positioned.fill(
                                     child: Align(
                                       alignment: Alignment.bottomLeft,

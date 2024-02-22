@@ -169,42 +169,48 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       onTap: () {
                                         Get.to(const BoardScreen());
                                       },
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: Image.asset(backImage,
-                                                height: 156,
-                                                width: 156,
-                                                fit: BoxFit.cover),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            child: AppText(
-                                              text: "All Items",
-                                              color: blackColor,
-                                              fontSize: 16.sp,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Image.asset(backImage,
+                                                  height: 156,
+                                                  width: 156,
+                                                  fit: BoxFit.cover),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: AppText(
-                                              text: "${items[index]} items",
-                                              color: textHintColor,
-                                              fontSize: 12.sp,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                              child: AppText(
+                                                text: "All Items",
+                                                color: blackColor,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              child: AppText(
+                                                text: "${items[index]} items",
+                                                color: textHintColor,
+                                                fontSize: 12.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },

@@ -53,6 +53,7 @@ class DoubleButton extends StatelessWidget {
                             side: MaterialStateProperty.all(
                               BorderSide(width: 1, color: firstBorderColor),
                             ),
+                            elevation: MaterialStateProperty.all(0.0),
                             backgroundColor:
                                 MaterialStateProperty.all(firstBackgroundColor),
                             textStyle: MaterialStateProperty.all(TextStyle(
@@ -91,6 +92,7 @@ class DoubleButton extends StatelessWidget {
                                 color: secondBorderColor,
                                 width: 1.0,
                                 style: BorderStyle.solid)),
+                            elevation: MaterialStateProperty.all(0.0),
                             backgroundColor: MaterialStateProperty.all(
                                 secondBackgroundColor),
                             textStyle: MaterialStateProperty.all(TextStyle(

@@ -62,6 +62,7 @@ class DoubleIconButton extends StatelessWidget {
                             side: MaterialStateProperty.all(
                               BorderSide(width: 1, color: firstBorderColor),
                             ),
+                            elevation: MaterialStateProperty.all(0.0),
                             backgroundColor:
                                 MaterialStateProperty.all(firstBackgroundColor),
                             textStyle: MaterialStateProperty.all(TextStyle(
@@ -107,6 +108,7 @@ class DoubleIconButton extends StatelessWidget {
                                 style: BorderStyle.solid)),
                             backgroundColor: MaterialStateProperty.all(
                                 secondBackgroundColor),
+                            elevation: MaterialStateProperty.all(0.0),
                             textStyle: MaterialStateProperty.all(TextStyle(
                               color: secondTextColor,
                               fontSize: secondFontSize,

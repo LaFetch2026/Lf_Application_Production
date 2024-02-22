@@ -47,6 +47,7 @@ class SingleIconButton extends StatelessWidget {
                 side: MaterialStateProperty.all(
                   BorderSide(width: 1, color: borderColor),
                 ),
+                elevation: MaterialStateProperty.all(0.0),
                 backgroundColor: MaterialStateProperty.all(backgroundColor),
                 textStyle: MaterialStateProperty.all(TextStyle(
                   color: textColor,

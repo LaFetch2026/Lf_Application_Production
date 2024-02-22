@@ -40,7 +40,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       bottomNavigationBar: BottomAppBar(
         notchMargin: 1,
         shape: const CircularNotchedRectangle(),
-        color: btnTextColor,
+        color: colorPrimary,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           mainAxisSize: MainAxisSize.max,

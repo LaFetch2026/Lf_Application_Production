@@ -68,7 +68,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                 child: Container(
                   height: 50,
                   decoration: BoxDecoration(
-                      color: colorPrimary,
+                      color: loginText,
                       borderRadius: BorderRadius.circular(1),
                       border: Border.all(color: colorSecondary, width: 1)),
                   child: Padding(
@@ -249,41 +249,48 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                         onTap: () {
                                                           // Get.to(const BoardScreen());
                                                         },
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Image.asset(
-                                                                backImage,
-                                                                height: 70,
-                                                                width: 90,
-                                                                fit: BoxFit
-                                                                    .cover),
-                                                            Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 5),
-                                                              child: AppText(
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                text: childItem[
-                                                                    i],
-                                                                color:
-                                                                    greyTextColor,
-                                                                fontSize: 10.sp,
-                                                                maxLines: 2,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                        child: Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Image.asset(
+                                                                  backImage,
+                                                                  height: 70,
+                                                                  width: 90,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        5),
+                                                                child: AppText(
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  text:
+                                                                      childItem[
+                                                                          i],
+                                                                  color:
+                                                                      greyTextColor,
+                                                                  fontSize:
+                                                                      10.sp,
+                                                                  maxLines: 2,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
                                                       );
                                                     },

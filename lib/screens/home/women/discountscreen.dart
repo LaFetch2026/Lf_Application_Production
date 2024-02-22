@@ -362,8 +362,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Image.asset(backImage,
-                                      width: 80, height: 72, fit: BoxFit.cover),
+                                  Center(
+                                    child: Image.asset(backImage,
+                                        width: 80,
+                                        height: 72,
+                                        fit: BoxFit.cover),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 5),

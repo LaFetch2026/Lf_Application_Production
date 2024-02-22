@@ -71,10 +71,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                   children: [
                                     Stack(
                                       children: [
-                                        Image.asset(backImage,
-                                            height: 190,
-                                            width: 152,
-                                            fit: BoxFit.cover),
+                                        Center(
+                                          child: Image.asset(backImage,
+                                              height: 190,
+                                              width: 152,
+                                              fit: BoxFit.cover),
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16, vertical: 10),

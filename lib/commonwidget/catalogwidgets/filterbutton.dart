@@ -24,6 +24,7 @@ class FilterButton extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: btnTextColor,
+                decoration: TextDecoration.none,
                 fontSize: 14.sp,
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
@@ -42,6 +43,7 @@ class FilterButton extends StatelessWidget {
             "Show ${list?.length} items",
             style: TextStyle(
               color: btnTextColor,
+              decoration: TextDecoration.none,
               fontSize: 14.sp,
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
