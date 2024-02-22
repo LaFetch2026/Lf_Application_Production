@@ -113,7 +113,7 @@ class SearchScreenState extends State<SearchScreen> {
                               duration: const Duration(milliseconds: 300),
                               margin: const EdgeInsets.only(right: 5),
                               width: 122,
-                              height: 240,
+                              
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -229,7 +229,7 @@ class SearchScreenState extends State<SearchScreen> {
                               duration: const Duration(milliseconds: 300),
                               margin: const EdgeInsets.only(right: 5),
                               width: 122,
-                              height: 240,
+                             
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

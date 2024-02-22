@@ -31,7 +31,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+              padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
               child: AppText(
                 text: "Explore Catalog",
                 fontFamily: "Franklin Gothic Regular",
@@ -51,12 +51,13 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
               child: ListView.builder(
                   primary: false,
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   itemCount: items.length,
+                  padding: EdgeInsets.zero,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (ctx, index) {
                     return Column(

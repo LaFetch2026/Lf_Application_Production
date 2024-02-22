@@ -35,66 +35,56 @@ class CatalogScreenState extends State<CatalogScreen> {
                 Get.to(const CartScreen());
               },
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PreferredSize(
-                      preferredSize: const Size.fromHeight(40),
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: TabBar(
-                            isScrollable: false,
-                            indicatorColor: btnTextColor,
-                            unselectedLabelColor: textHintColor,
-                            labelColor: btnTextColor,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            indicatorWeight: 3,
-                            tabs: [
-                              Tab(
-                                  child: Text(
-                                "Women",
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w400),
-                              )),
-                              Tab(
-                                  child: Text(
-                                "Men",
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w400),
-                              )),
-                              Tab(
-                                  child: Text(
-                                "Kids",
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w400),
-                              ))
-                            ]),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      color: lightText,
-                      height: 1,
-                    ),
-                    const SizedBox(
-                      height: 600,
-                      child: TabBarView(children: [
-                        WomenCatalogScreen(),
-                        WomenCatalogScreen(),
-                        WomenCatalogScreen(),
-                      ]),
-                    ),
-                  ],
-                ),
+            PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: TabBar(
+                    isScrollable: false,
+                    indicatorColor: btnTextColor,
+                    unselectedLabelColor: textHintColor,
+                    labelColor: btnTextColor,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorWeight: 3,
+                    tabs: [
+                      Tab(
+                          child: Text(
+                        "Women",
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Tab(
+                          child: Text(
+                        "Men",
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w400),
+                      )),
+                      Tab(
+                          child: Text(
+                        "Kids",
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w400),
+                      ))
+                    ]),
               ),
+            ),
+            Container(
+              width: double.infinity,
+              color: lightText,
+              height: 1,
+            ),
+            const Expanded(
+              child: TabBarView(children: [
+                WomenCatalogScreen(),
+                WomenCatalogScreen(),
+                WomenCatalogScreen(),
+              ]),
             ),
           ],
         ),

@@ -39,81 +39,78 @@ class ViewProductScreenState extends State<ViewProductScreen> {
           child: Column(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 16),
-                        child: AppText(
-                          text: "Tops, T-shirts & Shirts",
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: blackColor,
-                          fontSize: 22.sp,
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, left: 16),
+                      child: AppText(
+                        text: "Tops, T-shirts & Shirts",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: blackColor,
+                        fontSize: 22.sp,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 16),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              AppText(
-                                text: "30 items",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: textHintColor,
-                                fontSize: 12.sp,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            AppText(
+                              text: "30 items",
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: textHintColor,
+                              fontSize: 12.sp,
+                            ),
+                            const Expanded(
+                              child: SizedBox(
+                                width: 0,
                               ),
-                              const Expanded(
-                                child: SizedBox(
-                                  width: 0,
+                            ),
+                            const SizedBox(
+                              width: 100,
+                              child: PreferredSize(
+                                preferredSize: Size.fromHeight(40),
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: TabBar(
+                                      isScrollable: false,
+                                      indicatorColor: btnTextColor,
+                                      unselectedLabelColor: textHintColor,
+                                      labelColor: btnTextColor,
+                                      indicatorSize: TabBarIndicatorSize.tab,
+                                      indicatorWeight: 2,
+                                      tabs: [
+                                        Tab(
+                                          child: ImageIcon(
+                                            AssetImage(outlineImage),
+                                            size: 14,
+                                          ),
+                                        ),
+                                        Tab(
+                                          child: ImageIcon(
+                                            AssetImage(menuImage),
+                                            size: 14,
+                                          ),
+                                        ),
+                                      ]),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 100,
-                                child: PreferredSize(
-                                  preferredSize: Size.fromHeight(40),
-                                  child: Align(
-                                    alignment: Alignment.topRight,
-                                    child: TabBar(
-                                        isScrollable: false,
-                                        indicatorColor: btnTextColor,
-                                        unselectedLabelColor: textHintColor,
-                                        labelColor: btnTextColor,
-                                        indicatorSize: TabBarIndicatorSize.tab,
-                                        indicatorWeight: 2,
-                                        tabs: [
-                                          Tab(
-                                            child: ImageIcon(
-                                              AssetImage(outlineImage),
-                                              size: 14,
-                                            ),
-                                          ),
-                                          Tab(
-                                            child: ImageIcon(
-                                              AssetImage(menuImage),
-                                              size: 14,
-                                            ),
-                                          ),
-                                        ]),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 500,
-                        child: TabBarView(children: [
-                          ProductVerticalScreen(),
-                          ProductHorizontalScreen(),
-                        ]),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const Expanded(
+                      child: TabBarView(children: [
+                        ProductVerticalScreen(),
+                        ProductHorizontalScreen(),
+                      ]),
+                    ),
+                  ],
                 ),
               ),
               DoubleButton(

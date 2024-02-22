@@ -13,7 +13,7 @@ class LafetchCardWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Container(
-        height: 220,
+        height: 230,
         decoration: BoxDecoration(
             color: colorPrimary, borderRadius: BorderRadius.circular(0)),
         child: Column(

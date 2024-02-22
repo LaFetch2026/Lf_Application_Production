@@ -56,10 +56,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
+              padding: const EdgeInsets.only(left: 16, right: 16),
               child: ListView.builder(
                 primary: false,
                 shrinkWrap: true,
+                padding: EdgeInsets.zero,
                 physics: const ScrollPhysics(),
                 itemCount: items.length,
                 scrollDirection: Axis.vertical,

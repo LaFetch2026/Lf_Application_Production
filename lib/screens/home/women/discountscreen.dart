@@ -95,6 +95,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                 width: double.infinity,
                 height: 250,
                 child: ListView.builder(
+                    shrinkWrap: true,
+                    primary: false,
                     physics: const BouncingScrollPhysics(),
                     itemCount: items.length,
                     scrollDirection: Axis.horizontal,
@@ -107,7 +109,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                               duration: const Duration(milliseconds: 300),
                               margin: const EdgeInsets.only(right: 5),
                               width: 122,
-                              height: 240,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -220,7 +221,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                               duration: const Duration(milliseconds: 300),
                               margin: const EdgeInsets.only(right: 5),
                               width: 122,
-                              height: 240,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -503,6 +503,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                 text2: "Contact customer service",
                 onPressed: () {},
                 icon: question1Image),
+            const SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),

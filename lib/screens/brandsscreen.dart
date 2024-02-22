@@ -65,15 +65,15 @@ class BrandsScreenState extends State<BrandsScreen> {
               color: colorPrimary,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Container(
-                  height: 40,
+                  height: 50,
                   decoration: BoxDecoration(
                       color: colorPrimary,
                       borderRadius: BorderRadius.circular(1),
                       border: Border.all(color: colorSecondary, width: 1)),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.only(left: 16, right: 16),
                     child: Row(
                       children: [
                         const ImageIcon(
@@ -98,7 +98,7 @@ class BrandsScreenState extends State<BrandsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, top: 10, right: 16),
+              padding: const EdgeInsets.only(left: 16, top: 20, right: 16),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -143,12 +143,14 @@ class BrandsScreenState extends State<BrandsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, bottom: 10, top: 10),
               child: ListView.builder(
                   primary: false,
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   itemCount: items.length,
+                  padding: EdgeInsets.zero,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (ctx, index) {
                     return Column(
@@ -179,7 +181,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
-                                            Image.asset(otpImage,
+                                            Image.asset(chanelLogoImage,
                                                 height: 32,
                                                 width: 32,
                                                 fit: BoxFit.cover),
@@ -233,10 +235,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                 height: 10,
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 16, right: 16),
                                                 child: GridView.count(
                                                   shrinkWrap: true,
                                                   crossAxisCount: 3,
