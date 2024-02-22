@@ -18,7 +18,7 @@ class SettingWidgets extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+          padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
           child: AppText(
             text: "Settings",
             fontFamily: "Franklin Gothic Bold",

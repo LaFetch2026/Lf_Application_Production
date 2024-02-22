@@ -6,7 +6,6 @@ class SingleButton extends StatelessWidget {
   final FontWeight fontWeight;
   final double fontSize;
   final String fontFamily;
-  final EdgeInsets padding;
   final Color textColor;
   final Color borderColor;
   final Color backgroundColor;
@@ -23,7 +22,6 @@ class SingleButton extends StatelessWidget {
     this.roundness = 1,
     this.fontWeight = FontWeight.bold,
     this.fontFamily = "Franklin Gothic",
-    this.padding = const EdgeInsets.symmetric(vertical: 10),
     this.trailingWidget,
     this.onPressed,
   }) : super(key: key);

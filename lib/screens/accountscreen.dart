@@ -116,16 +116,22 @@ class AccountScreenState extends State<AccountScreen> {
                     onTap: () {
                       Get.to(const EditProfileScreen());
                     },
-                    child: AppText(
-                      text: "Edit",
-                      fontFamily: "Franklin Gothic",
-                      fontWeight: FontWeight.w500,
-                      color: colorPrimary,
-                      fontSize: 12.sp,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: AppText(
+                        text: "Edit",
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                        color: colorPrimary,
+                        fontSize: 12.sp,
+                      ),
                     ),
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 12,
             ),
             Container(
               color: greyCardBack,
@@ -294,9 +300,9 @@ class AccountScreenState extends State<AccountScreen> {
               ),
             ),
             const SettingWidgets(),
-            const SupportWidgets(visibilty: true),
+            const SupportWidgets(visibilty: false),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
+              padding: const EdgeInsets.only(top: 60, bottom: 20),
               child: SingleButton(
                   label: "Logout",
                   textColor: redColor,

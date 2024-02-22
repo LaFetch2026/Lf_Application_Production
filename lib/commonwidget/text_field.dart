@@ -25,7 +25,6 @@ class TextFieldWidget extends StatelessWidget {
           ),
           controller: controller,
           keyboardType: TextInputType.text,
-          maxLength: 25,
           decoration: InputDecoration(
             filled: true,
             fillColor: whiteTextColor,

@@ -26,7 +26,7 @@ class SupportWidgets extends StatelessWidget {
         Visibility(
           visible: visibilty,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.only(top: 20),
             child: Container(
               width: double.infinity,
               color: borderColor,
@@ -35,7 +35,7 @@ class SupportWidgets extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+          padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
           child: AppText(
             text: "Support",
             fontFamily: "Franklin Gothic Bold",
