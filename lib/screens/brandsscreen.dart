@@ -19,7 +19,6 @@ class BrandsScreen extends StatefulWidget {
 }
 
 class BrandsScreenState extends State<BrandsScreen> {
-  double heightContainer = 68.00;
   bool showlist = false;
   String text = "Expand All";
   List<String> items = [
@@ -119,13 +118,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                     onTap: () {
                       if (showlist) {
                         setState(() {
-                          heightContainer = 68.00;
                           showlist = false;
                           text = "Expand All";
                         });
                       } else {
                         setState(() {
-                          heightContainer = 310.00;
                           showlist = true;
                           text = "Collapse All";
                         });
@@ -161,7 +158,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                               padding: const EdgeInsets.only(bottom: 10),
                               child: Container(
                                 width: double.infinity,
-                                height: heightContainer,
                                 decoration: const BoxDecoration(
                                     color: whiteBorderColor),
                                 child: Column(
@@ -207,13 +203,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                               onTap: () {
                                                 if (showlist) {
                                                   setState(() {
-                                                    heightContainer = 68.00;
                                                     showlist = false;
                                                     text = "Expand All";
                                                   });
                                                 } else {
                                                   setState(() {
-                                                    heightContainer = 310.00;
                                                     showlist = true;
                                                     text = "Collapse All";
                                                   });
@@ -246,7 +240,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                   childAspectRatio: 0.8,
                                                   physics:
                                                       const ScrollPhysics(),
-                                                  crossAxisSpacing: 5,
+                                                  crossAxisSpacing: 1,
                                                   mainAxisSpacing: 0,
                                                   children: List.generate(
                                                     childItem.length,
