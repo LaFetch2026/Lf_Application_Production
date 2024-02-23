@@ -25,6 +25,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
     "400",
     "400",
   ];
+  bool showblackCircle = false;
 
   @override
   Widget build(BuildContext context) {
@@ -91,27 +92,66 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                 width: 152,
                                                 fit: BoxFit.cover),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 10),
-                                            child: Align(
-                                              alignment: Alignment.topRight,
-                                              child: InkWell(
-                                                child: SizedBox(
-                                                  height: 24,
-                                                  width: 24,
-                                                  child: CircleAvatar(
-                                                    backgroundColor: whiteColor,
-                                                    child: Image.asset(
-                                                      blackRightCircleImage,
-                                                      height: 24,
-                                                      width: 24,
+                                          showblackCircle
+                                              ? GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      showblackCircle = false;
+                                                    });
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 10),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: InkWell(
+                                                        child: SizedBox(
+                                                          height: 24,
+                                                          width: 24,
+                                                          child: CircleAvatar(
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            child: Image.asset(
+                                                              blackRightCircleImage,
+                                                              height: 24,
+                                                              width: 24,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      showblackCircle = true;
+                                                    });
+                                                  },
+                                                  child: const Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16,
+                                                            vertical: 10),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: InkWell(
+                                                        child: SizedBox(
+                                                          height: 24,
+                                                          width: 24,
+                                                          child: CircleAvatar(
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 16, vertical: 10),

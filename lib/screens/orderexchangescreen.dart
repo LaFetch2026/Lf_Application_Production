@@ -215,7 +215,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    //  Get.to(const OrderDetailsScreen());
+                                    Get.to(const OrderDetailsScreen());
                                   },
                                   child: Container(
                                     color: whiteColor,
