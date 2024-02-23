@@ -36,7 +36,7 @@ class FilterButton extends StatelessWidget {
             child: Container(
               width: 1,
               color: borderColor,
-              height: 30,
+              height: 32,
             ),
           ),
           Text(

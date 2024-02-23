@@ -39,8 +39,17 @@ class BottomFiltersState extends State<BottomFilters> {
     "Duffle bags",
     "Tuxedos"
   ];
-  Color colorChangeBack = backWhite;
-  Color textColor = bottomnavBack;
+  List<String> brands = [
+    "Price Range",
+    "Brand",
+    "Color",
+    "Size",
+    "Material",
+    "Style",
+    "Ocassion",
+    "Feature",
+  ];
+  List<bool> selected = List.generate(50, (i) => false);
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +109,8 @@ class BottomFiltersState extends State<BottomFilters> {
                       color: backWhite,
                       width: 150,
                       height: MediaQuery.of(context).size.height - 110,
-                      child: Column(
+                      child:
+                          /*  Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
@@ -226,7 +236,62 @@ class BottomFiltersState extends State<BottomFilters> {
                                 ),
                               ),
                             ),
-                          ]),
+                          ]
+                          ), */
+                          Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: SizedBox(
+                          height: 150,
+                          child: ListView.builder(
+                              physics: const ScrollPhysics(),
+                              itemCount: brands.length,
+                              padding: EdgeInsets.zero,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (ctx, index) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () {
+                                          selected.clear();
+                                          selected =
+                                              List.generate(50, (i) => false);
+                                          selected[index] = !selected[index];
+                                          setState(() {});
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          color: selected[index]
+                                              ? btnTextColor
+                                              : backWhite,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16, top: 2, bottom: 2),
+                                              child: Text(
+                                                brands[index],
+                                                style: TextStyle(
+                                                  color: selected[index]
+                                                      ? whiteBorderColor
+                                                      : btnTextColor,
+                                                  decoration:
+                                                      TextDecoration.none,
+                                                  fontSize: 14.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                                  ],
+                                );
+                              }),
+                        ),
+                      ),
                     ),
                     Container(
                       color: whiteBorderColor,
