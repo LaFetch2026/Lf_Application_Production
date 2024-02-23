@@ -25,296 +25,313 @@ class AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  AppText(
-                    text: "Profile",
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: appbarText,
-                    fontSize: 22.sp,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                AppText(
+                  text: "Profile",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: appbarText,
+                  fontSize: 22.sp,
+                ),
+                const Expanded(
+                  child: SizedBox(
+                    height: 0,
                   ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 0,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(const CartScreen());
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: blackColor,
-                        child: const ImageIcon(
-                          AssetImage(cartImage),
-                          color: whiteBorderColor,
-                          size: 30,
-                        ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(const CartScreen());
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      color: blackColor,
+                      child: const ImageIcon(
+                        AssetImage(cartImage),
+                        color: whiteBorderColor,
+                        size: 30,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(
-                        text: "Jane Deo",
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: blackColor,
-                        fontSize: 28.sp,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 20),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const ImageIcon(
-                              AssetImage(phoneImage),
-                              color: greyTextColor,
-                              size: 24,
+                            AppText(
+                              text: "Jane Deo",
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: blackColor,
+                              fontSize: 28.sp,
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: AppText(
-                                text: "+9178xxxxxx23",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: greyTextColor,
-                                fontSize: 14.sp,
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Row(
+                                children: [
+                                  const ImageIcon(
+                                    AssetImage(phoneImage),
+                                    color: greyTextColor,
+                                    size: 24,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: AppText(
+                                      text: "+9178xxxxxx23",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: greyTextColor,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      )
-                    ],
+                        const Expanded(
+                          child: SizedBox(
+                            height: 0,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(const EditProfileScreen());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: AppText(
+                              text: "Edit",
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              color: colorPrimary,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 0,
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Container(
+                    color: greyCardBack,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 16, bottom: 16),
+                      child: Row(
+                        children: [
+                          const ImageIcon(
+                            AssetImage(pointImage),
+                            color: btnTextColor,
+                            size: 24,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: AppText(
+                              text: "100 Lafetch points",
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: btnTextColor,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 16, right: 16, top: 20, bottom: 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: whiteBorderColor,
+                              border:
+                                  Border.all(color: profileBorder, width: 1)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 16, right: 16, top: 10, bottom: 10),
+                            child: Row(
+                              children: [
+                                Image.asset(rewardsImage,
+                                    height: 40, width: 40, fit: BoxFit.cover),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: AppText(
+                                    text: "Rewards",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: btnTextColor,
+                                    fontSize: 14.sp,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Expanded(
+                          child: SizedBox(
+                            width: 0,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: whiteBorderColor,
+                              border:
+                                  Border.all(color: profileBorder, width: 1)),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 16, right: 16, top: 10, bottom: 10),
+                            child: Row(
+                              children: [
+                                Image.asset(mysteryBoxImage,
+                                    height: 40, width: 40, fit: BoxFit.cover),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: AppText(
+                                    text: "Mystery Box",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: btnTextColor,
+                                    fontSize: 14.sp,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 16, right: 16),
+                    child: AppText(
+                      text: "My Account",
+                      fontFamily: "Franklin Gothic Bold",
+                      fontWeight: FontWeight.w700,
+                      color: nameText,
+                      fontSize: 18.sp,
                     ),
                   ),
                   GestureDetector(
                     onTap: () {
-                      Get.to(const EditProfileScreen());
+                      Get.to(const OrderExchangeScreen());
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 16, right: 16),
                       child: AppText(
-                        text: "Edit",
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w500,
-                        color: colorPrimary,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            Container(
-              color: greyCardBack,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 16, right: 16, top: 16, bottom: 16),
-                child: Row(
-                  children: [
-                    const ImageIcon(
-                      AssetImage(pointImage),
-                      color: btnTextColor,
-                      size: 24,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: AppText(
-                        text: "100 Lafetch points",
+                        text: "Orders & Exchanges",
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
-                        color: btnTextColor,
-                        fontSize: 16.sp,
+                        color: nameText,
+                        fontSize: 14.sp,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 16, right: 16, top: 20, bottom: 20),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: whiteBorderColor,
-                        border: Border.all(color: profileBorder, width: 1)),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, right: 16, top: 10, bottom: 10),
-                      child: Row(
-                        children: [
-                          Image.asset(rewardsImage,
-                              height: 40, width: 40, fit: BoxFit.cover),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: AppText(
-                              text: "Rewards",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: btnTextColor,
-                              fontSize: 14.sp,
-                            ),
-                          )
-                        ],
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 16, right: 16),
+                      child: AppText(
+                        text: "My Wishlist",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: nameText,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
-                  const Expanded(
-                    child: SizedBox(
-                      width: 0,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: whiteBorderColor,
-                        border: Border.all(color: profileBorder, width: 1)),
+                  GestureDetector(
+                    onTap: () {},
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, right: 16, top: 10, bottom: 10),
-                      child: Row(
-                        children: [
-                          Image.asset(mysteryBoxImage,
-                              height: 40, width: 40, fit: BoxFit.cover),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: AppText(
-                              text: "Mystery Box",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: btnTextColor,
-                              fontSize: 14.sp,
-                            ),
-                          )
-                        ],
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 16, right: 16),
+                      child: AppText(
+                        text: "Customer Care",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: nameText,
+                        fontSize: 14.sp,
                       ),
                     ),
                   ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 16, right: 16),
+                      child: AppText(
+                        text: "Saved Addresses",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: nameText,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(top: 20, left: 16, right: 16),
+                      child: AppText(
+                        text: "Payments & Currencies",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: nameText,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                  const SettingWidgets(),
+                  const SupportWidgets(visibilty: false),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60, bottom: 20),
+                    child: SingleButton(
+                        label: "Logout",
+                        textColor: redColor,
+                        onPressed: () {},
+                        backgroundColor: whiteBorderColor,
+                        borderColor: redColor),
+                  ),
+                  const ProfileBottom(
+                    version: " 1.2.1",
+                  )
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
-              child: AppText(
-                text: "My Account",
-                fontFamily: "Franklin Gothic Bold",
-                fontWeight: FontWeight.w700,
-                color: nameText,
-                fontSize: 18.sp,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.to(const OrderExchangeScreen());
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-                child: AppText(
-                  text: "Orders & Exchanges",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: nameText,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-                child: AppText(
-                  text: "My Wishlist",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: nameText,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-                child: AppText(
-                  text: "Customer Care",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: nameText,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-                child: AppText(
-                  text: "Saved Addresses",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: nameText,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-                child: AppText(
-                  text: "Payments & Currencies",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: nameText,
-                  fontSize: 14.sp,
-                ),
-              ),
-            ),
-            const SettingWidgets(),
-            const SupportWidgets(visibilty: false),
-            Padding(
-              padding: const EdgeInsets.only(top: 60, bottom: 20),
-              child: SingleButton(
-                  label: "Logout",
-                  textColor: redColor,
-                  onPressed: () {},
-                  backgroundColor: whiteBorderColor,
-                  borderColor: redColor),
-            ),
-            const ProfileBottom(
-              version: " 1.2.1",
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

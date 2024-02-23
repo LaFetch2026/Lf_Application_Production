@@ -77,13 +77,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
       backgroundColor: whiteTextColor,
       body: Column(
         children: [
+          const BackButtonAppbar(text: "Orders & Exchanges", threeDot: false),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const BackButtonAppbar(
-                      text: "Orders & Exchanges", threeDot: false),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 20),
@@ -199,7 +198,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.only(bottom: 10),
                     child: ListView.builder(
                         primary: false,
                         shrinkWrap: true,

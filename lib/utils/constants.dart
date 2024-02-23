@@ -33,6 +33,8 @@ const Color deepPurple = Color(0xFF404662);
 const Color deeptYellow = Color(0xFF5B4802);
 const Color deepRed = Color(0xFF8E2B2B);
 const Color deepGreen = Color(0xFF26443E);
+const Color underlineColor = Color(0xFF786E85);
+const Color greenText = Color(0xFF60AB9A);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
@@ -99,3 +101,4 @@ const homeUnselectImage = 'assets/images/home_unselect.png';
 const wishlistSelectImage = 'assets/images/wishlist_select.png';
 const brandSelectImage = 'assets/images/brand_select.png';
 const accountSelectImage = 'assets/images/account_select.png';
+const gPayImage = 'assets/images/g_pay.png';
