@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 
@@ -49,7 +51,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                   items.length,
                   (index) {
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(const ProductDetailsScreen());
+                      },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

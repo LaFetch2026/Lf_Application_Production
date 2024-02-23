@@ -40,7 +40,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
       backgroundColor: whiteTextColor,
       body: Column(
         children: [
-          const BackButtonAppbar(text: "Order details", threeDot: false),
+          const BackButtonAppbar(
+            text: "Order details",
+            threeDot: false,
+            icon: threeDotImage,
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(

@@ -43,7 +43,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const BackButtonAppbar(
-                        text: "Edit Profile", threeDot: false),
+                      text: "Edit Profile",
+                      threeDot: false,
+                      icon: threeDotImage,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 40),
                       child: TextFieldWidget(

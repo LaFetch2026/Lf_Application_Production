@@ -77,7 +77,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
       backgroundColor: whiteTextColor,
       body: Column(
         children: [
-          const BackButtonAppbar(text: "Orders & Exchanges", threeDot: false),
+          const BackButtonAppbar(
+            text: "Orders & Exchanges",
+            threeDot: false,
+            icon: threeDotImage,
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(

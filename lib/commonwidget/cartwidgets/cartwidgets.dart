@@ -60,7 +60,7 @@ class CartWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 4, right: 4),
+          padding: const EdgeInsets.only(top: 30, left: 24, right: 24),
           child: SingleButton(
               label: btntext,
               textColor: whiteBorderColor,

@@ -42,6 +42,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
               : const BackButtonAppbar(
                   text: "Add items to board",
                   threeDot: false,
+                  icon: threeDotImage,
                 ),
           Expanded(
             child: SingleChildScrollView(

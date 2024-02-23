@@ -39,6 +39,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                   BackButtonAppbar(
                     text: widget.title,
                     threeDot: false,
+                    icon: threeDotImage,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 40),

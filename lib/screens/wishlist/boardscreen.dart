@@ -43,6 +43,7 @@ class BoardScreenState extends State<BoardScreen> {
             BackButtonAppbar(
               text: "Board",
               threeDot: true,
+              icon: threeDotImage,
               onPressedThreeDot: () {
                 scaffoldKey.currentState
                     ?.showBottomSheet((context) => BottomSheetBoard(

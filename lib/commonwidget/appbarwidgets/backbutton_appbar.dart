@@ -8,12 +8,14 @@ import '../app_text.dart';
 class BackButtonAppbar extends StatelessWidget {
   final String text;
   final bool threeDot;
+  final String icon;
   final Function? onPressedThreeDot;
 
   const BackButtonAppbar(
       {Key? key,
       required this.text,
       required this.threeDot,
+      required this.icon,
       this.onPressedThreeDot})
       : super(key: key);
 
@@ -58,8 +60,8 @@ class BackButtonAppbar extends StatelessWidget {
                   onTap: () {
                     onPressedThreeDot?.call();
                   },
-                  child: const ImageIcon(
-                    AssetImage(threeDotImage),
+                  child: ImageIcon(
+                    AssetImage(icon),
                     color: appbarText,
                     size: 20,
                   ),

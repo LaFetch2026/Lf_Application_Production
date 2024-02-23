@@ -102,3 +102,5 @@ const wishlistSelectImage = 'assets/images/wishlist_select.png';
 const brandSelectImage = 'assets/images/brand_select.png';
 const accountSelectImage = 'assets/images/account_select.png';
 const gPayImage = 'assets/images/g_pay.png';
+const deleteIcon = 'assets/images/delete_icon.png';
+const blackCrossImage = 'assets/images/black_cross.png';
