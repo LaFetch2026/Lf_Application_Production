@@ -105,3 +105,5 @@ const gPayImage = 'assets/images/g_pay.png';
 const deleteIcon = 'assets/images/delete_icon.png';
 const blackCrossImage = 'assets/images/black_cross.png';
 const greenCheckImage = 'assets/images/green_check.png';
+const coupanImage = 'assets/images/coupan_image.png';
+const questionIcon = 'assets/images/question_icon.png';
