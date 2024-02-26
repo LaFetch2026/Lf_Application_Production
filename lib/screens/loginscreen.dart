@@ -26,14 +26,16 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> {
   final loginController = Get.put(LoginController());
+  Color appbarColor = colorPrimary;
 
   @override
   void initState() {
     if (widget.initialTab == 0) {
-      loginController.appbarColor = colorPrimary;
+      appbarColor = colorPrimary;
     } else {
-      loginController.appbarColor = btnTextColor;
+      appbarColor = btnTextColor;
     }
+    setState(() {});
     super.initState();
   }
 
@@ -49,7 +51,7 @@ class LoginScreenState extends State<LoginScreen> {
         child: Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
-              backgroundColor: loginController.appbarColor,
+              backgroundColor: appbarColor,
               title: Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
@@ -69,36 +71,43 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(40),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: TabBar(
-                      isScrollable: true,
-                      indicatorColor: whiteTextColor,
-                      unselectedLabelColor: textHintColor,
-                      labelColor: whiteBorderColor,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorWeight: 2,
-                      tabs: [
-                        Tab(
-                            child: Text(
-                          "Sign In",
-                          style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400),
-                        )),
-                        Tab(
-                            child: Text(
-                          "I’m new here",
-                          style: TextStyle(
-                              fontSize: 16.sp,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400),
-                        ))
-                      ]),
-                ),
-              ),
+                  preferredSize: const Size.fromHeight(40),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TabBar(
+                        isScrollable: true,
+                        onTap: (value) {
+                          if (appbarColor == btnTextColor) {
+                            appbarColor = colorPrimary;
+                          } else {
+                            appbarColor = btnTextColor;
+                          }
+                          setState(() {});
+                        },
+                        indicatorColor: whiteTextColor,
+                        unselectedLabelColor: textHintColor,
+                        labelColor: whiteBorderColor,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicatorWeight: 2,
+                        tabs: [
+                          Tab(
+                              child: Text(
+                            "Sign In",
+                            style: TextStyle(
+                                fontSize: 16.sp,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400),
+                          )),
+                          Tab(
+                              child: Text(
+                            "I’m new here",
+                            style: TextStyle(
+                                fontSize: 16.sp,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400),
+                          ))
+                        ]),
+                  )),
             ),
             body: TabBarView(children: [
               Expanded(
