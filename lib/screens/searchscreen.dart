@@ -14,6 +14,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen> {
+  TextEditingController searchController = TextEditingController();
   List<String> products = [
     "Salwar Suits",
     "Printed loose t-shirts",
@@ -26,6 +27,12 @@ class SearchScreenState extends State<SearchScreen> {
     "200",
     "300",
     "400",
+    "100",
+    "200",
+    "300",
+    "400",
+  ];
+  List<String> searchItem = [
     "100",
     "200",
     "300",
@@ -112,6 +119,137 @@ class SearchScreenState extends State<SearchScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    color: whiteColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: const ImageIcon(
+                                  AssetImage(backWhiteArrow),
+                                  color: colorPrimary,
+                                  size: 24,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  height: 40,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: TextField(
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      style: const TextStyle(
+                                        color: textColor,
+                                        fontFamily: "Franklin Gothic Regular",
+                                      ),
+                                      controller: searchController,
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: whiteColor,
+                                        suffixIcon: Image.asset(
+                                          greyCrossImage,
+                                          height: 18,
+                                          width: 18,
+                                        ),
+                                        prefixIcon: const Icon(Icons.search,
+                                            size: 20, color: Colors.grey),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: borderColor)),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                        ),
+                                        counterText: "",
+                                        hintText: "Search",
+                                        hintStyle:
+                                            const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10, top: 8),
+                            child: ListView.builder(
+                                primary: false,
+                                shrinkWrap: true,
+                                physics: const ScrollPhysics(),
+                                itemCount: searchItem.length,
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (ctx, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const Icon(Icons.search,
+                                            size: 20, color: Colors.grey),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: AppText(
+                                              text: "T-shirts Men",
+                                              maxLines: 1,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14.sp,
+                                              color: nameText,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          child: AppText(
+                                            text: "41",
+                                            maxLines: 1,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14.sp,
+                                            color: greyTextColor,
+                                          ),
+                                        ),
+                                        Image.asset(curveArrowImage,
+                                            height: 12,
+                                            width: 12,
+                                            fit: BoxFit.cover),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20, left: 16),
                     child: AppText(
