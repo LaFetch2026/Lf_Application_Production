@@ -4,7 +4,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/womenwidget/question_card.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/womenwidget/lafetch_card.dart';
 import '../../../commonwidget/womenwidget/sale_card.dart';
@@ -104,7 +106,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                       return Column(
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                               Get.to(()=>const ProductDetailsScreen());
+                            },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               margin: const EdgeInsets.only(right: 5),
