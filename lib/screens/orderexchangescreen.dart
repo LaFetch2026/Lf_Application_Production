@@ -362,7 +362,6 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                     margin:
                                                         const EdgeInsets.only(
                                                             right: 5),
-                                                    width: 135,
                                                     height: 30,
                                                     decoration: BoxDecoration(
                                                       color: containerColor(
@@ -380,22 +379,30 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           horizontal: 5),
                                                       child: Row(
                                                         children: [
-                                                          ImageIcon(
-                                                            AssetImage(
-                                                                selectedIcon(
-                                                                    items[
-                                                                        index])),
-                                                            color:
-                                                                selectedColor(
-                                                                    items[
-                                                                        index]),
-                                                            size: 14,
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        2),
+                                                            child: ImageIcon(
+                                                              AssetImage(
+                                                                  selectedIcon(
+                                                                      items[
+                                                                          index])),
+                                                              color:
+                                                                  selectedColor(
+                                                                      items[
+                                                                          index]),
+                                                              size: 14,
+                                                            ),
                                                           ),
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
                                                                         .only(
-                                                                    left: 5),
+                                                                    left: 5,
+                                                                    right: 2),
                                                             child: AppText(
                                                               text:
                                                                   items[index],
