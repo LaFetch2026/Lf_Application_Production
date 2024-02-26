@@ -107,3 +107,4 @@ const blackCrossImage = 'assets/images/black_cross.png';
 const greenCheckImage = 'assets/images/green_check.png';
 const coupanImage = 'assets/images/coupan_image.png';
 const questionIcon = 'assets/images/question_icon.png';
+const backWhiteArrow = 'assets/images/back_arrow_white.png';

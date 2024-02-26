@@ -73,7 +73,7 @@ class HomeAppbar extends StatelessWidget {
                       backgroundColor: whiteColor,
                       child: ImageIcon(
                         AssetImage(cartImage),
-                        color: textHintColor,
+                        color: colorPrimary,
                         size: 20,
                       ),
                     ),
