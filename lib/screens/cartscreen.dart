@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
+import 'package:lafetch/commonwidget/smallbtn.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
@@ -20,9 +21,6 @@ class CartScreenState extends State<CartScreen> {
     "1",
     "2",
     "3",
-    "4",
-    "5",
-    "6",
   ];
   @override
   Widget build(BuildContext context) {
@@ -366,6 +364,613 @@ class CartScreenState extends State<CartScreen> {
                           );
                         }),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 16),
+                    child: AppText(
+                      text: "You may also like",
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      color: colorPrimary,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 300,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: items.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (ctx, index) {
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.only(right: 8),
+                                    width: 122,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset(backImage,
+                                            height: 150,
+                                            width: 122,
+                                            fit: BoxFit.cover),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          child: AppText(
+                                            text: "Jack & Jones Core ",
+                                            color: nameText,
+                                            fontSize: 12.sp,
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
+                                          child: AppText(
+                                            text:
+                                                "Topman super skinny suit jacket and trousers in light blue",
+                                            color: nameText,
+                                            maxLines: 2,
+                                            fontSize: 11.sp,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, left: 10, right: 10),
+                                          child: Row(
+                                            children: [
+                                              AppText(
+                                                text:
+                                                    "\u{20B9} ${items[index]}",
+                                                color: deepGreytextColor,
+                                                maxLines: 2,
+                                                fontSize: 11.sp,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10),
+                                                child: AppText(
+                                                  text:
+                                                      "\u{20B9} ${items[index]}",
+                                                  color: textHintColor,
+                                                  maxLines: 2,
+                                                  fontSize: 11.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: SmallButton(
+                                              label: "Add to bag",
+                                              onPressed: () {},
+                                              textColor: btnTextColor,
+                                              backgroundColor: whiteBorderColor,
+                                              borderColor: btnTextColor,
+                                              width: 122),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                  Container(
+                    color: whiteColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            text: "Coupons",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: colorPrimary,
+                            fontSize: 12.sp,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: borderColor, width: 1),
+                                  borderRadius: BorderRadius.circular(1)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: Row(
+                                        children: [
+                                          const ImageIcon(
+                                            AssetImage(coupanImage),
+                                            color: colorPrimary,
+                                            size: 20,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: AppText(
+                                              text: "Apply Coupan",
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: textFilter,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Expanded(
+                                      child: SizedBox(
+                                        height: 0,
+                                      ),
+                                    ),
+                                    AppText(
+                                      text: "Select",
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                      color: textFilter,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: AppText(
+                              text: "Price Details",
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: colorPrimary,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Container(
+                              width: double.infinity,
+                              color: colorSecondary,
+                              height: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: AppText(
+                                    text: "Total MRP",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: textFilter,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "\u{20B9} ${2537.00}",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: textFilter,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: AppText(
+                                    text: "Express Delivery Charges",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: textFilter,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "\u{20B9} ${112.32}",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: textFilter,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: AppText(
+                                    text: "Discount on MRP",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: textFilter,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "\u{20B9} ${-36.00}",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: greenText,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: AppText(
+                                    text: "Coupon Discount",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: textFilter,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "\u{20B9} ${-36.00}",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: greenText,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: AppText(
+                                        text: "Convenience Fee",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: textFilter,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                    Image.asset(questionIcon,
+                                        height: 16,
+                                        width: 16,
+                                        fit: BoxFit.cover)
+                                  ],
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "Free",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: greenText,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: AppText(
+                                        text: "Tax & Charges",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: textFilter,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                    Image.asset(questionIcon,
+                                        height: 16,
+                                        width: 16,
+                                        fit: BoxFit.cover)
+                                  ],
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "\u{20B9} ${36}",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: textFilter,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Container(
+                              width: double.infinity,
+                              color: colorSecondary,
+                              height: 1.5,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: AppText(
+                                    text: "Total Bill",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: colorPrimary,
+                                    fontSize: 16.sp,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "\u{20B9} ${2501}",
+                                  fontFamily: "Franklin Gothic Bold",
+                                  fontWeight: FontWeight.w700,
+                                  color: colorPrimary,
+                                  fontSize: 18.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: greyCardBack,
+                    height: 34,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 6, bottom: 6),
+                      child: Center(
+                        child: AppText(
+                          text:
+                              "You will earn 100 LaFetch coins on this purchase",
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                          color: deepPurple,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: whiteColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: whiteBorderColor,
+                                borderRadius: BorderRadius.circular(1)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(14.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    text: "Return/Refund Policy",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: nameText,
+                                    fontSize: 14.sp,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: AppText(
+                                      text:
+                                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nibh augue, commodo eget pulvinar ac, pretium a ipsum.",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      maxLines: 3,
+                                      color: greyTextColor,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                  AppText(
+                                    text: "READ POLICY",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: greyTextColor,
+                                    fontSize: 12.sp,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30, bottom: 30),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  children: [
+                                    Image.asset(deliveredImage,
+                                        height: 40,
+                                        width: 40,
+                                        fit: BoxFit.cover),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: AppText(
+                                        text: "Delivered in\n6 hours",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greyTextColor,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                        fontSize: 10.sp,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image.asset(qualityImage,
+                                        height: 40,
+                                        width: 40,
+                                        fit: BoxFit.cover),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: AppText(
+                                        text: "100% Quality\nassured",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greyTextColor,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                        fontSize: 10.sp,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image.asset(locationBaseImage,
+                                        height: 40,
+                                        width: 40,
+                                        fit: BoxFit.cover),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: AppText(
+                                        text: "Location based\nDeliveries",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greyTextColor,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                        fontSize: 10.sp,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image.asset(exchangeImage,
+                                        height: 40,
+                                        width: 40,
+                                        fit: BoxFit.cover),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: AppText(
+                                        text: "2 exchanges\nwithin 2 days",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greyTextColor,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                        fontSize: 10.sp,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

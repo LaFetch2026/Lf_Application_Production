@@ -84,7 +84,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 10, left: 16),
               child: AppText(
-                text: "Express Delivery",
+                text: "6 hour Express Delivery",
                 fontFamily: "Franklin Gothic",
                 fontWeight: FontWeight.w500,
                 color: blackColor,
