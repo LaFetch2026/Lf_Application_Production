@@ -261,7 +261,7 @@ class BoardScreenState extends State<BoardScreen> {
                                       child: SmallButton(
                                           label: "Move to bag",
                                           textColor: btnTextColor,
-                                          backgroundColor: whiteBorderColor,
+                                          backgroundColor: whiteTextColor,
                                           borderColor: btnTextColor,
                                           onPressed: () {},
                                           width: 152),

@@ -36,7 +36,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: whiteTextColor,
       body: Column(
         children: [
           CatalogAppbar(
@@ -96,12 +96,14 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, top: 12),
                     child: ListView.builder(
                         primary: false,
                         shrinkWrap: true,
                         physics: const ScrollPhysics(),
                         itemCount: items.length,
+                        padding: EdgeInsets.zero,
                         scrollDirection: Axis.vertical,
                         itemBuilder: (ctx, index) {
                           return Column(

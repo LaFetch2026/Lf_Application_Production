@@ -41,7 +41,7 @@ class ProfilePicWidgets extends StatelessWidget {
               label: "Login / Sign up",
               textColor: btnTextColor,
               onPressed: () {},
-              backgroundColor: whiteBorderColor,
+              backgroundColor: whiteTextColor,
               borderColor: btnTextColor),
         ),
       ],

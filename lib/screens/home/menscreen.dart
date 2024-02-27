@@ -16,7 +16,7 @@ class MenScreenState extends State<MenScreen> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      color: whiteBorderColor,
+      color: whiteTextColor,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

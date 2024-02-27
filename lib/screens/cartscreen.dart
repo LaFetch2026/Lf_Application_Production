@@ -466,7 +466,7 @@ class CartScreenState extends State<CartScreen> {
                                               label: "Add to bag",
                                               onPressed: () {},
                                               textColor: btnTextColor,
-                                              backgroundColor: whiteBorderColor,
+                                              backgroundColor: whiteTextColor,
                                               borderColor: btnTextColor,
                                               width: 122),
                                         )

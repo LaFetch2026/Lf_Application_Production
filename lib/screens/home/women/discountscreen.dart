@@ -107,7 +107,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                               Get.to(()=>const ProductDetailsScreen());
+                              Get.to(() => const ProductDetailsScreen());
                             },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
@@ -499,6 +499,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                         })),
                 //  ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
             const LafetchCardWidget(),
             QuestionCardWidget(

@@ -34,7 +34,7 @@ class SmallButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
         width: width,
-        height: 40,
+        height: 44,
         child: ElevatedButton(
             style: ButtonStyle(
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(

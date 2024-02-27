@@ -475,9 +475,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                 firstTextColor: btnTextColor,
                                                 secondTextColor: btnTextColor,
                                                 firstBackgroundColor:
-                                                    whiteBorderColor,
+                                                    whiteTextColor,
                                                 secondBackgroundColor:
-                                                    whiteBorderColor,
+                                                    whiteTextColor,
                                                 firstBorderColor: btnTextColor,
                                                 secondBorderColor: btnTextColor,
                                                 firstIcon: exchangeItemImage,
@@ -487,7 +487,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                             /*  SingleIconButton(
                                                 label: "Track Order",
                                                 textColor: btnTextColor,
-                                                backgroundColor: whiteBorderColor,
+                                                backgroundColor: whiteTextColor,
                                                 onPressed: () {},
                                                 borderColor: btnTextColor,
                                                 icon: locationIcon) */
@@ -509,7 +509,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
             child: SingleButton(
                 label: "View details",
                 textColor: btnTextColor,
-                backgroundColor: whiteBorderColor,
+                backgroundColor: whiteTextColor,
                 onPressed: () {},
                 borderColor: btnTextColor),
           )

@@ -173,7 +173,7 @@ class SearchScreenState extends State<SearchScreen> {
                                     height: 33,
                                     margin: const EdgeInsets.only(right: 5),
                                     decoration: BoxDecoration(
-                                        color: whiteBorderColor,
+                                        color: whiteTextColor,
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
                                             color: btnTextColor, width: 1)),

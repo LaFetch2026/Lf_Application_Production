@@ -32,7 +32,7 @@ class _WomenScreenState extends State<WomenScreen> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      color: whiteBorderColor,
+      color: whiteTextColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -70,7 +70,7 @@ class _WomenScreenState extends State<WomenScreen> {
                             decoration: BoxDecoration(
                               color: current == index
                                   ? btnTextColor
-                                  : whiteBorderColor,
+                                  : whiteTextColor,
                               borderRadius: current == index
                                   ? BorderRadius.circular(20)
                                   : BorderRadius.circular(20),

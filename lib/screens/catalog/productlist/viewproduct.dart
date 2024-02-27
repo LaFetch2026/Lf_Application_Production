@@ -31,7 +31,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
       length: 2,
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: whiteBorderColor,
+        backgroundColor: whiteTextColor,
         body: GestureDetector(
           onTap: () {
             Get.back();
@@ -118,8 +118,8 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                 secondText: "Filters",
                 firstTextColor: deepGreytextColor,
                 secondTextColor: deepGreytextColor,
-                firstBackgroundColor: whiteBorderColor,
-                secondBackgroundColor: whiteBorderColor,
+                firstBackgroundColor: whiteTextColor,
+                secondBackgroundColor: whiteTextColor,
                 firstBorderColor: deepGreytextColor,
                 secondBorderColor: deepGreytextColor,
                 onPressedFirst: () {

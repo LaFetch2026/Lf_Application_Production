@@ -170,7 +170,7 @@ class AccountScreenState extends State<AccountScreen> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                              color: whiteBorderColor,
+                              color: whiteTextColor,
                               border:
                                   Border.all(color: profileBorder, width: 1)),
                           child: Padding(
@@ -202,7 +202,7 @@ class AccountScreenState extends State<AccountScreen> {
                         ),
                         Container(
                           decoration: BoxDecoration(
-                              color: whiteBorderColor,
+                              color: whiteTextColor,
                               border:
                                   Border.all(color: profileBorder, width: 1)),
                           child: Padding(
@@ -321,7 +321,7 @@ class AccountScreenState extends State<AccountScreen> {
                         label: "Logout",
                         textColor: redColor,
                         onPressed: () {},
-                        backgroundColor: whiteBorderColor,
+                        backgroundColor: whiteTextColor,
                         borderColor: redColor),
                   ),
                   const ProfileBottom(

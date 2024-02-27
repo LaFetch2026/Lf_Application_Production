@@ -87,7 +87,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                             SingleButton(
                                 label: "Continue Shopping",
                                 textColor: btnTextColor,
-                                backgroundColor: whiteBorderColor,
+                                backgroundColor: whiteTextColor,
                                 onPressed: () {},
                                 borderColor: btnTextColor)
                           ],

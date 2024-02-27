@@ -29,7 +29,7 @@ class QuestionCardWidget extends StatelessWidget {
         child: Container(
           height: 70,
           decoration: BoxDecoration(
-            color: whiteBorderColor,
+            color: whiteTextColor,
             borderRadius: BorderRadius.circular(1),
             border: Border.all(color: btnTextColor, width: 1),
           ),
