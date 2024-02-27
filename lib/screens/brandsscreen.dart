@@ -22,6 +22,7 @@ class BrandsScreenState extends State<BrandsScreen> {
   bool showlist = false;
   bool showAllBrand = false;
   String brandName = "";
+  Color borderColor = whiteBorderColor;
   String text = "Expand All";
   List<String> items = [
     "Salwar Suits",
@@ -127,11 +128,13 @@ class BrandsScreenState extends State<BrandsScreen> {
                               setState(() {
                                 showlist = false;
                                 text = "Expand All";
+                                borderColor = whiteBorderColor;
                               });
                             } else {
                               setState(() {
                                 showlist = true;
                                 text = "Collapse All";
+                                borderColor = greyTextColor;
                               });
                             }
                           },
@@ -165,7 +168,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                     padding: const EdgeInsets.only(bottom: 10),
                                     child: Container(
                                       width: double.infinity,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                          border: Border.all(
+                                              width: 1, color: borderColor),
                                           color: whiteBorderColor),
                                       child: Column(
                                         children: [
@@ -217,11 +224,15 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                       if (showlist) {
                                                         setState(() {
                                                           showlist = false;
+                                                          borderColor =
+                                                              whiteBorderColor;
                                                           text = "Expand All";
                                                         });
                                                       } else {
                                                         setState(() {
                                                           showlist = true;
+                                                          borderColor =
+                                                              greyTextColor;
                                                           text = "Collapse All";
                                                         });
                                                       }

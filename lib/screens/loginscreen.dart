@@ -115,7 +115,7 @@ class LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(0),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    color: whiteBorderColor,
+                    color: whiteTextColor,
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(0),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    color: whiteBorderColor,
+                    color: whiteTextColor,
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

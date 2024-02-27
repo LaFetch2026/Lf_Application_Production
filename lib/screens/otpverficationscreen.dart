@@ -70,11 +70,19 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                             fontSize: 14.sp,
                             color: greyTextColor,
                           ),
-                          AppText(
-                            text: widget.phoneMunber,
-                            fontFamily: "Franklin Gothic",
-                            fontSize: 14.sp,
-                            color: deepGreytextColor,
+                          Column(
+                            children: [
+                              Text(
+                                widget.phoneMunber,
+                                style: TextStyle(
+                                  fontFamily: "Franklin Gothic",
+                                  fontSize: 14.sp,
+                                  decorationColor: greyTextColor,
+                                  decoration: TextDecoration.underline,
+                                  color: deepGreytextColor,
+                                ),
+                              ),
+                            ],
                           )
                         ],
                       ),
@@ -88,9 +96,10 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         child: OtpTextField(
                           borderRadius: BorderRadius.circular(1),
                           numberOfFields: 4,
-                          fieldWidth: 69,
+                          fieldWidth:
+                              (MediaQuery.of(context).size.width - 65) / 4,
                           textStyle: const TextStyle(
-                              color: loginText, fontSize: 16, height: 2),
+                              color: loginText, fontSize: 16, height: 2.5),
                           focusedBorderColor: borderColor,
                           borderWidth: 1,
                           enabledBorderColor: borderColor,
@@ -109,7 +118,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     ),
                     Padding(
                       padding:
-                          const EdgeInsets.only(right: 20, top: 20, left: 20),
+                          const EdgeInsets.only(right: 16, top: 20, left: 16),
                       child: Row(
                         children: [
                           Expanded(

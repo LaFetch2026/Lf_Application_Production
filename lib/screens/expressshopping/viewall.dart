@@ -38,16 +38,6 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 16),
-                    child: AppText(
-                      text: "Express Delivery",
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: blackColor,
-                      fontSize: 16.sp,
-                    ),
-                  ),
-                  Padding(
                     padding:
                         const EdgeInsets.only(left: 16, right: 16, top: 10),
                     child: GridView.count(
@@ -95,6 +85,56 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     width: 16,
                                                   ),
                                                 ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  top: 140),
+                                              color: const Color(0xB3F7F7F5),
+                                              height: 26,
+                                              width: 80,
+                                              child: Row(
+                                                children: [
+                                                  Image.asset(
+                                                    starImage,
+                                                    height: 24,
+                                                    color: bottomnavBack,
+                                                    width: 24,
+                                                  ),
+                                                  AppText(
+                                                    text: "4.4",
+                                                    color: colorPrimary,
+                                                    fontSize: 12.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10),
+                                                    child: Container(
+                                                      width: 1,
+                                                      color: textHintColor,
+                                                      height: 16,
+                                                    ),
+                                                  ),
+                                                  AppText(
+                                                    text: "8",
+                                                    color: colorPrimary,
+                                                    fontSize: 12.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),

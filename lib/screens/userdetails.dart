@@ -126,7 +126,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                     return Column(
                                       children: [
                                         Container(
-                                          color: whiteColor,
+                                          color: whiteTextColor,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,

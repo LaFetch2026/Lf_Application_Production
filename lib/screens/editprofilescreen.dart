@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
-
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
+import 'package:lafetch/controller/profile_controller.dart';
 import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
 
@@ -16,22 +16,15 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  final nameController = TextEditingController();
-  final phoneController = TextEditingController();
-  final emailController = TextEditingController();
-  String? gender;
-  List<int> genderId = [1, 2, 3];
-  int genderPos = 0;
-  final List<String> genderList = [
-    'Male',
-    'Female',
-    'Non-Binary',
-  ];
+  final profileController = Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
+        setState(() {
+          profileController.showList.value = false;
+        });
       },
       child: Scaffold(
         backgroundColor: whiteTextColor,
@@ -51,92 +44,144 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       padding: const EdgeInsets.only(top: 40),
                       child: TextFieldWidget(
                         hint: "First Name and Last Name",
-                        controller: nameController,
+                        controller: profileController.nameController,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
-                      child: NumberWidget(controller: phoneController),
+                      child: NumberWidget(
+                          controller: profileController.phoneController),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: TextFieldWidget(
                         hint: "Email ID",
-                        controller: emailController,
+                        controller: profileController.emailController,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 20),
-                      child: Container(
+                      padding:
+                          const EdgeInsets.only(left: 16, top: 20, right: 16),
+                      child: SizedBox(
                         height: 44,
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(1))),
-                        child: DropdownButtonFormField2(
-                          value: gender,
+                        child: TextField(
+                          textCapitalization: TextCapitalization.words,
+                          readOnly: true,
+                          onTap: () {
+                            if (profileController.showList.value) {
+                              profileController.showList.value = false;
+                            } else {
+                              profileController.showList.value = true;
+                            }
+                          },
+                          style: const TextStyle(
+                            color: textColor,
+                            fontFamily: "Franklin Gothic Regular",
+                          ),
+                          controller: profileController.gerderController,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
+                            suffixIcon: const ImageIcon(
+                              AssetImage(dropdownImage),
+                              color: nameText,
+                              size: 30,
+                            ),
                             fillColor: whiteTextColor,
                             focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: borderColor)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(1),
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(1),
                               borderSide: const BorderSide(color: borderColor),
                             ),
-                            isDense: true,
-                            contentPadding: const EdgeInsets.only(left: 16),
-                            hintText: 'Gender',
-                            hintStyle: const TextStyle(
-                                fontSize: 14,
-                                fontFamily: "Franklin Gothic Regular"),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1),
-                            ),
-                          ),
-                          isExpanded: true,
-                          items: genderList
-                              .map((item) => DropdownMenuItem<String>(
-                                    value: item,
-                                    child: Text(
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: textColor,
-                                        fontFamily: "Franklin Gothic Regular",
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select Types.';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            gender = value;
-                            genderPos = genderList.indexOf(gender.toString());
-                            print(genderId[genderPos]);
-                            setState(() {});
-                          },
-                          onSaved: (value) {},
-                          buttonStyleData: const ButtonStyleData(
-                            height: 60,
-                            padding: EdgeInsets.only(right: 10),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: ImageIcon(AssetImage(dropdownImage)),
-                            iconSize: 30,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 200,
-                            decoration: BoxDecoration(
-                              color: whiteTextColor,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
+                            counterText: "",
+                            hintText: "Gender",
+                            hintStyle: const TextStyle(fontSize: 14),
                           ),
                         ),
                       ),
+                    ),
+                    Obx(
+                      () => profileController.showList.value
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16, right: 16),
+                              child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  itemCount:
+                                      profileController.genderList.length,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          color: whiteTextColor,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  profileController
+                                                          .gerderController
+                                                          .text =
+                                                      profileController
+                                                          .genderList[index];
+                                                  profileController
+                                                      .showList.value = false;
+                                                },
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  alignment: Alignment.center,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 10),
+                                                    child: Text(
+                                                      profileController
+                                                          .genderList[index],
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: nameText,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              index == 2
+                                                  ? const SizedBox(
+                                                      width: double.infinity,
+                                                      height: 5,
+                                                    )
+                                                  : Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 2),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        color: colorSecondary,
+                                                        height: 1,
+                                                      ),
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                            )
+                          : const SizedBox(
+                              height: 0,
+                            ),
                     ),
                   ],
                 ),

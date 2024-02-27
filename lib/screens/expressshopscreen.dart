@@ -76,7 +76,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+            padding:
+                const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 5),
             child: AppText(
               text: "Express Shop",
               fontFamily: "Franklin Gothic Regular",
