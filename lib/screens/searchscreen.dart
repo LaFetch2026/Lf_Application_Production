@@ -63,6 +63,7 @@ class SearchScreenState extends State<SearchScreen> {
         } else {
           isSearch = true;
         }
+        FocusScope.of(context).requestFocus(FocusNode());
         setState(() {});
       },
       child: Scaffold(
@@ -141,7 +142,7 @@ class SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 ),
-                Expanded(
+                /*        Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,6 +451,7 @@ class SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 ),
+            */
               ],
             ),
             isSearch
