@@ -116,3 +116,5 @@ const questionIcon = 'assets/images/question_icon.png';
 const backWhiteArrow = 'assets/images/back_arrow_white.png';
 const greyCrossImage = 'assets/images/grey_cross.png';
 const curveArrowImage = 'assets/images/up_arrow_curve.png';
+const boltBlackImage = 'assets/images/bolt_image.png';
+const boltWhiteImage = 'assets/images/bolt_white.png';

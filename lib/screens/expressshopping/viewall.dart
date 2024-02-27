@@ -30,16 +30,16 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
+          Positioned.fill(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 10),
+                    padding: const EdgeInsets.only(
+                        left: 16, right: 16, top: 10, bottom: 70),
                     child: GridView.count(
                       shrinkWrap: true,
                       crossAxisCount: 2,
@@ -237,21 +237,28 @@ class ViewAllScreenState extends State<ViewAllScreen> {
               ),
             ),
           ),
-          DoubleButton(
-            firstText: "Sort By",
-            secondText: "Filters",
-            firstTextColor: deepGreytextColor,
-            secondTextColor: deepGreytextColor,
-            firstBackgroundColor: whiteTextColor,
-            secondBackgroundColor: whiteTextColor,
-            firstBorderColor: deepGreytextColor,
-            secondBorderColor: deepGreytextColor,
-            onPressedFirst: () {},
-            onPressedSecond: () {
-              /*  Get.to(
-                      () => const LoginScreen(),
-                    ); */
-            },
+          Positioned(
+            bottom: 0,
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: DoubleButton(
+                firstText: "Sort By",
+                secondText: "Filters",
+                firstTextColor: deepGreytextColor,
+                secondTextColor: deepGreytextColor,
+                firstBackgroundColor: whiteTextColor,
+                secondBackgroundColor: whiteTextColor,
+                firstBorderColor: deepGreytextColor,
+                secondBorderColor: deepGreytextColor,
+                onPressedFirst: () {},
+                onPressedSecond: () {
+                  /*  Get.to(
+                          () => const LoginScreen(),
+                        ); */
+                },
+              ),
+            ),
           ),
         ],
       ),

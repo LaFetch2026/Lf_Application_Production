@@ -20,77 +20,91 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     const HomeScreen(),
     const BrandsScreen(),
     const WishlistScreen(),
-    const AccountScreen()
+    const AccountScreen(),
+    const ExpressShoppingScreen(),
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: /* FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  const ExpressShoppingScreen()));
+          setState(() {
+            _currentIndex = 4;
+          });
         },
-        backgroundColor: btnTextColor,
-        foregroundColor: whiteBorderColor,
-        child: Image.asset(boltIcon),
+        backgroundColor: null,
+        foregroundColor: null,
+        child: Image.asset(
+          _currentIndex == 4 ? boltIcon : boltIcon,
+          height: 70,
+          width: 70,
+        ),
+      ), */
+          GestureDetector(
+        onTap: () {
+          setState(() {
+            _currentIndex = 4;
+          });
+        },
+        child: Image.asset(
+          _currentIndex == 4 ? boltWhiteImage : boltBlackImage,
+          height: 70,
+          width: 70,
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
-        notchMargin: 1,
+        notchMargin: -15,
         shape: const CircularNotchedRectangle(),
         color: colorPrimary,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.max,
           children: [
             MaterialButton(
+              color: _currentIndex == 0 ? colorSecondary : bottomnavBack,
               onPressed: () {
                 setState(() {
                   _currentIndex = 0;
                 });
               },
-              child: Container(
-                color: _currentIndex == 0 ? colorSecondary : bottomnavBack,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 10, top: 5, left: 5, right: 5),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(
-                            _currentIndex == 0 ? homeIcon : homeUnselectImage),
-                        color:
-                            _currentIndex == 0 ? bottomnavBack : colorSecondary,
-                        size: 22,
-                      ),
-                      Text(
-                        "Home",
-                        style: TextStyle(
-                            color: _currentIndex == 0
-                                ? bottomnavBack
-                                : colorSecondary,
-                            fontSize: 10.sp,
-                            fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(
+                          _currentIndex == 0 ? homeIcon : homeUnselectImage),
+                      color:
+                          _currentIndex == 0 ? bottomnavBack : colorSecondary,
+                      size: 22,
+                    ),
+                    Text(
+                      "Home",
+                      style: TextStyle(
+                          color: _currentIndex == 0
+                              ? bottomnavBack
+                              : colorSecondary,
+                          fontSize: 10.sp,
+                          fontFamily: "Franklin Gothic"),
+                    )
+                  ],
                 ),
               ),
             ),
-            MaterialButton(
-              onPressed: () {
-                setState(() {
-                  _currentIndex = 1;
-                });
-              },
-              child: Container(
+            Container(
+              margin: const EdgeInsets.only(right: 4),
+              child: MaterialButton(
                 color: _currentIndex == 1 ? colorSecondary : bottomnavBack,
+                onPressed: () {
+                  setState(() {
+                    _currentIndex = 1;
+                  });
+                },
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 10, top: 5, left: 5, right: 5),
+                  padding: const EdgeInsets.only(bottom: 10, top: 5),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -115,17 +129,17 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                 ),
               ),
             ),
-            MaterialButton(
-              onPressed: () {
-                setState(() {
-                  _currentIndex = 2;
-                });
-              },
-              child: Container(
+            Container(
+              margin: const EdgeInsets.only(left: 4),
+              child: MaterialButton(
                 color: _currentIndex == 2 ? colorSecondary : bottomnavBack,
+                onPressed: () {
+                  setState(() {
+                    _currentIndex = 2;
+                  });
+                },
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 10, top: 5, left: 5, right: 5),
+                  padding: const EdgeInsets.only(bottom: 10, top: 5),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -152,38 +166,35 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               ),
             ),
             MaterialButton(
+              color: _currentIndex == 3 ? colorSecondary : bottomnavBack,
               onPressed: () {
                 setState(() {
                   _currentIndex = 3;
                 });
               },
-              child: Container(
-                color: _currentIndex == 3 ? colorSecondary : bottomnavBack,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      bottom: 10, top: 5, left: 5, right: 5),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(_currentIndex == 3
-                            ? accountSelectImage
-                            : accountIcon),
-                        color:
-                            _currentIndex == 3 ? bottomnavBack : colorSecondary,
-                        size: 22,
-                      ),
-                      Text(
-                        "Account",
-                        style: TextStyle(
-                            color: _currentIndex == 3
-                                ? bottomnavBack
-                                : colorSecondary,
-                            fontSize: 10.sp,
-                            fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(_currentIndex == 3
+                          ? accountSelectImage
+                          : accountIcon),
+                      color:
+                          _currentIndex == 3 ? bottomnavBack : colorSecondary,
+                      size: 22,
+                    ),
+                    Text(
+                      "Account",
+                      style: TextStyle(
+                          color: _currentIndex == 3
+                              ? bottomnavBack
+                              : colorSecondary,
+                          fontSize: 10.sp,
+                          fontFamily: "Franklin Gothic"),
+                    )
+                  ],
                 ),
               ),
             ),
