@@ -118,3 +118,4 @@ const greyCrossImage = 'assets/images/grey_cross.png';
 const curveArrowImage = 'assets/images/up_arrow_curve.png';
 const boltBlackImage = 'assets/images/bolt_image.png';
 const boltWhiteImage = 'assets/images/bolt_white.png';
+const bigHeartImage = 'assets/images/big_heart.png';

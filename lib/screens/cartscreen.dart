@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
 import 'package:lafetch/commonwidget/smallbtn.dart';
 import '../commonwidget/app_text.dart';
-import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
 
@@ -28,11 +28,11 @@ class CartScreenState extends State<CartScreen> {
       backgroundColor: whiteTextColor,
       body: Column(
         children: [
-          BackButtonAppbar(
+          CartAppbar(
             text: "Shopping Bag",
             threeDot: true,
-            icon: heartImage,
-            onPressedThreeDot: () {},
+            icon: bigHeartImage,
+            onPressedHeart: () {},
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -103,27 +103,31 @@ class CartScreenState extends State<CartScreen> {
                             height: 0,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              const ImageIcon(
-                                AssetImage(deleteIcon),
-                                color: colorPrimary,
-                                size: 16,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: AppText(
-                                  text: "Clear Bag",
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const ImageIcon(
+                                  AssetImage(deleteIcon),
                                   color: colorPrimary,
-                                  fontSize: 12.sp,
+                                  size: 16,
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  child: AppText(
+                                    text: "Clear Bag",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: colorPrimary,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -379,7 +383,7 @@ class CartScreenState extends State<CartScreen> {
                         horizontal: 16, vertical: 10),
                     child: SizedBox(
                       width: double.infinity,
-                      height: 300,
+                      height: 310,
                       child: ListView.builder(
                           shrinkWrap: true,
                           primary: false,
@@ -394,6 +398,7 @@ class CartScreenState extends State<CartScreen> {
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 300),
                                     margin: const EdgeInsets.only(right: 8),
+                                    color: whiteColor,
                                     width: 122,
                                     child: Column(
                                       crossAxisAlignment:
@@ -445,15 +450,17 @@ class CartScreenState extends State<CartScreen> {
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 10),
-                                                child: AppText(
-                                                  text:
-                                                      "\u{20B9} ${items[index]}",
-                                                  color: textHintColor,
-                                                  maxLines: 2,
-                                                  fontSize: 11.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
+                                                child: Text(
+                                                  "\u{20B9} ${items[index]}",
+                                                  style: TextStyle(
+                                                    color: textHintColor,
+                                                    fontSize: 11.sp,
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -478,6 +485,9 @@ class CartScreenState extends State<CartScreen> {
                             );
                           }),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 8,
                   ),
                   Container(
                     color: whiteColor,
@@ -520,7 +530,7 @@ class CartScreenState extends State<CartScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8),
                                             child: AppText(
-                                              text: "Apply Coupan",
+                                              text: "Apply Coupon",
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
                                               color: textFilter,
@@ -784,7 +794,7 @@ class CartScreenState extends State<CartScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 4),
                                   child: AppText(
-                                    text: "Total Bill",
+                                    text: "Bill total",
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w500,
                                     color: colorPrimary,
