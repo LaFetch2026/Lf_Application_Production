@@ -63,7 +63,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           mainAxisSize: MainAxisSize.max,
           children: [
             MaterialButton(
-              color: _currentIndex == 0 ? colorSecondary : bottomnavBack,
+              color: _currentIndex == 0 ? colorSecondary : colorPrimary,
               onPressed: () {
                 setState(() {
                   _currentIndex = 0;
@@ -97,7 +97,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             Container(
               margin: const EdgeInsets.only(right: 4),
               child: MaterialButton(
-                color: _currentIndex == 1 ? colorSecondary : bottomnavBack,
+                color: _currentIndex == 1 ? colorSecondary : colorPrimary,
                 onPressed: () {
                   setState(() {
                     _currentIndex = 1;
@@ -132,7 +132,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             Container(
               margin: const EdgeInsets.only(left: 4),
               child: MaterialButton(
-                color: _currentIndex == 2 ? colorSecondary : bottomnavBack,
+                color: _currentIndex == 2 ? colorSecondary : colorPrimary,
                 onPressed: () {
                   setState(() {
                     _currentIndex = 2;
@@ -166,7 +166,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               ),
             ),
             MaterialButton(
-              color: _currentIndex == 3 ? colorSecondary : bottomnavBack,
+              color: _currentIndex == 3 ? colorSecondary : colorPrimary,
               onPressed: () {
                 setState(() {
                   _currentIndex = 3;
