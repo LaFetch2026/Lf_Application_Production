@@ -31,7 +31,16 @@ class SplashThreeScreenState extends State<SplashThreeScreen> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
-        color: btnTextColor,
+        gradient: LinearGradient(
+          colors: [
+            btnTextColor,
+            Color(0xFF241736),
+            Color(0xFF1D132C),
+            Color(0xFF130C1C),
+            Color(0xFF040206),
+            blackColor,
+          ],
+        ),
       ),
       child: Center(
           child: Center(
