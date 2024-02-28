@@ -31,7 +31,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
-        color: colorPrimary,
+        color: btnTextColor,
       ),
       child: Center(
           child: Center(
