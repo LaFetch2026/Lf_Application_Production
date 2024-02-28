@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lafetch/commonwidget/app_button.dart';
 import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
@@ -37,6 +38,23 @@ class LoginScreenState extends State<LoginScreen> {
     }
     setState(() {});
     super.initState();
+  }
+
+  void googleSignInProcess(BuildContext context) async {
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    if (googleUser != null) {
+      GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+      String? token = googleAuth.idToken;
+      print("name ${googleUser.displayName}");
+      print("email ${googleUser.email}");
+      print("photoUrl ${googleUser.photoUrl}");
+      print("id ${googleUser.id}");
+      print("token $token");
+      if (googleUser.displayName != null) {
+        Get.to(const BottomNavScreen());
+      }
+    }
   }
 
   @override
@@ -144,6 +162,10 @@ class LoginScreenState extends State<LoginScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               image: googleImage,
                               textColor: greyTextColor,
+                              onPressed: () {
+                                //  signup(context);
+                                googleSignInProcess(context);
+                              },
                               borderColor: colorSecondary,
                               fontSize: 14.sp,
                               backgroundColor: whiteTextColor),
