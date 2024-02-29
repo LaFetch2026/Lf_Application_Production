@@ -36,6 +36,11 @@ const Color deepGreen = Color(0xFF26443E);
 const Color underlineColor = Color(0xFF786E85);
 const Color greenText = Color(0xFF60AB9A);
 const Color greyBorder = Color(0xFFAFB1B6);
+const Color color5StartReview = Color(0xFF4D897B);
+const Color color4StartReview = Color(0xFF60AB9A);
+const Color color3StartReview = Color(0xFF60AB9A);
+const Color color2StartReview = Color(0xFFE9C437);
+const Color color1StartReview = Color(0xFFD95656);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
