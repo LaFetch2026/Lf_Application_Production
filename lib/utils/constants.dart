@@ -121,3 +121,6 @@ const boltWhiteImage = 'assets/images/bolt_white.png';
 const bigHeartImage = 'assets/images/big_heart.png';
 const switchOnImage = 'assets/images/switch_on.png';
 const switchOffImage = 'assets/images/switch_off.png';
+const upiImage = 'assets/images/upi_image.png';
+const googlePayImage = 'assets/images/google_pay.png';
+const paytmImage = 'assets/images/paytm.png';

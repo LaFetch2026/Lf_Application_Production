@@ -10,12 +10,14 @@ class BackButtonAppbar extends StatelessWidget {
   final bool threeDot;
   final String icon;
   final Function? onPressedThreeDot;
+  final Color backgroundColor;
 
   const BackButtonAppbar(
       {Key? key,
       required this.text,
       required this.threeDot,
       required this.icon,
+      this.backgroundColor = whiteTextColor,
       this.onPressedThreeDot})
       : super(key: key);
 
@@ -24,7 +26,7 @@ class BackButtonAppbar extends StatelessWidget {
     return Container(
       height: 80,
       width: MediaQuery.of(context).size.width,
-      color: whiteTextColor,
+      color: backgroundColor,
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 40, right: 16),

@@ -36,7 +36,7 @@ class PaymentFailWidget extends StatelessWidget {
                   height: 180, width: 200, fit: BoxFit.cover),
             )),
         Padding(
-          padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+          padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
           child: Center(
             child: AppText(
               text: text1,
@@ -48,7 +48,7 @@ class PaymentFailWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
           child: AppText(
             text: text2,
             fontFamily: "Franklin Gothic Regular",
@@ -58,16 +58,16 @@ class PaymentFailWidget extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+          padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
           child: SmallButton(
-              width: 150,
+              width: 160,
               label: btntext,
               textColor: whiteBorderColor,
-              backgroundColor: btnTextColor,
+              backgroundColor: colorPrimary,
               onPressed: () {
                 onPressed?.call();
               },
-              borderColor: btnTextColor),
+              borderColor: colorPrimary),
         )
       ],
     );
