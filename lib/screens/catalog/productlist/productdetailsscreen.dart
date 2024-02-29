@@ -31,6 +31,69 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     {'id': '5', 'title': 'XL', 'left': '1'},
   ];
 
+  final List<Map<String, String>> reviewsCount = [
+    {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
+    {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
+    {'id': '3', 'title': '3', 'count': '250', 'total': '2015'},
+    {'id': '4', 'title': '2', 'count': '87', 'total': '2015'},
+    {'id': '5', 'title': '1', 'count': '151', 'total': '2015'},
+  ];
+
+  final List<Map<String, String>> customerReviews = [
+    {
+      'id': '1',
+      'rating': '5',
+      'name': 'Samantha Payne',
+      'comment':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+      'date': '2 years ago',
+      'helpfulCount': '21'
+    },
+    {
+      'id': '1',
+      'rating': '4',
+      'name': 'Payne Samantha',
+      'comment':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+      'date': '6 years ago',
+      'helpfulCount': '2'
+    },
+    {
+      'id': '1',
+      'rating': '1',
+      'name': 'Samantha',
+      'comment':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+      'date': '1 years ago',
+      'helpfulCount': '31'
+    },
+  ];
+
+  Color getColorForReview(reviewTitle) {
+    switch (reviewTitle) {
+      case '5':
+        return color5StartReview;
+      case '4':
+        return color4StartReview;
+      case '3':
+        return color3StartReview;
+      case '2':
+        return color2StartReview;
+      case '1':
+        return color1StartReview;
+      default:
+        return colorPrimary;
+    }
+  }
+
+  List<String> items = [
+    "100",
+    "200",
+    "300",
+    "400",
+    "500",
+  ];
+
   List<Widget> getListForPageView() {
     List<Widget> list = [];
     for (var i in images) {
@@ -382,7 +445,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 18.0, bottom: 54.0),
+                                  top: 18.0, bottom: 40.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -463,8 +526,629 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             const Divider(
                               color: colorSecondary,
                             ),
+                            ExpansionTile(
+                              title: AppText(
+                                text: 'Product Description',
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w500,
+                                color: colorPrimary,
+                                fontSize: 16.sp,
+                              ),
+                              tilePadding: const EdgeInsets.all(0),
+                              childrenPadding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              children: [
+                                AppText(
+                                  text:
+                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+                                  fontFamily: "Franklin Gothic Regular",
+                                  maxLines: 7,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorPrimary,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              color: colorSecondary,
+                            ),
+                            ExpansionTile(
+                              title: AppText(
+                                text: 'Composition & Care',
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w500,
+                                color: colorPrimary,
+                                fontSize: 16.sp,
+                              ),
+                              tilePadding: const EdgeInsets.all(0),
+                              childrenPadding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              children: [
+                                AppText(
+                                  text:
+                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+                                  fontFamily: "Franklin Gothic Regular",
+                                  maxLines: 7,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorPrimary,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              color: colorSecondary,
+                            ),
+                            ExpansionTile(
+                              title: AppText(
+                                text: 'Delivery & Returns',
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w500,
+                                color: colorPrimary,
+                                fontSize: 16.sp,
+                              ),
+                              tilePadding: const EdgeInsets.all(0),
+                              childrenPadding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              children: [
+                                AppText(
+                                  text:
+                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+                                  fontFamily: "Franklin Gothic Regular",
+                                  maxLines: 7,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorPrimary,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              color: colorSecondary,
+                            ),
+                            ExpansionTile(
+                              title: AppText(
+                                text: 'About the Brand',
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w500,
+                                color: colorPrimary,
+                                fontSize: 16.sp,
+                              ),
+                              tilePadding: const EdgeInsets.all(0),
+                              childrenPadding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              children: [
+                                AppText(
+                                  text:
+                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
+                                  fontFamily: "Franklin Gothic Regular",
+                                  maxLines: 7,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorPrimary,
+                                  fontSize: 12.sp,
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              color: colorSecondary,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              heightFactor: 2.0,
+                              child: AppText(
+                                text: 'LaFetch ID: 27384720',
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w500,
+                                color: textHintColor,
+                                fontSize: 12.sp,
+                              ),
+                            ),
                           ]),
                     ),
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      color: backWhite,
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      child: AppText(
+                        text: 'You will earn 10 LaFetch coins on this purchase',
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w500,
+                        color: expressText,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 30.0, horizontal: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          AppText(
+                            text: 'Customer Reviews',
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w500,
+                            color: colorPrimary,
+                            fontSize: 16.sp,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20.0, horizontal: 16.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AppText(
+                                      text: '${4.5} \u{2605}',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w500,
+                                      color: blackColor,
+                                      fontSize: 24.sp,
+                                    ),
+                                    AppText(
+                                      text: '2015 verified buyers',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w500,
+                                      color: textHintColor,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    ...reviewsCount.map((e) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 2.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              AppText(
+                                                text:
+                                                    '${e['title']} \u{2605}  ',
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w500,
+                                                color: blackColor,
+                                                fontSize: 10.sp,
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.33,
+                                                child: LinearProgressIndicator(
+                                                  value: (int.parse(e['count']
+                                                          .toString()) /
+                                                      int.parse(e['total']
+                                                          .toString())),
+                                                  backgroundColor:
+                                                      colorSecondary,
+                                                  color: getColorForReview(
+                                                      e['title']),
+                                                ),
+                                              ),
+                                              AppText(
+                                                text: '  ${e['count']}',
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w500,
+                                                color: blackColor,
+                                                fontSize: 10.sp,
+                                              ),
+                                            ],
+                                          ),
+                                        ))
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ...customerReviews.map(
+                                (e) => Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          color: color5StartReview,
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Text(
+                                            ' ${e['rating']} \u{2605} ',
+                                            style: TextStyle(
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w500,
+                                              color: whiteColor,
+                                              fontSize: 12.sp,
+                                            ),
+                                          ),
+                                        ),
+                                        AppText(
+                                          text: '${e['date']}',
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textHintColor,
+                                          fontSize: 12.sp,
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0),
+                                      child: AppText(
+                                        text: '${e['comment']}',
+                                        maxLines: 4,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greyTextColor,
+                                        fontSize: 14.sp,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          text: 'Read more  ',
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w600,
+                                          color: bottomnavBack,
+                                          fontSize: 12.sp,
+                                        ),
+                                        const ImageIcon(
+                                          AssetImage(dropdownImage),
+                                          color: nameText,
+                                          size: 16,
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          AppText(
+                                            text: '${e['name']}',
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: bottomnavBack,
+                                            fontSize: 11.sp,
+                                          ),
+                                          AppText(
+                                            text:
+                                                '${e['helpfulCount']} found this helpful',
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: bottomnavBack,
+                                            fontSize: 11.sp,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(
+                                      color: colorSecondary,
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: AppText(
+                              text: "Recommended for you",
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              color: blackColor,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 250,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  primary: false,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: items.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {},
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            margin:
+                                                const EdgeInsets.only(right: 5),
+                                            width: 122,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Image.asset(backImage,
+                                                    height: 150,
+                                                    width: 122,
+                                                    fit: BoxFit.cover),
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                                  child: AppText(
+                                                    text:
+                                                        "Topman super skinny suit jacket and trousers in light blue",
+                                                    color: nameText,
+                                                    maxLines: 2,
+                                                    fontSize: 11.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      AppText(
+                                                        text:
+                                                            "\u{20B9} ${items[index]}",
+                                                        color:
+                                                            deepGreytextColor,
+                                                        maxLines: 2,
+                                                        fontSize: 11.sp,
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 10),
+                                                        child: Text(
+                                                          "\u{20B9} ${items[index]}",
+                                                          style: TextStyle(
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 11.sp,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .lineThrough,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      const ImageIcon(
+                                                        AssetImage(truckImage),
+                                                        color: expressText,
+                                                        size: 14,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 5),
+                                                        child: AppText(
+                                                          text: "Express",
+                                                          color: expressText,
+                                                          maxLines: 2,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                            ),
+                          ),
+                          const Divider(
+                            color: colorSecondary,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: AppText(
+                              text: "Frequently bought with",
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              color: blackColor,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 250,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  primary: false,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: items.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {},
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            margin:
+                                                const EdgeInsets.only(right: 5),
+                                            width: 122,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Image.asset(backImage,
+                                                    height: 150,
+                                                    width: 122,
+                                                    fit: BoxFit.cover),
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                                  child: AppText(
+                                                    text:
+                                                        "Topman super skinny suit jacket and trousers in light blue",
+                                                    color: nameText,
+                                                    maxLines: 2,
+                                                    fontSize: 11.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      AppText(
+                                                        text:
+                                                            "\u{20B9} ${items[index]}",
+                                                        color:
+                                                            deepGreytextColor,
+                                                        maxLines: 2,
+                                                        fontSize: 11.sp,
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 10),
+                                                        child: Text(
+                                                          "\u{20B9} ${items[index]}",
+                                                          style: TextStyle(
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 11.sp,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .lineThrough,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      const ImageIcon(
+                                                        AssetImage(truckImage),
+                                                        color: expressText,
+                                                        size: 14,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 5),
+                                                        child: AppText(
+                                                          text: "Express",
+                                                          color: expressText,
+                                                          maxLines: 2,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                            ),
+                          ),
+                          const Divider(
+                            color: colorSecondary,
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
