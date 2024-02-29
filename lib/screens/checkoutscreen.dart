@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/screens/shippingaddressscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
@@ -581,7 +583,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         label: "Pay Now",
                         textColor: whiteBorderColor,
                         backgroundColor: colorPrimary,
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.to(const ShippingAddressScreen());
+                        },
                         borderColor: colorPrimary),
                   ),
                 ),

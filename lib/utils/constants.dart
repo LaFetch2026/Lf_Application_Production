@@ -35,6 +35,7 @@ const Color deepRed = Color(0xFF8E2B2B);
 const Color deepGreen = Color(0xFF26443E);
 const Color underlineColor = Color(0xFF786E85);
 const Color greenText = Color(0xFF60AB9A);
+const Color greyBorder = Color(0xFFAFB1B6);
 
 const splashGif = 'assets/splash.gif';
 const backImage = 'assets/images/back_image.png';
@@ -118,3 +119,5 @@ const curveArrowImage = 'assets/images/up_arrow_curve.png';
 const boltBlackImage = 'assets/images/bolt_image.png';
 const boltWhiteImage = 'assets/images/bolt_white.png';
 const bigHeartImage = 'assets/images/big_heart.png';
+const switchOnImage = 'assets/images/switch_on.png';
+const switchOffImage = 'assets/images/switch_off.png';
