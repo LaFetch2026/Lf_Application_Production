@@ -753,112 +753,122 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ],
                             ),
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ...customerReviews.map(
-                                (e) => Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          color: color5StartReview,
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            ' ${e['rating']} \u{2605} ',
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w500,
-                                              color: whiteColor,
-                                              fontSize: 12.sp,
-                                            ),
-                                          ),
-                                        ),
-                                        AppText(
-                                          text: '${e['date']}',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: textHintColor,
-                                          fontSize: 12.sp,
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
-                                      child: AppText(
-                                        text: '${e['comment']}',
-                                        maxLines: 4,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: greyTextColor,
-                                        fontSize: 14.sp,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        AppText(
-                                          text: 'Read more  ',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w600,
-                                          color: bottomnavBack,
-                                          fontSize: 12.sp,
-                                        ),
-                                        const ImageIcon(
-                                          AssetImage(dropdownImage),
-                                          color: nameText,
-                                          size: 16,
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10.0),
-                                      child: Row(
+                          SizedBox(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                primary: false,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: customerReviews.length,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (ctx, index) {
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            color: color5StartReview,
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              ' ${customerReviews[index]['rating']} \u{2605} ',
+                                              style: TextStyle(
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w500,
+                                                color: whiteColor,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ),
+                                          ),
+                                          AppText(
+                                            text:
+                                                '${customerReviews[index]['date']}',
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textHintColor,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10.0),
+                                        child: AppText(
+                                          text:
+                                              '${customerReviews[index]['comment']}',
+                                          maxLines: 4,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: greyTextColor,
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           AppText(
-                                            text: '${e['name']}',
+                                            text: 'Read more  ',
                                             fontFamily:
                                                 "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
+                                            fontWeight: FontWeight.w600,
                                             color: bottomnavBack,
-                                            fontSize: 11.sp,
+                                            fontSize: 12.sp,
                                           ),
-                                          AppText(
-                                            text:
-                                                '${e['helpfulCount']} found this helpful',
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: bottomnavBack,
-                                            fontSize: 11.sp,
+                                          const ImageIcon(
+                                            AssetImage(dropdownImage),
+                                            color: nameText,
+                                            size: 16,
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    const Divider(
-                                      color: colorSecondary,
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            AppText(
+                                              text:
+                                                  '${customerReviews[index]['name']}',
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: bottomnavBack,
+                                              fontSize: 11.sp,
+                                            ),
+                                            AppText(
+                                              text:
+                                                  '${customerReviews[index]['helpfulCount']} found this helpful',
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: bottomnavBack,
+                                              fontSize: 11.sp,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: colorSecondary,
+                                      )
+                                    ],
+                                  );
+                                }),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16.0),
