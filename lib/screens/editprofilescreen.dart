@@ -192,9 +192,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               child: SingleButton(
                   label: "Save Changes",
                   textColor: whiteBorderColor,
-                  backgroundColor: btnTextColor,
+                  backgroundColor: colorPrimary,
                   onPressed: () {},
-                  borderColor: btnTextColor),
+                  borderColor: colorPrimary),
             )
           ],
         ),

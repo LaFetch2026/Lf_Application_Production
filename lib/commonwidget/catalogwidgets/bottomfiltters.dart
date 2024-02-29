@@ -341,14 +341,14 @@ class BottomFiltersState extends State<BottomFilters> {
                                                         child: ImageIcon(
                                                           AssetImage(
                                                               checkImage),
-                                                          color: textFilter,
+                                                          color: textColor,
                                                           size: 14,
                                                         ),
                                                       ),
                                                       Text(
                                                         items[index],
                                                         style: TextStyle(
-                                                          color: textFilter,
+                                                          color: textColor,
                                                           decoration:
                                                               TextDecoration
                                                                   .none,

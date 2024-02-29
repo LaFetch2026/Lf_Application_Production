@@ -287,11 +287,11 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                   child: SingleButton(
                       label: widget.btnText,
                       textColor: whiteBorderColor,
-                      backgroundColor: btnTextColor,
+                      backgroundColor: colorPrimary,
                       onPressed: () {
                         Get.close(2);
                       },
-                      borderColor: btnTextColor),
+                      borderColor: colorPrimary),
                 )
         ],
       ),

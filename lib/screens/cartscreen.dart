@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
 import 'package:lafetch/commonwidget/smallbtn.dart';
+import 'package:lafetch/screens/checkoutscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
@@ -533,7 +535,7 @@ class CartScreenState extends State<CartScreen> {
                                               text: "Apply Coupon",
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
-                                              color: textFilter,
+                                              color: textColor,
                                               fontSize: 14.sp,
                                             ),
                                           ),
@@ -549,7 +551,7 @@ class CartScreenState extends State<CartScreen> {
                                       text: "Select",
                                       fontFamily: "Franklin Gothic",
                                       fontWeight: FontWeight.w500,
-                                      color: textFilter,
+                                      color: textColor,
                                       fontSize: 12.sp,
                                     ),
                                   ],
@@ -587,7 +589,7 @@ class CartScreenState extends State<CartScreen> {
                                     text: "Total MRP",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
-                                    color: textFilter,
+                                    color: textColor,
                                     fontSize: 12.sp,
                                   ),
                                 ),
@@ -600,7 +602,7 @@ class CartScreenState extends State<CartScreen> {
                                   text: "\u{20B9} ${2537.00}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: textFilter,
+                                  color: textColor,
                                   fontSize: 12.sp,
                                 ),
                               ],
@@ -618,7 +620,7 @@ class CartScreenState extends State<CartScreen> {
                                     text: "Express Delivery Charges",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
-                                    color: textFilter,
+                                    color: textColor,
                                     fontSize: 12.sp,
                                   ),
                                 ),
@@ -631,7 +633,7 @@ class CartScreenState extends State<CartScreen> {
                                   text: "\u{20B9} ${112.32}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: textFilter,
+                                  color: textColor,
                                   fontSize: 12.sp,
                                 ),
                               ],
@@ -649,7 +651,7 @@ class CartScreenState extends State<CartScreen> {
                                     text: "Discount on MRP",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
-                                    color: textFilter,
+                                    color: textColor,
                                     fontSize: 12.sp,
                                   ),
                                 ),
@@ -680,7 +682,7 @@ class CartScreenState extends State<CartScreen> {
                                     text: "Coupon Discount",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
-                                    color: textFilter,
+                                    color: textColor,
                                     fontSize: 12.sp,
                                   ),
                                 ),
@@ -713,7 +715,7 @@ class CartScreenState extends State<CartScreen> {
                                         text: "Convenience Fee",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        color: textFilter,
+                                        color: textColor,
                                         fontSize: 12.sp,
                                       ),
                                     ),
@@ -752,7 +754,7 @@ class CartScreenState extends State<CartScreen> {
                                         text: "Tax & Charges",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        color: textFilter,
+                                        color: textColor,
                                         fontSize: 12.sp,
                                       ),
                                     ),
@@ -771,7 +773,7 @@ class CartScreenState extends State<CartScreen> {
                                   text: "\u{20B9} ${36}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: textFilter,
+                                  color: textColor,
                                   fontSize: 12.sp,
                                 ),
                               ],
@@ -1006,9 +1008,11 @@ class CartScreenState extends State<CartScreen> {
                   child: SingleButton(
                       label: "Proceed to checkout",
                       textColor: whiteBorderColor,
-                      backgroundColor: btnTextColor,
-                      onPressed: () {},
-                      borderColor: btnTextColor),
+                      backgroundColor: colorPrimary,
+                      onPressed: () {
+                        Get.to(const CheckoutScreen());
+                      },
+                      borderColor: colorPrimary),
                 ),
               ],
             ),

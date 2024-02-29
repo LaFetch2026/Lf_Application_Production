@@ -64,11 +64,11 @@ class CartWidget extends StatelessWidget {
           child: SingleButton(
               label: btntext,
               textColor: whiteBorderColor,
-              backgroundColor: btnTextColor,
+              backgroundColor: colorPrimary,
               onPressed: () {
                 onPressed?.call();
               },
-              borderColor: btnTextColor),
+              borderColor: colorPrimary),
         )
       ],
     );

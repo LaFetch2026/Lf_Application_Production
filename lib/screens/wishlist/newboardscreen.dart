@@ -57,7 +57,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
             child: SingleButton(
                 label: widget.btnText,
                 textColor: whiteBorderColor,
-                backgroundColor: btnTextColor,
+                backgroundColor: colorPrimary,
                 onPressed: () {
                   Get.to(
                     () => const CreateBoardScreen(
@@ -65,7 +65,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     ),
                   );
                 },
-                borderColor: btnTextColor),
+                borderColor: colorPrimary),
           )
         ],
       ),
