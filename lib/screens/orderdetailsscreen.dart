@@ -19,7 +19,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     "1",
     "2",
   ];
-  List<String> trackOrderItem = ["Order Confirmed", "Shipped", "Delivered"];
+  List<String> trackOrderItem = [
+    "Order Confirmed",
+    "Packed",
+    "Shipped",
+    "Delivered"
+  ];
+  List<String> orderItem = ["Confirmed", "Packed", "Shipped", "Delivered"];
   /* List<TextDto> orderList = [
     TextDto("Sun, 27th Mar '22 - 10:19am", null),
   ];
@@ -43,6 +49,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
           const BackButtonAppbar(
             text: "Order details",
             threeDot: false,
+            backgroundColor: whiteColor,
             icon: threeDotImage,
           ),
           Expanded(
@@ -50,142 +57,226 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Center(
-                      child: Image.asset(orderDispatchImage,
-                          height: 250, width: 250, fit: BoxFit.cover),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: AppText(
-                      text: "Order Details",
-                      maxLines: 1,
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18.sp,
-                      color: loginText,
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                    child: Row(
+                  Container(
+                    color: whiteColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 1,
-                          child: Image.asset(backImage,
-                              height: 85, width: 70, fit: BoxFit.cover),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Center(
+                            child: Image.asset(shippedGif,
+                                height: 250, fit: BoxFit.cover),
+                          ),
                         ),
-                        Expanded(
-                          flex: 3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                ),
-                                child: AppText(
-                                  text:
-                                      "Topman super skinny suit jacket and trousers in light blue",
-                                  maxLines: 1,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14.sp,
-                                  color: nameText,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 5),
-                                child: AppText(
-                                  text: "Jack & Jones Core",
-                                  color: greyTextColor,
-                                  maxLines: 2,
-                                  fontSize: 12.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 5),
-                                child: Row(
-                                  children: [
-                                    AppText(
-                                      text: "Size :M",
-                                      color: greyTextColor,
-                                      maxLines: 2,
-                                      fontSize: 12.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Padding(
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 14, right: 14, bottom: 10),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 30,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                primary: false,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: orderItem.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (ctx, index) {
+                                  return Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
+                                            horizontal: 2),
+                                        child: index < 2
+                                            ? Image.asset(
+                                                greenDotImage,
+                                                height: 8,
+                                                width: 8,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.asset(
+                                                greyDotImage,
+                                                height: 8,
+                                                width: 8,
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4),
                                         child: AppText(
-                                          text: "Qty :1",
-                                          color: greyTextColor,
-                                          maxLines: 2,
-                                          fontSize: 12.sp,
+                                          text: orderItem[index],
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
+                                          fontSize: 10.sp,
+                                          color: index < 2
+                                              ? color5StartReview
+                                              : greyDotColor,
                                         ),
                                       ),
+                                      index == 3
+                                          ? const SizedBox(
+                                              width: 0,
+                                            )
+                                          : Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 2),
+                                              child: Container(
+                                                width: 20,
+                                                height: 2,
+                                                color: index < 1
+                                                    ? color5StartReview
+                                                    : greyDotColor,
+                                              ),
+                                            )
+                                    ],
+                                  );
+                                }),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          child: AppText(
+                            text: "Order Details",
+                            maxLines: 1,
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 18.sp,
+                            color: loginText,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Image.asset(backImage,
+                                    height: 85, width: 70, fit: BoxFit.cover),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                      ),
+                                      child: AppText(
+                                        text:
+                                            "Topman super skinny suit jacket and trousers in light blue",
+                                        maxLines: 1,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14.sp,
+                                        color: nameText,
+                                      ),
                                     ),
-                                    AppText(
-                                      text: "\u{20B9} ${120.00}",
-                                      color: greyTextColor,
-                                      fontSize: 12.sp,
-                                      textAlign: TextAlign.right,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 5),
+                                      child: AppText(
+                                        text: "Jack & Jones Core",
+                                        color: greyTextColor,
+                                        maxLines: 2,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 5),
+                                      child: Row(
+                                        children: [
+                                          AppText(
+                                            text: "Size :M",
+                                            color: greyTextColor,
+                                            maxLines: 2,
+                                            fontSize: 12.sp,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              child: AppText(
+                                                text: "Qty :1",
+                                                color: greyTextColor,
+                                                maxLines: 2,
+                                                fontSize: 12.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                          AppText(
+                                            text: "\u{20B9} ${120.00}",
+                                            color: greyTextColor,
+                                            fontSize: 12.sp,
+                                            textAlign: TextAlign.right,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
+                              )
                             ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: Container(
-                      color: lightGreen,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, right: 16, top: 16, bottom: 16),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: AppText(
-                                text: "Delivered",
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
-                                color: deepGreen,
-                                fontSize: 14.sp,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          child: Container(
+                            // color: lightGreen,
+                            color: whiteBack,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 16, top: 16, bottom: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: AppText(
+                                      text: "Order Packed",
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                      color: deepGreen,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                  AppText(
+                                    text: "29 July 2023",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: deepGreen,
+                                    fontSize: 15.sp,
+                                  ),
+                                ],
                               ),
                             ),
-                            AppText(
-                              text: "29 July 2023",
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w500,
-                              color: deepGreen,
-                              fontSize: 15.sp,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -288,7 +379,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           children: [
                                             Image.asset(greenCheckImage,
                                                 height: 24, fit: BoxFit.cover),
-                                            index == 2
+                                            index == 3
                                                 ? const SizedBox(
                                                     height: 0,
                                                   )
