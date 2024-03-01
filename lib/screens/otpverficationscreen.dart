@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/singlebtn.dart';
-import 'package:lafetch/controller/otpverify_controller.dart';
-import 'package:lafetch/screens/userdetails.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+
+import '../commonwidget/common_widgets.dart';
+import '../controller/login_controller.dart';
 
 class OTPVerficationScreen extends StatefulWidget {
   final String phoneMunber;
@@ -19,9 +19,10 @@ class OTPVerficationScreen extends StatefulWidget {
 }
 
 class OTPVerficationScreenState extends State<OTPVerficationScreen> {
-  final otpController = Get.put(OtpVerificationController());
+  final otpController = Get.put(LoginController());
   @override
   void initState() {
+    otpController.showButton.value = false;
     super.initState();
   }
 
@@ -105,7 +106,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           enabledBorderColor: borderColor,
                           showFieldAsBox: true,
                           onCodeChanged: (String code) {
-                            //  otpController.showButton.value = true;
+                            otpController.otp.value = code;
                           },
                           onSubmit: (String verificationCode) {
                             otpController.otp.value = verificationCode;
@@ -152,28 +153,26 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
             Obx(() => otpController.showButton.value
                 ? Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: SingleButton(
+                    child: getSingleButton(
                         label: "Submit",
                         textColor: whiteBorderColor,
                         backgroundColor: btnTextColor,
+                        controller: otpController,
                         onPressed: () {
-                          Get.to(
-                            () => const UserDetailsScreen(),
-                          );
+                          if (otpController
+                              .checkOtpvalidation(otpController.otp.value)) {
+                            otpController.callVerifyOtp();
+                          }
                         },
                         borderColor: btnTextColor),
                   )
                 : Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: SingleButton(
+                    child: getSingleButton(
                         label: "Submit",
                         textColor: greyTextColor,
                         backgroundColor: colorSecondary,
-                        onPressed: () {
-                          Get.to(
-                            () => const UserDetailsScreen(),
-                          );
-                        },
+                        onPressed: () {},
                         borderColor: colorSecondary),
                   ))
           ],

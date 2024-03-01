@@ -5,12 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lafetch/commonwidget/app_button.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
-import 'package:lafetch/commonwidget/singlebtn.dart';
-import 'package:lafetch/screens/otpverficationscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 
 import '../commonwidget/app_text.dart';
@@ -186,22 +185,27 @@ class LoginScreenState extends State<LoginScreen> {
                           child: NumberWidget(
                               controller: loginController.phoneNumber),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40, bottom: 10),
-                          child: SingleButton(
-                              label: "Continue",
-                              textColor: whiteTextColor,
-                              borderColor: colorPrimary,
-                              onPressed: () {
-                                Get.to(
-                                  () => OTPVerficationScreen(
-                                    phoneMunber:
-                                        "+91${loginController.phoneNumber.text.toString().trim()}",
-                                  ),
-                                );
-                              },
-                              fontSize: 14.sp,
-                              backgroundColor: colorPrimary),
+                        Obx(
+                          () => Padding(
+                            padding: const EdgeInsets.only(top: 40, bottom: 10),
+                            child: getSingleButton(
+                                label: "Continue",
+                                textColor: whiteTextColor,
+                                borderColor: colorPrimary,
+                                controller: loginController,
+                                onPressed: () {
+                                  if (loginController.checkNumbervalidation(
+                                      loginController.phoneNumber.text
+                                          .toString()
+                                          .trim())) {
+                                    loginController.number.value =
+                                        "+91${loginController.phoneNumber.text.toString().trim()}";
+                                    loginController.callRegisterAccount();
+                                  }
+                                },
+                                fontSize: 14.sp,
+                                backgroundColor: colorPrimary),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 40),
@@ -272,22 +276,27 @@ class LoginScreenState extends State<LoginScreen> {
                           child: NumberWidget(
                               controller: loginController.phoneNumber),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40, bottom: 10),
-                          child: SingleButton(
-                              label: "Continue",
-                              textColor: whiteTextColor,
-                              borderColor: colorPrimary,
-                              onPressed: () {
-                                Get.to(
-                                  () => OTPVerficationScreen(
-                                    phoneMunber:
-                                        "+91${loginController.phoneNumber.text.toString().trim()}",
-                                  ),
-                                );
-                              },
-                              fontSize: 14.sp,
-                              backgroundColor: colorPrimary),
+                        Obx(
+                          () => Padding(
+                            padding: const EdgeInsets.only(top: 40, bottom: 10),
+                            child: getSingleButton(
+                                label: "Continue",
+                                textColor: whiteTextColor,
+                                borderColor: colorPrimary,
+                                controller: loginController,
+                                onPressed: () {
+                                  if (loginController.checkNumbervalidation(
+                                      loginController.phoneNumber.text
+                                          .toString()
+                                          .trim())) {
+                                    loginController.number.value =
+                                        "+91${loginController.phoneNumber.text.toString().trim()}";
+                                    loginController.callRegisterAccount();
+                                  }
+                                },
+                                fontSize: 14.sp,
+                                backgroundColor: colorPrimary),
+                          ),
                         ),
                         MultipleTextWidget(
                           text1: "By continuing, I agree to the",

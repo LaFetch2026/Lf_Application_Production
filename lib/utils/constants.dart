@@ -134,3 +134,154 @@ const googlePayImage = 'assets/images/google_pay.png';
 const paytmImage = 'assets/images/paytm.png';
 const greenDotImage = 'assets/images/green_dot.png';
 const greyDotImage = 'assets/images/grey_dot.png';
+
+class ApiConstants {
+  ApiConstants._();
+  // static const String baseUrl =
+  //  "https://staging-api.la-fetch.com/customer/api/"; //production
+
+  static const String baseUrl =
+      "https://staging-api.la-fetch.com/customer/api"; //staging
+
+  /*  static showToastMsg(BuildContext context, String msg, Color backgroundcolor) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.transparent,
+      duration: const Duration(milliseconds: 3000),
+      behavior: SnackBarBehavior.floating,
+      elevation: 0,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 80),
+      content: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            height: 40,
+            decoration: BoxDecoration(
+              color: backgroundcolor,
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+            ),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 30,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        msg,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+              top: -20,
+              left: 5,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                      top: 5,
+                      child: Icon(
+                        Icons.clear_outlined,
+                        color: backgroundcolor,
+                        size: 20,
+                      ))
+                ],
+              )),
+        ],
+      ),
+    ));
+  }
+ */
+  static showToastmessage(
+      BuildContext context, String msg, Color backgroundcolor) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.transparent,
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(milliseconds: 3000),
+      elevation: 0,
+      content: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            height: 40,
+            decoration: BoxDecoration(
+              color: backgroundcolor,
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+            ),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 30,
+                ),
+                Expanded(
+                  child: Text(
+                    msg,
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+              top: -20,
+              left: 5,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                      top: 5,
+                      child: Icon(
+                        Icons.clear_outlined,
+                        color: backgroundcolor,
+                        size: 20,
+                      ))
+                ],
+              )),
+        ],
+      ),
+    ));
+  }
+}
