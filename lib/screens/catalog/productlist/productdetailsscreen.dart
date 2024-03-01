@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lafetch/commonwidget/singlebtn.dart';
-import 'package:lafetch/commonwidget/text_field.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 
@@ -172,7 +170,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Stack(
                         children: [
@@ -384,63 +382,51 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               color: colorPrimary,
                               fontSize: 16.sp,
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 12.0),
-                              padding: const EdgeInsets.all(2.0),
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: borderColor, width: 1),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.6,
-                                    child: TextField(
-                                      controller: pincodeController,
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        // filled: true,
-                                        // fillColor: whiteTextColor,
-                                        // focusedBorder: const OutlineInputBorder(
-                                        //     borderSide: BorderSide(color: borderColor)),
-                                        // border: OutlineInputBorder(
-                                        //   borderRadius: BorderRadius.circular(1),
-                                        // ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(1),
-                                          borderSide: const BorderSide(
-                                              color: Color(0x00000000)),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 44,
+                                child: TextField(
+                                  controller: pincodeController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: whiteTextColor,
+                                    suffixIcon: TextButton(
+                                      onPressed: () {},
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(
+                                            right: 6, bottom: 3),
+                                        child: AppText(
+                                          text: 'Check',
+                                          fontFamily: "Franklin Gothic",
+                                          fontWeight: FontWeight.w500,
+                                          color: blackColor,
+                                          fontSize: 14,
                                         ),
-                                        counterText: "",
-                                        hintText: 'Enter pincode',
-                                        hintStyle: const TextStyle(
-                                            fontSize: 14, color: textHintColor),
-                                      ),
-                                      style: TextStyle(
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w500,
-                                        color: colorPrimary,
-                                        fontSize: 14.sp,
                                       ),
                                     ),
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: borderColor)),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1),
+                                      borderSide:
+                                          const BorderSide(color: borderColor),
+                                    ),
+                                    hintText: 'Enter pincode',
+                                    hintStyle: const TextStyle(
+                                        fontSize: 14,
+                                        color: textHintColor,
+                                        fontFamily: "Franklin Gothic Regular"),
                                   ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: AppText(
-                                      text: 'Check',
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w600,
-                                      color: blackColor,
-                                      fontSize: 14.sp,
-                                    ),
-                                  )
-                                ],
+                                  style: const TextStyle(
+                                      color: colorPrimary, fontSize: 14),
+                                ),
                               ),
                             ),
                             Padding(
@@ -912,7 +898,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     fit: BoxFit.cover),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -985,7 +971,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .symmetric(
+                                                                    .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",
@@ -1055,7 +1041,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     fit: BoxFit.cover),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -1128,7 +1114,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .symmetric(
+                                                                    .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",

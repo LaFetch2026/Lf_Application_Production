@@ -42,7 +42,9 @@ const Color color3StartReview = Color(0xFF60AB9A);
 const Color color2StartReview = Color(0xFFE9C437);
 const Color color1StartReview = Color(0xFFD95656);
 
-const splashGif = 'assets/splash.gif';
+const placedGif = 'assets/placed.gif';
+const shippedGif = 'assets/shipped.gif';
+const truckGif = 'assets/truck.gif';
 const backImage = 'assets/images/back_image.png';
 const appNameImage = 'assets/images/app_name_image.png';
 const googleImage = 'assets/images/google.png';
