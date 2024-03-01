@@ -58,11 +58,7 @@ class SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (isSearch) {
-          isSearch = false;
-        } else {
-          isSearch = true;
-        }
+        isSearch = false;
         FocusScope.of(context).requestFocus(FocusNode());
         setState(() {});
       },
