@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 
@@ -205,7 +206,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 children: [
                                   IconButton(
                                     icon: Image.asset(arrowBack),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Get.back();
+                                    },
                                   ),
                                   Column(
                                     children: [
