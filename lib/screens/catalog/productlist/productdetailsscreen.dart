@@ -330,7 +330,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       borderRadius: BorderRadius.circular(18),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(6.0),
+                                      padding: const EdgeInsets.only(
+                                          top: 6, bottom: 6, left: 8, right: 8),
                                       child: AppText(
                                         text: "61% OFF",
                                         color: expressText,
