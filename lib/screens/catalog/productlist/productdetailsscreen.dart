@@ -230,6 +230,45 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                           ),
+                          Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                height: 30,
+                                color: whiteBack,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    AppText(
+                                      text: '\u{2606} ',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w500,
+                                      color: colorPrimary,
+                                      fontSize: 18.sp,
+                                    ),
+                                    AppText(
+                                      text: '4.4',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: colorPrimary,
+                                      fontSize: 12.sp,
+                                    ),
+                                    const VerticalDivider(
+                                        color: colorSecondary),
+                                    AppText(
+                                      text: '8',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: colorPrimary,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ],
+                                ),
+                              ))
                         ],
                       ),
                     ),
@@ -896,13 +935,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Image.asset(backImage,
-                                                    height: 150,
-                                                    width: 122,
-                                                    fit: BoxFit.cover),
+                                                Stack(children: [
+                                                  Image.asset(backImage,
+                                                      height: 150,
+                                                      width: 122,
+                                                      fit: BoxFit.cover),
+                                                  Positioned(
+                                                    right: 0,
+                                                    child: IconButton(
+                                                      icon: CircleAvatar(
+                                                          radius: 12.0,
+                                                          backgroundColor:
+                                                              whiteColor,
+                                                          child: Image.asset(
+                                                              heartImage)),
+                                                      onPressed: () {},
+                                                    ),
+                                                  ),
+                                                ]),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -975,7 +1028,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",
@@ -1039,13 +1092,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Image.asset(backImage,
-                                                    height: 150,
-                                                    width: 122,
-                                                    fit: BoxFit.cover),
+                                                Stack(children: [
+                                                  Image.asset(backImage,
+                                                      height: 150,
+                                                      width: 122,
+                                                      fit: BoxFit.cover),
+                                                  Positioned(
+                                                    right: 0,
+                                                    child: IconButton(
+                                                      icon: CircleAvatar(
+                                                          radius: 12.0,
+                                                          backgroundColor:
+                                                              whiteColor,
+                                                          child: Image.asset(
+                                                              heartImage)),
+                                                      onPressed: () {},
+                                                    ),
+                                                  ),
+                                                ]),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -1118,7 +1185,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",
