@@ -81,9 +81,15 @@ class CatalogScreenState extends State<CatalogScreen> {
             ),
             const Expanded(
               child: TabBarView(children: [
-                WomenCatalogScreen(),
-                WomenCatalogScreen(),
-                WomenCatalogScreen(),
+                WomenCatalogScreen(
+                  categorytext: "women",
+                ),
+                WomenCatalogScreen(
+                  categorytext: "men",
+                ),
+                WomenCatalogScreen(
+                  categorytext: "kids",
+                ),
               ]),
             ),
           ],

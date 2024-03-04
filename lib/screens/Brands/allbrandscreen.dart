@@ -98,7 +98,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       alignment: Alignment.bottomLeft,
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
+                                            horizontal: 18, vertical: 10),
                                         child: AppText(
                                           text: gridList[index],
                                           color: whiteColor,

@@ -24,7 +24,7 @@ class MenScreenState extends State<MenScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 16),
               child: AppText(
-                text: "2",
+                text: "",
                 fontFamily: "Franklin Gothic",
                 fontWeight: FontWeight.w500,
                 color: btnTextColor,

@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/welcomescreen.dart';
 import 'package:lafetch/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashThreeScreen extends StatefulWidget {
   const SplashThreeScreen({super.key});
@@ -13,16 +15,34 @@ class SplashThreeScreen extends StatefulWidget {
 }
 
 class SplashThreeScreenState extends State<SplashThreeScreen> {
+  String? token;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () => nextScreen());
+    getPrefrenceValue();
+    Timer(const Duration(seconds: 2), () => navigateToScreen());
   }
 
-  void nextScreen() {
-    Get.offAll(
-      () => const WelcomeScreen(),
-    );
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+  }
+
+  navigateToScreen() {
+    Future.delayed(const Duration(seconds: 1), () async {
+      if (token != null) {
+        if (token!.isNotEmpty) {
+          Get.offAll(
+            () => const BottomNavScreen(),
+          );
+        }
+      } else {
+        Get.offAll(
+          () => const WelcomeScreen(),
+        );
+      }
+    });
   }
 
   @override

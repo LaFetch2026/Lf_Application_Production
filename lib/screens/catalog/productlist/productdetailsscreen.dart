@@ -197,7 +197,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             // height: 80,
                             alignment: Alignment.center,
                             child: Padding(
-                              padding: const EdgeInsets.all(0.0),
+                              padding: const EdgeInsets.only(right: 8),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment:
@@ -231,8 +231,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                           ),
                           Positioned(
-                              bottom: 10,
-                              right: 10,
+                              bottom: 30,
+                              right: 16,
                               child: Container(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
@@ -243,12 +243,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    AppText(
-                                      text: '\u{2606} ',
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w500,
-                                      color: colorPrimary,
-                                      fontSize: 18.sp,
+                                    Image.asset(
+                                      starImage,
+                                      height: 24,
+                                      color: bottomnavBack,
+                                      width: 24,
                                     ),
                                     AppText(
                                       text: '4.4',
@@ -955,7 +954,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 ]),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -1028,7 +1027,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .symmetric(
+                                                                    .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",
@@ -1112,7 +1111,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 ]),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -1185,7 +1184,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .symmetric(
+                                                                    .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",

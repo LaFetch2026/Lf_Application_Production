@@ -8,7 +8,8 @@ import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 
 class WomenCatalogScreen extends StatefulWidget {
-  const WomenCatalogScreen({super.key});
+  final String categorytext;
+  const WomenCatalogScreen({super.key, required this.categorytext});
 
   @override
   State<WomenCatalogScreen> createState() => WomenCatalogScreenState();
@@ -43,7 +44,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
               child: AppText(
-                text: "For women",
+                text: "For ${widget.categorytext}",
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: textHintColor,
