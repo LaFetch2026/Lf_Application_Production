@@ -67,6 +67,7 @@ class ProfileController extends BaseController {
               body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        getSnackBar("Profile updated");
         print(responseData);
         if (responseData['data']['email'] != null) {
           prefs.setString('email', responseData['data']['email']);

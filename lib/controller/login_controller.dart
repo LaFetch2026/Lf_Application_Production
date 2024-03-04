@@ -72,8 +72,8 @@ class LoginController extends BaseController {
         getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(phoneMunber: number.value));
       } else if (response.statusCode == 400) {
-        if (responseData['source']['phone'] != null) {
-          getSnackBar(responseData['source']['phone'][0]);
+        if (responseData['errors']['phone'] != null) {
+          getSnackBar(responseData['errors']['phone'][0]);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -123,8 +123,8 @@ class LoginController extends BaseController {
           );
         }
       } else if (response.statusCode == 400) {
-        if (responseData['source']['phone'] != null) {
-          getSnackBar(responseData['source']['phone'][0]);
+        if (responseData['errors']['phone'] != null) {
+          getSnackBar(responseData['errors']['phone'][0]);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
