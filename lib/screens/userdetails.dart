@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
-import 'package:lafetch/screens/bottomnavscreen.dart';
-
 import '../commonwidget/app_text.dart';
-import '../commonwidget/singlebtn.dart';
-import '../controller/userdetail_controller.dart';
+import '../commonwidget/common_widgets.dart';
+import '../controller/profile_controller.dart';
 import '../utils/constants.dart';
 
 class UserDetailsScreen extends StatefulWidget {
@@ -19,7 +17,7 @@ class UserDetailsScreen extends StatefulWidget {
 }
 
 class UserDetailsScreenState extends State<UserDetailsScreen> {
-  final userController = Get.put(UserDetailsController());
+  final userController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +136,22 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                           .text =
                                                       userController
                                                           .genderList[index];
+                                                  if (userController
+                                                          .gerderController.text
+                                                          .toString() ==
+                                                      "Female") {
+                                                    userController
+                                                        .genderId.value = 1;
+                                                  } else if (userController
+                                                          .gerderController.text
+                                                          .toString() ==
+                                                      "male") {
+                                                    userController
+                                                        .genderId.value = 2;
+                                                  } else {
+                                                    userController
+                                                        .genderId.value = 3;
+                                                  }
                                                   userController
                                                       .showList.value = false;
                                                 },
@@ -192,18 +206,24 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: SingleButton(
-                  label: "Continue",
-                  textColor: greyTextColor,
-                  backgroundColor: colorSecondary,
-                  onPressed: () {
-                    Get.to(
-                      () => const BottomNavScreen(),
-                    );
-                  },
-                  borderColor: colorSecondary),
+            Obx(
+              () => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: getSingleButton(
+                    label: "Continue",
+                    textColor: greyTextColor,
+                    controller: userController,
+                    backgroundColor: colorSecondary,
+                    onPressed: () {
+                      if (userController.checkvalidation(
+                          userController.nameController.text.toString().trim(),
+                          userController.emailController.text.toString().trim(),
+                          userController.genderId.value)) {
+                        userController.callupdateProfile();
+                      }
+                    },
+                    borderColor: colorSecondary),
+              ),
             )
           ],
         ),

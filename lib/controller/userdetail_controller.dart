@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class UserDetailsController extends GetxController {
-  RxBool showList = false.obs;
+  /*  RxBool showList = false.obs;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final gerderController = TextEditingController();
@@ -11,5 +10,5 @@ class UserDetailsController extends GetxController {
     'Male',
     'Female',
     'Non-Binary',
-  ].obs;
+  ].obs; */
 }

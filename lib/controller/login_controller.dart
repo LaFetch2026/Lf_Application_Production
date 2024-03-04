@@ -10,7 +10,6 @@ import 'package:lafetch/screens/otpverficationscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 import '../screens/userdetails.dart';
 import '../utils/common_widgets.dart';
 
@@ -99,7 +98,6 @@ class LoginController extends BaseController {
         "otp": otp.value,
       });
       var responseData = json.decode(response.body);
-      print(responseData);
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar(responseData['message']);
@@ -112,7 +110,7 @@ class LoginController extends BaseController {
           prefs.setString('email', responseData['data']['email']);
         }
         if (responseData['data']['gender'] != null) {
-          prefs.setString('gender', responseData['data']['gender']);
+          prefs.setInt('gender', responseData['data']['gender']);
         }
         if (responseData['data']['name'] != null) {
           prefs.setString('name', responseData['data']['name']);
@@ -133,7 +131,7 @@ class LoginController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("login failed");
+        getSnackBar("otp failed");
       }
     } catch (e) {
       print(e.toString());
