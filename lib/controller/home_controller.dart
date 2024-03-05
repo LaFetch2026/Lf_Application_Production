@@ -7,8 +7,7 @@ import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
-import '../utils/common_widgets.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
 
 class HomeController extends BaseController {

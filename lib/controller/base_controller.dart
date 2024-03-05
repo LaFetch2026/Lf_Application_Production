@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-
-import '../utils/common_widgets.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 
 enum PageState { DEFAULT, LOADING, ERROR }
 

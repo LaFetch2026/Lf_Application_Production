@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () => nextScreen());
+    Timer(const Duration(seconds: 1), () => nextScreen());
   }
 
   Route scaleIn(Widget page) {
@@ -49,10 +49,6 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void nextScreen() {
-    /*  Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-          builder: (BuildContext context) => const WelcomeScreen()),
-    ); */
     Navigator.push(context, scaleIn(const SplashTwoScreen()));
   }
 
@@ -65,21 +61,16 @@ class _SplashScreenState extends State<SplashScreen>
         color: whiteBorderColor,
       ),
       child: Center(
-        child:
-            /*    ScaleTransition(
-        scale: animation, 
-        child: */
-            Container(
-                width: 120,
-                height: 120,
-                decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(logoBackImage), fit: BoxFit.cover)),
-                child: Center(
-                  child: Image.asset(logoImage,
-                      height: 75, width: 50, fit: BoxFit.cover),
-                )),
-        // )
+        child: Container(
+            width: 120,
+            height: 120,
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage(logoBackImage), fit: BoxFit.cover)),
+            child: Center(
+              child: Image.asset(logoImage,
+                  height: 75, width: 50, fit: BoxFit.cover),
+            )),
       ),
     );
   }

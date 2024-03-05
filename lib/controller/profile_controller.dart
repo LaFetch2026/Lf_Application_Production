@@ -9,7 +9,7 @@ import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../screens/bottomnavscreen.dart';
-import '../utils/common_widgets.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 
 class ProfileController extends BaseController {
   RxBool showList = false.obs;

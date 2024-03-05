@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/splash/splashthree.dart';
 import 'package:lafetch/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../bottomnavscreen.dart';
+import '../welcomescreen.dart';
 
 class SplashTwoScreen extends StatefulWidget {
   const SplashTwoScreen({super.key});
@@ -13,39 +16,45 @@ class SplashTwoScreen extends StatefulWidget {
 }
 
 class SplashTwoScreenState extends State<SplashTwoScreen> {
+  String? token;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () => nextScreen());
+    getPrefrenceValue();
+    Timer(const Duration(seconds: 1), () => navigateToScreen());
   }
 
-  void nextScreen() {
-    Get.offAll(
-      () => const SplashThreeScreen(),
-    );
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token');
+  }
+
+  navigateToScreen() {
+    if (token != null) {
+      if (token!.isNotEmpty) {
+        Get.offAll(
+          () => const BottomNavScreen(),
+        );
+      }
+    } else {
+      Get.offAll(
+        () => const WelcomeScreen(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            btnTextColor,
-            Color(0xFF241736),
-            Color(0xFF1D132C),
-            Color(0xFF130C1C),
-            Color(0xFF040206),
-            blackColor,
-          ],
-        ),
+      color: colorPrimary,
+      child: Image.asset(
+        splashGif,
+        fit: BoxFit.cover,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
       ),
-      child: Center(
-          child: Center(
-        child: Image.asset(logoImage, height: 82, width: 50, fit: BoxFit.cover),
-      )),
     );
   }
 }

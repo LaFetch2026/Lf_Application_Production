@@ -43,6 +43,7 @@ const Color color2StartReview = Color(0xFFE9C437);
 const Color color1StartReview = Color(0xFFD95656);
 const Color greyDotColor = Color(0xFFC6C3C0);
 
+const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';
 const shippedGif = 'assets/shipped.gif';
 const truckGif = 'assets/truck.gif';
