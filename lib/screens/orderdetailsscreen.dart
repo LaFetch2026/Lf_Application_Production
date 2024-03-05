@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:getwidget/getwidget.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../utils/constants.dart';
@@ -15,6 +16,7 @@ class OrderDetailsScreen extends StatefulWidget {
 }
 
 class OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  double _rating = 0;
   List<String> items = [
     "1",
     "2",
@@ -285,7 +287,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       color: whiteColor,
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: 16, right: 16, top: 16, bottom: 16),
+                            left: 16, right: 16, top: 20, bottom: 20),
                         child: Row(
                           children: [
                             Expanded(
@@ -298,7 +300,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 fontSize: 16.sp,
                               ),
                             ),
-                            RatingBar.builder(
+                            /*  RatingBar.builder(
                               initialRating: 0,
                               minRating: 1,
                               itemSize: 24,
@@ -316,7 +318,19 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               onRatingUpdate: (rating) {
                                 print(rating);
                               },
-                            )
+                            ) */
+                            GFRating(
+                              value: _rating,
+                              borderColor: const Color(0XFFA6A39F),
+                              color: Colors.amber,
+                              size: 24,
+                              onChanged: (value) {
+                                setState(() {
+                                  _rating = value;
+                                  print(value);
+                                });
+                              },
+                            ),
                           ],
                         ),
                       ),
