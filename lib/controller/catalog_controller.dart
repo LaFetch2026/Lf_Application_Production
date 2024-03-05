@@ -13,8 +13,10 @@ import '../utils/constants.dart';
 class CatalogController extends BaseController {
   RxBool isCatalog = false.obs;
   List catalogList = [].obs;
+  RxBool isCategory = false.obs;
+  List categoryList = [].obs;
 
-  getCategoryData() async {
+  getCatalogData() async {
     isCatalog.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -45,5 +47,36 @@ class CatalogController extends BaseController {
       print("error$e");
     }
     isCatalog.value = false;
+  }
+
+  getCategoryData() async {
+    isCategory.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/categories"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {}
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get category failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCategory.value = false;
   }
 }

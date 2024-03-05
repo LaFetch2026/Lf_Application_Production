@@ -21,7 +21,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
 
   @override
   void initState() {
-    controller.getCategoryData();
+    controller.getCatalogData();
     super.initState();
   }
 
