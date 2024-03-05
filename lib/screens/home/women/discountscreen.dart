@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/womenwidget/question_card.dart';
+import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/womenwidget/lafetch_card.dart';
@@ -20,17 +21,13 @@ class DiscountScreen extends StatefulWidget {
 }
 
 class DiscountScreenState extends State<DiscountScreen> {
+  final homeController = Get.put(HomeController());
   List<String> items = [
     "100",
     "200",
     "300",
     "400",
     "500",
-  ];
-  List<String> images = [
-    image,
-    backImage,
-    otpImage,
   ];
 
   int _currentPage = 0;
@@ -49,6 +46,7 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
+    homeController.getBannerData();
     timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (_currentPage < 2) {
         _currentPage++;
@@ -403,14 +401,19 @@ class DiscountScreenState extends State<DiscountScreen> {
                 height: 210,
                 child: PageView.builder(
                   scrollDirection: Axis.horizontal,
-                  // onPageChanged: callOnchanged,
                   controller: _pageController,
-                  itemCount: images.length,
+                  itemCount: homeController.bannerList.length,
                   itemBuilder: (context, int index) {
-                    return Container(
+                    return FadeInImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                            homeController.bannerList[index]["image"]),
+                        placeholder: const AssetImage(image));
+                    /* Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(images[index]),
+                          image: NetworkImage(
+                              homeController.bannerList[index]["image"]),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -471,6 +474,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                         ),
                       ),
                     );
+                 */
                   },
                 ),
               ),
@@ -482,25 +486,21 @@ class DiscountScreenState extends State<DiscountScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(
                 width: double.infinity,
-                child: /* SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: */
-                    Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children:
-                            List<Widget>.generate(images.length, (int index) {
-                          return AnimatedContainer(
-                              duration: const Duration(milliseconds: 400),
-                              height: 6,
-                              width: 40,
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              decoration: BoxDecoration(
-                                  color: (index == _currentPage)
-                                      ? colorPrimary
-                                      : colorSecondary));
-                        })),
-                //  ),
+                child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List<Widget>.generate(
+                        homeController.bannerList.length, (int index) {
+                      return AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
+                          height: 6,
+                          width: 40,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                              color: (index == _currentPage)
+                                  ? colorPrimary
+                                  : colorSecondary));
+                    })),
               ),
             ),
             const SizedBox(

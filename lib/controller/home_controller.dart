@@ -19,7 +19,7 @@ class HomeController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/banners?type=2"),
+          Uri.parse("${ApiConstants.baseUrl}/banners?type=1"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -45,5 +45,36 @@ class HomeController extends BaseController {
       print("error$e");
     }
     isBanner.value = false;
+  }
+
+  getData() async {
+    // isBanner.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/banners?type=2"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {}
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get banner 2 failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    //  isBanner.value = false;
   }
 }

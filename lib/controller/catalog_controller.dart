@@ -12,9 +12,15 @@ import '../utils/constants.dart';
 
 class CatalogController extends BaseController {
   RxBool isCatalog = false.obs;
-  List catalogList = [].obs;
+  // List catalogList = [].obs;
   RxBool isCategory = false.obs;
   List categoryList = [].obs;
+  final List<Map<String, String>> catalogList = [
+    {'id': '1', "name": 'All item'},
+    {'id': '2', "name": 'Bag'},
+    {'id': '3', "name": 'All Item'},
+    {'id': '4', "name": 'Watch'},
+  ].obs;
 
   getCatalogData() async {
     isCatalog.value = true;
@@ -29,7 +35,7 @@ class CatalogController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
-          catalogList = responseData;
+          //  catalogList = responseData;
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

@@ -9,6 +9,7 @@ import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlist/boardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import '../commonwidget/app_text.dart';
+import '../controller/wishlist_controller.dart';
 import '../utils/constants.dart';
 import 'cartscreen.dart';
 import 'catalogscreen.dart';
@@ -21,13 +22,14 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class WishlistScreenState extends State<WishlistScreen> {
-  List<String> items = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "400",
-  ];
+  final wishlistController = Get.put(WishlistController());
+
+  @override
+  void initState() {
+    wishlistController.getWishlistData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,175 +52,190 @@ class WishlistScreenState extends State<WishlistScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  items.isEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              height: 100,
-                            ),
-                            Image.asset(emptyBoxImage,
-                                height: 160, width: 196, fit: BoxFit.cover),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 16, right: 16),
-                              child: AppText(
-                                text: "Your Wishlist is empty",
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
-                                color: colorPrimary,
-                                fontSize: 22.sp,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 16, right: 16, bottom: 20),
-                              child: AppText(
-                                text:
-                                    "Add products to your wishlist, review them anytime and easily move to cart",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                                color: nameText,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            SingleButton(
-                                label: "Continue Shopping",
-                                textColor: btnTextColor,
-                                backgroundColor: whiteTextColor,
-                                onPressed: () {},
-                                borderColor: btnTextColor)
-                          ],
+                  Obx(() => wishlistController.isWishlist.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
                         )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 16, right: 16),
-                              child: AppText(
-                                text: "Wishlist",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: blackColor,
-                                fontSize: 25.sp,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10, left: 16, right: 16),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Get.to(const NewBoardScreen(
-                                    title: "New Board",
-                                    boardName: "Name of the Board",
-                                    btnText: "Next",
-                                  ));
-                                },
-                                child: Row(
-                                  children: [
-                                    AppText(
-                                      text: "6 boards",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: textHintColor,
-                                      fontSize: 12.sp,
-                                    ),
-                                    const Expanded(
-                                      child: SizedBox(
-                                        width: 0,
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.add,
-                                      color: blackColor,
-                                      size: 16,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: AppText(
-                                        text: "New Board",
-                                        color: blackColor,
-                                        fontSize: 12.sp,
-                                        fontFamily: "Franklin Gothic Bold",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
+                      : wishlistController.wishlistList.isEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  height: 90,
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
-                              child: GridView.count(
-                                shrinkWrap: true,
-                                crossAxisCount: 2,
-                                scrollDirection: Axis.vertical,
-                                padding: EdgeInsets.zero,
-                                childAspectRatio: 0.7,
-                                physics: const ScrollPhysics(),
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 0,
-                                children: List.generate(
-                                  items.length,
-                                  (index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(const BoardScreen());
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: Image.asset(backImage,
-                                                  height: 156,
-                                                  width: 156,
-                                                  fit: BoxFit.cover),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                Image.asset(emptyBoxImage,
+                                    height: 160, width: 196, fit: BoxFit.cover),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 40, left: 16, right: 16),
+                                  child: AppText(
+                                    text: "Your Wishlist is empty",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: colorPrimary,
+                                    fontSize: 22.sp,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 20, left: 16, right: 16, bottom: 20),
+                                  child: AppText(
+                                    text:
+                                        "Add products to your wishlist, review them anytime and easily move to cart",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
+                                    color: nameText,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: SingleButton(
+                                      label: "Continue Shopping",
+                                      textColor: btnTextColor,
+                                      backgroundColor: whiteTextColor,
+                                      onPressed: () {},
+                                      borderColor: btnTextColor),
+                                )
+                              ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 20, left: 16, right: 16),
+                                  child: AppText(
+                                    text: "Wishlist",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: blackColor,
+                                    fontSize: 25.sp,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10, left: 16, right: 16),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(const NewBoardScreen(
+                                        title: "New Board",
+                                        boardName: "Name of the Board",
+                                        btnText: "Next",
+                                      ));
+                                    },
+                                    child: Row(
+                                      children: [
+                                        AppText(
+                                          text:
+                                              "${wishlistController.wishlistList.length} boards",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textHintColor,
+                                          fontSize: 12.sp,
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(
+                                            width: 0,
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Icons.add,
+                                          color: blackColor,
+                                          size: 16,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          child: AppText(
+                                            text: "New Board",
+                                            color: blackColor,
+                                            fontSize: 12.sp,
+                                            fontFamily: "Franklin Gothic Bold",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  child: GridView.count(
+                                    shrinkWrap: true,
+                                    crossAxisCount: 2,
+                                    scrollDirection: Axis.vertical,
+                                    padding: EdgeInsets.zero,
+                                    childAspectRatio: 0.7,
+                                    physics: const ScrollPhysics(),
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 0,
+                                    children: List.generate(
+                                      wishlistController.wishlistList.length,
+                                      (index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Get.to(const BoardScreen());
+                                          },
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: Image.asset(backImage,
+                                                      height: 156,
+                                                      width: 156,
+                                                      fit: BoxFit.cover),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
-                                              child: AppText(
-                                                text: "All Items",
-                                                color: blackColor,
-                                                fontSize: 16.sp,
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                                  child: AppText(
+                                                    text: "All Items",
+                                                    color: blackColor,
+                                                    fontSize: 16.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       horizontal: 10),
-                                              child: AppText(
-                                                text: "${items[index]} items",
-                                                color: textHintColor,
-                                                fontSize: 12.sp,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                                                  child: AppText(
+                                                    text: wishlistController
+                                                                .wishlistList[
+                                                            index]["name"] ??
+                                                        "",
+                                                    color: textHintColor,
+                                                    fontSize: 12.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        )
+                              ],
+                            ))
                 ],
               ),
             ),

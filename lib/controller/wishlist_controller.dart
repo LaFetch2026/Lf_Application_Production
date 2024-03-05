@@ -10,13 +10,19 @@ import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
 
-class ProductController extends BaseController {
+class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
   dynamic wishlistDetails = "".obs;
-  List wishlistList = [].obs;
+  // List wishlistList = [].obs;
+  final List<Map<String, String>> wishlistList = [
+    {'id': '1', "name": 'All item'},
+    {'id': '2', "name": 'Bag'},
+    {'id': '3', "name": 'All Item'},
+    {'id': '4', "name": 'Watch'},
+  ].obs;
 
-  getProductData() async {
+  getWishlistData() async {
     isWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -28,8 +34,8 @@ class ProductController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
-          wishlistList = responseData;
+        if (responseData["data"] != null) {
+          // wishlistList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -49,7 +55,7 @@ class ProductController extends BaseController {
     isWishlist.value = false;
   }
 
-  getProductDetails(int wishlistId) async {
+  getWishlistDetails(int wishlistId) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {

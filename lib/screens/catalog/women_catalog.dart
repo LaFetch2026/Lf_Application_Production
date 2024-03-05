@@ -96,9 +96,9 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                   MainAxisAlignment.start,
                                               children: [
                                                 AppText(
-                                                  text: controller
-                                                          .catalogList[index]
-                                                      ["name"],
+                                                  text: controller.catalogList[
+                                                          index]["name"] ??
+                                                      "",
                                                   color: whiteBorderColor,
                                                   fontSize: 16.sp,
                                                   fontFamily:
