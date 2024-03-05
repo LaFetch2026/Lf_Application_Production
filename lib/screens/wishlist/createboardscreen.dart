@@ -7,6 +7,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/singlebtn.dart';
+import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 
 class CreateBoardScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class CreateBoardScreen extends StatefulWidget {
 }
 
 class CreateBoardScreenState extends State<CreateBoardScreen> {
+  final wishlistController = Get.put(WishlistController());
   List<String> items = [
     "100",
     "200",

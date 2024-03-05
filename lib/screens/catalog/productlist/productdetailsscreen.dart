@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/controller/product_controller.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 
@@ -15,7 +16,7 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final PageController controller = PageController();
-  final pincodeController = TextEditingController();
+  final productController = Get.put(ProductController());
   int _curr = 0;
   final List<String> images = [
     'https://s3-alpha-sig.figma.com/img/2f0d/21cc/22d5c0b59802d64433ee57355546f23b?Expires=1710115200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=irBTQhEp97J~f93ETyTr6PkEV6zJvSvvObu9q0GfUCD1P503BBR-KR0wStaqg7ZsrEhYI0BUprdto~1LDD4JdkXjnvLc-CeoECBUYTcESzoC~I-dfqASDSETa2twg6nYR2D8DCPajI709rF0zgJrmly-ZmlQTOtSz4u05CtjVB4eeky-G6OrJP5~Ku2Qq8zSqC7uD397pK3eSPgGUgC0g2PL4G3cp0gsZapnLHeNCxCVmDYCaQhZB09cxz8z8ukyqLhlwHyBHxHHg5uYyc0X3yQphDGQt2xsynBTY33SpcAtQ5k-Q6f1r2AfFTDjB-1Ju1yqTmvlEPLh0StG7PezIw__',
@@ -424,50 +425,76 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               color: colorPrimary,
                               fontSize: 16.sp,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12),
-                              child: SizedBox(
-                                width: double.infinity,
-                                height: 44,
-                                child: TextField(
-                                  controller: pincodeController,
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: whiteTextColor,
-                                    suffixIcon: TextButton(
-                                      onPressed: () {},
-                                      child: const Padding(
-                                        padding: EdgeInsets.only(
-                                            right: 6, bottom: 3),
-                                        child: AppText(
-                                          text: 'Check',
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                          color: blackColor,
-                                          fontSize: 14,
+                            Obx(
+                              () => Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 44,
+                                  child: TextField(
+                                    controller:
+                                        productController.pincodeController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: whiteTextColor,
+                                      suffixIcon: TextButton(
+                                        onPressed: () {
+                                          if (productController
+                                              .checkPinvalidation(
+                                                  productController
+                                                      .pincodeController.text
+                                                      .toString()
+                                                      .trim())) {
+                                            productController.getCheckPincode(
+                                                productController
+                                                    .pincodeController.text
+                                                    .toString()
+                                                    .trim());
+                                          }
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 6, bottom: 3),
+                                          child: productController
+                                                  .isPincode.value
+                                              ? const SizedBox(
+                                                  height: 10,
+                                                  width: 10,
+                                                  child: Center(
+                                                      child:
+                                                          CircularProgressIndicator()),
+                                                )
+                                              : const AppText(
+                                                  text: 'Check',
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: blackColor,
+                                                  fontSize: 14,
+                                                ),
                                         ),
                                       ),
+                                      focusedBorder: const OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: borderColor)),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(1),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(1),
+                                        borderSide: const BorderSide(
+                                            color: borderColor),
+                                      ),
+                                      hintText: 'Enter pincode',
+                                      hintStyle: const TextStyle(
+                                          fontSize: 14,
+                                          color: textHintColor,
+                                          fontFamily:
+                                              "Franklin Gothic Regular"),
                                     ),
-                                    focusedBorder: const OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: borderColor)),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(1),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(1),
-                                      borderSide:
-                                          const BorderSide(color: borderColor),
-                                    ),
-                                    hintText: 'Enter pincode',
-                                    hintStyle: const TextStyle(
-                                        fontSize: 14,
-                                        color: textHintColor,
-                                        fontFamily: "Franklin Gothic Regular"),
+                                    style: const TextStyle(
+                                        color: colorPrimary, fontSize: 14),
                                   ),
-                                  style: const TextStyle(
-                                      color: colorPrimary, fontSize: 14),
                                 ),
                               ),
                             ),

@@ -2,12 +2,14 @@
 
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import '../screens/wishlist/createboardscreen.dart';
 import '../utils/constants.dart';
 
 class WishlistController extends BaseController {
@@ -21,6 +23,7 @@ class WishlistController extends BaseController {
     {'id': '3', "name": 'All Item'},
     {'id': '4', "name": 'Watch'},
   ].obs;
+  final boardNameController = TextEditingController();
 
   getWishlistData() async {
     isWishlist.value = true;
@@ -90,14 +93,25 @@ class WishlistController extends BaseController {
 
   callCreateWishlist(String name) async {
     showLoading();
+    final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/wishlists?name=$name"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
       );
       var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         print(responseData);
-        getSnackBar("");
+        getSnackBar("Board Created");
+        Get.to(
+          () => const CreateBoardScreen(
+            btnText: "Create board",
+          ),
+        );
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -105,7 +119,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("create wishlist failed");
+        print("create wishlist failed");
       }
     } catch (e) {
       print(e.toString());
@@ -115,9 +129,15 @@ class WishlistController extends BaseController {
 
   callDeteleWishlist(int wishlistId) async {
     showLoading();
+    final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.delete(
         Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
       );
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -130,7 +150,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("delete wishlist failed");
+        print("delete wishlist failed");
       }
     } catch (e) {
       print(e.toString());

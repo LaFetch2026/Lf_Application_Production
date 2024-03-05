@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -18,6 +18,23 @@ class ProductController extends BaseController {
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
+  final pincodeController = TextEditingController();
+
+  bool checkPinvalidation(String pin) {
+    if (pin.isEmpty) {
+      getSnackBar(
+        "Enter Pincode",
+      );
+      return false;
+    }
+    if (pin.length < 6) {
+      getSnackBar(
+        "The pincode must be 6 digit.",
+      );
+      return false;
+    }
+    return true;
+  }
 
   getProductData() async {
     isProduct.value = true;
@@ -162,7 +179,15 @@ class ProductController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {}
+        if (responseData != null) {
+          getSnackBar(responseData["name"]);
+        }
+      } else if (response.statusCode == 400) {
+        if (responseData['errors']['pincode'] != null) {
+          getSnackBar(responseData['errors']['pincode'][0]);
+        }
+      } else if (response.statusCode == 404) {
+        getSnackBar(responseData["message"]);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

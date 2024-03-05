@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
-import 'package:lafetch/screens/wishlist/createboardscreen.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../commonwidget/singlebtn.dart';
+import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 
 class NewBoardScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class NewBoardScreen extends StatefulWidget {
 }
 
 class NewBoardScreenState extends State<NewBoardScreen> {
-  final boardNameController = TextEditingController();
+  final wishlistController = Get.put(WishlistController());
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +45,27 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     padding: const EdgeInsets.only(top: 40),
                     child: TextFieldWidget(
                       hint: widget.boardName,
-                      controller: boardNameController,
+                      controller: wishlistController.boardNameController,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: SingleButton(
-                label: widget.btnText,
-                textColor: whiteBorderColor,
-                backgroundColor: colorPrimary,
-                onPressed: () {
-                  Get.to(
-                    () => const CreateBoardScreen(
-                      btnText: "Create board",
-                    ),
-                  );
-                },
-                borderColor: colorPrimary),
-          )
+          Obx(() => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: getSingleButton(
+                    label: widget.btnText,
+                    textColor: whiteBorderColor,
+                    backgroundColor: colorPrimary,
+                    controller: wishlistController,
+                    onPressed: () {
+                      wishlistController.callCreateWishlist(wishlistController
+                          .boardNameController.text
+                          .toString());
+                    },
+                    borderColor: colorPrimary),
+              ))
         ],
       ),
     );
