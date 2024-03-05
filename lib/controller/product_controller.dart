@@ -18,6 +18,7 @@ class ProductController extends BaseController {
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
+  List recommendedList = [].obs;
   final pincodeController = TextEditingController();
 
   bool checkPinvalidation(String pin) {
@@ -147,7 +148,9 @@ class ProductController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {}
+        if (responseData["data"] != null) {
+          recommendedList = responseData["data"];
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

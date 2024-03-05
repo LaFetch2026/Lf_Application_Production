@@ -83,12 +83,15 @@ class CatalogScreenState extends State<CatalogScreen> {
               child: TabBarView(children: [
                 WomenCatalogScreen(
                   categorytext: "women",
+                  type: 3,
                 ),
                 WomenCatalogScreen(
                   categorytext: "men",
+                  type: 2,
                 ),
                 WomenCatalogScreen(
                   categorytext: "kids",
+                  type: 1,
                 ),
               ]),
             ),

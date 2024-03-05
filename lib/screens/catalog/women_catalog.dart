@@ -10,7 +10,9 @@ import '../../utils/constants.dart';
 
 class WomenCatalogScreen extends StatefulWidget {
   final String categorytext;
-  const WomenCatalogScreen({super.key, required this.categorytext});
+  final int type;
+  const WomenCatalogScreen(
+      {super.key, required this.categorytext, required this.type});
 
   @override
   State<WomenCatalogScreen> createState() => WomenCatalogScreenState();
@@ -21,7 +23,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
 
   @override
   void initState() {
-    controller.getCatalogData();
+    controller.getCatalogData(widget.type);
     super.initState();
   }
 

@@ -22,12 +22,12 @@ class CatalogController extends BaseController {
     {'id': '4', "name": 'Watch'},
   ].obs;
 
-  getCatalogData() async {
+  getCatalogData(int type) async {
     isCatalog.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/catalogs?type=1"),
+          Uri.parse("${ApiConstants.baseUrl}/catalogs?type=$type"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

@@ -159,6 +159,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   @override
+  void initState() {
+    productController.getProductRecommendations(4); //id will be change
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,
@@ -810,7 +816,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                           SizedBox(
                             width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.7,
+                            //  height: MediaQuery.of(context).size.height * 0.7,
                             child: ListView.builder(
                                 shrinkWrap: true,
                                 primary: false,
@@ -925,163 +931,206 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   );
                                 }),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: AppText(
-                              text: "Recommended for you",
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w500,
-                              color: blackColor,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 250,
-                              child: ListView.builder(
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: items.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (ctx, index) {
-                                    return Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {},
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            margin:
-                                                const EdgeInsets.only(right: 5),
-                                            width: 122,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Stack(children: [
-                                                  Image.asset(backImage,
-                                                      height: 150,
+                          Obx(() => productController.isRecommendations.value
+                              ? const Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: AppText(
+                                        text: "Recommended for you",
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                        color: blackColor,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        height: 250,
+                                        child: ListView.builder(
+                                            shrinkWrap: true,
+                                            primary: false,
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            itemCount: productController
+                                                .recommendedList.length,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (ctx, index) {
+                                              return Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {},
+                                                    child: AnimatedContainer(
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              right: 5),
                                                       width: 122,
-                                                      fit: BoxFit.cover),
-                                                  Positioned(
-                                                    right: 0,
-                                                    child: IconButton(
-                                                      icon: CircleAvatar(
-                                                          radius: 12.0,
-                                                          backgroundColor:
-                                                              whiteColor,
-                                                          child: Image.asset(
-                                                              heartImage)),
-                                                      onPressed: () {},
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Stack(children: [
+                                                            Image.asset(
+                                                                backImage,
+                                                                height: 150,
+                                                                width: 122,
+                                                                fit: BoxFit
+                                                                    .cover),
+                                                            Positioned(
+                                                              right: 0,
+                                                              child: IconButton(
+                                                                icon: CircleAvatar(
+                                                                    radius:
+                                                                        12.0,
+                                                                    backgroundColor:
+                                                                        whiteColor,
+                                                                    child: Image
+                                                                        .asset(
+                                                                            heartImage)),
+                                                                onPressed:
+                                                                    () {},
+                                                              ),
+                                                            ),
+                                                          ]),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        5),
+                                                            child: AppText(
+                                                              text: productController
+                                                                              .recommendedList[
+                                                                          index]
+                                                                      [
+                                                                      "name"] ??
+                                                                  "",
+                                                              color: nameText,
+                                                              maxLines: 2,
+                                                              fontSize: 11.sp,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 10,
+                                                                    left: 10,
+                                                                    right: 10),
+                                                            child: Row(
+                                                              children: [
+                                                                AppText(
+                                                                  text:
+                                                                      "\u{20B9} ${productController.recommendedList[index]["price"] ?? "0"}",
+                                                                  color:
+                                                                      deepGreytextColor,
+                                                                  maxLines: 2,
+                                                                  fontSize:
+                                                                      11.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      left: 10),
+                                                                  child: Text(
+                                                                    "\u{20B9} ${productController.recommendedList[index]["mrp"] ?? "0"}",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          textHintColor,
+                                                                      fontSize:
+                                                                          11.sp,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .lineThrough,
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 10,
+                                                                    left: 10,
+                                                                    right: 10),
+                                                            child: Row(
+                                                              children: [
+                                                                const ImageIcon(
+                                                                  AssetImage(
+                                                                      truckImage),
+                                                                  color:
+                                                                      expressText,
+                                                                  size: 14,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          5),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Express",
+                                                                    color:
+                                                                        expressText,
+                                                                    maxLines: 2,
+                                                                    fontSize:
+                                                                        11.sp,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ]),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
-                                                  child: AppText(
-                                                    text:
-                                                        "Topman super skinny suit jacket and trousers in light blue",
-                                                    color: nameText,
-                                                    maxLines: 2,
-                                                    fontSize: 11.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10,
-                                                          left: 10,
-                                                          right: 10),
-                                                  child: Row(
-                                                    children: [
-                                                      AppText(
-                                                        text:
-                                                            "\u{20B9} ${items[index]}",
-                                                        color:
-                                                            deepGreytextColor,
-                                                        maxLines: 2,
-                                                        fontSize: 11.sp,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 10),
-                                                        child: Text(
-                                                          "\u{20B9} ${items[index]}",
-                                                          style: TextStyle(
-                                                            color:
-                                                                textHintColor,
-                                                            fontSize: 11.sp,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10,
-                                                          left: 10,
-                                                          right: 10),
-                                                  child: Row(
-                                                    children: [
-                                                      const ImageIcon(
-                                                        AssetImage(truckImage),
-                                                        color: expressText,
-                                                        size: 14,
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 5),
-                                                        child: AppText(
-                                                          text: "Express",
-                                                          color: expressText,
-                                                          maxLines: 2,
-                                                          fontSize: 11.sp,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }),
-                            ),
-                          ),
-                          const Divider(
-                            color: colorSecondary,
-                          ),
+                                                ],
+                                              );
+                                            }),
+                                      ),
+                                    ),
+                                    const Divider(
+                                      color: colorSecondary,
+                                    ),
+                                  ],
+                                )),
                           Padding(
                             padding: const EdgeInsets.only(top: 16.0),
                             child: AppText(
