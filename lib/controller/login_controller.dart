@@ -15,9 +15,11 @@ import '../screens/userdetails.dart';
 
 class LoginController extends BaseController {
   final phoneNumber = TextEditingController();
+  RxInt secondsRemaining = 30.obs;
   RxString number = "".obs;
   RxString otp = "".obs;
   RxBool showButton = false.obs;
+  RxBool enableResend = false.obs;
 
   bool checkOtpvalidation(String otpnumber) {
     if (otpnumber.isEmpty) {
@@ -61,6 +63,37 @@ class LoginController extends BaseController {
 
   callRegisterAccount() async {
     showLoading();
+    try {
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+        "phone": number.value,
+      });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        Get.to(OTPVerficationScreen(phoneMunber: number.value));
+      } else if (response.statusCode == 400) {
+        if (responseData['errors']['phone'] != null) {
+          getSnackBar(responseData['errors']['phone'][0]);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("login failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
+  callResendOtp() async {
+    showLoading();
+    secondsRemaining.value = 30;
+    enableResend.value = false;
     try {
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {

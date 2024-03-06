@@ -139,8 +139,10 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                         width: MediaQuery.of(context).size.width,
                         child: const Center(
                           child: Text("No Catolog Found",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black)),
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontFamily: "Franklin Gothic Regular")),
                         ),
                       ))
           ],

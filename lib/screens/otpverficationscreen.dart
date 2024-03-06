@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,10 +22,24 @@ class OTPVerficationScreen extends StatefulWidget {
 
 class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   final otpController = Get.put(LoginController());
+  Timer? timer;
   @override
   void initState() {
     otpController.showButton.value = false;
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (otpController.secondsRemaining.value != 0) {
+        otpController.secondsRemaining.value--;
+      } else {
+        otpController.enableResend.value = true;
+      }
+    });
     super.initState();
+  }
+
+  @override
+  dispose() {
+    timer!.cancel();
+    super.dispose();
   }
 
   @override
@@ -137,7 +153,8 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: AppText(
-                              text: "00:30",
+                              text:
+                                  '00 : ${otpController.secondsRemaining.value})',
                               fontFamily: "Franklin Gothic Regular",
                               fontSize: 14.sp,
                               color: deepGreytextColor,
