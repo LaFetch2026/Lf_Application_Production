@@ -31,6 +31,11 @@ class WishlistScreenState extends State<WishlistScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,

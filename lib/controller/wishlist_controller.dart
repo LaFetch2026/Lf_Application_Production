@@ -16,14 +16,22 @@ class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
   dynamic wishlistDetails = "".obs;
-  // List wishlistList = [].obs;
-  final List<Map<String, String>> wishlistList = [
+  List wishlistList = [].obs;
+  RxInt wishId = 0.obs;
+  final boardNameController = TextEditingController();
+  List<bool> selected = List.generate(50, (i) => false).obs;
+  /*  final List<Map<String, String>> wishlistList = [
     {'id': '1', "name": 'All item'},
     {'id': '2', "name": 'Bag'},
     {'id': '3', "name": 'All Item'},
     {'id': '4', "name": 'Watch'},
-  ].obs;
-  final boardNameController = TextEditingController();
+  ].obs; */
+
+  /*  @override
+  void onInit() async {
+    getWishlistData();
+    super.onInit();
+  } */
 
   getWishlistData() async {
     isWishlist.value = true;
@@ -38,7 +46,9 @@ class WishlistController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
-          // wishlistList = responseData["data"];
+          wishlistList = responseData["data"];
+          selected.clear();
+          selected = List.generate(wishlistList.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -108,7 +118,7 @@ class WishlistController extends BaseController {
         print(responseData);
         getSnackBar("Board Created");
         Get.to(
-          () => const CreateBoardScreen(
+          () => CreateBoardScreen(
             btnText: "Create board",
           ),
         );
@@ -128,7 +138,6 @@ class WishlistController extends BaseController {
   }
 
   callDeteleWishlist(int wishlistId) async {
-    showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.delete(
@@ -139,10 +148,9 @@ class WishlistController extends BaseController {
           "Authorization": "Bearer ${prefs.getString('token')} ",
         },
       );
-      var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        print(responseData);
-        getSnackBar("");
+        getSnackBar("Item deleted");
+        getWishlistData();
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -155,6 +163,5 @@ class WishlistController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    hideLoading();
   }
 }

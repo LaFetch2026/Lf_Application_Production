@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../commonwidget/common_widgets.dart';
 import '../../commonwidget/singlebtn.dart';
 import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
@@ -27,7 +28,13 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
     "400",
     "400",
   ];
-  bool showblackCircle = false;
+  @override
+  void initState() {
+    print("start${wishlistController.isWishlist}");
+    wishlistController.getWishlistData();
+    print("end${wishlistController.isWishlist}");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,27 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
           widget.btnText == ""
               ? EditBoardAppbar(
                   text: "Edit Board",
-                  onPressedDelete: () {},
+                  onPressedDelete: () {
+                    showDialog(
+                      barrierColor: Colors.black26,
+                      context: context,
+                      builder: (context) {
+                        return showDoubleBtnDailog(
+                            click1: () {
+                              Get.back();
+                            },
+                            click2: () {
+                              Get.back();
+                              wishlistController.callDeteleWishlist(
+                                  wishlistController.wishId.value);
+                            },
+                            btncolor: colorPrimary,
+                            text: "Are you sure you want to Delete it?",
+                            btn1Text: "No",
+                            btn2Text: "Yes");
+                      },
+                    );
+                  },
                   onPressedShare: () {},
                 )
               : const BackButtonAppbar(
@@ -46,240 +73,329 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                   threeDot: false,
                   icon: threeDotImage,
                 ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 10),
-                    child: AppText(
-                      text: "2 items selected",
-                      color: textHintColor,
-                      fontSize: 12.sp,
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  Center(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16, right: 16, top: 10),
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        primary: false,
-                        crossAxisCount: 2,
-                        scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.zero,
-                        childAspectRatio: 0.6,
-                        physics: const ScrollPhysics(),
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 9,
-                        children: List.generate(
-                          items.length,
-                          (index) {
-                            return Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          Center(
-                                            child: Image.asset(backImage,
-                                                height: 190,
-                                                width: 152,
-                                                fit: BoxFit.cover),
-                                          ),
-                                          showblackCircle
-                                              ? GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      showblackCircle = false;
-                                                    });
-                                                  },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.topRight,
-                                                      child: InkWell(
-                                                        child: SizedBox(
-                                                          height: 24,
-                                                          width: 24,
-                                                          child: CircleAvatar(
-                                                            backgroundColor:
-                                                                whiteColor,
-                                                            child: Image.asset(
-                                                              blackRightCircleImage,
-                                                              height: 24,
-                                                              width: 24,
+          Obx(() => wishlistController.isWishlist.value
+              ? const Padding(
+                  padding: EdgeInsets.all(40.0),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : wishlistController.wishlistList.isNotEmpty
+                  ? Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 16, top: 10),
+                              child: AppText(
+                                text: "2 items selected",
+                                color: textHintColor,
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16, right: 16, top: 10),
+                                child: GetBuilder<WishlistController>(
+                                  builder: (value) => GridView.count(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    crossAxisCount: 2,
+                                    scrollDirection: Axis.vertical,
+                                    padding: EdgeInsets.zero,
+                                    childAspectRatio: 0.6,
+                                    physics: const ScrollPhysics(),
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 9,
+                                    children: List.generate(
+                                      value.wishlistList.length,
+                                      (index) {
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {},
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      Center(
+                                                        child: Image.asset(
+                                                            backImage,
+                                                            height: 190,
+                                                            width: 152,
+                                                            fit: BoxFit.cover),
+                                                      ),
+                                                      value.selected[index]
+                                                          ? GestureDetector(
+                                                              onTap: () {
+                                                                value.selected
+                                                                    .clear();
+                                                                value.selected =
+                                                                    List.generate(
+                                                                        value
+                                                                            .wishlistList
+                                                                            .length,
+                                                                        (i) =>
+                                                                            false);
+                                                                wishlistController
+                                                                    .update();
+                                                              },
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        10),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topRight,
+                                                                  child:
+                                                                      InkWell(
+                                                                    child:
+                                                                        SizedBox(
+                                                                      height:
+                                                                          24,
+                                                                      width: 24,
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        backgroundColor:
+                                                                            whiteColor,
+                                                                        child: Image
+                                                                            .asset(
+                                                                          blackRightCircleImage,
+                                                                          height:
+                                                                              24,
+                                                                          width:
+                                                                              24,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : GestureDetector(
+                                                              onTap: () {
+                                                                value.wishId
+                                                                    .value = value
+                                                                        .wishlistList[
+                                                                    index]["id"];
+                                                                value.selected[
+                                                                        index] =
+                                                                    !value.selected[
+                                                                        index];
+                                                              },
+                                                              child:
+                                                                  const Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            16,
+                                                                        vertical:
+                                                                            10),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topRight,
+                                                                  child:
+                                                                      InkWell(
+                                                                    child:
+                                                                        SizedBox(
+                                                                      height:
+                                                                          24,
+                                                                      width: 24,
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        backgroundColor:
+                                                                            whiteColor,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 10),
+                                                        child: Align(
+                                                          alignment: Alignment
+                                                              .bottomLeft,
+                                                          child: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 140),
+                                                            color:
+                                                                whiteBorderColor,
+                                                            height: 26,
+                                                            width: 80,
+                                                            child: Row(
+                                                              children: [
+                                                                Image.asset(
+                                                                  heartImage,
+                                                                  height: 24,
+                                                                  color:
+                                                                      bottomnavBack,
+                                                                  width: 24,
+                                                                ),
+                                                                AppText(
+                                                                  text: "4.4",
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          10),
+                                                                  child:
+                                                                      Container(
+                                                                    width: 1,
+                                                                    color:
+                                                                        textHintColor,
+                                                                    height: 16,
+                                                                  ),
+                                                                ),
+                                                                AppText(
+                                                                  text: "8",
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                    child: AppText(
+                                                      text: wishlistController
+                                                                  .wishlistList[
+                                                              index]["name"] ??
+                                                          "",
+                                                      color: nameText,
+                                                      maxLines: 2,
+                                                      fontSize: 12.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
-                                                )
-                                              : GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      showblackCircle = true;
-                                                    });
-                                                  },
-                                                  child: const Padding(
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10),
+                                                    child: AppText(
+                                                      text:
+                                                          "Topman super skinny suit jacket and trousers in light blue",
+                                                      color: nameText,
+                                                      maxLines: 2,
+                                                      fontSize: 11.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                  Padding(
                                                     padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 16,
-                                                            vertical: 10),
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.topRight,
-                                                      child: InkWell(
-                                                        child: SizedBox(
-                                                          height: 24,
-                                                          width: 24,
-                                                          child: CircleAvatar(
-                                                            backgroundColor:
-                                                                whiteColor,
+                                                        const EdgeInsets.only(
+                                                            top: 10,
+                                                            left: 10,
+                                                            right: 10),
+                                                    child: Row(
+                                                      children: [
+                                                        AppText(
+                                                          text:
+                                                              "\u{20B9} ${items[index]}",
+                                                          color:
+                                                              deepGreytextColor,
+                                                          maxLines: 2,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 10),
+                                                          child: Text(
+                                                            "\u{20B9} ${items[index]}",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  textHintColor,
+                                                              fontSize: 11.sp,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .lineThrough,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
                                                   ),
-                                                ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 10),
-                                            child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    top: 140),
-                                                color: whiteBorderColor,
-                                                height: 26,
-                                                width: 80,
-                                                child: Row(
-                                                  children: [
-                                                    Image.asset(
-                                                      heartImage,
-                                                      height: 24,
-                                                      color: bottomnavBack,
-                                                      width: 24,
-                                                    ),
-                                                    AppText(
-                                                      text: "4.4",
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 10),
-                                                      child: Container(
-                                                        width: 1,
-                                                        color: textHintColor,
-                                                        height: 16,
-                                                      ),
-                                                    ),
-                                                    AppText(
-                                                      text: "8",
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
-                                        child: AppText(
-                                          text: "Jack & Jones Core ",
-                                          color: nameText,
-                                          maxLines: 2,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: AppText(
-                                          text:
-                                              "Topman super skinny suit jacket and trousers in light blue",
-                                          color: nameText,
-                                          maxLines: 2,
-                                          fontSize: 11.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, left: 10, right: 10),
-                                        child: Row(
-                                          children: [
-                                            AppText(
-                                              text: "\u{20B9} ${items[index]}",
-                                              color: deepGreytextColor,
-                                              maxLines: 2,
-                                              fontSize: 11.sp,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10),
-                                              child: Text(
-                                                "\u{20B9} ${items[index]}",
-                                                style: TextStyle(
-                                                  color: textHintColor,
-                                                  fontSize: 11.sp,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
+                                                ],
                                               ),
                                             ),
                                           ],
-                                        ),
-                                      ),
-                                    ],
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ],
-                            );
-                          },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                    )
+                  : const Expanded(
+                      child: Center(
+                        child: Text("No Item Found",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontFamily: "Franklin Gothic Regular")),
+                      ),
+                    )),
           widget.btnText == ""
               ? const SizedBox(
                   height: 0,
