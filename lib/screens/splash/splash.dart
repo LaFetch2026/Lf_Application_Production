@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 1), () => nextScreen());
+    Timer(const Duration(milliseconds: 500), () => nextScreen());
   }
 
   Route scaleIn(Widget page) {
