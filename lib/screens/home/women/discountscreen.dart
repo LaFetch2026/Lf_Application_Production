@@ -7,10 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/womenwidget/question_card.dart';
 import 'package:lafetch/controller/home_controller.dart';
+import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/womenwidget/lafetch_card.dart';
-import '../../../commonwidget/womenwidget/sale_card.dart';
 import '../../../utils/constants.dart';
 
 class DiscountScreen extends StatefulWidget {
@@ -22,6 +22,7 @@ class DiscountScreen extends StatefulWidget {
 
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
+  final productController = Get.put(ProductController());
   List<String> items = [
     "100",
     "200",
@@ -46,7 +47,10 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
-    homeController.getBannerData();
+    homeController.getBannar1Data();
+    homeController.getBannar2Data();
+    homeController.getCategoryData();
+    productController.getProductData();
     timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (_currentPage < 2) {
         _currentPage++;
@@ -70,7 +74,33 @@ class DiscountScreenState extends State<DiscountScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SaleCardWidget(),
+            // const SaleCardWidget(),
+            Obx(
+              () => homeController.isBanner.value
+                  ? const Padding(
+                      padding: EdgeInsets.all(40.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: SizedBox(
+                        height: 210,
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          controller: _pageController,
+                          itemCount: homeController.banner1List.length,
+                          itemBuilder: (context, int index) {
+                            return FadeInImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                    homeController.banner1List[index]["image"]),
+                                placeholder: const AssetImage(image));
+                          },
+                        ),
+                      ),
+                    ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Container(
@@ -79,269 +109,342 @@ class DiscountScreenState extends State<DiscountScreen> {
                 height: 1,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16),
-              child: AppText(
-                text: "6 hour Express Delivery",
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
-                color: blackColor,
-                fontSize: 16.sp,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 250,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    primary: false,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: items.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.to(() => const ProductDetailsScreen());
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 122,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset(backImage,
-                                      height: 150,
-                                      width: 122,
-                                      fit: BoxFit.cover),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    child: AppText(
-                                      text:
-                                          "Topman super skinny suit jacket and trousers in light blue",
-                                      color: nameText,
-                                      maxLines: 2,
-                                      fontSize: 11.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
-                                    child: Row(
-                                      children: [
-                                        AppText(
-                                          text: "\u{20B9} ${items[index]}",
-                                          color: deepGreytextColor,
-                                          maxLines: 2,
-                                          fontSize: 11.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            "\u{20B9} ${items[index]}",
-                                            style: TextStyle(
-                                              color: textHintColor,
-                                              fontSize: 11.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
+            Obx(() => productController.isProduct.value
+                ? const Padding(
+                    padding: EdgeInsets.all(40.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, left: 16),
+                        child: AppText(
+                          text: "6 hour Express Delivery",
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w500,
+                          color: blackColor,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 250,
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              primary: false,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: productController.productList.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (ctx, index) {
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Get.to(() => ProductDetailsScreen(
+                                              productId: productController
+                                                  .productList[index]["id"],
+                                            ));
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.only(right: 5),
+                                        width: 122,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset(backImage,
+                                                height: 150,
+                                                width: 122,
+                                                fit: BoxFit.cover),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                              child: AppText(
+                                                text: productController
+                                                            .productList[index]
+                                                        ["name"] ??
+                                                    "",
+                                                color: nameText,
+                                                maxLines: 2,
+                                                fontSize: 11.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
-                                    child: Row(
-                                      children: [
-                                        const ImageIcon(
-                                          AssetImage(truckImage),
-                                          color: expressText,
-                                          size: 14,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          child: AppText(
-                                            text: "Express",
-                                            color: expressText,
-                                            maxLines: 2,
-                                            fontSize: 11.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16),
-              child: AppText(
-                text: "We think you might also like",
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
-                color: blackColor,
-                fontSize: 16.sp,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 250,
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: items.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 122,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image.asset(backImage,
-                                      height: 150,
-                                      width: 122,
-                                      fit: BoxFit.cover),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    child: AppText(
-                                      text:
-                                          "Topman super skinny suit jacket and trousers in light blue",
-                                      color: nameText,
-                                      maxLines: 2,
-                                      fontSize: 11.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
-                                    child: Row(
-                                      children: [
-                                        AppText(
-                                          text: "\u{20B9} ${items[index]}",
-                                          color: deepGreytextColor,
-                                          maxLines: 2,
-                                          fontSize: 11.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            "\u{20B9} ${items[index]}",
-                                            style: TextStyle(
-                                              color: textHintColor,
-                                              fontSize: 11.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10, left: 10, right: 10),
+                                              child: Row(
+                                                children: [
+                                                  AppText(
+                                                    text:
+                                                        "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                    color: deepGreytextColor,
+                                                    maxLines: 2,
+                                                    fontSize: 11.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    child: Text(
+                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      style: TextStyle(
+                                                        color: textHintColor,
+                                                        fontSize: 11.sp,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10, left: 10, right: 10),
+                                              child: Row(
+                                                children: [
+                                                  const ImageIcon(
+                                                    AssetImage(truckImage),
+                                                    color: expressText,
+                                                    size: 14,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 5),
+                                                    child: AppText(
+                                                      text: "Express",
+                                                      color: expressText,
+                                                      maxLines: 2,
+                                                      fontSize: 11.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                        ),
+                      ),
+                    ],
+                  )),
+            Obx(() => productController.isProduct.value
+                ? const Padding(
+                    padding: EdgeInsets.all(40.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, left: 16),
+                        child: AppText(
+                          text: "We think you might also like",
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w500,
+                          color: blackColor,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 250,
+                          child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: productController.productList.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (ctx, index) {
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.only(right: 5),
+                                        width: 122,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Image.asset(backImage,
+                                                height: 150,
+                                                width: 122,
+                                                fit: BoxFit.cover),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                              child: AppText(
+                                                text: productController
+                                                            .productList[index]
+                                                        ["name"] ??
+                                                    "",
+                                                color: nameText,
+                                                maxLines: 2,
+                                                fontSize: 11.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10, left: 10, right: 10),
+                                              child: Row(
+                                                children: [
+                                                  AppText(
+                                                    text:
+                                                        "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                    color: deepGreytextColor,
+                                                    maxLines: 2,
+                                                    fontSize: 11.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    child: Text(
+                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      style: TextStyle(
+                                                        color: textHintColor,
+                                                        fontSize: 11.sp,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                        ),
+                      ),
+                    ],
+                  )),
+            Obx(
+              () => homeController.isCategory.value
+                  ? const Padding(
+                      padding: EdgeInsets.all(40.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 0, left: 16),
+                          child: AppText(
+                            text: "Popular Categories",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: blackColor,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 180,
+                            child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: homeController.categoryList.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (ctx, index) {
+                                  return Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {},
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          width: 150,
+                                          height: 180,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Image.asset(backImage,
+                                                  height: 144,
+                                                  width: 150,
+                                                  fit: BoxFit.cover),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                child: AppText(
+                                                  text: homeController
+                                                              .categoryList[
+                                                          index]["name"] ??
+                                                      "",
+                                                  color: greyTextColor,
+                                                  fontSize: 10.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                      ),
+                                    ],
+                                  );
+                                }),
                           ),
-                        ],
-                      );
-                    }),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16),
-              child: AppText(
-                text: "Popular Categories",
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
-                color: blackColor,
-                fontSize: 16.sp,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 180,
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: items.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 10),
-                              width: 150,
-                              height: 180,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(backImage,
-                                      height: 144,
-                                      width: 150,
-                                      fit: BoxFit.cover),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    child: AppText(
-                                      text: "Denim Jeans",
-                                      color: greyTextColor,
-                                      fontSize: 10.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-              ),
+                        ),
+                      ],
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -402,12 +505,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                 child: PageView.builder(
                   scrollDirection: Axis.horizontal,
                   controller: _pageController,
-                  itemCount: homeController.bannerList.length,
+                  itemCount: homeController.banner2List.length,
                   itemBuilder: (context, int index) {
                     return FadeInImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                            homeController.bannerList[index]["image"]),
+                            homeController.banner2List[index]["image"]),
                         placeholder: const AssetImage(image));
                     /* Container(
                       decoration: BoxDecoration(
@@ -490,7 +593,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List<Widget>.generate(
-                        homeController.bannerList.length, (int index) {
+                        homeController.banner2List.length, (int index) {
                       return AnimatedContainer(
                           duration: const Duration(milliseconds: 400),
                           height: 6,

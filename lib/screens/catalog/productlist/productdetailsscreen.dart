@@ -8,7 +8,8 @@ import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  const ProductDetailsScreen({super.key});
+  final int productId;
+  const ProductDetailsScreen({super.key, required this.productId});
 
   @override
   State<ProductDetailsScreen> createState() => ProductDetailsScreenState();

@@ -12,9 +12,45 @@ import '../utils/constants.dart';
 
 class HomeController extends BaseController {
   RxBool isBanner = false.obs;
-  List bannerList = [].obs;
+  RxBool isCategory = false.obs;
+  List banner2List = [].obs;
+  List banner1List = [].obs;
+  List categoryList = [].obs;
 
-  getBannerData() async {
+  getCategoryData() async {
+    isCategory.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/categories"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          categoryList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get category failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCategory.value = false;
+  }
+
+  getBannar1Data() async {
     isBanner.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -27,7 +63,7 @@ class HomeController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
-          bannerList = responseData;
+          banner1List = responseData;
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -47,8 +83,7 @@ class HomeController extends BaseController {
     isBanner.value = false;
   }
 
-  getData() async {
-    // isBanner.value = true;
+  getBannar2Data() async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -59,7 +94,9 @@ class HomeController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {}
+        if (responseData != null) {
+          banner2List = responseData;
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -75,6 +112,5 @@ class HomeController extends BaseController {
     } catch (e) {
       print("error$e");
     }
-    //  isBanner.value = false;
   }
 }

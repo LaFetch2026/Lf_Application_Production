@@ -71,7 +71,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Get.to(const ProductDetailsScreen());
+                          Get.to(const ProductDetailsScreen(
+                            productId: 0,
+                          ));
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
