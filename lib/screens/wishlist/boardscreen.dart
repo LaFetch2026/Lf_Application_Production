@@ -39,6 +39,12 @@ class BoardScreenState extends State<BoardScreen> {
   ];
 
   @override
+  void initState() {
+    wishlistController.getProductData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
@@ -63,9 +69,17 @@ class BoardScreenState extends State<BoardScreen> {
                       },
                       onPressedAddItem: () {
                         Get.back();
-                        Get.to(const CreateBoardScreen(
-                          btnText: "Add 2 items",
-                        ));
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const CreateBoardScreen(
+                                      btnText: "Add 2 items",
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    wishlistController.getProductData();
+                                  },
+                                ));
                       },
                       onPressedDelete: () {
                         showDialog(
@@ -77,7 +91,7 @@ class BoardScreenState extends State<BoardScreen> {
                                   Get.back();
                                 },
                                 click2: () {
-                                  Get.back();
+                                  Get.close(3);
                                   wishlistController
                                       .callDeteleWishlist(widget.boardId);
                                 },
@@ -90,13 +104,21 @@ class BoardScreenState extends State<BoardScreen> {
                       },
                       onPressedRename: () {
                         Get.back();
-                        Get.to(NewBoardScreen(
-                          title: "Edit Board Name",
-                          hintName: "",
-                          boardId: widget.boardId,
-                          boardName: widget.boardName,
-                          btnText: "Save changes",
-                        ));
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    NewBoardScreen(
+                                      title: "Edit Board Name",
+                                      hintName: "",
+                                      boardId: widget.boardId,
+                                      boardName: widget.boardName,
+                                      btnText: "Save changes",
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    wishlistController.getProductData();
+                                  },
+                                ));
                       },
                     ));
               },
@@ -128,183 +150,246 @@ class BoardScreenState extends State<BoardScreen> {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        crossAxisCount: 2,
-                        scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.zero,
-                        childAspectRatio: 0.5,
-                        physics: const ScrollPhysics(),
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 0,
-                        children: List.generate(
-                          items.length,
-                          (index) {
-                            return GestureDetector(
-                              onTap: () {},
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Stack(
-                                    children: [
-                                      Center(
-                                        child: Image.asset(backImage,
-                                            height: 190,
-                                            width: 152,
-                                            fit: BoxFit.cover),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 10),
-                                        child: Align(
-                                          alignment: Alignment.topRight,
-                                          child: InkWell(
-                                            child: SizedBox(
-                                              height: 24,
-                                              width: 24,
-                                              child: CircleAvatar(
-                                                backgroundColor: whiteColor,
-                                                child: Image.asset(
-                                                  whiteCrossCircleImage,
-                                                  height: 24,
-                                                  width: 24,
+                    Obx(() => wishlistController.isProduct.value
+                        ? const Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : wishlistController.productList.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                child: GetBuilder<WishlistController>(
+                                  builder: (value) => GridView.count(
+                                    shrinkWrap: true,
+                                    crossAxisCount: 2,
+                                    scrollDirection: Axis.vertical,
+                                    padding: EdgeInsets.zero,
+                                    childAspectRatio: 0.5,
+                                    physics: const ScrollPhysics(),
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 0,
+                                    children: List.generate(
+                                      value.productList.length,
+                                      (index) {
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Stack(
+                                                children: [
+                                                  Center(
+                                                    child: Image.asset(
+                                                        backImage,
+                                                        height: 190,
+                                                        width: 152,
+                                                        fit: BoxFit.cover),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 10),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: InkWell(
+                                                        child: SizedBox(
+                                                          height: 24,
+                                                          width: 24,
+                                                          child: CircleAvatar(
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            child: Image.asset(
+                                                              whiteCrossCircleImage,
+                                                              height: 24,
+                                                              width: 24,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 10),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.bottomLeft,
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(top: 140),
+                                                        color: const Color(
+                                                            0xB3F7F7F5),
+                                                        height: 26,
+                                                        width: 80,
+                                                        child: Row(
+                                                          children: [
+                                                            Image.asset(
+                                                              starImage,
+                                                              height: 24,
+                                                              color:
+                                                                  bottomnavBack,
+                                                              width: 24,
+                                                            ),
+                                                            AppText(
+                                                              text: value.productList[
+                                                                              index]
+                                                                          [
+                                                                          "aggregated_rating"] !=
+                                                                      null
+                                                                  ? value
+                                                                      .productList[
+                                                                          index]
+                                                                          [
+                                                                          "aggregated_rating"]
+                                                                      .toString()
+                                                                  : "",
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize: 12.sp,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      10),
+                                                              child: Container(
+                                                                width: 1,
+                                                                color:
+                                                                    textHintColor,
+                                                                height: 16,
+                                                              ),
+                                                            ),
+                                                            AppText(
+                                                              text: "8",
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize: 12.sp,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                child: AppText(
+                                                  text: value.productList[index]
+                                                          ["name"] ??
+                                                      "",
+                                                  color: nameText,
+                                                  maxLines: 2,
+                                                  fontSize: 12.sp,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 10),
-                                        child: Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 140),
-                                            color: const Color(0xB3F7F7F5),
-                                            height: 26,
-                                            width: 80,
-                                            child: Row(
-                                              children: [
-                                                Image.asset(
-                                                  starImage,
-                                                  height: 24,
-                                                  color: bottomnavBack,
-                                                  width: 24,
-                                                ),
-                                                AppText(
-                                                  text: "4.4",
-                                                  color: colorPrimary,
-                                                  fontSize: 12.sp,
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                child: AppText(
+                                                  text: value.productList[index]
+                                                          [
+                                                          "short_description"] ??
+                                                      "",
+                                                  color: nameText,
+                                                  maxLines: 2,
+                                                  fontSize: 11.sp,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10),
-                                                  child: Container(
-                                                    width: 1,
-                                                    color: textHintColor,
-                                                    height: 16,
-                                                  ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10,
+                                                    left: 10,
+                                                    right: 10),
+                                                child: Row(
+                                                  children: [
+                                                    AppText(
+                                                      text:
+                                                          "\u{20B9} ${value.productList[index]["price"] ?? ""}",
+                                                      color: deepGreytextColor,
+                                                      maxLines: 2,
+                                                      fontSize: 11.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10),
+                                                      child: Text(
+                                                        "\u{20B9} ${value.productList[index]["mrp"] ?? ""}",
+                                                        style: TextStyle(
+                                                          color: textHintColor,
+                                                          fontSize: 11.sp,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .lineThrough,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                AppText(
-                                                  text: "8",
-                                                  color: colorPrimary,
-                                                  fontSize: 12.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Center(
+                                                  child: SmallButton(
+                                                      label: "Move to bag",
+                                                      textColor: btnTextColor,
+                                                      backgroundColor:
+                                                          whiteTextColor,
+                                                      borderColor: btnTextColor,
+                                                      onPressed: () {},
+                                                      width: 152),
                                                 ),
-                                              ],
-                                            ),
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    child: AppText(
-                                      text: "Jack & Jones Core ",
-                                      color: nameText,
-                                      maxLines: 2,
-                                      fontSize: 12.sp,
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
+                                        );
+                                      },
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: AppText(
-                                      text:
-                                          "Topman super skinny suit jacket and trousers in light blue",
-                                      color: nameText,
-                                      maxLines: 2,
-                                      fontSize: 11.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
-                                    child: Row(
-                                      children: [
-                                        AppText(
-                                          text: "\u{20B9} ${items[index]}",
-                                          color: deepGreytextColor,
-                                          maxLines: 2,
-                                          fontSize: 11.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10),
-                                          child: Text(
-                                            "\u{20B9} ${items[index]}",
-                                            style: TextStyle(
-                                              color: textHintColor,
-                                              fontSize: 11.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5),
-                                    child: Center(
-                                      child: SmallButton(
-                                          label: "Move to bag",
-                                          textColor: btnTextColor,
-                                          backgroundColor: whiteTextColor,
-                                          borderColor: btnTextColor,
-                                          onPressed: () {},
-                                          width: 152),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                                ),
+                              )
+                            : const Center(
+                                child: Text("No Item Found",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontFamily: "Franklin Gothic Regular")),
+                              )),
                   ],
                 ),
               ),

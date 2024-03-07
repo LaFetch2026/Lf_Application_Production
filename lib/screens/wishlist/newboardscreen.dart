@@ -74,9 +74,16 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     backgroundColor: colorPrimary,
                     controller: wishlistController,
                     onPressed: () {
-                      wishlistController.callCreateWishlist(wishlistController
-                          .boardNameController.text
-                          .toString());
+                      if (widget.boardId == 0) {
+                        wishlistController.callCreateWishlist(wishlistController
+                            .boardNameController.text
+                            .toString());
+                      } else {
+                        wishlistController.callUpdateWishlist(
+                            wishlistController.boardNameController.text
+                                .toString(),
+                            widget.boardId);
+                      }
                     },
                     borderColor: colorPrimary),
               ))

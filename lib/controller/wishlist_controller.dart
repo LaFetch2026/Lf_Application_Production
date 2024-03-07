@@ -59,9 +59,6 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           wishlistList = responseData["data"];
-          selected.clear();
-          deleteidList.clear();
-          selected = List.generate(wishlistList.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -95,6 +92,9 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productList = responseData;
+          selected.clear();
+          deleteidList.clear();
+          selected = List.generate(wishlistList.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -183,6 +183,42 @@ class WishlistController extends BaseController {
     hideLoading();
   }
 
+  callUpdateWishlist(String name, int id) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+        Uri.parse("${ApiConstants.baseUrl}/wishlists/$id?name=$name"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar("Board Updated");
+        Get.to(
+          () => const CreateBoardScreen(
+            btnText: "Create board",
+          ),
+        );
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print("update wishlist failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
   callDeteleWishlist(int wishlistId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -196,7 +232,7 @@ class WishlistController extends BaseController {
       );
       if (response.statusCode == 200) {
         getSnackBar("Board deleted");
-        getWishlistData();
+        getProductData();
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

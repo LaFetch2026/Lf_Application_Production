@@ -126,13 +126,23 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       top: 10, left: 16, right: 16),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Get.to(const NewBoardScreen(
-                                        title: "New Board",
-                                        boardId: 0,
-                                        hintName: "Name of the Board",
-                                        boardName: "",
-                                        btnText: "Next",
-                                      ));
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  const NewBoardScreen(
+                                                    title: "New Board",
+                                                    boardId: 0,
+                                                    hintName:
+                                                        "Name of the Board",
+                                                    boardName: "",
+                                                    btnText: "Next",
+                                                  )))
+                                          .then((value) => setState(
+                                                () {
+                                                  wishlistController
+                                                      .getWishlistData();
+                                                },
+                                              ));
                                     },
                                     child: Row(
                                       children: [
@@ -186,14 +196,28 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       (index) {
                                         return GestureDetector(
                                           onTap: () {
-                                            Get.to(BoardScreen(
-                                              boardName: wishlistController
-                                                          .wishlistList[index]
-                                                      ["name"] ??
-                                                  "",
-                                              boardId: wishlistController
-                                                  .wishlistList[index]["id"],
-                                            ));
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                                    builder:
+                                                        (BuildContext
+                                                                context) =>
+                                                            BoardScreen(
+                                                              boardName: wishlistController
+                                                                              .wishlistList[
+                                                                          index]
+                                                                      [
+                                                                      "name"] ??
+                                                                  "",
+                                                              boardId: wishlistController
+                                                                      .wishlistList[
+                                                                  index]["id"],
+                                                            )))
+                                                .then((value) => setState(
+                                                      () {
+                                                        wishlistController
+                                                            .getWishlistData();
+                                                      },
+                                                    ));
                                           },
                                           child: Container(
                                             alignment: Alignment.center,
