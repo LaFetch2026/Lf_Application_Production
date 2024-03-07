@@ -55,9 +55,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                               Get.back();
                             },
                             click2: () {
-                              Get.back();
-                              wishlistController.callDeteleWishlist(
-                                  wishlistController.wishId.value);
+                              if (wishlistController.checkDeletevalidation(
+                                  wishlistController.wishId.value)) {
+                                Get.back();
+                                wishlistController.callDeteleWishlist(
+                                    wishlistController.wishId.value);
+                              }
                             },
                             btncolor: colorPrimary,
                             text: "Are you sure you want to Delete it?",
@@ -133,17 +136,25 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                       value.selected[index]
                                                           ? GestureDetector(
                                                               onTap: () {
-                                                                value.selected
-                                                                    .clear();
-                                                                value.selected =
-                                                                    List.generate(
-                                                                        value
-                                                                            .wishlistList
-                                                                            .length,
-                                                                        (i) =>
-                                                                            false);
-                                                                wishlistController
-                                                                    .update();
+                                                                value.wishId
+                                                                    .value = 0;
+                                                                value.selected[
+                                                                        index] =
+                                                                    false;
+                                                                if (value.selected[
+                                                                        index] ==
+                                                                    false) {
+                                                                  value
+                                                                      .deleteidList
+                                                                      .removeWhere((item) =>
+                                                                          item ==
+                                                                          value.wishlistList[index]
+                                                                              [
+                                                                              "id"]);
+                                                                }
+                                                                print(value
+                                                                    .deleteidList);
+                                                                value.update();
                                                               },
                                                               child: Padding(
                                                                 padding: const EdgeInsets
@@ -191,6 +202,19 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                         index] =
                                                                     !value.selected[
                                                                         index];
+                                                                if (value
+                                                                        .selected[
+                                                                    index]) {
+                                                                  value
+                                                                      .deleteidList
+                                                                      .add(value
+                                                                              .wishlistList[index]
+                                                                          [
+                                                                          "id"]);
+                                                                }
+                                                                print(value
+                                                                    .deleteidList);
+                                                                value.update();
                                                               },
                                                               child:
                                                                   const Padding(

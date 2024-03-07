@@ -17,6 +17,7 @@ class WishlistController extends BaseController {
   RxBool isDetails = false.obs;
   dynamic wishlistDetails = "".obs;
   List wishlistList = [].obs;
+  List deleteidList = [].obs;
   RxInt wishId = 0.obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
@@ -33,6 +34,16 @@ class WishlistController extends BaseController {
     super.onInit();
   } */
 
+  bool checkDeletevalidation(int id) {
+    if (id == 0) {
+      getSnackBar(
+        "Select item",
+      );
+      return false;
+    }
+    return true;
+  }
+
   getWishlistData() async {
     isWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -48,6 +59,7 @@ class WishlistController extends BaseController {
         if (responseData["data"] != null) {
           wishlistList = responseData["data"];
           selected.clear();
+          deleteidList.clear();
           selected = List.generate(wishlistList.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
@@ -118,7 +130,7 @@ class WishlistController extends BaseController {
         print(responseData);
         getSnackBar("Board Created");
         Get.to(
-          () => CreateBoardScreen(
+          () => const CreateBoardScreen(
             btnText: "Create board",
           ),
         );

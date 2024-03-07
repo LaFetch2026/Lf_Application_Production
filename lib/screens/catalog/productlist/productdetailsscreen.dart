@@ -442,6 +442,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     controller:
                                         productController.pincodeController,
                                     keyboardType: TextInputType.number,
+                                    maxLength: 6,
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: whiteTextColor,
@@ -492,6 +493,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         borderSide: const BorderSide(
                                             color: borderColor),
                                       ),
+                                      counterText: "",
                                       hintText: 'Enter pincode',
                                       hintStyle: const TextStyle(
                                           fontSize: 14,
