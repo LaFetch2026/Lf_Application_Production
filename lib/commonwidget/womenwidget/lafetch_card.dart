@@ -15,7 +15,17 @@ class LafetchCardWidget extends StatelessWidget {
       child: Container(
         height: 235,
         decoration: BoxDecoration(
-            color: colorPrimary, borderRadius: BorderRadius.circular(0)),
+            gradient: const LinearGradient(
+              colors: [
+                btnTextColor,
+                Color(0xFF241736),
+                Color(0xFF1D132C),
+                Color(0xFF130C1C),
+                Color(0xFF040206),
+                blackColor,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(0)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,

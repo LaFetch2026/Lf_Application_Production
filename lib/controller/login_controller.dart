@@ -156,6 +156,9 @@ class LoginController extends BaseController {
           );
         }
       } else if (response.statusCode == 400) {
+        if (responseData['errors']['message'] != null) {
+          getSnackBar(responseData['errors']['message']);
+        }
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
         }
