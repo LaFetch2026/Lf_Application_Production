@@ -138,28 +138,38 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           const EdgeInsets.only(right: 16, top: 20, left: 16),
                       child: Row(
                         children: [
-                          Expanded(
-                            flex: 1,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: AppText(
-                                text: "Resend Code",
-                                fontFamily: "Franklin Gothic",
-                                fontSize: 14.sp,
-                                color: btnTextColor,
+                          Obx(
+                            () => Expanded(
+                              flex: 1,
+                              child: GestureDetector(
+                                onTap: () {
+                                  otpController.enableResend.value
+                                      ? otpController.callResendOtp()
+                                      : null;
+                                },
+                                child: AppText(
+                                  text: "Resend Code",
+                                  fontFamily: "Franklin Gothic",
+                                  fontSize: 14.sp,
+                                  color: otpController.enableResend.value
+                                      ? btnTextColor
+                                      : Colors.grey,
+                                ),
                               ),
                             ),
                           ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: AppText(
-                              text:
-                                  '00 : ${otpController.secondsRemaining.value})',
-                              fontFamily: "Franklin Gothic Regular",
-                              fontSize: 14.sp,
-                              color: deepGreytextColor,
+                          Obx(
+                            () => Align(
+                              alignment: Alignment.centerRight,
+                              child: AppText(
+                                text:
+                                    '00 : ${otpController.secondsRemaining.value}',
+                                fontFamily: "Franklin Gothic Regular",
+                                fontSize: 14.sp,
+                                color: deepGreytextColor,
+                              ),
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ),

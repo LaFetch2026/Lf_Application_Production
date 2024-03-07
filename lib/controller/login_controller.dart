@@ -63,6 +63,8 @@ class LoginController extends BaseController {
 
   callRegisterAccount() async {
     showLoading();
+    secondsRemaining.value = 30;
+    enableResend.value = false;
     try {
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
@@ -91,7 +93,6 @@ class LoginController extends BaseController {
   }
 
   callResendOtp() async {
-    showLoading();
     secondsRemaining.value = 30;
     enableResend.value = false;
     try {
@@ -118,7 +119,6 @@ class LoginController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    hideLoading();
   }
 
   callVerifyOtp() async {
@@ -156,8 +156,8 @@ class LoginController extends BaseController {
           );
         }
       } else if (response.statusCode == 400) {
-        if (responseData['errors']['message'] != null) {
-          getSnackBar(responseData['errors']['message']);
+        if (responseData['errors']['otp'] != null) {
+          getSnackBar(responseData['errors']['otp'][0]);
         }
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
