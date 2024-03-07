@@ -11,10 +11,14 @@ import '../../utils/constants.dart';
 class NewBoardScreen extends StatefulWidget {
   final String title;
   final String boardName;
+  final String hintName;
+  final int boardId;
   final String btnText;
   const NewBoardScreen(
       {required this.title,
       required this.boardName,
+      required this.hintName,
+      required this.boardId,
       required this.btnText,
       super.key});
 
@@ -24,6 +28,16 @@ class NewBoardScreen extends StatefulWidget {
 
 class NewBoardScreenState extends State<NewBoardScreen> {
   final wishlistController = Get.put(WishlistController());
+
+  @override
+  void initState() {
+    if (widget.boardName.isNotEmpty) {
+      wishlistController.boardNameController.text = widget.boardName;
+    } else {
+      wishlistController.boardNameController.clear();
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +58,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 40),
                     child: TextFieldWidget(
-                      hint: widget.boardName,
+                      hint: widget.hintName,
                       controller: wishlistController.boardNameController,
                     ),
                   ),

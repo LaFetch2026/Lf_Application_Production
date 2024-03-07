@@ -30,9 +30,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   ];
   @override
   void initState() {
-    print("start${wishlistController.isWishlist}");
-    wishlistController.getWishlistData();
-    print("end${wishlistController.isWishlist}");
+    wishlistController.getProductData();
     super.initState();
   }
 
@@ -54,14 +52,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                             click1: () {
                               Get.back();
                             },
-                            click2: () {
-                              if (wishlistController.checkDeletevalidation(
-                                  wishlistController.wishId.value)) {
-                                Get.back();
-                                wishlistController.callDeteleWishlist(
-                                    wishlistController.wishId.value);
-                              }
-                            },
+                            click2: () {},
                             btncolor: colorPrimary,
                             text: "Are you sure you want to Delete it?",
                             btn1Text: "No",
@@ -76,12 +67,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                   threeDot: false,
                   icon: threeDotImage,
                 ),
-          Obx(() => wishlistController.isWishlist.value
+          Obx(() => wishlistController.isProduct.value
               ? const Padding(
                   padding: EdgeInsets.all(40.0),
                   child: Center(child: CircularProgressIndicator()),
                 )
-              : wishlistController.wishlistList.isNotEmpty
+              : wishlistController.productList.isNotEmpty
                   ? Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -114,7 +105,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                     crossAxisSpacing: 5,
                                     mainAxisSpacing: 9,
                                     children: List.generate(
-                                      value.wishlistList.length,
+                                      value.productList.length,
                                       (index) {
                                         return Column(
                                           children: [
@@ -136,8 +127,6 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                       value.selected[index]
                                                           ? GestureDetector(
                                                               onTap: () {
-                                                                value.wishId
-                                                                    .value = 0;
                                                                 value.selected[
                                                                         index] =
                                                                     false;
@@ -148,7 +137,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                       .deleteidList
                                                                       .removeWhere((item) =>
                                                                           item ==
-                                                                          value.wishlistList[index]
+                                                                          value.productList[index]
                                                                               [
                                                                               "id"]);
                                                                 }
@@ -194,10 +183,6 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                             )
                                                           : GestureDetector(
                                                               onTap: () {
-                                                                value.wishId
-                                                                    .value = value
-                                                                        .wishlistList[
-                                                                    index]["id"];
                                                                 value.selected[
                                                                         index] =
                                                                     !value.selected[
@@ -208,7 +193,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                   value
                                                                       .deleteidList
                                                                       .add(value
-                                                                              .wishlistList[index]
+                                                                              .productList[index]
                                                                           [
                                                                           "id"]);
                                                                 }
@@ -273,7 +258,17 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                   width: 24,
                                                                 ),
                                                                 AppText(
-                                                                  text: "4.4",
+                                                                  text: wishlistController.productList[index]
+                                                                              [
+                                                                              "aggregated_rating"] !=
+                                                                          null
+                                                                      ? wishlistController
+                                                                          .productList[
+                                                                              index]
+                                                                              [
+                                                                              "aggregated_rating"]
+                                                                          .toString()
+                                                                      : "",
                                                                   color:
                                                                       colorPrimary,
                                                                   fontSize:
@@ -323,7 +318,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                         vertical: 5),
                                                     child: AppText(
                                                       text: wishlistController
-                                                                  .wishlistList[
+                                                                  .productList[
                                                               index]["name"] ??
                                                           "",
                                                       color: nameText,
@@ -340,8 +335,11 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                             .symmetric(
                                                         horizontal: 10),
                                                     child: AppText(
-                                                      text:
-                                                          "Topman super skinny suit jacket and trousers in light blue",
+                                                      text: wishlistController
+                                                                      .productList[
+                                                                  index][
+                                                              "short_description"] ??
+                                                          "",
                                                       color: nameText,
                                                       maxLines: 2,
                                                       fontSize: 11.sp,
@@ -361,7 +359,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                       children: [
                                                         AppText(
                                                           text:
-                                                              "\u{20B9} ${items[index]}",
+                                                              "\u{20B9} ${wishlistController.productList[index]["price"] ?? ""}",
                                                           color:
                                                               deepGreytextColor,
                                                           maxLines: 2,
@@ -377,7 +375,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                       .only(
                                                                   left: 10),
                                                           child: Text(
-                                                            "\u{20B9} ${items[index]}",
+                                                            "\u{20B9} ${wishlistController.productList[index]["mrp"] ?? ""}",
                                                             style: TextStyle(
                                                               color:
                                                                   textHintColor,

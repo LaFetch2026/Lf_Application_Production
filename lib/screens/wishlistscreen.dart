@@ -128,7 +128,9 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     onTap: () {
                                       Get.to(const NewBoardScreen(
                                         title: "New Board",
-                                        boardName: "Name of the Board",
+                                        boardId: 0,
+                                        hintName: "Name of the Board",
+                                        boardName: "",
                                         btnText: "Next",
                                       ));
                                     },
@@ -184,7 +186,14 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       (index) {
                                         return GestureDetector(
                                           onTap: () {
-                                            Get.to(const BoardScreen());
+                                            Get.to(BoardScreen(
+                                              boardName: wishlistController
+                                                          .wishlistList[index]
+                                                      ["name"] ??
+                                                  "",
+                                              boardId: wishlistController
+                                                  .wishlistList[index]["id"],
+                                            ));
                                           },
                                           child: Container(
                                             alignment: Alignment.center,

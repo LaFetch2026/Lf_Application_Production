@@ -15,10 +15,11 @@ import '../utils/constants.dart';
 class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
+  RxBool isProduct = false.obs;
   dynamic wishlistDetails = "".obs;
   List wishlistList = [].obs;
   List deleteidList = [].obs;
-  RxInt wishId = 0.obs;
+  List productList = [].obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
   /*  final List<Map<String, String>> wishlistList = [
@@ -34,7 +35,7 @@ class WishlistController extends BaseController {
     super.onInit();
   } */
 
-  bool checkDeletevalidation(int id) {
+  /*  bool checkDeletevalidation(int id) {
     if (id == 0) {
       getSnackBar(
         "Select item",
@@ -43,7 +44,7 @@ class WishlistController extends BaseController {
     }
     return true;
   }
-
+ */
   getWishlistData() async {
     isWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -78,6 +79,39 @@ class WishlistController extends BaseController {
       print("error$e");
     }
     isWishlist.value = false;
+  }
+
+  getProductData() async {
+    isProduct.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          productList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isProduct.value = false;
   }
 
   getWishlistDetails(int wishlistId) async {
@@ -161,7 +195,7 @@ class WishlistController extends BaseController {
         },
       );
       if (response.statusCode == 200) {
-        getSnackBar("Item deleted");
+        getSnackBar("Board deleted");
         getWishlistData();
       } else if (response.statusCode == 400) {
         print(response.body);

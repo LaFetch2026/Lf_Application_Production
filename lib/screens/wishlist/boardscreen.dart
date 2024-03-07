@@ -9,10 +9,18 @@ import 'package:lafetch/screens/wishlist/createboardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../commonwidget/common_widgets.dart';
+import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 
 class BoardScreen extends StatefulWidget {
-  const BoardScreen({super.key});
+  final String boardName;
+  final int boardId;
+  const BoardScreen({
+    super.key,
+    required this.boardName,
+    required this.boardId,
+  });
 
   @override
   State<BoardScreen> createState() => BoardScreenState();
@@ -20,6 +28,7 @@ class BoardScreen extends StatefulWidget {
 
 class BoardScreenState extends State<BoardScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final wishlistController = Get.put(WishlistController());
 
   List<String> items = [
     "100",
@@ -45,29 +54,51 @@ class BoardScreenState extends State<BoardScreen> {
               threeDot: true,
               icon: threeDotImage,
               onPressedThreeDot: () {
-                scaffoldKey.currentState
-                    ?.showBottomSheet((context) => BottomSheetBoard(
-                          onPressedEdit: () {
-                            Get.to(CreateBoardScreen(
-                              btnText: "",
-                            ));
-                          },
-                          onPressedAddItem: () {
-                            Get.back();
-                            Get.to(CreateBoardScreen(
-                              btnText: "Add 2 items",
-                            ));
-                          },
-                          onPressedDelete: () {},
-                          onPressedRename: () {
-                            Get.back();
-                            Get.to(const NewBoardScreen(
-                              title: "Edit Board Name",
-                              boardName: "Vintage Vibes",
-                              btnText: "Save changes",
-                            ));
-                          },
+                scaffoldKey.currentState?.showBottomSheet((context) =>
+                    BottomSheetBoard(
+                      onPressedEdit: () {
+                        Get.to(const CreateBoardScreen(
+                          btnText: "",
                         ));
+                      },
+                      onPressedAddItem: () {
+                        Get.back();
+                        Get.to(const CreateBoardScreen(
+                          btnText: "Add 2 items",
+                        ));
+                      },
+                      onPressedDelete: () {
+                        showDialog(
+                          barrierColor: Colors.black26,
+                          context: context,
+                          builder: (context) {
+                            return showDoubleBtnDailog(
+                                click1: () {
+                                  Get.back();
+                                },
+                                click2: () {
+                                  Get.back();
+                                  wishlistController
+                                      .callDeteleWishlist(widget.boardId);
+                                },
+                                btncolor: colorPrimary,
+                                text: "Are you sure you want to delete board?",
+                                btn1Text: "No",
+                                btn2Text: "Yes");
+                          },
+                        );
+                      },
+                      onPressedRename: () {
+                        Get.back();
+                        Get.to(NewBoardScreen(
+                          title: "Edit Board Name",
+                          hintName: "",
+                          boardId: widget.boardId,
+                          boardName: widget.boardName,
+                          btnText: "Save changes",
+                        ));
+                      },
+                    ));
               },
             ),
             Expanded(
@@ -79,7 +110,7 @@ class BoardScreenState extends State<BoardScreen> {
                       padding:
                           const EdgeInsets.only(left: 16, right: 16, top: 10),
                       child: AppText(
-                        text: "Vintage Vibes",
+                        text: widget.boardName,
                         color: blackColor,
                         fontSize: 25.sp,
                         fontFamily: "Franklin Gothic Regular",
