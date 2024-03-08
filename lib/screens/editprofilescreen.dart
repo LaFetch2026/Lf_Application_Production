@@ -138,6 +138,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                 },
                                                 child: Container(
                                                   width: double.infinity,
+                                                  color: whiteTextColor,
                                                   alignment: Alignment.center,
                                                   child: Padding(
                                                     padding: const EdgeInsets
