@@ -4,6 +4,7 @@ class SingleButton extends StatelessWidget {
   final String label;
   final double roundness;
   final FontWeight fontWeight;
+  final double height;
   final double fontSize;
   final String fontFamily;
   final Color textColor;
@@ -18,6 +19,7 @@ class SingleButton extends StatelessWidget {
     required this.textColor,
     required this.backgroundColor,
     required this.borderColor,
+    this.height = 50,
     this.fontSize = 14,
     this.roundness = 1,
     this.fontWeight = FontWeight.bold,
@@ -32,7 +34,7 @@ class SingleButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
           width: double.infinity,
-          height: 50,
+          height: height,
           child: ElevatedButton(
               style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(

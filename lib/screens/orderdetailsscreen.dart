@@ -474,18 +474,21 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               padding: const EdgeInsets.only(top: 5),
                               child: Row(
                                 children: [
-                                  AppText(
-                                    text: "example@mail.com",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: textHintColor,
-                                    fontSize: 14.sp,
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: AppText(
+                                      text: "+9178xxxxxx23",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: textHintColor,
+                                      fontSize: 14.sp,
+                                    ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
                                     child: AppText(
-                                      text: "+9178xxxxxx23",
+                                      text: "example@mail.com",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: textHintColor,

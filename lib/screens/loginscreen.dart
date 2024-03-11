@@ -183,7 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: NumberWidget(
-                              controller: loginController.phoneNumber),
+                              controller: loginController.phoneNumberLogin),
                         ),
                         Obx(
                           () => Padding(
@@ -195,11 +195,11 @@ class LoginScreenState extends State<LoginScreen> {
                                 controller: loginController,
                                 onPressed: () {
                                   if (loginController.checkNumbervalidation(
-                                      loginController.phoneNumber.text
+                                      loginController.phoneNumberLogin.text
                                           .toString()
                                           .trim())) {
                                     loginController.number.value =
-                                        "+91${loginController.phoneNumber.text.toString().trim()}";
+                                        "+91${loginController.phoneNumberLogin.text.toString().trim()}";
                                     loginController.callRegisterAccount();
                                   }
                                 },
@@ -274,7 +274,7 @@ class LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: NumberWidget(
-                              controller: loginController.phoneNumber),
+                              controller: loginController.phoneNumberRegister),
                         ),
                         Obx(
                           () => Padding(
@@ -286,11 +286,11 @@ class LoginScreenState extends State<LoginScreen> {
                                 controller: loginController,
                                 onPressed: () {
                                   if (loginController.checkNumbervalidation(
-                                      loginController.phoneNumber.text
+                                      loginController.phoneNumberRegister.text
                                           .toString()
                                           .trim())) {
                                     loginController.number.value =
-                                        "+91${loginController.phoneNumber.text.toString().trim()}";
+                                        "+91${loginController.phoneNumberRegister.text.toString().trim()}";
                                     loginController.callRegisterAccount();
                                   }
                                 },

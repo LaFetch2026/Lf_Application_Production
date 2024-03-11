@@ -144,7 +144,8 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   otpController.enableResend.value
-                                      ? otpController.callResendOtp()
+                                      ? otpController
+                                          .callResendOtp(widget.phoneMunber)
                                       : null;
                                 },
                                 child: AppText(

@@ -64,7 +64,7 @@ class LafetchCardWidget extends StatelessWidget {
                   label: "Get Access",
                   textColor: whiteBorderColor,
                   width: double.infinity,
-                  backgroundColor: colorPrimary,
+                  backgroundColor: Colors.transparent,
                   onPressed: () {},
                   borderColor: whiteBorderColor),
             )

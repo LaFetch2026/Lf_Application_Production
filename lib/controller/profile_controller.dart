@@ -11,9 +11,13 @@ import 'package:http/http.dart' as http;
 import '../screens/bottomnavscreen.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 
+import '../screens/loginscreen.dart';
+
 class ProfileController extends BaseController {
   RxBool showList = false.obs;
+  RxBool isProfile = false.obs;
   RxInt genderId = 0.obs;
+  dynamic profileDetails = "".obs;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final gerderController = TextEditingController();
@@ -48,6 +52,39 @@ class ProfileController extends BaseController {
     return true;
   }
 
+  getProductData() async {
+    isProfile.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/profile"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          profileDetails = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isProfile.value = false;
+  }
+
   callupdateProfile() async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
@@ -78,7 +115,7 @@ class ProfileController extends BaseController {
         if (responseData['data']['name'] != null) {
           prefs.setString('name', responseData['data']['name']);
         }
-        Get.to(
+        Get.offAll(
           () => const BottomNavScreen(),
         );
       } else if (response.statusCode == 400) {

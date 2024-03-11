@@ -14,7 +14,8 @@ import 'package:http/http.dart' as http;
 import '../screens/userdetails.dart';
 
 class LoginController extends BaseController {
-  final phoneNumber = TextEditingController();
+  final phoneNumberLogin = TextEditingController();
+  final phoneNumberRegister = TextEditingController();
   RxInt secondsRemaining = 30.obs;
   RxString number = "".obs;
   RxString otp = "".obs;
@@ -92,13 +93,13 @@ class LoginController extends BaseController {
     hideLoading();
   }
 
-  callResendOtp() async {
+  callResendOtp(String num) async {
     secondsRemaining.value = 30;
     enableResend.value = false;
     try {
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
-        "phone": number.value,
+        "phone": num,
       });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -147,17 +148,19 @@ class LoginController extends BaseController {
         }
         if (responseData['data']['name'] != null) {
           prefs.setString('name', responseData['data']['name']);
-          Get.to(
+          Get.offAll(
             () => const BottomNavScreen(),
           );
         } else {
-          Get.to(
+          Get.off(
             () => const UserDetailsScreen(),
           );
         }
       } else if (response.statusCode == 400) {
         if (responseData['errors']['otp'] != null) {
-          getSnackBar(responseData['errors']['otp'][0]);
+          for (var i = 0; i < responseData['errors']['otp'].length; i++) {
+            getSnackBar(responseData['errors']['otp'][i]);
+          }
         }
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
