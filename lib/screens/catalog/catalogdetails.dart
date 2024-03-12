@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/catalog_appbar.dart';
+import '../../controller/catalog_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 import '../searchscreen.dart';
@@ -23,16 +24,15 @@ class CatalogDetailsScreen extends StatefulWidget {
 }
 
 class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
-  List<String> items = [
-    "Suits",
-    "Skirt",
-    "Top",
-    "Dresses",
-    "jacket",
-    "Footwear",
-    "Jeans",
-    "Sales Discount",
-  ];
+  final controller = Get.put(CatalogController());
+
+  @override
+  void initState() {
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => controller.getCategoryData());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,50 +95,71 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, top: 12),
-                    child: ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: items.length,
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (ctx, index) {
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    Get.to(const ProductListScreen());
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          AppText(
-                                            text: items[index],
-                                            color: greyTextColor,
-                                            fontSize: 14.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          );
-                        }),
-                  ),
+                  Obx(() => controller.isCategory.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : controller.categoryList.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 16, top: 12),
+                              child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  itemCount: controller.categoryList.length,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                            onTap: () {
+                                              Get.to(const ProductListScreen());
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 10),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    AppText(
+                                                      text: controller
+                                                                  .categoryList[
+                                                              index]["name"] ??
+                                                          "",
+                                                      color: greyTextColor,
+                                                      fontSize: 14.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )),
+                                      ],
+                                    );
+                                  }),
+                            )
+                          : const Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: Center(
+                                child: Text("No Category Found",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontFamily: "Franklin Gothic Regular")),
+                              ),
+                            ))
                 ],
               ),
             ),

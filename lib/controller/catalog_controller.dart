@@ -61,7 +61,10 @@ class CatalogController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {}
+        if (responseData != null) {
+          print(responseData);
+          categoryList = responseData;
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

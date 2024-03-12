@@ -115,9 +115,11 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                 ),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    Get.to(
-                                                        const CatalogDetailsScreen(
-                                                      title: "Clothing",
+                                                    Get.to(CatalogDetailsScreen(
+                                                      title: controller
+                                                                  .catalogList[
+                                                              index]["name"] ??
+                                                          "",
                                                     ));
                                                   },
                                                   child: Image.asset(
