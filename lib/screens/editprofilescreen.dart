@@ -9,7 +9,17 @@ import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  final String name;
+  final String email;
+  final String number;
+
+  final int genderId;
+  const EditProfileScreen(
+      {super.key,
+      required this.name,
+      required this.email,
+      required this.number,
+      required this.genderId});
 
   @override
   State<EditProfileScreen> createState() => EditProfileScreenState();
@@ -17,6 +27,23 @@ class EditProfileScreen extends StatefulWidget {
 
 class EditProfileScreenState extends State<EditProfileScreen> {
   final profileController = Get.put(ProfileController());
+
+  @override
+  void initState() {
+    profileController.nameController.text = widget.name;
+    profileController.emailController.text = widget.email;
+    profileController.phoneController.text = widget.number;
+    profileController.genderId.value = widget.genderId;
+    if (widget.genderId == 1) {
+      profileController.gerderController.text = "Female";
+    } else if (widget.genderId == 2) {
+      profileController.gerderController.text = "Male";
+    } else {
+      profileController.gerderController.text = "Non-Binary";
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -50,6 +77,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: NumberWidget(
+                          readonly: true,
                           controller: profileController.phoneController),
                     ),
                     Padding(
@@ -194,7 +222,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   label: "Save Changes",
                   textColor: whiteBorderColor,
                   backgroundColor: colorPrimary,
-                  onPressed: () {},
+                  onPressed: () {
+                    /*  if (profileController.checkvalidation(
+                        profileController.nameController.text.toString().trim(),
+                        profileController.emailController.text
+                            .toString()
+                            .trim(),
+                        profileController.genderId.value)) {
+                      profileController.callupdateProfile();
+                    } */
+                  },
                   borderColor: colorPrimary),
             )
           ],

@@ -183,6 +183,7 @@ class LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: NumberWidget(
+                              readonly: false,
                               controller: loginController.phoneNumberLogin),
                         ),
                         Obx(
@@ -274,6 +275,7 @@ class LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: NumberWidget(
+                              readonly: false,
                               controller: loginController.phoneNumberRegister),
                         ),
                         Obx(

@@ -6,10 +6,12 @@ import '../app_text.dart';
 
 class NumberWidget extends StatelessWidget {
   final TextEditingController controller;
+  final bool readonly;
 
   const NumberWidget({
     Key? key,
     required this.controller,
+    required this.readonly,
   }) : super(key: key);
 
   @override
@@ -21,6 +23,7 @@ class NumberWidget extends StatelessWidget {
         width: double.infinity,
         child: TextField(
           controller: controller,
+          readOnly: readonly,
           keyboardType: TextInputType.number,
           maxLength: 10,
           style: const TextStyle(color: textColor),

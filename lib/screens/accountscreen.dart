@@ -149,7 +149,20 @@ class AccountScreenState extends State<AccountScreen> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Get.to(const EditProfileScreen());
+                                        Get.to(EditProfileScreen(
+                                          name: controller
+                                                  .profileDetails["name"] ??
+                                              "",
+                                          email: controller
+                                                  .profileDetails["email"] ??
+                                              "",
+                                          number: controller
+                                                  .profileDetails["phone"] ??
+                                              "",
+                                          genderId: controller
+                                                  .profileDetails["gender"] ??
+                                              "",
+                                        ));
                                       },
                                       child: Padding(
                                         padding:

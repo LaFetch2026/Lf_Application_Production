@@ -61,6 +61,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: NumberWidget(
+                          readonly: false,
                           controller: shipController.phoneController),
                     ),
                     Padding(
