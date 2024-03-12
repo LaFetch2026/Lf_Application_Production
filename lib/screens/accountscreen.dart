@@ -27,7 +27,7 @@ class AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    controller.getProductData();
+    controller.getProfileData();
     super.initState();
   }
 
@@ -149,20 +149,33 @@ class AccountScreenState extends State<AccountScreen> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Get.to(EditProfileScreen(
-                                          name: controller
-                                                  .profileDetails["name"] ??
-                                              "",
-                                          email: controller
-                                                  .profileDetails["email"] ??
-                                              "",
-                                          number: controller
-                                                  .profileDetails["phone"] ??
-                                              "",
-                                          genderId: controller
-                                                  .profileDetails["gender"] ??
-                                              "",
-                                        ));
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        EditProfileScreen(
+                                                          name: controller
+                                                                      .profileDetails[
+                                                                  "name"] ??
+                                                              "",
+                                                          email: controller
+                                                                      .profileDetails[
+                                                                  "email"] ??
+                                                              "",
+                                                          number: controller
+                                                                      .profileDetails[
+                                                                  "phone"] ??
+                                                              "",
+                                                          genderId: controller
+                                                                      .profileDetails[
+                                                                  "gender"] ??
+                                                              "",
+                                                        )))
+                                            .then((value) => setState(
+                                                  () {
+                                                    controller.getProfileData();
+                                                  },
+                                                ));
                                       },
                                       child: Padding(
                                         padding:

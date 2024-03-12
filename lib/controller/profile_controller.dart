@@ -52,7 +52,7 @@ class ProfileController extends BaseController {
     return true;
   }
 
-  getProductData() async {
+  getProfileData() async {
     isProfile.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -85,7 +85,7 @@ class ProfileController extends BaseController {
     isProfile.value = false;
   }
 
-  callupdateProfile() async {
+  callupdateProfile(String type) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -115,9 +115,13 @@ class ProfileController extends BaseController {
         if (responseData['data']['name'] != null) {
           prefs.setString('name', responseData['data']['name']);
         }
-        Get.offAll(
-          () => const BottomNavScreen(),
-        );
+        if (type == "edit") {
+          Get.close(1);
+        } else {
+          Get.offAll(
+            () => const BottomNavScreen(),
+          );
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

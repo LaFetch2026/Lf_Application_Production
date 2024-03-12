@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
 import 'package:lafetch/controller/profile_controller.dart';
-import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -216,23 +216,28 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: SingleButton(
-                  label: "Save Changes",
-                  textColor: whiteBorderColor,
-                  backgroundColor: colorPrimary,
-                  onPressed: () {
-                    /*  if (profileController.checkvalidation(
-                        profileController.nameController.text.toString().trim(),
-                        profileController.emailController.text
-                            .toString()
-                            .trim(),
-                        profileController.genderId.value)) {
-                      profileController.callupdateProfile();
-                    } */
-                  },
-                  borderColor: colorPrimary),
+            Obx(
+              () => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: getSingleButton(
+                    label: "Save Changes",
+                    textColor: whiteBorderColor,
+                    backgroundColor: colorPrimary,
+                    controller: profileController,
+                    onPressed: () {
+                      if (profileController.checkvalidation(
+                          profileController.nameController.text
+                              .toString()
+                              .trim(),
+                          profileController.emailController.text
+                              .toString()
+                              .trim(),
+                          profileController.genderId.value)) {
+                        profileController.callupdateProfile("edit");
+                      }
+                    },
+                    borderColor: colorPrimary),
+              ),
             )
           ],
         ),

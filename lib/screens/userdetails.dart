@@ -220,7 +220,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                           userController.nameController.text.toString().trim(),
                           userController.emailController.text.toString().trim(),
                           userController.genderId.value)) {
-                        userController.callupdateProfile();
+                        userController.callupdateProfile("user");
                       }
                     },
                     borderColor: colorSecondary),
