@@ -23,7 +23,8 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
 
   @override
   void initState() {
-    controller.getCatalogData(widget.type);
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => controller.getCatalogData(widget.type));
     super.initState();
   }
 

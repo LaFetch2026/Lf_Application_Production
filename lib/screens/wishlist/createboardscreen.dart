@@ -30,7 +30,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   ];
   @override
   void initState() {
-    wishlistController.getProductData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => wishlistController.getProductData("express"));
     super.initState();
   }
 

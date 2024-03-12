@@ -28,7 +28,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
 
   @override
   void initState() {
-    productController.getProductData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
     super.initState();
   }
 

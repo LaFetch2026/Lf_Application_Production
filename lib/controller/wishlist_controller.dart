@@ -78,12 +78,12 @@ class WishlistController extends BaseController {
     isWishlist.value = false;
   }
 
-  getProductData() async {
+  getProductData(String type) async {
     isProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+          Uri.parse("${ApiConstants.baseUrl}/products?type=$type"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -199,11 +199,12 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar("Board Updated");
-        Get.to(
+        /*  Get.to(
           () => const CreateBoardScreen(
             btnText: "Create board",
           ),
-        );
+        ); */
+        Get.close(2);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -232,7 +233,7 @@ class WishlistController extends BaseController {
       );
       if (response.statusCode == 200) {
         getSnackBar("Board deleted");
-        getProductData();
+        getProductData("express");
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

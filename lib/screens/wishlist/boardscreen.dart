@@ -40,7 +40,8 @@ class BoardScreenState extends State<BoardScreen> {
 
   @override
   void initState() {
-    wishlistController.getProductData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => wishlistController.getProductData("express"));
     super.initState();
   }
 
@@ -77,7 +78,8 @@ class BoardScreenState extends State<BoardScreen> {
                                     )))
                             .then((value) => setState(
                                   () {
-                                    wishlistController.getProductData();
+                                    wishlistController
+                                        .getProductData("express");
                                   },
                                 ));
                       },
@@ -116,7 +118,8 @@ class BoardScreenState extends State<BoardScreen> {
                                     )))
                             .then((value) => setState(
                                   () {
-                                    wishlistController.getProductData();
+                                    wishlistController
+                                        .getProductData("express");
                                   },
                                 ));
                       },

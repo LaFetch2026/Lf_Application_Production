@@ -47,10 +47,14 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
-    homeController.getBannar1Data();
-    homeController.getBannar2Data();
-    homeController.getCategoryData();
-    productController.getProductData();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getBannar1Data());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getBannar2Data());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getCategoryData());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
     timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (_currentPage < 2) {
         _currentPage++;

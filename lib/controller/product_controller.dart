@@ -39,12 +39,12 @@ class ProductController extends BaseController {
     return true;
   }
 
-  getProductData() async {
+  getProductData(String type) async {
     isProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=relevant"),
+          Uri.parse("${ApiConstants.baseUrl}/products?type=$type"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

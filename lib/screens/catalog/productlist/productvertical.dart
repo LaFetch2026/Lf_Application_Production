@@ -49,7 +49,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
 
   @override
   void initState() {
-    productController.getProductData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
     super.initState();
   }
 
