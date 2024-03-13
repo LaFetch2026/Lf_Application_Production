@@ -20,6 +20,8 @@ class WishlistController extends BaseController {
   List wishlistList = [].obs;
   List deleteidList = [].obs;
   List productList = [].obs;
+  RxInt addItem = 0.obs;
+  RxInt productId = 0.obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
   /*  final List<Map<String, String>> wishlistList = [
@@ -35,7 +37,7 @@ class WishlistController extends BaseController {
     super.onInit();
   } */
 
-  /*  bool checkDeletevalidation(int id) {
+  bool checkIdvalidation(int id) {
     if (id == 0) {
       getSnackBar(
         "Select item",
@@ -44,7 +46,7 @@ class WishlistController extends BaseController {
     }
     return true;
   }
- */
+
   getWishlistData() async {
     isWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -246,5 +248,33 @@ class WishlistController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  callAddItemWishlist() async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+        Uri.parse("${ApiConstants.baseUrl}/products/$productId/wishlist"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      if (response.statusCode == 200) {
+        getSnackBar("item added");
+        Get.close(2);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("item add failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
   }
 }

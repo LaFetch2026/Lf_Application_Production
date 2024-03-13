@@ -7,7 +7,6 @@ import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/common_widgets.dart';
-import '../../commonwidget/singlebtn.dart';
 import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 
@@ -30,8 +29,10 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   ];
   @override
   void initState() {
+    wishlistController.addItem.value = 0;
+    wishlistController.productId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => wishlistController.getProductData("express"));
+        (_) => wishlistController.getProductData("relevant"));
     super.initState();
   }
 
@@ -144,6 +145,13 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                 }
                                                                 print(value
                                                                     .deleteidList);
+                                                                value.addItem
+                                                                    .value--;
+                                                                print(value
+                                                                    .addItem
+                                                                    .value);
+                                                                value.productId
+                                                                    .value = 0;
                                                                 value.update();
                                                               },
                                                               child: Padding(
@@ -200,6 +208,15 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                 }
                                                                 print(value
                                                                     .deleteidList);
+                                                                value.addItem
+                                                                    .value++;
+                                                                print(value
+                                                                    .addItem
+                                                                    .value);
+                                                                value.productId
+                                                                    .value = value
+                                                                        .productList[
+                                                                    index]["id"];
                                                                 value.update();
                                                               },
                                                               child:
@@ -419,21 +436,27 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                 fontFamily: "Franklin Gothic Regular")),
                       ),
                     )),
-          widget.btnText == ""
+          Obx(() => widget.btnText == ""
               ? const SizedBox(
                   height: 0,
                 )
               : Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: SingleButton(
-                      label: widget.btnText,
+                  child: getSingleButton(
+                      label: widget.btnText == "Add"
+                          ? "Add ${wishlistController.addItem.value} items"
+                          : "",
                       textColor: whiteBorderColor,
+                      controller: wishlistController,
                       backgroundColor: colorPrimary,
                       onPressed: () {
-                        Get.close(2);
+                        if (wishlistController.checkIdvalidation(
+                            wishlistController.productId.value)) {
+                          wishlistController.callAddItemWishlist();
+                        }
                       },
                       borderColor: colorPrimary),
-                )
+                ))
         ],
       ),
     );

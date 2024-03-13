@@ -50,84 +50,81 @@ class BoardScreenState extends State<BoardScreen> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: whiteTextColor,
-      body: GestureDetector(
-        onTap: () {
-          Get.back();
-        },
-        child: Column(
-          children: [
-            BackButtonAppbar(
-              text: "Board",
-              threeDot: true,
-              icon: threeDotImage,
-              onPressedThreeDot: () {
-                scaffoldKey.currentState?.showBottomSheet((context) =>
-                    BottomSheetBoard(
-                      onPressedEdit: () {
-                        Get.to(const CreateBoardScreen(
-                          btnText: "",
-                        ));
-                      },
-                      onPressedAddItem: () {
-                        Get.back();
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const CreateBoardScreen(
-                                      btnText: "Add 2 items",
-                                    )))
-                            .then((value) => setState(
-                                  () {
-                                    wishlistController
-                                        .getProductData("express");
-                                  },
-                                ));
-                      },
-                      onPressedDelete: () {
-                        showDialog(
-                          barrierColor: Colors.black26,
-                          context: context,
-                          builder: (context) {
-                            return showDoubleBtnDailog(
-                                click1: () {
-                                  Get.back();
+      body: Column(
+        children: [
+          BackButtonAppbar(
+            text: "Board",
+            threeDot: true,
+            icon: threeDotImage,
+            onPressedThreeDot: () {
+              scaffoldKey.currentState?.showBottomSheet((context) =>
+                  BottomSheetBoard(
+                    onPressedEdit: () {
+                      Get.to(const CreateBoardScreen(
+                        btnText: "",
+                      ));
+                    },
+                    onPressedAddItem: () {
+                      Get.back();
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const CreateBoardScreen(
+                                    btnText: "Add",
+                                  )))
+                          .then((value) => setState(
+                                () {
+                                  wishlistController.getProductData("express");
                                 },
-                                click2: () {
-                                  Get.close(3);
-                                  wishlistController
-                                      .callDeteleWishlist(widget.boardId);
+                              ));
+                    },
+                    onPressedDelete: () {
+                      showDialog(
+                        barrierColor: Colors.black26,
+                        context: context,
+                        builder: (context) {
+                          return showDoubleBtnDailog(
+                              click1: () {
+                                Get.back();
+                              },
+                              click2: () {
+                                Get.close(3);
+                                wishlistController
+                                    .callDeteleWishlist(widget.boardId);
+                              },
+                              btncolor: colorPrimary,
+                              text: "Are you sure you want to delete board?",
+                              btn1Text: "No",
+                              btn2Text: "Yes");
+                        },
+                      );
+                    },
+                    onPressedRename: () {
+                      Get.back();
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (BuildContext context) => NewBoardScreen(
+                                    title: "Edit Board Name",
+                                    hintName: "",
+                                    boardId: widget.boardId,
+                                    boardName: widget.boardName,
+                                    btnText: "Save changes",
+                                  )))
+                          .then((value) => setState(
+                                () {
+                                  wishlistController.getProductData("express");
                                 },
-                                btncolor: colorPrimary,
-                                text: "Are you sure you want to delete board?",
-                                btn1Text: "No",
-                                btn2Text: "Yes");
-                          },
-                        );
-                      },
-                      onPressedRename: () {
-                        Get.back();
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    NewBoardScreen(
-                                      title: "Edit Board Name",
-                                      hintName: "",
-                                      boardId: widget.boardId,
-                                      boardName: widget.boardName,
-                                      btnText: "Save changes",
-                                    )))
-                            .then((value) => setState(
-                                  () {
-                                    wishlistController
-                                        .getProductData("express");
-                                  },
-                                ));
-                      },
-                    ));
-              },
-            ),
-            Expanded(
-              child: SingleChildScrollView(
+                              ));
+                    },
+                  ));
+            },
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: GestureDetector(
+                onTap: () {
+                  Get.back();
+                },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -397,8 +394,8 @@ class BoardScreenState extends State<BoardScreen> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
