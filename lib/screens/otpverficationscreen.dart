@@ -107,29 +107,34 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Center(
-                        child: OtpTextField(
-                          borderRadius: BorderRadius.circular(1),
-                          numberOfFields: 4,
-                          fieldWidth:
-                              (MediaQuery.of(context).size.width - 65) / 4,
-                          textStyle: const TextStyle(
-                              color: loginText, fontSize: 16, height: 2.5),
-                          focusedBorderColor: borderColor,
-                          borderWidth: 1,
-                          enabledBorderColor: borderColor,
-                          showFieldAsBox: true,
-                          onCodeChanged: (String code) {
-                            otpController.otp.value = code;
-                          },
-                          onSubmit: (String verificationCode) {
-                            otpController.otp.value = verificationCode;
-                            if (otpController.otp.value.length == 4) {
-                              otpController.showButton.value = true;
-                            }
-                          },
+                    Obx(
+                      () => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Center(
+                          child: OtpTextField(
+                            borderRadius: BorderRadius.circular(1),
+                            numberOfFields: 4,
+                            clearText: otpController.otpClear.value,
+                            fieldWidth:
+                                (MediaQuery.of(context).size.width - 65) / 4,
+                            textStyle: const TextStyle(
+                                color: loginText, fontSize: 16, height: 2.5),
+                            focusedBorderColor: borderColor,
+                            borderWidth: 1,
+                            enabledBorderColor: borderColor,
+                            showFieldAsBox: true,
+                            onCodeChanged: (String code) {
+                              otpController.otpClear.value = false;
+                              otpController.otp.value = code;
+                            },
+                            onSubmit: (String verificationCode) {
+                              otpController.otpClear.value = false;
+                              otpController.otp.value = verificationCode;
+                              if (otpController.otp.value.length == 4) {
+                                otpController.showButton.value = true;
+                              }
+                            },
+                          ),
                         ),
                       ),
                     ),
@@ -143,6 +148,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               flex: 1,
                               child: GestureDetector(
                                 onTap: () {
+                                  otpController.otpClear.value = true;
                                   otpController.enableResend.value
                                       ? otpController
                                           .callResendOtp(widget.phoneMunber)

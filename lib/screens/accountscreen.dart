@@ -196,7 +196,7 @@ class AccountScreenState extends State<AccountScreen> {
                                 height: 12,
                               ),
                               Container(
-                                color: greyCardBack,
+                                color: backWhite,
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       left: 16, right: 16, top: 16, bottom: 16),

@@ -826,7 +826,7 @@ class CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Container(
-                    color: greyCardBack,
+                    color: backWhite,
                     height: 34,
                     child: Padding(
                       padding: const EdgeInsets.only(

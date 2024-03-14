@@ -23,7 +23,6 @@ const Color expressText = Color(0xFF404662);
 const Color appbarText = Color(0xFF1F1C21);
 const Color redColor = Color(0xFFD95656);
 const Color backWhite = Color(0xFFF2EEF7);
-const Color greyCardBack = Color(0xFFF2EEF7);
 const Color profileBorder = Color(0xFFDED9E4);
 const Color lightPurple = Color(0xFFECEEF9);
 const Color lightYellow = Color(0xFFF7E9B4);
