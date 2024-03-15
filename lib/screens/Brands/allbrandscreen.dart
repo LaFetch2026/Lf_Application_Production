@@ -6,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
 import '../../commonwidget/app_text.dart';
+import '../../controller/brand_controller.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
@@ -21,6 +22,7 @@ class AllBrandScreen extends StatefulWidget {
 
 class AllBrandScreenState extends State<AllBrandScreen> {
   final productController = Get.put(ProductController());
+  final brandController = Get.put(BrandController());
   List<String> gridList = [
     "New In",
     "Clothing",
@@ -44,6 +46,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         children: [
           AllBrandAppbar(
             text: widget.title,
+            onPressedback: () {
+              brandController.showAllBrand.value = false;
+            },
             onPressedSearch: () {
               Get.to(const SearchScreen());
             },

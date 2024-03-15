@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
@@ -19,34 +20,20 @@ class BrandsScreen extends StatefulWidget {
 }
 
 class BrandsScreenState extends State<BrandsScreen> {
-  bool showlist = false;
-  bool showAllBrand = false;
-  String brandName = "";
-  Color borderColor = whiteBorderColor;
-  String text = "Expand All";
-  List<String> items = [
-    "Salwar Suits",
-    "Printed",
-    "Clothing",
-    "Duffle bags",
-    "Tuxedos",
-    "Salwar Suits",
-    "Printed",
-    "Clothing",
-    "Duffle bags",
-    "Tuxedos"
-  ];
-  List<String> childItem = [
-    "Salwar Suits",
-    "Printed",
-    "Clothing Clothing Clothing",
-    "Duffle bags",
-    "Tuxedos Tuxedos Tuxedos",
-  ];
+  final brandController = Get.put(BrandController());
+
+  @override
+  void initState() {
+    brandController.showAllBrand.value = false;
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => brandController.getBrandData());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return showAllBrand
-        ? AllBrandScreen(title: brandName)
+    return Obx(() => brandController.showAllBrand.value
+        ? AllBrandScreen(title: brandController.brandName.value)
         : Scaffold(
             backgroundColor: colorSecondary,
             body: SingleChildScrollView(
@@ -122,227 +109,250 @@ class BrandsScreenState extends State<BrandsScreen> {
                             width: 0,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            if (showlist) {
-                              setState(() {
-                                showlist = false;
-                                text = "Expand All";
-                                borderColor = whiteBorderColor;
-                              });
-                            } else {
-                              setState(() {
-                                showlist = true;
-                                text = "Collapse All";
-                                borderColor = greyTextColor;
-                              });
-                            }
-                          },
-                          child: AppText(
-                            text: text,
-                            color: blackColor,
-                            fontSize: 12.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w500,
+                        Obx(
+                          () => GestureDetector(
+                            onTap: () {
+                              if (brandController.text.value == "Expand All") {
+                                brandController.text.value = "Collapse All";
+                                brandController.selected.clear();
+                                brandController.selected = List.generate(
+                                    brandController.brandList.length,
+                                    (i) => true);
+                                brandController.update();
+                              } else {
+                                brandController.text.value = "Expand All";
+                                brandController.selected.clear();
+                                brandController.selected = List.generate(
+                                    brandController.brandList.length,
+                                    (i) => false);
+                                brandController.update();
+                              }
+                            },
+                            child: AppText(
+                              text: brandController.text.value,
+                              color: blackColor,
+                              fontSize: 12.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, bottom: 10, top: 10),
-                    child: ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: items.length,
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (ctx, index) {
-                          return Column(
-                            children: [
-                              GestureDetector(
-                                  onTap: () {},
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(1),
-                                          border: Border.all(
-                                              width: 1, color: borderColor),
-                                          color: whiteBorderColor),
-                                      child: Column(
+                  brandController.isBrand.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : brandController.brandList.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, right: 16, bottom: 10, top: 10),
+                              child: GetBuilder<BrandController>(
+                                builder: (value) => ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    physics: const ScrollPhysics(),
+                                    itemCount: value.brandList.length,
+                                    padding: EdgeInsets.zero,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (ctx, index) {
+                                      return Column(
                                         children: [
                                           GestureDetector(
-                                            onTap: () {
-                                              /*   Get.to(AllBrandScreen(
-                                                title: items[index],
-                                              )); */
-                                              setState(() {
-                                                showAllBrand = true;
-                                              });
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 10),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Image.asset(chanelLogoImage,
-                                                      height: 32,
-                                                      width: 32,
-                                                      fit: BoxFit.cover),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10),
-                                                    child: AppText(
-                                                      text: items[index],
-                                                      color: colorPrimary,
-                                                      fontSize: 14.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  const Expanded(
-                                                    child: SizedBox(
-                                                      width: 0,
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      if (showlist) {
-                                                        setState(() {
-                                                          showlist = false;
-                                                          borderColor =
-                                                              whiteBorderColor;
-                                                          text = "Expand All";
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          showlist = true;
-                                                          borderColor =
-                                                              greyTextColor;
-                                                          text = "Collapse All";
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Image.asset(
-                                                        upArrowIcon,
-                                                        height: 20,
-                                                        width: 20,
-                                                        fit: BoxFit.cover),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          showlist
-                                              ? Column(
-                                                  children: [
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 16,
-                                                              right: 16),
-                                                      child: GridView.count(
-                                                        shrinkWrap: true,
-                                                        crossAxisCount: 3,
-                                                        scrollDirection:
-                                                            Axis.vertical,
-                                                        padding:
-                                                            EdgeInsets.zero,
-                                                        childAspectRatio: 0.8,
-                                                        physics:
-                                                            const ScrollPhysics(),
-                                                        crossAxisSpacing: 1,
-                                                        mainAxisSpacing: 0,
-                                                        children: List.generate(
-                                                          childItem.length,
-                                                          (i) {
-                                                            return GestureDetector(
-                                                              onTap: () {
-                                                                // Get.to(const BoardScreen());
-                                                              },
-                                                              child: Container(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Image.asset(
-                                                                        backImage,
-                                                                        height:
-                                                                            70,
-                                                                        width:
-                                                                            90,
-                                                                        fit: BoxFit
-                                                                            .cover),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                          horizontal:
-                                                                              10,
-                                                                          vertical:
-                                                                              5),
-                                                                      child:
-                                                                          AppText(
-                                                                        textAlign:
-                                                                            TextAlign.center,
-                                                                        text: childItem[
-                                                                            i],
-                                                                        color:
-                                                                            greyTextColor,
-                                                                        fontSize:
-                                                                            10.sp,
-                                                                        maxLines:
-                                                                            2,
-                                                                        fontFamily:
-                                                                            "Franklin Gothic Regular",
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
-                                                                      ),
-                                                                    ),
-                                                                  ],
+                                              onTap: () {},
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 10),
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              1),
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: value.selected[
+                                                                  index]
+                                                              ? greyTextColor
+                                                              : whiteBorderColor),
+                                                      color: whiteBorderColor),
+                                                  child: Column(
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          brandController
+                                                              .showAllBrand
+                                                              .value = true;
+                                                          brandController
+                                                              .update();
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      16,
+                                                                  vertical: 10),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Image.asset(
+                                                                  chanelLogoImage,
+                                                                  height: 32,
+                                                                  width: 32,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                                child: AppText(
+                                                                  text: value.brandList[
+                                                                          index]
+                                                                      ["name"],
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize:
+                                                                      14.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
                                                                 ),
                                                               ),
-                                                            );
-                                                          },
+                                                              const Expanded(
+                                                                child: SizedBox(
+                                                                  width: 0,
+                                                                ),
+                                                              ),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  value.selected[
+                                                                          index] =
+                                                                      !value.selected[
+                                                                          index];
+                                                                  value
+                                                                      .update();
+                                                                },
+                                                                child: Image.asset(
+                                                                    upArrowIcon,
+                                                                    height: 20,
+                                                                    width: 20,
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                )
-                                              : const SizedBox(
-                                                  height: 0,
-                                                )
+                                                      value.selected[index]
+                                                          ? Column(
+                                                              children: [
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      left: 16,
+                                                                      right:
+                                                                          16),
+                                                                  child: GridView
+                                                                      .count(
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    crossAxisCount:
+                                                                        3,
+                                                                    scrollDirection:
+                                                                        Axis.vertical,
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    childAspectRatio:
+                                                                        0.8,
+                                                                    physics:
+                                                                        const ScrollPhysics(),
+                                                                    crossAxisSpacing:
+                                                                        1,
+                                                                    mainAxisSpacing:
+                                                                        0,
+                                                                    children: List
+                                                                        .generate(
+                                                                      value
+                                                                          .childItem
+                                                                          .length,
+                                                                      (i) {
+                                                                        return GestureDetector(
+                                                                          onTap:
+                                                                              () {},
+                                                                          child:
+                                                                              Container(
+                                                                            alignment:
+                                                                                Alignment.center,
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                                  child: Center(
+                                                                                    child: AppText(
+                                                                                      textAlign: TextAlign.center,
+                                                                                      text: value.childItem[i],
+                                                                                      color: greyTextColor,
+                                                                                      fontSize: 10.sp,
+                                                                                      maxLines: 2,
+                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : const SizedBox(
+                                                              height: 0,
+                                                            )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )),
                                         ],
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          );
-                        }),
-                  ),
+                                      );
+                                    }),
+                              ),
+                            )
+                          : const SizedBox(
+                              height: 400,
+                              width: double.infinity,
+                              child: Center(
+                                child: Text("No Brand Found",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontFamily: "Franklin Gothic Regular")),
+                              ),
+                            )
                 ],
               ),
             ),
-          );
+          ));
   }
 }

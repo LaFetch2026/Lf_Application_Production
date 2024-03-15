@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
 import '../app_text.dart';
@@ -8,10 +7,15 @@ import '../app_text.dart';
 class AllBrandAppbar extends StatelessWidget {
   final Function? onPressedCart;
   final Function? onPressedSearch;
+  final Function? onPressedback;
   final String text;
 
   const AllBrandAppbar(
-      {Key? key, this.onPressedCart, this.onPressedSearch, required this.text})
+      {Key? key,
+      this.onPressedCart,
+      this.onPressedSearch,
+      required this.text,
+      required this.onPressedback})
       : super(key: key);
 
   @override
@@ -29,7 +33,7 @@ class AllBrandAppbar extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Get.back();
+                  onPressedback!.call();
                 },
                 child: Image.asset(backArrowImage,
                     height: 16, width: 10, fit: BoxFit.cover),

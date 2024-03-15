@@ -20,13 +20,6 @@ class CreateBoardScreen extends StatefulWidget {
 
 class CreateBoardScreenState extends State<CreateBoardScreen> {
   final wishlistController = Get.put(WishlistController());
-  List<String> items = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "400",
-  ];
   @override
   void initState() {
     wishlistController.addItem.value = 0;
