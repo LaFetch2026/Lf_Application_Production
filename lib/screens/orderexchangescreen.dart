@@ -532,11 +532,16 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                   ],
                                                 ),
                                               ),
-                                              index < 3
-                                                  ? Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 16),
+                                              Column(
+                                                children: [
+                                                  if (items[index] ==
+                                                      "Delivered") ...[
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16,
+                                                              right: 16,
+                                                              bottom: 20),
                                                       child: DoubleIconButton(
                                                           firstText:
                                                               "Exchange Item",
@@ -562,10 +567,65 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           secondIcon:
                                                               rateOrderImage),
                                                     )
-                                                  : Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 10),
+                                                  ] else if (items[index] ==
+                                                      "Order Confirmed") ...[
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16,
+                                                              right: 16,
+                                                              bottom: 20),
+                                                      child: DoubleIconButton(
+                                                          firstText:
+                                                              "Cancel Item",
+                                                          secondText:
+                                                              "Track Order",
+                                                          firstTextColor:
+                                                              btnTextColor,
+                                                          secondTextColor:
+                                                              btnTextColor,
+                                                          firstBackgroundColor:
+                                                              whiteColor,
+                                                          secondBackgroundColor:
+                                                              whiteColor,
+                                                          firstBorderColor:
+                                                              btnTextColor,
+                                                          secondBorderColor:
+                                                              btnTextColor,
+                                                          firstIcon:
+                                                              blackCrossImage,
+                                                          onPressedFirst: () {},
+                                                          onPressedSecond:
+                                                              () {},
+                                                          secondIcon:
+                                                              locationIcon),
+                                                    )
+                                                  ] else if (items[index] ==
+                                                      "Shipped") ...[
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 16,
+                                                              right: 16,
+                                                              top: 10,
+                                                              bottom: 30),
+                                                      child: SingleIconButton(
+                                                          label: "Track Order",
+                                                          textColor:
+                                                              btnTextColor,
+                                                          backgroundColor:
+                                                              whiteColor,
+                                                          onPressed: () {},
+                                                          borderColor:
+                                                              btnTextColor,
+                                                          icon: locationIcon),
+                                                    )
+                                                  ] else ...[
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10,
+                                                              bottom: 30),
                                                       child: SingleButton(
                                                           label: "View details",
                                                           height: 40,
@@ -577,13 +637,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           borderColor:
                                                               btnTextColor),
                                                     )
-                                              /*  SingleIconButton(
-                                                  label: "Track Order",
-                                                  textColor: btnTextColor,
-                                                  backgroundColor: whiteColor,
-                                                  onPressed: () {},
-                                                  borderColor: btnTextColor,
-                                                  icon: locationIcon) */
+                                                  ],
+                                                ],
+                                              ),
                                             ]),
                                       ),
                                     ),
