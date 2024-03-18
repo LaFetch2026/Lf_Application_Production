@@ -57,7 +57,7 @@ class NumberWidget extends StatelessWidget {
                       child: Container(
                         width: 1,
                         color: textHintColor,
-                        height: 25,
+                        height: 20,
                       ),
                     ),
                   ],

@@ -215,6 +215,7 @@ class LoginScreenState extends State<LoginScreen> {
                               text1: "By continuing, I agree to the",
                               text2: " Terms of Use",
                               text3: " and",
+                              visible: true,
                               text4: " Privacy Policy"),
                         )
                       ],
@@ -304,6 +305,7 @@ class LoginScreenState extends State<LoginScreen> {
                           text1: "By continuing, I agree to the",
                           text2: " Terms of Use",
                           text3: " and",
+                          visible: false,
                           text4: "",
                           fontSize: 12.sp,
                         ),

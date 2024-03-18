@@ -7,6 +7,7 @@ class MultipleTextWidget extends StatelessWidget {
   final String text2;
   final String text3;
   final String text4;
+  final bool visible;
   final Function? onPressedTerm;
   final Function? onPressedPolicy;
   final double fontSize;
@@ -18,6 +19,7 @@ class MultipleTextWidget extends StatelessWidget {
     required this.text3,
     required this.text4,
     required this.fontSize,
+    required this.visible,
     this.onPressedPolicy,
     this.onPressedTerm,
   }) : super(key: key);
@@ -62,20 +64,29 @@ class MultipleTextWidget extends StatelessWidget {
               color: greyTextColor,
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              onPressedPolicy?.call();
-            },
-            child: Text(
-              text4,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
-                color: deepGreytextColor,
-              ),
-            ),
-          ),
+          visible
+              ? Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      onPressedPolicy?.call();
+                    },
+                    child: Text(
+                      text4,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        overflow: TextOverflow.ellipsis,
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                        color: deepGreytextColor,
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox(
+                  width: 0,
+                )
         ],
       ),
     );
