@@ -53,7 +53,7 @@ class NumberWidget extends StatelessWidget {
                       fontSize: 14.sp,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.only(left: 10),
                       child: Container(
                         width: 1,
                         color: textHintColor,
