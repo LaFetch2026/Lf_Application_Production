@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
+import '../commonwidget/homewidget/horizontal_home_list.dart';
+import '../controller/product_controller.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -15,6 +17,8 @@ class SearchScreen extends StatefulWidget {
 
 class SearchScreenState extends State<SearchScreen> {
   TextEditingController searchController = TextEditingController();
+  final productController =
+      Get.put(ProductController()); //most viewed item list
   bool isSearch = false;
   List<String> products = [
     "Salwar Suits",
@@ -51,6 +55,8 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getProductData("relevant")); //most viewed item list
     super.initState();
   }
 
@@ -337,7 +343,7 @@ class SearchScreenState extends State<SearchScreen> {
                                 }),
                           ),
                         ),
-                        Padding(
+                        /*  Padding(
                           padding: const EdgeInsets.only(top: 10, left: 16),
                           child: AppText(
                             text: "Items you have viewed",
@@ -443,6 +449,22 @@ class SearchScreenState extends State<SearchScreen> {
                                 }),
                           ),
                         ),
+                     */
+                        Obx(() => productController.isProduct.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(40.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            : HorizontalHomeList(
+                                text: "Items you have viewed",
+                                height: 250,
+                                visibleExpress: false,
+                                textColor: bottomnavBack,
+                                fontFamily: "Franklin Gothic Regular",
+                                onPressed: (p0) {},
+                                list: productController.productList,
+                              )),
                       ],
                     ),
                   ),

@@ -5,12 +5,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/womenwidget/question_card.dart';
+import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
+import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/womenwidget/lafetch_card.dart';
+import '../../../commonwidget/homewidget/lafetch_card.dart';
 import '../../../utils/constants.dart';
 
 class DiscountScreen extends StatefulWidget {
@@ -118,7 +119,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     padding: EdgeInsets.all(40.0),
                     child: Center(child: CircularProgressIndicator()),
                   )
-                : Column(
+                : /*  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -259,13 +260,24 @@ class DiscountScreenState extends State<DiscountScreen> {
                         ),
                       ),
                     ],
+                  ) */
+                HorizontalHomeList(
+                    text: "6 hour Express Delivery",
+                    height: 250,
+                    list: productController.productList,
+                    visibleExpress: true,
+                    onPressed: (p0) {
+                      Get.to(() => ProductDetailsScreen(
+                            productId: p0,
+                          ));
+                    },
                   )),
             Obx(() => productController.isProduct.value
                 ? const Padding(
                     padding: EdgeInsets.all(40.0),
                     child: Center(child: CircularProgressIndicator()),
                   )
-                : Column(
+                : /* Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -371,6 +383,17 @@ class DiscountScreenState extends State<DiscountScreen> {
                         ),
                       ),
                     ],
+                  ) */
+                HorizontalHomeList(
+                    text: "We think you might also like",
+                    height: 250,
+                    visibleExpress: false,
+                    onPressed: (p0) {
+                      Get.to(() => ProductDetailsScreen(
+                            productId: p0,
+                          ));
+                    },
+                    list: productController.productList,
                   )),
             Obx(
               () => homeController.isCategory.value

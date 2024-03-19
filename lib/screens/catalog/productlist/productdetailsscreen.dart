@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import '../../../commonwidget/app_text.dart';
+import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../utils/constants.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -125,15 +126,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Column(
                     children: [
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           selectedProductSize = i;
                           setState(() {});
                         },
                         child: Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: colorSecondary, width: 1),
-                              color: selectedProductSize.isNotEmpty && selectedProductSize['id'] == i['id']?colorPrimary:whiteTextColor
-                            ),
+                                border:
+                                    Border.all(color: colorSecondary, width: 1),
+                                color: selectedProductSize.isNotEmpty &&
+                                        selectedProductSize['id'] == i['id']
+                                    ? colorPrimary
+                                    : whiteTextColor),
                             child: SizedBox(
                               width: 40,
                               height: 40,
@@ -143,7 +147,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   text: i['title'].toString(),
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: selectedProductSize.isNotEmpty && selectedProductSize['id'] == i['id']?whiteTextColor:colorPrimary,
+                                  color: selectedProductSize.isNotEmpty &&
+                                          selectedProductSize['id'] == i['id']
+                                      ? whiteTextColor
+                                      : colorPrimary,
                                   fontSize: 14.sp,
                                 ),
                               ),
@@ -1055,7 +1062,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
+                                    /* Padding(
                                       padding: const EdgeInsets.only(top: 16.0),
                                       child: AppText(
                                         text: "Recommended for you",
@@ -1241,6 +1248,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             }),
                                       ),
                                     ),
+                                    */
+                                    HorizontalHomeList(
+                                      text: "Recommended for you",
+                                      height: 250,
+                                      leftPadding: 0,
+                                      list: productController.productList,
+                                      visibleExpress: true,
+                                      visibleheart: true,
+                                      onPressed: (p0) {},
+                                    ),
                                     const Divider(
                                       color: colorSecondary,
                                     ),
@@ -1255,7 +1272,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
+                                    /* Padding(
                                       padding: const EdgeInsets.only(top: 16.0),
                                       child: AppText(
                                         text: "Frequently bought with",
@@ -1440,6 +1457,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               );
                                             }),
                                       ),
+                                    ),
+                                   */
+                                    HorizontalHomeList(
+                                      text: "Frequently bought with",
+                                      height: 250,
+                                      leftPadding: 0,
+                                      list: productController.productList,
+                                      visibleExpress: true,
+                                      visibleheart: true,
+                                      onPressed: (p0) {},
                                     ),
                                     const Divider(
                                       color: colorSecondary,
