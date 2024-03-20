@@ -203,6 +203,19 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
+                                                              /* FadeInImage(
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  height: 32,
+                                                                  width: 32,
+                                                                  image: NetworkImage(
+                                                                      value.brandList[
+                                                                              index]
+                                                                          [
+                                                                          "logo"]),
+                                                                  placeholder:
+                                                                      const AssetImage(
+                                                                          chanelLogoImage)), */
                                                               Image.asset(
                                                                   chanelLogoImage,
                                                                   height: 32,
@@ -216,8 +229,10 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                         10),
                                                                 child: AppText(
                                                                   text: value.brandList[
-                                                                          index]
-                                                                      ["name"],
+                                                                              index]
+                                                                          [
+                                                                          "name"] ??
+                                                                      "",
                                                                   color:
                                                                       colorPrimary,
                                                                   fontSize:
@@ -240,6 +255,21 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                           index] =
                                                                       !value.selected[
                                                                           index];
+                                                                  /*  value
+                                                                      .categoryList
+                                                                      .clear(); */
+                                                                  if (index ==
+                                                                      2) {
+                                                                    value
+                                                                        .getCategoryData(
+                                                                            1);
+                                                                  } else {
+                                                                    value.getCategoryData(
+                                                                        value.brandList[index]
+                                                                            [
+                                                                            "id"]);
+                                                                  }
+
                                                                   value
                                                                       .update();
                                                                 },
@@ -255,78 +285,101 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                         ),
                                                       ),
                                                       value.selected[index]
-                                                          ? Column(
-                                                              children: [
-                                                                const SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .only(
-                                                                      left: 16,
-                                                                      right:
-                                                                          16),
-                                                                  child: GridView
-                                                                      .count(
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    crossAxisCount:
-                                                                        3,
-                                                                    scrollDirection:
-                                                                        Axis.vertical,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    childAspectRatio:
-                                                                        0.8,
-                                                                    physics:
-                                                                        const ScrollPhysics(),
-                                                                    crossAxisSpacing:
-                                                                        1,
-                                                                    mainAxisSpacing:
-                                                                        0,
-                                                                    children: List
-                                                                        .generate(
-                                                                      value
-                                                                          .childItem
-                                                                          .length,
-                                                                      (i) {
-                                                                        return GestureDetector(
-                                                                          onTap:
-                                                                              () {},
+                                                          ? value.isCategory
+                                                                  .value
+                                                              ? const Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              40.0),
+                                                                  child: Center(
+                                                                      child:
+                                                                          CircularProgressIndicator()),
+                                                                )
+                                                              : value.categoryList
+                                                                      .isNotEmpty
+                                                                  ? Column(
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              10,
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 16,
+                                                                              right: 16),
                                                                           child:
-                                                                              Container(
-                                                                            alignment:
-                                                                                Alignment.center,
-                                                                            child:
-                                                                                Column(
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                                  child: Center(
-                                                                                    child: AppText(
-                                                                                      textAlign: TextAlign.center,
-                                                                                      text: value.childItem[i],
-                                                                                      color: greyTextColor,
-                                                                                      fontSize: 10.sp,
-                                                                                      maxLines: 2,
-                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                      fontWeight: FontWeight.w400,
+                                                                              /*   GetBuilder<BrandController>(
+                                                                            builder: (val) => */
+                                                                              GridView.count(
+                                                                            shrinkWrap:
+                                                                                true,
+                                                                            crossAxisCount:
+                                                                                3,
+                                                                            scrollDirection:
+                                                                                Axis.vertical,
+                                                                            padding:
+                                                                                EdgeInsets.zero,
+                                                                            childAspectRatio:
+                                                                                0.8,
+                                                                            physics:
+                                                                                const ScrollPhysics(),
+                                                                            crossAxisSpacing:
+                                                                                1,
+                                                                            mainAxisSpacing:
+                                                                                0,
+                                                                            children:
+                                                                                List.generate(
+                                                                              value.categoryList.length,
+                                                                              (i) {
+                                                                                return GestureDetector(
+                                                                                  onTap: () {},
+                                                                                  child: Container(
+                                                                                    alignment: Alignment.center,
+                                                                                    child: Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                                          child: Center(
+                                                                                            child: AppText(
+                                                                                              textAlign: TextAlign.center,
+                                                                                              text: value.categoryList[i]["name"] ?? "",
+                                                                                              color: greyTextColor,
+                                                                                              fontSize: 10.sp,
+                                                                                              maxLines: 2,
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
                                                                                     ),
                                                                                   ),
-                                                                                ),
-                                                                              ],
+                                                                                );
+                                                                              },
                                                                             ),
                                                                           ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )
+                                                                        ),
+                                                                        //  ),
+                                                                      ],
+                                                                    )
+                                                                  : const SizedBox(
+                                                                      height:
+                                                                          50,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      child:
+                                                                          Center(
+                                                                        child: Text(
+                                                                            "No Category Found",
+                                                                            style: TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors.black,
+                                                                                fontFamily: "Franklin Gothic Regular")),
+                                                                      ),
+                                                                    )
                                                           : const SizedBox(
                                                               height: 0,
                                                             )

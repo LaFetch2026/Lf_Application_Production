@@ -15,6 +15,8 @@ class BrandController extends BaseController {
   RxString brandName = "".obs;
   RxString text = "Expand All".obs;
   RxBool showAllBrand = false.obs;
+  RxBool isCategory = false.obs;
+  List categoryList = [].obs;
   List<String> childItem = [
     "Salwar Suits",
     "Printed",
@@ -28,8 +30,7 @@ class BrandController extends BaseController {
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/wishlists"),
+      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/brands"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -57,5 +58,38 @@ class BrandController extends BaseController {
       print("error$e");
     }
     isBrand.value = false;
+  }
+
+  getCategoryData(int id) async {
+    isCategory.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/categories?brand_id=$id"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          categoryList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get category failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCategory.value = false;
   }
 }
