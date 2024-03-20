@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -10,6 +11,12 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
 
 class BrandController extends BaseController {
+  TextEditingController searchController = TextEditingController();
+  int page = 1;
+  RxBool loadMore = false.obs;
+  RxBool hasnextpage = true.obs;
+  ScrollController listController = ScrollController();
+  RxString queryText = "".obs;
   RxBool isBrand = false.obs;
   List brandList = [].obs;
   RxString brandName = "".obs;
@@ -26,11 +33,21 @@ class BrandController extends BaseController {
   ].obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
+  @override
+  void onInit() async {
+    listController.addListener(() {
+      fetchMoreData();
+      update();
+    });
+    super.onInit();
+  }
+
   getBrandData() async {
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/brands"),
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/brands?q=$queryText"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -58,6 +75,49 @@ class BrandController extends BaseController {
       print("error$e");
     }
     isBrand.value = false;
+  }
+
+  fetchMoreData() async {
+    if (hasnextpage.value == true &&
+        isBrand.value == false &&
+        loadMore.value == false) {
+      loadMore.value = true;
+      page += 1;
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/brands?q=$queryText&page=$page"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              brandList.addAll(responseData['data']);
+            } else {
+              hasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch brand failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      loadMore.value = false;
+    }
   }
 
   getCategoryData(int id) async {

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
@@ -1480,39 +1481,33 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10.0),
+            SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: 90,
+              height: 80,
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
+                      margin: const EdgeInsets.only(left: 10.0),
                       decoration: BoxDecoration(
                         border: Border.all(color: btnTextColor, width: 1),
                       ),
                       child: IconButton(
                           onPressed: () {}, icon: Image.asset(heartIcon24))),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 18.0),
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: colorPrimary,
-                            border: Border.all(color: btnTextColor, width: 1),
-                          ),
-                          child: TextButton(
-                              onPressed: () {},
-                              child: AppText(
-                                text: 'Add to bag',
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w600,
-                                color: whiteBorderColor,
-                                fontSize: 14.sp,
-                              ))),
+                  Obx(
+                    () => Expanded(
+                      child: getSingleButton(
+                          label: "Add to bag",
+                          textColor: whiteBorderColor,
+                          backgroundColor: colorPrimary,
+                          controller: productController,
+                          onPressed: () {
+                            productController.callAddtoCart(widget.productId);
+                          },
+                          borderColor: colorPrimary),
                     ),
-                  ),
+                  )
                 ],
               ),
             )

@@ -21,6 +21,7 @@ Widget getSingleButton(
     fontFamily = "Franklin Gothic",
     roundness = 1,
     fontWeight = FontWeight.bold,
+    width = double.infinity,
     textColor,
     borderColor,
     backgroundColor,
@@ -30,7 +31,7 @@ Widget getSingleButton(
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Container(
-        width: double.infinity,
+        width: width,
         height: 50,
         color: backgroundColor,
         child: (controller != null && controller.pageState == PageState.LOADING)
