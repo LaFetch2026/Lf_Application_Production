@@ -34,8 +34,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   @override
   void initState() {
+    print(brandController.brandId.value);
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => brandController.getCategoryData(brandController.brandId.value));
     super.initState();
   }
 
@@ -76,55 +79,69 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: MasonryGridView.count(
-                      primary: false,
-                      shrinkWrap: true,
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 7,
-                      itemCount: gridList.length,
-                      itemBuilder: (context, index) {
-                        double ht = index % 2 == 0 ? 100 : 180;
-                        return GestureDetector(
-                          onTap: () {
-                            //  Get.to(const BoardScreen());
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                children: [
-                                  Center(
-                                    child: Image.asset(backImage,
-                                        height: ht,
-                                        width: 156,
-                                        fit: BoxFit.cover),
-                                  ),
-                                  Positioned.fill(
-                                    child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 18, vertical: 10),
-                                        child: AppText(
-                                          text: gridList[index],
-                                          color: whiteColor,
-                                          fontSize: 14.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                  Obx(
+                    () => brandController.isCategory.value
+                        ? const Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: MasonryGridView.count(
+                              primary: false,
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 2,
+                              mainAxisSpacing: 7,
+                              itemCount: brandController.categoryList.length,
+                              itemBuilder: (context, index) {
+                                double ht = index % 2 == 0 ? 100 : 180;
+                                return GestureDetector(
+                                  onTap: () {
+                                    //  Get.to(const BoardScreen());
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Image.asset(backImage,
+                                                height: ht,
+                                                width: 156,
+                                                fit: BoxFit.cover),
+                                          ),
+                                          Positioned.fill(
+                                            child: Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 18,
+                                                        vertical: 10),
+                                                child: AppText(
+                                                  text: brandController
+                                                              .categoryList[
+                                                          index]["name"] ??
+                                                      "",
+                                                  color: whiteColor,
+                                                  fontSize: 14.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ],
+                                );
+                              },
+                            ),
                           ),
-                        );
-                      },
-                    ),
                   ),
                   Obx(
                     () => productController.isProduct.value

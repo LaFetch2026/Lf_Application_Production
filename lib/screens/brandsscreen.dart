@@ -203,6 +203,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                 .showAllBrand
                                                                 .value = true;
                                                             brandController
+                                                                .brandId
+                                                                .value = value
+                                                                    .brandList[
+                                                                index]["id"];
+                                                            brandController
                                                                 .update();
                                                           },
                                                           child: Padding(
