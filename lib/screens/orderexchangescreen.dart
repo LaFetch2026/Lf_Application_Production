@@ -85,6 +85,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
             const BackButtonAppbar(
               text: "Orders & Exchanges",
               threeDot: false,
+              backgroundColor: whiteColor,
               icon: threeDotImage,
             ),
             Expanded(
@@ -92,153 +93,159 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          /* Container(
-                            height: 40,
-                            width: 180,
-                            decoration: BoxDecoration(
-                                color: whiteBorderColor,
-                                borderRadius: BorderRadius.circular(1),
-                                border: Border.all(color: borderColor, width: 1)),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16, right: 10),
-                              child: Row(
-                                children: [
-                                  const ImageIcon(
-                                    AssetImage(searchImage),
-                                    color: textHintColor,
-                                    size: 14,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 5),
-                                    child: AppText(
-                                      text: "Search",
-                                      color: textHintColor,
-                                      fontSize: 14.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ), */
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox(
+                    Container(
+                      color: whiteColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            /* Container(
                               height: 40,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                  color: whiteBorderColor,
+                                  borderRadius: BorderRadius.circular(1),
+                                  border: Border.all(color: borderColor, width: 1)),
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: TextField(
-                                  textCapitalization: TextCapitalization.words,
-                                  style: const TextStyle(
-                                    color: textColor,
-                                    fontFamily: "Franklin Gothic Regular",
-                                  ),
-                                  controller: searchController,
-                                  keyboardType: TextInputType.text,
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: whiteBorderColor,
-                                    prefixIcon: const Icon(Icons.search,
-                                        size: 20, color: Colors.grey),
-                                    focusedBorder: const OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: borderColor)),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(1),
+                                padding: const EdgeInsets.only(left: 16, right: 10),
+                                child: Row(
+                                  children: [
+                                    const ImageIcon(
+                                      AssetImage(searchImage),
+                                      color: textHintColor,
+                                      size: 14,
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(1),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(horizontal: 5),
+                                      child: AppText(
+                                        text: "Search",
+                                        color: textHintColor,
+                                        fontSize: 14.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ), */
+                            Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                height: 40,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: TextField(
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    style: const TextStyle(
+                                      color: textColor,
+                                      fontFamily: "Franklin Gothic Regular",
+                                    ),
+                                    controller: searchController,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: whiteColor,
+                                      prefixIcon: const Icon(Icons.search,
+                                          size: 20, color: Colors.grey),
+                                      focusedBorder: const OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: borderColor)),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(1),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(1),
+                                        borderSide: const BorderSide(
+                                            color: borderColor),
+                                      ),
+                                      counterText: "",
+                                      hintText: "Search",
+                                      hintStyle: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 40,
+                              width: 120,
+                              child: DropdownButtonFormField2(
+                                value: filter,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: whiteColor,
+                                  focusedBorder: const OutlineInputBorder(
                                       borderSide:
-                                          const BorderSide(color: borderColor),
-                                    ),
-                                    counterText: "",
-                                    hintText: "Search",
-                                    hintStyle: const TextStyle(fontSize: 14),
+                                          BorderSide(color: borderColor)),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(1),
+                                    borderSide:
+                                        const BorderSide(color: borderColor),
+                                  ),
+                                  isDense: true,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 16),
+                                  hintText: 'Filter',
+                                  hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "Franklin Gothic Regular"),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(1),
+                                  ),
+                                ),
+                                isExpanded: true,
+                                items: filterList
+                                    .map((item) => DropdownMenuItem<String>(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: textColor,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Please select Types.';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  filter = value;
+                                  genderPos =
+                                      filterList.indexOf(filter.toString());
+                                  print(genderId[genderPos]);
+                                  setState(() {});
+                                },
+                                onSaved: (value) {},
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 60,
+                                  padding: EdgeInsets.only(right: 10),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: ImageIcon(AssetImage(dropdownImage)),
+                                  iconSize: 30,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  decoration: BoxDecoration(
+                                    color: whiteTextColor,
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 40,
-                            width: 120,
-                            child: DropdownButtonFormField2(
-                              value: filter,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: whiteTextColor,
-                                focusedBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: borderColor)),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(1),
-                                  borderSide:
-                                      const BorderSide(color: borderColor),
-                                ),
-                                isDense: true,
-                                contentPadding: const EdgeInsets.only(left: 16),
-                                hintText: 'Filter',
-                                hintStyle: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: "Franklin Gothic Regular"),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(1),
-                                ),
-                              ),
-                              isExpanded: true,
-                              items: filterList
-                                  .map((item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: textColor,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Please select Types.';
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                filter = value;
-                                genderPos =
-                                    filterList.indexOf(filter.toString());
-                                print(genderId[genderPos]);
-                                setState(() {});
-                              },
-                              onSaved: (value) {},
-                              buttonStyleData: const ButtonStyleData(
-                                height: 60,
-                                padding: EdgeInsets.only(right: 10),
-                              ),
-                              iconStyleData: const IconStyleData(
-                                icon: ImageIcon(AssetImage(dropdownImage)),
-                                iconSize: 30,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                decoration: BoxDecoration(
-                                  color: whiteTextColor,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
@@ -252,7 +259,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                           scrollDirection: Axis.vertical,
                           itemBuilder: (ctx, index) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.only(bottom: 10),
                               child: Column(
                                 children: [
                                   GestureDetector(
@@ -296,9 +303,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal: 5,
-                                                            ),
+                                                                        .only(
+                                                                    right: 5,
+                                                                    left: 12),
                                                             child: AppText(
                                                               text:
                                                                   "Topman super skinny suit jacket and trousers in light blue",
@@ -315,11 +322,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        5,
-                                                                    vertical:
-                                                                        5),
+                                                                        .only(
+                                                                    right: 5,
+                                                                    left: 12,
+                                                                    top: 5,
+                                                                    bottom: 5),
                                                             child: AppText(
                                                               text:
                                                                   "Jack & Jones Core",
@@ -337,11 +344,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        5,
-                                                                    vertical:
-                                                                        5),
+                                                                        .only(
+                                                                    right: 5,
+                                                                    left: 12,
+                                                                    top: 5,
+                                                                    bottom: 5),
                                                             child: Row(
                                                               children: [
                                                                 AppText(

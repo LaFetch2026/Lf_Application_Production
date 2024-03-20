@@ -518,7 +518,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   decoration: TextDecoration.underline,
                                   fontFamily: "Franklin Gothic",
                                   fontWeight: FontWeight.w500,
-                                  color: textHintColor,
+                                  color: underlineColor,
                                   fontSize: 14.sp,
                                 ),
                               ),

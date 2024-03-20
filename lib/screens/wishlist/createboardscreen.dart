@@ -429,27 +429,27 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                 fontFamily: "Franklin Gothic Regular")),
                       ),
                     )),
-          Obx(() => widget.btnText == ""
+          widget.btnText == ""
               ? const SizedBox(
                   height: 0,
                 )
-              : Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: getSingleButton(
-                      label: widget.btnText == "Add"
-                          ? "Add ${wishlistController.addItem.value} items"
-                          : "",
-                      textColor: whiteBorderColor,
-                      controller: wishlistController,
-                      backgroundColor: colorPrimary,
-                      onPressed: () {
-                        if (wishlistController.checkIdvalidation(
-                            wishlistController.productId.value)) {
-                          wishlistController.callAddItemWishlist();
-                        }
-                      },
-                      borderColor: colorPrimary),
-                ))
+              : Obx(() => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: getSingleButton(
+                        label: widget.btnText == "Add"
+                            ? "Add ${wishlistController.addItem.value} items"
+                            : "",
+                        textColor: whiteBorderColor,
+                        controller: wishlistController,
+                        backgroundColor: colorPrimary,
+                        onPressed: () {
+                          if (wishlistController.checkIdvalidation(
+                              wishlistController.productId.value)) {
+                            wishlistController.callAddItemWishlist();
+                          }
+                        },
+                        borderColor: colorPrimary),
+                  ))
         ],
       ),
     );
