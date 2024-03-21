@@ -220,8 +220,17 @@ class CartScreenState extends State<CartScreen> {
                                                                       .start,
                                                               children: [
                                                                 AppText(
-                                                                  text:
-                                                                      "Kassually",
+                                                                  text: value
+                                                                          .orderList[
+                                                                              index]
+                                                                              [
+                                                                              "order_lines"]
+                                                                          .isNotEmpty
+                                                                      ? value.orderList[
+                                                                              index]["order_lines"][0]["product"]
+                                                                          [
+                                                                          "name"]
+                                                                      : "",
                                                                   maxLines: 1,
                                                                   fontFamily:
                                                                       "Franklin Gothic",
@@ -240,8 +249,14 @@ class CartScreenState extends State<CartScreen> {
                                                                           5),
                                                                   child:
                                                                       AppText(
-                                                                    text:
-                                                                        "Solid shirt style crop top",
+                                                                    text: value
+                                                                            .orderList[index][
+                                                                                "order_lines"]
+                                                                            .isNotEmpty
+                                                                        ? value.orderList[index]["order_lines"][0]["product"]
+                                                                            [
+                                                                            "short_description"]
+                                                                        : "",
                                                                     color:
                                                                         nameText,
                                                                     maxLines: 2,
@@ -255,8 +270,17 @@ class CartScreenState extends State<CartScreen> {
                                                                   ),
                                                                 ),
                                                                 AppText(
-                                                                  text:
-                                                                      "Sold by ABC company",
+                                                                  text: value
+                                                                          .orderList[
+                                                                              index]
+                                                                              [
+                                                                              "order_lines"]
+                                                                          .isNotEmpty
+                                                                      ? value.orderList[
+                                                                              index]["order_lines"][0]["product"]
+                                                                          [
+                                                                          "description"]
+                                                                      : "",
                                                                   color:
                                                                       textHintColor,
                                                                   fontSize:
@@ -324,7 +348,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               Padding(
                                                                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                                                                 child: AppText(
-                                                                                  text: "Qty : 1",
+                                                                                  text: "Qty : ${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["quantity"] : "0"}",
                                                                                   color: blackColor,
                                                                                   fontSize: 10.sp,
                                                                                   fontFamily: "Franklin Gothic Regular",
@@ -352,7 +376,7 @@ class CartScreenState extends State<CartScreen> {
                                                                     children: [
                                                                       AppText(
                                                                         text:
-                                                                            "\u{20B9} ${699}",
+                                                                            "\u{20B9} ${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["product"]["mrp"] : "0"}",
                                                                         color:
                                                                             blackColor,
                                                                         fontSize:
@@ -367,7 +391,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             const EdgeInsets.only(left: 10),
                                                                         child:
                                                                             Text(
-                                                                          "\u{20B9} ${1800}",
+                                                                          "\u{20B9} ${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["product"]["price"] : "0"}",
                                                                           style:
                                                                               TextStyle(
                                                                             color:
@@ -388,7 +412,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             const EdgeInsets.only(left: 10),
                                                                         child:
                                                                             Text(
-                                                                          "61% OFF",
+                                                                          "${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["product"]["discount_percentage"] : "0 %"} OFF",
                                                                           style:
                                                                               TextStyle(
                                                                             color:
