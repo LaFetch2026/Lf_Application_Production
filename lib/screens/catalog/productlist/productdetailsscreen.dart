@@ -1503,7 +1503,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           backgroundColor: colorPrimary,
                           controller: productController,
                           onPressed: () {
-                            productController.callAddtoCart(widget.productId);
+                            productController.callAddtoCart(
+                                widget.productId, 1, "details");
                           },
                           borderColor: colorPrimary),
                     ),

@@ -8,8 +8,11 @@ import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
 import 'package:lafetch/commonwidget/smallbtn.dart';
 import 'package:lafetch/screens/checkoutscreen.dart';
 import '../commonwidget/app_text.dart';
+import '../commonwidget/common_widgets.dart';
 import '../commonwidget/singlebtn.dart';
+import '../controller/base_controller.dart';
 import '../controller/cart_controller.dart';
+import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 
 class CartScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class CartScreen extends StatefulWidget {
 
 class CartScreenState extends State<CartScreen> {
   final controller = Get.put(CartController());
+  final productController = Get.put(ProductController());
   List<String> items = [
     "1",
     "2",
@@ -31,6 +35,8 @@ class CartScreenState extends State<CartScreen> {
   void initState() {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData(1));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
     super.initState();
   }
 
@@ -249,14 +255,10 @@ class CartScreenState extends State<CartScreen> {
                                                                           5),
                                                                   child:
                                                                       AppText(
-                                                                    text: value
-                                                                            .orderList[index][
-                                                                                "order_lines"]
-                                                                            .isNotEmpty
-                                                                        ? value.orderList[index]["order_lines"][0]["product"]
+                                                                    text: value.orderList[index]["order_lines"][0]["product"]
                                                                             [
-                                                                            "short_description"]
-                                                                        : "",
+                                                                            "short_description"] ??
+                                                                        "",
                                                                     color:
                                                                         nameText,
                                                                     maxLines: 2,
@@ -270,17 +272,12 @@ class CartScreenState extends State<CartScreen> {
                                                                   ),
                                                                 ),
                                                                 AppText(
-                                                                  text: value
-                                                                          .orderList[
-                                                                              index]
+                                                                  text: value.orderList[index]["order_lines"][0]
                                                                               [
-                                                                              "order_lines"]
-                                                                          .isNotEmpty
-                                                                      ? value.orderList[
-                                                                              index]["order_lines"][0]["product"]
+                                                                              "product"]
                                                                           [
-                                                                          "description"]
-                                                                      : "",
+                                                                          "description"] ??
+                                                                      "",
                                                                   color:
                                                                       textHintColor,
                                                                   fontSize:
@@ -348,7 +345,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               Padding(
                                                                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                                                                 child: AppText(
-                                                                                  text: "Qty : ${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["quantity"] : "0"}",
+                                                                                  text: "Qty : ${value.orderList[index]["order_lines"][0]["quantity"] ?? "0"}",
                                                                                   color: blackColor,
                                                                                   fontSize: 10.sp,
                                                                                   fontFamily: "Franklin Gothic Regular",
@@ -376,7 +373,7 @@ class CartScreenState extends State<CartScreen> {
                                                                     children: [
                                                                       AppText(
                                                                         text:
-                                                                            "\u{20B9} ${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["product"]["mrp"] : "0"}",
+                                                                            "\u{20B9} ${value.orderList[index]["order_lines"][0]["product"]["mrp"] ?? "0"}",
                                                                         color:
                                                                             blackColor,
                                                                         fontSize:
@@ -391,7 +388,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             const EdgeInsets.only(left: 10),
                                                                         child:
                                                                             Text(
-                                                                          "\u{20B9} ${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["product"]["price"] : "0"}",
+                                                                          "\u{20B9} ${value.orderList[index]["order_lines"][0]["product"]["price"] ?? "0"}",
                                                                           style:
                                                                               TextStyle(
                                                                             color:
@@ -412,7 +409,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             const EdgeInsets.only(left: 10),
                                                                         child:
                                                                             Text(
-                                                                          "${value.orderList[index]["order_lines"].isNotEmpty ? value.orderList[index]["order_lines"][0]["product"]["discount_percentage"] : "0 %"} OFF",
+                                                                          "${value.orderList[index]["order_lines"][0]["product"]["discount_percentage"] ?? "0 %"} OFF",
                                                                           style:
                                                                               TextStyle(
                                                                             color:
@@ -433,11 +430,49 @@ class CartScreenState extends State<CartScreen> {
                                                             ),
                                                           ),
                                                         ),
-                                                        Image.asset(
-                                                            blackCrossImage,
-                                                            height: 10,
-                                                            width: 10,
-                                                            fit: BoxFit.cover),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            showDialog(
+                                                              barrierColor:
+                                                                  Colors
+                                                                      .black26,
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return showDoubleBtnDailog(
+                                                                    click1: () {
+                                                                      Get.back();
+                                                                    },
+                                                                    click2: () {
+                                                                      productController.callAddtoCart(
+                                                                          value.orderList[index]["order_lines"][0]["product"]
+                                                                              [
+                                                                              "id"],
+                                                                          0,
+                                                                          "remove");
+                                                                      value.getCartData(
+                                                                          1);
+                                                                      value
+                                                                          .update();
+                                                                    },
+                                                                    btncolor:
+                                                                        colorPrimary,
+                                                                    text:
+                                                                        "Are you sure you want to remove this item?",
+                                                                    btn1Text:
+                                                                        "Cancel",
+                                                                    btn2Text:
+                                                                        "Remove");
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Image.asset(
+                                                              blackCrossImage,
+                                                              height: 10,
+                                                              width: 10,
+                                                              fit:
+                                                                  BoxFit.cover),
+                                                        ),
                                                       ],
                                                     ),
                                                     Padding(
@@ -458,123 +493,193 @@ class CartScreenState extends State<CartScreen> {
                             ],
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 16),
-                    child: AppText(
-                      text: "You may also like",
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: colorPrimary,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 310,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          primary: false,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: items.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (ctx, index) {
-                            return Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    margin: const EdgeInsets.only(right: 8),
-                                    color: whiteColor,
-                                    width: 122,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(backImage,
-                                            height: 150,
-                                            width: 122,
-                                            fit: BoxFit.cover),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
-                                          child: AppText(
-                                            text: "Jack & Jones Core ",
-                                            color: nameText,
-                                            fontSize: 12.sp,
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 3),
-                                          child: AppText(
-                                            text:
-                                                "Topman super skinny suit jacket and trousers in light blue",
-                                            color: nameText,
-                                            maxLines: 2,
-                                            fontSize: 11.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, left: 10, right: 10),
-                                          child: Row(
-                                            children: [
-                                              AppText(
-                                                text:
-                                                    "\u{20B9} ${items[index]}",
-                                                color: deepGreytextColor,
-                                                maxLines: 2,
-                                                fontSize: 11.sp,
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10),
-                                                child: Text(
-                                                  "\u{20B9} ${items[index]}",
-                                                  style: TextStyle(
-                                                    color: textHintColor,
-                                                    fontSize: 11.sp,
-                                                    decoration: TextDecoration
-                                                        .lineThrough,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
+                  Obx(
+                    () => productController.isProduct.value
+                        ? const Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, left: 16),
+                                child: AppText(
+                                  text: "You may also like",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: colorPrimary,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                child: SizedBox(
+                                    width: double.infinity,
+                                    height: 310,
+                                    child: GetBuilder<ProductController>(
+                                      builder: (value) => ListView.builder(
+                                          shrinkWrap: true,
+                                          primary: false,
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount: value.productList.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (ctx, index) {
+                                            return Column(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {},
+                                                  child: AnimatedContainer(
+                                                    duration: const Duration(
+                                                        milliseconds: 300),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            right: 8),
+                                                    color: whiteColor,
+                                                    width: 122,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Image.asset(backImage,
+                                                            height: 150,
+                                                            width: 122,
+                                                            fit: BoxFit.cover),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5),
+                                                          child: AppText(
+                                                            text: value.productList[
+                                                                        index]
+                                                                    ["name"] ??
+                                                                "",
+                                                            color: nameText,
+                                                            fontSize: 12.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 3),
+                                                          child: AppText(
+                                                            text: value.productList[
+                                                                        index][
+                                                                    "short_description"] ??
+                                                                "",
+                                                            color: nameText,
+                                                            maxLines: 2,
+                                                            fontSize: 11.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10,
+                                                                  left: 10,
+                                                                  right: 10),
+                                                          child: Row(
+                                                            children: [
+                                                              AppText(
+                                                                text:
+                                                                    "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
+                                                                color:
+                                                                    deepGreytextColor,
+                                                                maxLines: 2,
+                                                                fontSize: 11.sp,
+                                                                fontFamily:
+                                                                    "Franklin Gothic",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            10),
+                                                                child: Text(
+                                                                  "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        textHintColor,
+                                                                    fontSize:
+                                                                        11.sp,
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .lineThrough,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Obx(() => Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 10),
+                                                              child:
+                                                                  getSmallButton(
+                                                                      controller:
+                                                                          productController,
+                                                                      label:
+                                                                          "Add to bag",
+                                                                      onPressed:
+                                                                          () {
+                                                                        productController.callAddtoCart(
+                                                                            value.productList[index]["id"],
+                                                                            1,
+                                                                            "addproduct");
+                                                                        controller
+                                                                            .getCartData(1);
+                                                                      },
+                                                                      textColor:
+                                                                          btnTextColor,
+                                                                      backgroundColor:
+                                                                          whiteColor,
+                                                                      borderColor:
+                                                                          btnTextColor,
+                                                                      width:
+                                                                          122),
+                                                            ))
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: SmallButton(
-                                              label: "Add to bag",
-                                              onPressed: () {},
-                                              textColor: btnTextColor,
-                                              backgroundColor: whiteTextColor,
-                                              borderColor: btnTextColor,
-                                              width: 122),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          }),
-                    ),
+                                              ],
+                                            );
+                                          }),
+                                    )),
+                              ),
+                            ],
+                          ),
                   ),
                   const SizedBox(
                     height: 8,

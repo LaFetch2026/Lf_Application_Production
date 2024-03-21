@@ -213,13 +213,13 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(int productId) async {
+  callAddtoCart(int productId, int quantity, String page) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
         "product_id": productId,
-        "quantity": 1,
+        "quantity": quantity,
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
@@ -231,7 +231,13 @@ class ProductController extends BaseController {
               body: json.encode(sendData));
       // var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        Get.close(1);
+        if (page == "addproduct") {
+          print("addproduct");
+        } else if (page == "remove") {
+          print("remove");
+        } else {
+          Get.close(1);
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

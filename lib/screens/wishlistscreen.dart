@@ -241,7 +241,10 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
-                                                    text: "All Items",
+                                                    text: wishlistController
+                                                                .wishlistList[
+                                                            index]["name"] ??
+                                                        "",
                                                     color: blackColor,
                                                     fontSize: 16.sp,
                                                     fontFamily:
@@ -254,10 +257,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                           .symmetric(
                                                       horizontal: 10),
                                                   child: AppText(
-                                                    text: wishlistController
-                                                                .wishlistList[
-                                                            index]["name"] ??
-                                                        "",
+                                                    text: "$index items",
                                                     color: textHintColor,
                                                     fontSize: 12.sp,
                                                     fontFamily:
