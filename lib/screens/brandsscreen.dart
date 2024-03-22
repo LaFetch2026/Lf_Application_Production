@@ -29,6 +29,12 @@ class BrandsScreenState extends State<BrandsScreen> {
     brandController.queryText.value = "";
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      brandController.listController.addListener(() {
+        brandController.fetchMoreData();
+        brandController.update();
+      });
+    });
     super.initState();
   }
 
@@ -39,6 +45,7 @@ class BrandsScreenState extends State<BrandsScreen> {
         : Scaffold(
             backgroundColor: colorSecondary,
             body: SingleChildScrollView(
+              controller: brandController.listController,
               child: GestureDetector(
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
@@ -68,7 +75,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                           color: loginText,
                           height: 50,
                           child: TextField(
-                            textCapitalization: TextCapitalization.characters,
+                            textCapitalization: TextCapitalization.words,
                             style: const TextStyle(
                               color: colorSecondary,
                               fontFamily: "Franklin Gothic Regular",
@@ -343,6 +350,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   child: Column(
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                     children: [
+                                                                                      //   FadeInImage(fit: BoxFit.cover, height: 70, width: 90, image: NetworkImage(value.brandList[index]["categories"][i]["thumbnail"]), placeholder: const AssetImage(backImage)),
                                                                                       Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
                                                                                       Padding(
                                                                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

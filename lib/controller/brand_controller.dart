@@ -25,23 +25,16 @@ class BrandController extends BaseController {
   RxBool showAllBrand = false.obs;
   RxBool isCategory = false.obs;
   List categoryList = [].obs;
-  List<String> childItem = [
-    "Salwar Suits",
-    "Printed",
-    "Clothing Clothing Clothing",
-    "Duffle bags",
-    "Tuxedos Tuxedos Tuxedos",
-  ].obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
-  @override
+  /*  @override
   void onInit() async {
     listController.addListener(() {
       fetchMoreData();
       update();
     });
     super.onInit();
-  }
+  } */
 
   getBrandData() async {
     isBrand.value = true;
@@ -57,6 +50,7 @@ class BrandController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           brandList = responseData["data"];
+          print(brandList.length);
           selected.clear();
           selected = List.generate(brandList.length, (i) => false);
         }
@@ -84,6 +78,7 @@ class BrandController extends BaseController {
         loadMore.value == false) {
       loadMore.value = true;
       page += 1;
+      print(page);
       final prefs = await SharedPreferences.getInstance();
       try {
         var response = await http.get(
@@ -98,6 +93,9 @@ class BrandController extends BaseController {
             if (responseData["data"].isNotEmpty) {
               print(responseData);
               brandList.addAll(responseData['data']);
+              print(brandList.length);
+              selected.clear();
+              selected = List.generate(brandList.length, (i) => false);
             } else {
               hasnextpage.value = false;
             }
