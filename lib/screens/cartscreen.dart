@@ -640,35 +640,35 @@ class CartScreenState extends State<CartScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Obx(() => Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      top: 10),
-                                                              child:
-                                                                  getSmallButton(
-                                                                      controller:
-                                                                          productController,
-                                                                      label:
-                                                                          "Add to bag",
-                                                                      onPressed:
-                                                                          () {
-                                                                        productController.callAddtoCart(
-                                                                            value.productList[index]["id"],
-                                                                            1,
-                                                                            "addproduct");
-                                                                        controller
-                                                                            .getCartData(1);
-                                                                      },
-                                                                      textColor:
-                                                                          btnTextColor,
-                                                                      backgroundColor:
-                                                                          whiteColor,
-                                                                      borderColor:
-                                                                          btnTextColor,
-                                                                      width:
-                                                                          122),
-                                                            ))
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10),
+                                                          child: getSmallButton(
+                                                              controller:
+                                                                  productController,
+                                                              label:
+                                                                  "Add to bag",
+                                                              onPressed: () {
+                                                                productController.callAddtoCart(
+                                                                    value.productList[
+                                                                            index]
+                                                                        ["id"],
+                                                                    1,
+                                                                    "addproduct");
+                                                                controller
+                                                                    .getCartData(
+                                                                        1);
+                                                              },
+                                                              textColor:
+                                                                  btnTextColor,
+                                                              backgroundColor:
+                                                                  whiteColor,
+                                                              borderColor:
+                                                                  btnTextColor,
+                                                              width: 122),
+                                                        )
                                                       ],
                                                     ),
                                                   ),
