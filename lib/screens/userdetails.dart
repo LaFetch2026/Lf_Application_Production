@@ -145,7 +145,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                   } else if (userController
                                                           .gerderController.text
                                                           .toString() ==
-                                                      "male") {
+                                                      "Male") {
                                                     userController
                                                         .genderId.value = 2;
                                                   } else {

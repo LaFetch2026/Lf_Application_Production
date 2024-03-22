@@ -161,6 +161,22 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                           .text =
                                                       profileController
                                                           .genderList[index];
+                                                  if (profileController
+                                                          .gerderController.text
+                                                          .toString() ==
+                                                      "Female") {
+                                                    profileController
+                                                        .genderId.value = 1;
+                                                  } else if (profileController
+                                                          .gerderController.text
+                                                          .toString() ==
+                                                      "Male") {
+                                                    profileController
+                                                        .genderId.value = 2;
+                                                  } else {
+                                                    profileController
+                                                        .genderId.value = 3;
+                                                  }
                                                   profileController
                                                       .showList.value = false;
                                                 },
