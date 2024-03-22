@@ -233,6 +233,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (page == "addproduct") {
           print("addproduct");
+          getSnackBar("Product added to bag");
         } else if (page == "remove") {
           print("remove");
         } else {

@@ -646,12 +646,11 @@ class CartScreenState extends State<CartScreen> {
                                                                       .only(
                                                                   top: 10),
                                                           child: getSmallButton(
-                                                              controller:
-                                                                  productController,
+                                                              controller: value,
                                                               label:
                                                                   "Add to bag",
                                                               onPressed: () {
-                                                                productController.callAddtoCart(
+                                                                value.callAddtoCart(
                                                                     value.productList[
                                                                             index]
                                                                         ["id"],

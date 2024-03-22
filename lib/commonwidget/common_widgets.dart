@@ -91,7 +91,7 @@ Widget getSmallButton(
               child: Transform.scale(
                 scale: 0.5,
                 child: const CircularProgressIndicator(
-                  color: Colors.white,
+                  color: Colors.grey,
                 ),
               ),
             )
