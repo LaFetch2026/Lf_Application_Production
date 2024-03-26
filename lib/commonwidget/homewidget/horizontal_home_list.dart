@@ -73,7 +73,7 @@ class HorizontalHomeList extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Stack(children: [
-                                Image.asset(backImage,
+                                Image.asset(productImage,
                                     height: 150, width: 122, fit: BoxFit.cover),
                                 Visibility(
                                   visible: visibleheart,

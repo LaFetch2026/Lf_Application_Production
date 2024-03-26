@@ -440,7 +440,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Image.asset(backImage,
+                                              Image.asset(categoryImage,
                                                   height: 144,
                                                   width: 150,
                                                   fit: BoxFit.cover),
@@ -498,7 +498,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Center(
-                                    child: Image.asset(backImage,
+                                    child: Image.asset(sneakerImage,
                                         width: 80,
                                         height: 72,
                                         fit: BoxFit.cover),

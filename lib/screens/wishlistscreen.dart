@@ -230,7 +230,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           8.0),
-                                                  child: Image.asset(backImage,
+                                                  child: Image.asset(
+                                                      sneakerImage,
                                                       height: 156,
                                                       width: 156,
                                                       fit: BoxFit.cover),

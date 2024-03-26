@@ -134,6 +134,9 @@ const googlePayImage = 'assets/images/google_pay.png';
 const paytmImage = 'assets/images/paytm.png';
 const greenDotImage = 'assets/images/green_dot.png';
 const greyDotImage = 'assets/images/grey_dot.png';
+const productImage = 'assets/images/productImage.png';
+const categoryImage = 'assets/images/categoryImage.png';
+const sneakerImage = 'assets/images/sneaker.png';
 
 class ApiConstants {
   ApiConstants._();
