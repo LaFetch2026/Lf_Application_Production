@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
@@ -13,6 +14,7 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/lafetch_card.dart';
 import '../../../utils/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class DiscountScreen extends StatefulWidget {
   const DiscountScreen({super.key});
@@ -96,11 +98,31 @@ class DiscountScreenState extends State<DiscountScreen> {
                           controller: _pageController,
                           itemCount: homeController.banner1List.length,
                           itemBuilder: (context, int index) {
-                            return FadeInImage(
+                            return /* FadeInImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(
                                     homeController.banner1List[index]["image"]),
-                                placeholder: const AssetImage(image));
+                                placeholder: const AssetImage(image)) 
+                                */
+                                CachedNetworkImage(
+                              cacheManager: CacheManager(Config(
+                                  "customCacheKey",
+                                  stalePeriod: const Duration(days: 15),
+                                  maxNrOfCacheObjects: 100)),
+                              fit: BoxFit.cover,
+                              imageUrl: homeController.banner1List[index]
+                                  ["image"],
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Center(
+                                child: CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                Icons.error,
+                                size: 100,
+                                color: Colors.red,
+                              ),
+                            );
                           },
                         ),
                       ),
