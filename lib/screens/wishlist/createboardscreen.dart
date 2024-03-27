@@ -438,7 +438,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                     child: getSingleButton(
                         label: widget.btnText == "Add"
                             ? "Add ${wishlistController.addItem.value} items"
-                            : "",
+                            : widget.btnText,
                         textColor: whiteBorderColor,
                         controller: wishlistController,
                         backgroundColor: colorPrimary,

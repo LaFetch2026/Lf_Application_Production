@@ -136,7 +136,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                     hintName:
                                                         "Name of the Board",
                                                     boardName: "",
-                                                    btnText: "",
+                                                    btnText: "Next",
                                                   )))
                                           .then((value) => setState(
                                                 () {
