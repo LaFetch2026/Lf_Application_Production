@@ -77,8 +77,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     ImageIcon(
                       AssetImage(
                           _currentIndex == 0 ? homeIcon : homeUnselectImage),
-                      color:
-                          _currentIndex == 0 ? bottomnavBack : colorSecondary,
+                      color: _currentIndex == 0 ? bottomnavBack : greyTextColor,
                       size: 22,
                     ),
                     Text(
@@ -86,7 +85,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       style: TextStyle(
                           color: _currentIndex == 0
                               ? bottomnavBack
-                              : colorSecondary,
+                              : greyTextColor,
                           fontSize: 10.sp,
                           fontFamily: "Franklin Gothic"),
                     )
@@ -112,7 +111,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         AssetImage(
                             _currentIndex == 1 ? brandSelectImage : brandsIcon),
                         color:
-                            _currentIndex == 1 ? bottomnavBack : colorSecondary,
+                            _currentIndex == 1 ? bottomnavBack : greyTextColor,
                         size: 22,
                       ),
                       Text(
@@ -120,7 +119,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         style: TextStyle(
                             color: _currentIndex == 1
                                 ? bottomnavBack
-                                : colorSecondary,
+                                : greyTextColor,
                             fontSize: 10.sp,
                             fontFamily: "Franklin Gothic"),
                       )
@@ -148,7 +147,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             ? wishlistSelectImage
                             : wishlistIcon),
                         color:
-                            _currentIndex == 2 ? bottomnavBack : colorSecondary,
+                            _currentIndex == 2 ? bottomnavBack : greyTextColor,
                         size: 22,
                       ),
                       Text(
@@ -156,7 +155,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         style: TextStyle(
                             color: _currentIndex == 2
                                 ? bottomnavBack
-                                : colorSecondary,
+                                : greyTextColor,
                             fontSize: 10.sp,
                             fontFamily: "Franklin Gothic"),
                       )
@@ -181,8 +180,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       AssetImage(_currentIndex == 3
                           ? accountSelectImage
                           : accountIcon),
-                      color:
-                          _currentIndex == 3 ? bottomnavBack : colorSecondary,
+                      color: _currentIndex == 3 ? bottomnavBack : greyTextColor,
                       size: 22,
                     ),
                     Text(
@@ -190,7 +188,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       style: TextStyle(
                           color: _currentIndex == 3
                               ? bottomnavBack
-                              : colorSecondary,
+                              : greyTextColor,
                           fontSize: 10.sp,
                           fontFamily: "Franklin Gothic"),
                     )

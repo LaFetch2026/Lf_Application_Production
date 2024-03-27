@@ -16,7 +16,7 @@ getSnackBar(message, {SnackPosition? snackPosition}) {
 }
 
 Widget getSingleButton(
-    {String label = "",
+    {label,
     double fontSize = 14,
     fontFamily = "Franklin Gothic",
     roundness = 1,
