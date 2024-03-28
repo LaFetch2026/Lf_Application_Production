@@ -352,7 +352,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           ],
                         ) */
                       HorizontalBrandList(
-                          text: "New Arrivals",
+                          text: "Best Sellers",
                           productController: productController))
                 ],
               ),

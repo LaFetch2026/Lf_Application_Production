@@ -22,6 +22,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     " In next 6 hours",
     " 10 May 2023",
   ];
+  List<String> itemText = [
+    "Estimated delivery :",
+    "Estimated delivery :",
+    "Estimated delivery by",
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +127,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 padding:
                                     const EdgeInsets.only(left: 16, top: 2),
                                 child: AppText(
-                                  text: "Select payement method",
+                                  text: "Select payment method",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greyTextColor,
@@ -186,7 +191,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 16),
                                     child: AppText(
-                                      text: "Estimated delivery:",
+                                      text: itemText[index],
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: blackColor,

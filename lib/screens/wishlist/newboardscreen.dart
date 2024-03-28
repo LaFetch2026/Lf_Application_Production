@@ -31,6 +31,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
 
   @override
   void initState() {
+    print(widget.btnText);
     if (widget.boardName.isNotEmpty) {
       wishlistController.boardNameController.text = widget.boardName;
     } else {

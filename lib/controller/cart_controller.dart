@@ -12,21 +12,24 @@ import '../utils/constants.dart';
 class CartController extends BaseController {
   RxBool isOrder = false.obs;
   List orderList = [].obs;
+  RxInt cartId = 0.obs;
 
-  getCartData(int status) async {
+  getCartData() async {
     isOrder.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/orders?status=$status"),
+          Uri.parse("${ApiConstants.baseUrl}/orders/cart"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          orderList = responseData["data"];
+        if (responseData != null) {
+          orderList = responseData["order_lines"];
+          print(orderList);
+          cartId.value = responseData["id"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -44,5 +47,90 @@ class CartController extends BaseController {
       print("error$e");
     }
     isOrder.value = false;
+  }
+
+  callDeleteCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.delete(
+        Uri.parse("${ApiConstants.baseUrl}/orders/${cartId.value}"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      if (response.statusCode == 200) {
+        Get.close(1);
+        getSnackBar("Cart cleared");
+        orderList.clear();
+        getCartData();
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print("delete cart failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  callAddtoCart(int productId, int quantity, String page) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "product_id": productId,
+        "quantity": quantity,
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        if (page == "addproduct") {
+          print("addproduct");
+          getSnackBar("Product added to bag");
+          getCartData();
+        } else if (page == "remove") {
+          print("remove");
+          Get.close(1);
+          getCartData();
+        } else {
+          Get.close(1);
+        }
+      } else if (response.statusCode == 201) {
+        if (page == "addproduct") {
+          print("addproduct");
+          getSnackBar("Product added to bag");
+          getCartData();
+        } else if (page == "remove") {
+          print("remove");
+          Get.close(1);
+          getCartData();
+        } else {
+          Get.close(1);
+        }
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
   }
 }

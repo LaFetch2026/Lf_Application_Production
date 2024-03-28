@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
-import 'package:lafetch/screens/paymentscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/loginwidgets/number_widget.dart';
-import '../commonwidget/singlebtn.dart';
 import '../commonwidget/text_field.dart';
 import '../utils/constants.dart';
 
@@ -21,6 +20,7 @@ class ShippingAddressScreen extends StatefulWidget {
 
 class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   final shipController = Get.put(ShipAddressController());
+
   List<String> items = [
     "Home",
     "Work",
@@ -64,11 +64,43 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                           readonly: false,
                           controller: shipController.phoneController),
                     ),
-                    Padding(
+                    /*  Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: TextFieldWidget(
                         hint: "Pin Code",
                         controller: shipController.pincodeController,
+                      ),
+                    ), */
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16, right: 16, top: 10),
+                      child: SizedBox(
+                        height: 44,
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
+                          style: const TextStyle(
+                            color: textColor,
+                            fontFamily: "Franklin Gothic Regular",
+                          ),
+                          controller: shipController.pincodeController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: whiteTextColor,
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: borderColor)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(1),
+                              borderSide: const BorderSide(color: borderColor),
+                            ),
+                            hintText: "Pin Code",
+                            counterText: "",
+                            hintStyle: const TextStyle(fontSize: 14),
+                          ),
+                        ),
                       ),
                     ),
                     Padding(
@@ -162,22 +194,22 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   itemBuilder: (ctx, index) {
                                     return Column(
                                       children: [
-                                        Container(
-                                          color: whiteTextColor,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  shipController.stateController
-                                                          .text =
-                                                      shipController
-                                                          .stateList[index];
-                                                  shipController
-                                                      .showList.value = false;
-                                                },
-                                                child: Container(
+                                        GestureDetector(
+                                          onTap: () {
+                                            shipController
+                                                    .stateController.text =
+                                                shipController.stateList[index];
+                                            shipController.showList.value =
+                                                false;
+                                          },
+                                          child: Container(
+                                            color: whiteTextColor,
+                                            width: double.infinity,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
                                                   width: double.infinity,
                                                   alignment: Alignment.center,
                                                   child: Padding(
@@ -196,24 +228,26 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              index == 2
-                                                  ? const SizedBox(
-                                                      width: double.infinity,
-                                                      height: 5,
-                                                    )
-                                                  : Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 2),
-                                                      child: Container(
+                                                index == 2
+                                                    ? const SizedBox(
                                                         width: double.infinity,
-                                                        color: colorSecondary,
-                                                        height: 1,
+                                                        height: 5,
+                                                      )
+                                                    : Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 2),
+                                                        child: Container(
+                                                          width:
+                                                              double.infinity,
+                                                          color: colorSecondary,
+                                                          height: 1,
+                                                        ),
                                                       ),
-                                                    ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -243,6 +277,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               ? GestureDetector(
                                   onTap: () {
                                     shipController.onButton.value = false;
+                                    shipController.defaultBilling.value = 0;
                                   },
                                   child: Image.asset(
                                     switchOnImage,
@@ -253,6 +288,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               : GestureDetector(
                                   onTap: () {
                                     shipController.onButton.value = true;
+                                    shipController.defaultBilling.value = 1;
                                   },
                                   child: Image.asset(
                                     switchOffImage,
@@ -291,6 +327,11 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     onTap: () {
                                       setState(() {
                                         current = index;
+                                        if (index == 0) {
+                                          shipController.type.value = "Home";
+                                        } else {
+                                          shipController.type.value = "Work";
+                                        }
                                       });
                                     },
                                     child: AnimatedContainer(
@@ -360,6 +401,13 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     onChanged: (value) {
                                       setState(() {
                                         shipController.isCheck.value = value!;
+                                        if (shipController.isCheck.value) {
+                                          shipController.defaultShipping.value =
+                                              1;
+                                        } else {
+                                          shipController.defaultShipping.value =
+                                              0;
+                                        }
                                       });
                                     },
                                   )),
@@ -370,8 +418,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 onTap: () {
                                   if (shipController.isCheck.value) {
                                     shipController.isCheck.value = false;
+                                    shipController.defaultShipping.value = 0;
                                   } else {
                                     shipController.isCheck.value = true;
+                                    shipController.defaultShipping.value = 1;
                                   }
                                 },
                                 child: AppText(
@@ -392,25 +442,33 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 ),
               ),
             ),
-            Container(
-              color: whiteBorderColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: SingleButton(
-                        label: "Save and Continue",
-                        textColor: whiteBorderColor,
-                        backgroundColor: colorPrimary,
-                        onPressed: () {
-                          Get.to(const PaymentScreen());
-                        },
-                        borderColor: colorPrimary),
+            Obx(() => Container(
+                  color: whiteBorderColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: getSingleButton(
+                            label: "Save and Continue",
+                            controller: shipController,
+                            textColor: whiteBorderColor,
+                            backgroundColor: colorPrimary,
+                            onPressed: () {
+                              if (shipController.checkvalidation(shipController
+                                  .phoneController.text
+                                  .toString()
+                                  .trim())) {
+                                shipController.phonenumber.value =
+                                    "+91${shipController.phoneController.text.toString().trim()}";
+                                shipController.callSaveAddress();
+                              }
+                            },
+                            borderColor: colorPrimary),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
+                ))
           ],
         ),
       ),
