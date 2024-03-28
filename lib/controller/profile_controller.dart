@@ -16,7 +16,9 @@ import '../screens/loginscreen.dart';
 class ProfileController extends BaseController {
   RxBool showList = false.obs;
   RxBool isProfile = false.obs;
+  RxBool isAddress = false.obs;
   RxInt genderId = 0.obs;
+  List addressList = [].obs;
   dynamic profileDetails = "".obs;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -135,5 +137,39 @@ class ProfileController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  }
+
+  getAddressData() async {
+    isAddress.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/addresses"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          addressList = responseData;
+          print(addressList);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isAddress.value = false;
   }
 }

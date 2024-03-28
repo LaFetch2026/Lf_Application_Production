@@ -28,6 +28,7 @@ class AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     controller.getProfileData();
+    controller.getAddressData();
     super.initState();
   }
 
