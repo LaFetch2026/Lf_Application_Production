@@ -877,13 +877,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ],
                                 ),
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
                                   children: [
                                     ...reviewsCount.map((e) => Padding(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 2.0),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
