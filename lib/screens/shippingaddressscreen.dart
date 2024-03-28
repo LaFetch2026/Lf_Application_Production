@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
-import 'package:lafetch/screens/paymentscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/loginwidgets/number_widget.dart';
-import '../commonwidget/singlebtn.dart';
 import '../commonwidget/text_field.dart';
 import '../utils/constants.dart';
 
@@ -443,25 +442,33 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 ),
               ),
             ),
-            Container(
-              color: whiteBorderColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: SingleButton(
-                        label: "Save and Continue",
-                        textColor: whiteBorderColor,
-                        backgroundColor: colorPrimary,
-                        onPressed: () {
-                          Get.to(const PaymentScreen());
-                        },
-                        borderColor: colorPrimary),
+            Obx(() => Container(
+                  color: whiteBorderColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: getSingleButton(
+                            label: "Save and Continue",
+                            controller: shipController,
+                            textColor: whiteBorderColor,
+                            backgroundColor: colorPrimary,
+                            onPressed: () {
+                              if (shipController.checkvalidation(shipController
+                                  .phoneController.text
+                                  .toString()
+                                  .trim())) {
+                                shipController.phonenumber.value =
+                                    "+91${shipController.phoneController.text.toString().trim()}";
+                                shipController.callSaveAddress();
+                              }
+                            },
+                            borderColor: colorPrimary),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
+                ))
           ],
         ),
       ),

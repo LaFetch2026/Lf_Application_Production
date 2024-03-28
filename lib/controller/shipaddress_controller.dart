@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 import '../commonwidget/common_widgets.dart';
+import '../screens/paymentscreen.dart';
 import '../utils/constants.dart';
 
 class ShipAddressController extends BaseController {
@@ -18,6 +18,7 @@ class ShipAddressController extends BaseController {
   RxInt defaultBilling = 0.obs;
   RxInt defaultShipping = 0.obs;
   RxString type = "".obs;
+  RxString phonenumber = "".obs;
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();
   final stateController = TextEditingController();
@@ -31,6 +32,64 @@ class ShipAddressController extends BaseController {
     'Bihar',
     'Uttar Pradesh',
   ].obs;
+
+  bool checkvalidation(String phone) {
+    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+    RegExp regExp = RegExp(patttern);
+    if (nameController.text.toString().trim().isEmpty) {
+      getSnackBar("Enter Name");
+      return false;
+    }
+    if (phone.isEmpty) {
+      getSnackBar("Enter Phone Number");
+      return false;
+    }
+    if (phone.length < 10) {
+      getSnackBar(
+        "Enter 10 digit Phone Number",
+      );
+      return false;
+    }
+    if (!regExp.hasMatch(phone)) {
+      getSnackBar(
+        "Enter valid Phone Number",
+      );
+      return false;
+    }
+    if (pincodeController.text.toString().trim().isEmpty) {
+      getSnackBar(
+        "Enter Pincode",
+      );
+      return false;
+    }
+    if (pincodeController.text.toString().trim().length < 6) {
+      getSnackBar(
+        "The pincode must be 6 digit.",
+      );
+      return false;
+    }
+    if (addressController.text.toString().trim().isEmpty) {
+      getSnackBar("Enter Address");
+      return false;
+    }
+    if (localityController.text.toString().trim().isEmpty) {
+      getSnackBar("Enter Locality");
+      return false;
+    }
+    if (cityController.text.toString().trim().isEmpty) {
+      getSnackBar("Enter City");
+      return false;
+    }
+    if (stateController.text.toString().trim().isEmpty) {
+      getSnackBar("Select State");
+      return false;
+    }
+    if (type.value.isEmpty) {
+      getSnackBar("Select Address Type");
+      return false;
+    }
+    return true;
+  }
 
   callSaveAddress() async {
     showLoading();
@@ -56,6 +115,10 @@ class ShipAddressController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        Get.to(const PaymentScreen());
+      } else if (response.statusCode == 201) {
+        print(responseData);
+        Get.to(const PaymentScreen());
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
