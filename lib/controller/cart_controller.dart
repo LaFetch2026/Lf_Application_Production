@@ -61,8 +61,9 @@ class CartController extends BaseController {
         },
       );
       if (response.statusCode == 200) {
-        getSnackBar("Cart cleared");
         Get.close(1);
+        getSnackBar("Cart cleared");
+        orderList.clear();
         getCartData();
       } else if (response.statusCode == 400) {
         print(response.body);
@@ -76,5 +77,60 @@ class CartController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  callAddtoCart(int productId, int quantity, String page) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "product_id": productId,
+        "quantity": quantity,
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        if (page == "addproduct") {
+          print("addproduct");
+          getSnackBar("Product added to bag");
+          getCartData();
+        } else if (page == "remove") {
+          print("remove");
+          Get.close(1);
+          getCartData();
+        } else {
+          Get.close(1);
+        }
+      } else if (response.statusCode == 201) {
+        if (page == "addproduct") {
+          print("addproduct");
+          getSnackBar("Product added to bag");
+          getCartData();
+        } else if (page == "remove") {
+          print("remove");
+          Get.close(1);
+          getCartData();
+        } else {
+          Get.close(1);
+        }
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
   }
 }

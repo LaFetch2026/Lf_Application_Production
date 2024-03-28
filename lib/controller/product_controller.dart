@@ -213,7 +213,7 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(int productId, int quantity, String page) async {
+  callAddtoCart(int productId, int quantity) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -229,17 +229,12 @@ class ProductController extends BaseController {
                 "Authorization": "Bearer ${prefs.getString('token')} ",
               },
               body: json.encode(sendData));
-      // var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (page == "addproduct") {
-          print("addproduct");
-          getSnackBar("Product added to bag");
-        } else if (page == "remove") {
-          print("remove");
-          Get.close(1);
-        } else {
-          Get.close(1);
-        }
+        getSnackBar("Product added to bag");
+        Get.close(1);
+      } else if (response.statusCode == 201) {
+        getSnackBar("Product added to bag");
+        Get.close(1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

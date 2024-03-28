@@ -668,7 +668,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
                           title: AppText(
                             text: 'Product Description',
@@ -703,7 +704,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
                           title: AppText(
                             text: 'Composition & Care',
@@ -738,7 +740,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
                           title: AppText(
                             text: 'Delivery & Returns',
@@ -773,7 +776,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
                           title: AppText(
                             text: 'About the Brand',
@@ -1516,7 +1520,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           controller: productController,
                           onPressed: () {
                             productController.callAddtoCart(
-                                widget.productId, 1, "details");
+                                widget.productId, 1);
                           },
                           borderColor: colorPrimary),
                     ),
