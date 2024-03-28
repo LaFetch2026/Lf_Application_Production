@@ -90,7 +90,7 @@ class BoardScreenState extends State<BoardScreen> {
                               click2: () {
                                 Get.close(3);
                                 wishlistController
-                                    .callDeteleWishlist(widget.boardId);
+                                    .callDeleteWishlist(widget.boardId);
                               },
                               btncolor: colorPrimary,
                               text: "Are you sure you want to delete board?",

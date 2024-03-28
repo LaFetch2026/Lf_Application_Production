@@ -10,7 +10,6 @@ import 'package:lafetch/screens/checkoutscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
 import '../commonwidget/singlebtn.dart';
-import '../controller/base_controller.dart';
 import '../controller/cart_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -34,7 +33,7 @@ class CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => controller.getCartData(1));
+        .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     super.initState();
@@ -140,7 +139,31 @@ class CartScreenState extends State<CartScreen> {
                                       padding:
                                           const EdgeInsets.only(bottom: 15),
                                       child: GestureDetector(
-                                        onTap: () {},
+                                        onTap: () {
+                                          showDialog(
+                                            barrierColor: Colors.black26,
+                                            context: context,
+                                            builder: (context) {
+                                              return showDoubleBtnDailog(
+                                                  click1: () {
+                                                    Get.back();
+                                                  },
+                                                  click2: () {
+                                                    if (controller
+                                                            .cartId.value !=
+                                                        0) {
+                                                      controller
+                                                          .callDeleteCart();
+                                                    }
+                                                  },
+                                                  btncolor: colorPrimary,
+                                                  text:
+                                                      "Are you sure you want to clear cart?",
+                                                  btn1Text: "Cancel",
+                                                  btn2Text: "Clear");
+                                            },
+                                          );
+                                        },
                                         child: Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -226,17 +249,12 @@ class CartScreenState extends State<CartScreen> {
                                                                       .start,
                                                               children: [
                                                                 AppText(
-                                                                  text: value
-                                                                          .orderList[
-                                                                              index]
+                                                                  text: value.orderList[index]
                                                                               [
-                                                                              "order_lines"]
-                                                                          .isNotEmpty
-                                                                      ? value.orderList[
-                                                                              index]["order_lines"][0]["product"]
+                                                                              "product"]
                                                                           [
-                                                                          "name"]
-                                                                      : "",
+                                                                          "name"] ??
+                                                                      "",
                                                                   maxLines: 1,
                                                                   fontFamily:
                                                                       "Franklin Gothic",
@@ -255,7 +273,7 @@ class CartScreenState extends State<CartScreen> {
                                                                           5),
                                                                   child:
                                                                       AppText(
-                                                                    text: value.orderList[index]["order_lines"][0]["product"]
+                                                                    text: value.orderList[index]["product"]
                                                                             [
                                                                             "short_description"] ??
                                                                         "",
@@ -272,7 +290,7 @@ class CartScreenState extends State<CartScreen> {
                                                                   ),
                                                                 ),
                                                                 AppText(
-                                                                  text: value.orderList[index]["order_lines"][0]
+                                                                  text: value.orderList[index]
                                                                               [
                                                                               "product"]
                                                                           [
@@ -345,7 +363,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               Padding(
                                                                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                                                                 child: AppText(
-                                                                                  text: "Qty : ${value.orderList[index]["order_lines"][0]["quantity"] ?? "0"}",
+                                                                                  text: "Qty : ${value.orderList[index]["quantity"] ?? "0"}",
                                                                                   color: blackColor,
                                                                                   fontSize: 10.sp,
                                                                                   fontFamily: "Franklin Gothic Regular",
@@ -373,7 +391,7 @@ class CartScreenState extends State<CartScreen> {
                                                                     children: [
                                                                       AppText(
                                                                         text:
-                                                                            "\u{20B9} ${value.orderList[index]["order_lines"][0]["product"]["mrp"] ?? "0"}",
+                                                                            "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
                                                                         color:
                                                                             blackColor,
                                                                         fontSize:
@@ -388,7 +406,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             const EdgeInsets.only(left: 10),
                                                                         child:
                                                                             Text(
-                                                                          "\u{20B9} ${value.orderList[index]["order_lines"][0]["product"]["price"] ?? "0"}",
+                                                                          "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
                                                                           style:
                                                                               TextStyle(
                                                                             color:
@@ -409,7 +427,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             const EdgeInsets.only(left: 10),
                                                                         child:
                                                                             Text(
-                                                                          "${value.orderList[index]["order_lines"][0]["product"]["discount_percentage"] ?? "0 %"} OFF",
+                                                                          "${value.orderList[index]["product"]["discount_percentage"] ?? "0 %"} OFF",
                                                                           style:
                                                                               TextStyle(
                                                                             color:
@@ -445,13 +463,13 @@ class CartScreenState extends State<CartScreen> {
                                                                     },
                                                                     click2: () {
                                                                       productController.callAddtoCart(
-                                                                          value.orderList[index]["order_lines"][0]["product"]
+                                                                          value.orderList[index]["product"]
                                                                               [
                                                                               "id"],
                                                                           0,
                                                                           "remove");
-                                                                      value.getCartData(
-                                                                          1);
+                                                                      value
+                                                                          .getCartData();
                                                                       value
                                                                           .update();
                                                                     },
@@ -466,12 +484,22 @@ class CartScreenState extends State<CartScreen> {
                                                               },
                                                             );
                                                           },
-                                                          child: Image.asset(
-                                                              blackCrossImage,
-                                                              height: 10,
-                                                              width: 10,
-                                                              fit:
-                                                                  BoxFit.cover),
+                                                          child: Container(
+                                                            color: Colors
+                                                                .transparent,
+                                                            child: Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal: 4,
+                                                                  vertical: 4),
+                                                              child: Image.asset(
+                                                                  blackCrossImage,
+                                                                  height: 10,
+                                                                  width: 10,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                            ),
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
@@ -657,8 +685,9 @@ class CartScreenState extends State<CartScreen> {
                                                                     1,
                                                                     "addproduct");
                                                                 controller
-                                                                    .getCartData(
-                                                                        1);
+                                                                    .getCartData();
+                                                                controller
+                                                                    .update();
                                                               },
                                                               textColor:
                                                                   btnTextColor,
@@ -1184,16 +1213,25 @@ class CartScreenState extends State<CartScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 20, right: 20),
-                  child: AppText(
-                    text: "3 items in shopping bag",
-                    textAlign: TextAlign.center,
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: blackColor,
-                    fontSize: 12.sp,
-                  ),
+                Obx(
+                  () => controller.isOrder.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16, left: 20, right: 20),
+                          child: AppText(
+                            text:
+                                "${controller.orderList.length} items in shopping bag",
+                            textAlign: TextAlign.center,
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: blackColor,
+                            fontSize: 12.sp,
+                          ),
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),

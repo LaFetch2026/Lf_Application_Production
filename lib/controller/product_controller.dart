@@ -236,6 +236,7 @@ class ProductController extends BaseController {
           getSnackBar("Product added to bag");
         } else if (page == "remove") {
           print("remove");
+          Get.close(1);
         } else {
           Get.close(1);
         }
