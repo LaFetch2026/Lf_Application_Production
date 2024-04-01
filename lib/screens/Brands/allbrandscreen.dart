@@ -15,7 +15,9 @@ import '../searchscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
   final String title;
-  const AllBrandScreen({required this.title, super.key});
+  final String brandLogo;
+  const AllBrandScreen(
+      {required this.title, required this.brandLogo, super.key});
 
   @override
   State<AllBrandScreen> createState() => AllBrandScreenState();
@@ -71,12 +73,28 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           height: 112,
                           width: double.infinity,
                           fit: BoxFit.cover),
+                      /*  FadeInImage(
+                          fit: BoxFit.cover,
+                          height: 112,
+                          width: double.infinity,
+                          image: NetworkImage(
+                              brandController.brandbackground.value),
+                          placeholder: const AssetImage(brandback)), */
                       Container(
                         alignment: Alignment.bottomCenter,
                         margin: const EdgeInsets.only(top: 70),
-                        child: Image.asset(brandLogoImage,
-                            height: 80, width: 80, fit: BoxFit.cover),
-                      ),
+                        decoration: const BoxDecoration(
+                            color: Colors.white, shape: BoxShape.circle),
+                        child: ClipOval(
+                          child: FadeInImage(
+                              fit: BoxFit.cover,
+                              height: 80,
+                              width: 80,
+                              image:
+                                  NetworkImage(brandController.brandlogo.value),
+                              placeholder: const AssetImage(chanelLogoImage)),
+                        ),
+                      )
                     ],
                   ),
                   Obx(

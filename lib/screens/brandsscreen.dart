@@ -41,7 +41,10 @@ class BrandsScreenState extends State<BrandsScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx(() => brandController.showAllBrand.value
-        ? AllBrandScreen(title: brandController.brandName.value)
+        ? AllBrandScreen(
+            title: brandController.brandName.value,
+            brandLogo: brandController.brandlogo.value,
+          )
         : Scaffold(
             backgroundColor: colorSecondary,
             body: SingleChildScrollView(
@@ -207,6 +210,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                         GestureDetector(
                                                           onTap: () {
                                                             brandController
+                                                                .brandlogo
+                                                                .value = value
+                                                                    .brandList[
+                                                                index]["logo"];
+                                                            brandController
                                                                 .showAllBrand
                                                                 .value = true;
                                                             brandController
@@ -233,25 +241,30 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                   MainAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                /* FadeInImage(
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    height: 32,
-                                                                    width: 32,
-                                                                    image: NetworkImage(
-                                                                        value.brandList[
-                                                                                index]
+                                                                value.brandList[index]
                                                                             [
+                                                                            "logo"] !=
+                                                                        null
+                                                                    ? FadeInImage(
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        height:
+                                                                            32,
+                                                                        width:
+                                                                            32,
+                                                                        image: NetworkImage(value.brandList[index][
                                                                             "logo"]),
-                                                                    placeholder:
-                                                                        const AssetImage(
-                                                                            chanelLogoImage)), */
-                                                                Image.asset(
-                                                                    chanelLogoImage,
-                                                                    height: 32,
-                                                                    width: 32,
-                                                                    fit: BoxFit
-                                                                        .cover),
+                                                                        placeholder:
+                                                                            const AssetImage(
+                                                                                chanelLogoImage))
+                                                                    : Image.asset(
+                                                                        chanelLogoImage,
+                                                                        height:
+                                                                            32,
+                                                                        width:
+                                                                            32,
+                                                                        fit: BoxFit
+                                                                            .cover),
                                                                 Padding(
                                                                   padding: const EdgeInsets
                                                                           .symmetric(
@@ -350,8 +363,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   child: Column(
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                     children: [
-                                                                                      //   FadeInImage(fit: BoxFit.cover, height: 70, width: 90, image: NetworkImage(value.brandList[index]["categories"][i]["thumbnail"]), placeholder: const AssetImage(backImage)),
-                                                                                      Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
+                                                                                      value.brandList[index]["categories"][i]["thumbnail"] != null ? FadeInImage(fit: BoxFit.cover, height: 70, width: 90, image: NetworkImage(value.brandList[index]["categories"][i]["thumbnail"]), placeholder: const AssetImage(backImage)) : Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
                                                                                       Padding(
                                                                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                                                                         child: Center(

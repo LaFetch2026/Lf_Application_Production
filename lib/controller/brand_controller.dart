@@ -20,6 +20,8 @@ class BrandController extends BaseController {
   RxBool isBrand = false.obs;
   List brandList = [].obs;
   RxString brandName = "".obs;
+  RxString brandlogo = "".obs;
+  RxString brandbackground = "".obs;
   RxInt brandId = 0.obs;
   RxString text = "Expand All".obs;
   RxBool showAllBrand = false.obs;
