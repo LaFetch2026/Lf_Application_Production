@@ -12,7 +12,8 @@ import '../commonwidget/text_field.dart';
 import '../utils/constants.dart';
 
 class ShippingAddressScreen extends StatefulWidget {
-  const ShippingAddressScreen({super.key});
+  final int addressId;
+  const ShippingAddressScreen({super.key, required this.addressId});
 
   @override
   State<ShippingAddressScreen> createState() => ShippingAddressScreenState();
@@ -27,6 +28,13 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   ];
 
   int? current;
+
+  @override
+  void initState() {
+    if (widget.addressId != 0) {}
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

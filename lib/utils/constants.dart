@@ -137,6 +137,7 @@ const greyDotImage = 'assets/images/grey_dot.png';
 const productImage = 'assets/images/productImage.png';
 const categoryImage = 'assets/images/categoryImage.png';
 const sneakerImage = 'assets/images/sneaker.png';
+const editImage = 'assets/images/edit.png';
 
 class ApiConstants {
   ApiConstants._();

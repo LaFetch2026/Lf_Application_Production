@@ -9,6 +9,7 @@ import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
 import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
@@ -28,7 +29,6 @@ class AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     controller.getProfileData();
-    controller.getAddressData();
     super.initState();
   }
 
@@ -370,7 +370,9 @@ class AccountScreenState extends State<AccountScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Get.to(const SavedAddressScreen());
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       top: 20, left: 16, right: 16),

@@ -589,7 +589,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         textColor: whiteBorderColor,
                         backgroundColor: colorPrimary,
                         onPressed: () {
-                          Get.to(const ShippingAddressScreen());
+                          Get.to(const ShippingAddressScreen(
+                            addressId: 0,
+                          ));
                         },
                         borderColor: colorPrimary),
                   ),

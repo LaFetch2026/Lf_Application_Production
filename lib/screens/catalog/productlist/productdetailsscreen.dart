@@ -385,20 +385,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        AppText(
-                                          text: productController
-                                                  .productDetails["name"] ??
-                                              "",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w600,
-                                          color: colorPrimary,
-                                          fontSize: 16.sp,
+                                        Expanded(
+                                          child: AppText(
+                                            text: productController
+                                                    .productDetails["name"] ??
+                                                "",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w600,
+                                            color: colorPrimary,
+                                            maxLines: 2,
+                                            fontSize: 16.sp,
+                                          ),
                                         ),
                                         AppText(
                                           text: 'Explore Brand',
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w600,
                                           color: colorPrimary,
+                                          maxLines: 1,
                                           fontSize: 12.sp,
                                         ),
                                       ],
@@ -413,6 +418,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: greyTextColor,
+                                    maxLines: 4,
                                     fontSize: 14.sp,
                                   ),
                                 ),
