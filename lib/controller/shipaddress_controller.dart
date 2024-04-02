@@ -8,6 +8,7 @@ import 'package:lafetch/controller/base_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../commonwidget/common_widgets.dart';
+import '../screens/loginscreen.dart';
 import '../screens/paymentscreen.dart';
 import '../utils/constants.dart';
 
@@ -19,6 +20,8 @@ class ShipAddressController extends BaseController {
   RxInt defaultShipping = 0.obs;
   RxString type = "".obs;
   RxString phonenumber = "".obs;
+  List cityList = [].obs;
+  RxInt cityId = 0.obs;
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();
   final stateController = TextEditingController();
@@ -26,13 +29,6 @@ class ShipAddressController extends BaseController {
   final cityController = TextEditingController();
   final addressController = TextEditingController();
   final localityController = TextEditingController();
-
-  final RxList<String> stateList = [
-    'West Bengal',
-    'Bihar',
-    'Uttar Pradesh',
-  ].obs;
-
   bool checkvalidation(String phone) {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
@@ -91,12 +87,44 @@ class ShipAddressController extends BaseController {
     return true;
   }
 
+  getCitiesData() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/cities"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          cityList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get wishlist failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+  }
+
   callSaveAddress() async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
-        "city_id": 1,
+        "name": nameController.text.toString().trim(),
+        "phone": phonenumber.value,
+        "city_id": cityId.value,
         "type": type.value,
         "address": addressController.text.toString().trim(),
         "zip": pincodeController.text.toString().trim(),

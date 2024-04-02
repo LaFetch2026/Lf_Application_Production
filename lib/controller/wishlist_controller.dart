@@ -20,6 +20,7 @@ class WishlistController extends BaseController {
   List wishlistList = [].obs;
   List deleteidList = [].obs;
   List productList = [].obs;
+  List wishListProduct = [].obs;
   RxInt addItem = 0.obs;
   RxInt productId = 0.obs;
   final boardNameController = TextEditingController();
@@ -177,8 +178,13 @@ class WishlistController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        print(responseData);
         if (responseData != null) {
           wishlistDetails = responseData;
+          if (responseData["products"].isNotEmpty) {
+            wishListProduct = responseData["products"];
+            print(wishListProduct);
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

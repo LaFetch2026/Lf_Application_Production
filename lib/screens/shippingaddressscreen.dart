@@ -31,6 +31,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => shipController.getCitiesData());
     if (widget.addressId != 0) {}
     super.initState();
   }
@@ -135,13 +137,13 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                         controller: shipController.localityController,
                       ),
                     ),
-                    Padding(
+                    /*  Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: TextFieldWidget(
                         hint: "City / District",
                         controller: shipController.cityController,
                       ),
-                    ),
+                    ), */
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 16, top: 10, right: 16),
@@ -181,7 +183,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               borderSide: const BorderSide(color: borderColor),
                             ),
                             counterText: "",
-                            hintText: "Select State",
+                            hintText: "Select City",
                             hintStyle: const TextStyle(fontSize: 14),
                           ),
                         ),
@@ -196,7 +198,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   primary: false,
                                   shrinkWrap: true,
                                   physics: const ScrollPhysics(),
-                                  itemCount: shipController.stateList.length,
+                                  itemCount: shipController.cityList.length,
                                   padding: EdgeInsets.zero,
                                   scrollDirection: Axis.vertical,
                                   itemBuilder: (ctx, index) {
@@ -206,7 +208,11 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                           onTap: () {
                                             shipController
                                                     .stateController.text =
-                                                shipController.stateList[index];
+                                                shipController.cityList[index]
+                                                    ["name"];
+                                            shipController.cityId.value =
+                                                shipController.cityList[index]
+                                                    ["id"];
                                             shipController.showList.value =
                                                 false;
                                           },
@@ -226,7 +232,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                         vertical: 10),
                                                     child: Text(
                                                       shipController
-                                                          .stateList[index],
+                                                              .cityList[index]
+                                                          ["name"],
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         color: nameText,
@@ -236,7 +243,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                     ),
                                                   ),
                                                 ),
-                                                index == 2
+                                                index ==
+                                                        shipController.cityList
+                                                                .length -
+                                                            1
                                                     ? const SizedBox(
                                                         width: double.infinity,
                                                         height: 5,

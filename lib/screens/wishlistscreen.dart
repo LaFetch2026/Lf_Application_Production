@@ -65,6 +65,72 @@ class WishlistScreenState extends State<WishlistScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 16, right: 16),
+                    child: AppText(
+                      text: "Wishlist",
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      color: blackColor,
+                      fontSize: 25.sp,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 16, right: 16),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const NewBoardScreen(
+                                      title: "New Board",
+                                      boardId: 0,
+                                      hintName: "Name of the Board",
+                                      boardName: "",
+                                      btnText: "Next",
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    wishlistController.getWishlistData();
+                                  },
+                                ));
+                      },
+                      child: Row(
+                        children: [
+                          AppText(
+                            text:
+                                "${wishlistController.wishlistList.length} boards",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: textHintColor,
+                            fontSize: 12.sp,
+                          ),
+                          const Expanded(
+                            child: SizedBox(
+                              width: 0,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.add,
+                            color: blackColor,
+                            size: 16,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: AppText(
+                              text: "New Board",
+                              color: blackColor,
+                              fontSize: 12.sp,
+                              fontFamily: "Franklin Gothic Bold",
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   Obx(() => wishlistController.isWishlist.value
                       ? const Padding(
                           padding: EdgeInsets.all(40.0),
@@ -75,7 +141,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const SizedBox(
-                                  height: 90,
+                                  height: 50,
                                 ),
                                 Image.asset(emptyBoxImage,
                                     height: 160, width: 196, fit: BoxFit.cover),
@@ -118,75 +184,6 @@ class WishlistScreenState extends State<WishlistScreen> {
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20, left: 16, right: 16),
-                                  child: AppText(
-                                    text: "Wishlist",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: blackColor,
-                                    fontSize: 25.sp,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, left: 16, right: 16),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  const NewBoardScreen(
-                                                    title: "New Board",
-                                                    boardId: 0,
-                                                    hintName:
-                                                        "Name of the Board",
-                                                    boardName: "",
-                                                    btnText: "Next",
-                                                  )))
-                                          .then((value) => setState(
-                                                () {
-                                                  wishlistController
-                                                      .getWishlistData();
-                                                },
-                                              ));
-                                    },
-                                    child: Row(
-                                      children: [
-                                        AppText(
-                                          text:
-                                              "${wishlistController.wishlistList.length} boards",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: textHintColor,
-                                          fontSize: 12.sp,
-                                        ),
-                                        const Expanded(
-                                          child: SizedBox(
-                                            width: 0,
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Icons.add,
-                                          color: blackColor,
-                                          size: 16,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
-                                          child: AppText(
-                                            text: "New Board",
-                                            color: blackColor,
-                                            fontSize: 12.sp,
-                                            fontFamily: "Franklin Gothic Bold",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 10),

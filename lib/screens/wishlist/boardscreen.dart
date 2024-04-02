@@ -30,18 +30,10 @@ class BoardScreenState extends State<BoardScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final wishlistController = Get.put(WishlistController());
 
-  List<String> items = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "400",
-  ];
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => wishlistController.getProductData("express"));
+        (_) => wishlistController.getWishlistDetails(widget.boardId));
     super.initState();
   }
 
@@ -74,7 +66,8 @@ class BoardScreenState extends State<BoardScreen> {
                                   )))
                           .then((value) => setState(
                                 () {
-                                  wishlistController.getProductData("express");
+                                  wishlistController
+                                      .getWishlistDetails(widget.boardId);
                                 },
                               ));
                     },
@@ -112,7 +105,8 @@ class BoardScreenState extends State<BoardScreen> {
                                   )))
                           .then((value) => setState(
                                 () {
-                                  wishlistController.getProductData("express");
+                                  wishlistController
+                                      .getWishlistDetails(widget.boardId);
                                 },
                               ));
                     },
@@ -150,12 +144,12 @@ class BoardScreenState extends State<BoardScreen> {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    Obx(() => wishlistController.isProduct.value
+                    Obx(() => wishlistController.isDetails.value
                         ? const Padding(
                             padding: EdgeInsets.all(40.0),
                             child: Center(child: CircularProgressIndicator()),
                           )
-                        : wishlistController.productList.isNotEmpty
+                        : wishlistController.wishListProduct.isNotEmpty
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 10),
@@ -170,7 +164,7 @@ class BoardScreenState extends State<BoardScreen> {
                                     crossAxisSpacing: 5,
                                     mainAxisSpacing: 0,
                                     children: List.generate(
-                                      value.productList.length,
+                                      value.wishListProduct.length,
                                       (index) {
                                         return GestureDetector(
                                           onTap: () {},
@@ -237,13 +231,13 @@ class BoardScreenState extends State<BoardScreen> {
                                                               width: 24,
                                                             ),
                                                             AppText(
-                                                              text: value.productList[
+                                                              text: value.wishListProduct[
                                                                               index]
                                                                           [
                                                                           "aggregated_rating"] !=
                                                                       null
                                                                   ? value
-                                                                      .productList[
+                                                                      .wishListProduct[
                                                                           index]
                                                                           [
                                                                           "aggregated_rating"]
@@ -294,8 +288,8 @@ class BoardScreenState extends State<BoardScreen> {
                                                         horizontal: 10,
                                                         vertical: 5),
                                                 child: AppText(
-                                                  text: value.productList[index]
-                                                          ["name"] ??
+                                                  text: value.wishListProduct[
+                                                          index]["name"] ??
                                                       "",
                                                   color: nameText,
                                                   maxLines: 1,
@@ -309,8 +303,8 @@ class BoardScreenState extends State<BoardScreen> {
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 10),
                                                 child: AppText(
-                                                  text: value.productList[index]
-                                                          [
+                                                  text: value.wishListProduct[
+                                                              index][
                                                           "short_description"] ??
                                                       "",
                                                   color: nameText,
@@ -330,7 +324,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                   children: [
                                                     AppText(
                                                       text:
-                                                          "\u{20B9} ${value.productList[index]["price"] ?? ""}",
+                                                          "\u{20B9} ${value.wishListProduct[index]["price"] ?? ""}",
                                                       color: deepGreytextColor,
                                                       maxLines: 2,
                                                       fontSize: 11.sp,
@@ -344,7 +338,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                           const EdgeInsets.only(
                                                               left: 10),
                                                       child: Text(
-                                                        "\u{20B9} ${value.productList[index]["mrp"] ?? ""}",
+                                                        "\u{20B9} ${value.wishListProduct[index]["mrp"] ?? ""}",
                                                         style: TextStyle(
                                                           color: textHintColor,
                                                           fontSize: 11.sp,
@@ -383,12 +377,16 @@ class BoardScreenState extends State<BoardScreen> {
                                   ),
                                 ),
                               )
-                            : const Center(
-                                child: Text("No Item Found",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                        fontFamily: "Franklin Gothic Regular")),
+                            : const Padding(
+                                padding: EdgeInsets.only(top: 40),
+                                child: Center(
+                                  child: Text("No Item Found",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                          fontFamily:
+                                              "Franklin Gothic Regular")),
+                                ),
                               )),
                   ],
                 ),
