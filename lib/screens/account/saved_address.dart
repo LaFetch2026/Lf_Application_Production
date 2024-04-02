@@ -225,8 +225,10 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                   onPressedFirst: () {},
                                                   onPressedSecond: () {
                                                     Get.to(
-                                                        const ShippingAddressScreen(
-                                                      addressId: 0,
+                                                        ShippingAddressScreen(
+                                                      addressId: controller
+                                                              .addressList[
+                                                          index]["id"],
                                                     ));
                                                   },
                                                   secondIcon: editImage),

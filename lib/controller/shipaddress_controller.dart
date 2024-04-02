@@ -18,9 +18,12 @@ class ShipAddressController extends BaseController {
   RxBool isCheck = false.obs;
   RxInt defaultBilling = 0.obs;
   RxInt defaultShipping = 0.obs;
+  RxBool isDetails = false.obs;
+  dynamic addressDetails = "".obs;
   RxString type = "".obs;
   RxString phonenumber = "".obs;
   List cityList = [].obs;
+  RxInt current = 3.obs;
   RxInt cityId = 0.obs;
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();
@@ -160,5 +163,70 @@ class ShipAddressController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  }
+
+  getAddressDetails(int id) async {
+    isDetails.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/addresses/$id"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        if (responseData != null) {
+          nameController.text = responseData["name"] ?? "";
+          phoneController.text = responseData["phone"] ?? "";
+          phonenumber.value = responseData["phone"];
+          pincodeController.text = responseData["zip"].toString();
+          addressController.text = responseData["address"];
+          localityController.text = responseData["locality"];
+          if (responseData["city"] != null) {
+            stateController.text = responseData["city"]["name"];
+            cityId.value = responseData["city"]["id"];
+          }
+          isCheck.value = responseData["default_shipping"];
+          if (isCheck.value) {
+            defaultShipping.value = 1;
+            isCheck.value = true;
+          } else {
+            defaultShipping.value = 0;
+            isCheck.value = false;
+          }
+          if (responseData["type"] == "Work") {
+            type.value = "Work";
+            current.value = 0;
+          } else {
+            type.value = "Home";
+            current.value = 1;
+          }
+          if (responseData["default_billing"]) {
+            onButton.value = true;
+            defaultBilling.value = 1;
+          } else {
+            onButton.value = false;
+            defaultBilling.value = 0;
+          }
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get address details failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isDetails.value = false;
   }
 }
