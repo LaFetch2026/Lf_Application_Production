@@ -298,7 +298,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                           ["name"] ??
                                                       "",
                                                   color: nameText,
-                                                  maxLines: 2,
+                                                  maxLines: 1,
                                                   fontSize: 12.sp,
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
@@ -314,7 +314,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                           "short_description"] ??
                                                       "",
                                                   color: nameText,
-                                                  maxLines: 2,
+                                                  maxLines: 1,
                                                   fontSize: 11.sp,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",

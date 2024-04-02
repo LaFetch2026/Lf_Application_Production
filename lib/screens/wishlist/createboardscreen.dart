@@ -333,7 +333,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                               index]["name"] ??
                                                           "",
                                                       color: nameText,
-                                                      maxLines: 2,
+                                                      maxLines: 1,
                                                       fontSize: 12.sp,
                                                       fontFamily:
                                                           "Franklin Gothic",
@@ -352,7 +352,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                               "short_description"] ??
                                                           "",
                                                       color: nameText,
-                                                      maxLines: 2,
+                                                      maxLines: 1,
                                                       fontSize: 11.sp,
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
