@@ -26,6 +26,12 @@ class WishlistScreenState extends State<WishlistScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      wishlistController.listController.addListener(() {
+        wishlistController.fetchMoreData();
+        wishlistController.update();
+      });
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
@@ -55,6 +61,7 @@ class WishlistScreenState extends State<WishlistScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
+              controller: wishlistController.listController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -186,6 +193,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
+                                    controller:
+                                        wishlistController.listController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.7,
@@ -274,6 +283,16 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     ),
                                   ),
                                 ),
+                                wishlistController.loadMore.value
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 10, bottom: 10),
+                                        child: Center(
+                                            child: CircularProgressIndicator()),
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
                               ],
                             ))
                 ],

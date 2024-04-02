@@ -24,17 +24,17 @@ class BrandsScreenState extends State<BrandsScreen> {
 
   @override
   void initState() {
-    brandController.showAllBrand.value = false;
-    brandController.searchController.clear();
-    brandController.queryText.value = "";
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => brandController.getBrandData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.listController.addListener(() {
         brandController.fetchMoreData();
         brandController.update();
       });
     });
+    brandController.showAllBrand.value = false;
+    brandController.searchController.clear();
+    brandController.queryText.value = "";
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();
   }
 

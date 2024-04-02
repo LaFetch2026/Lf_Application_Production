@@ -24,6 +24,10 @@ class WishlistController extends BaseController {
   RxInt productId = 0.obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
+  RxBool loadMore = false.obs;
+  RxBool hasnextpage = true.obs;
+  int page = 1;
+  ScrollController listController = ScrollController();
   /*  final List<Map<String, String>> wishlistList = [
     {'id': '1', "name": 'All item'},
     {'id': '2', "name": 'Bag'},
@@ -78,6 +82,51 @@ class WishlistController extends BaseController {
       print("error$e");
     }
     isWishlist.value = false;
+  }
+
+  fetchMoreData() async {
+    if (hasnextpage.value == true &&
+        isWishlist.value == false &&
+        loadMore.value == false) {
+      loadMore.value = true;
+      page += 1;
+      print(page);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/wishlists?page=$page"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              wishlistList.addAll(responseData['data']);
+              print(wishlistList.length);
+            } else {
+              hasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch brand failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      loadMore.value = false;
+    }
   }
 
   getProductData(String type) async {
