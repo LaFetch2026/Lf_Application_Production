@@ -72,12 +72,12 @@ class ShipAddressController extends BaseController {
       getSnackBar("Enter Locality");
       return false;
     }
-    if (cityController.text.toString().trim().isEmpty) {
+    /*   if (cityController.text.toString().trim().isEmpty) {
       getSnackBar("Enter City");
       return false;
-    }
+    } */
     if (stateController.text.toString().trim().isEmpty) {
-      getSnackBar("Select State");
+      getSnackBar("Select City");
       return false;
     }
     if (type.value.isEmpty) {
