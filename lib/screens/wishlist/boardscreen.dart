@@ -32,6 +32,7 @@ class BoardScreenState extends State<BoardScreen> {
 
   @override
   void initState() {
+    wishlistController.wishListProduct.clear();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => wishlistController.getWishlistDetails(widget.boardId));
     super.initState();
