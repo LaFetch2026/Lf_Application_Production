@@ -84,6 +84,7 @@ class HomeController extends BaseController {
   }
 
   getBannar2Data() async {
+    isBanner.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -112,5 +113,6 @@ class HomeController extends BaseController {
     } catch (e) {
       print("error$e");
     }
+    isBanner.value = false;
   }
 }

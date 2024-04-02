@@ -98,13 +98,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           controller: _pageController,
                           itemCount: homeController.banner1List.length,
                           itemBuilder: (context, int index) {
-                            return /* FadeInImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    homeController.banner1List[index]["image"]),
-                                placeholder: const AssetImage(image)) 
-                                */
-                                CachedNetworkImage(
+                            return CachedNetworkImage(
                               cacheManager: CacheManager(Config(
                                   "customCacheKey",
                                   stalePeriod: const Duration(days: 15),
@@ -117,10 +111,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 child: CircularProgressIndicator(
                                     value: downloadProgress.progress),
                               ),
-                              errorWidget: (context, url, error) => const Icon(
-                                Icons.error,
-                                size: 100,
-                                color: Colors.red,
+                              errorWidget: (context, url, error) => Image.asset(
+                                downloadImage,
+                                height: 210,
                               ),
                             );
                           },
@@ -547,89 +540,43 @@ class DiscountScreenState extends State<DiscountScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                height: 210,
-                child: PageView.builder(
-                  scrollDirection: Axis.horizontal,
-                  controller: _pageController,
-                  itemCount: homeController.banner2List.length,
-                  itemBuilder: (context, int index) {
-                    return FadeInImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                            homeController.banner2List[index]["image"]),
-                        placeholder: const AssetImage(image));
-                    /* Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              homeController.bannerList[index]["image"]),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    child: Image.asset(chanelLogoImage,
-                                        height: 32,
-                                        width: 32,
-                                        fit: BoxFit.cover),
-                                  ),
-                                  const Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                      height: 0,
-                                    ),
-                                  ),
-                                  AppText(
-                                    text: "Flat ₹500 OFF*",
-                                    color: whiteBorderColor,
-                                    fontSize: 25.sp,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    child: AppText(
-                                      text: "on Chanel Handbags",
-                                      color: whiteBorderColor,
-                                      fontSize: 14.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
+            Obx(
+              () => homeController.isBanner.value
+                  ? const Padding(
+                      padding: EdgeInsets.all(40.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: SizedBox(
+                        height: 210,
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          controller: _pageController,
+                          itemCount: homeController.banner2List.length,
+                          itemBuilder: (context, int index) {
+                            return CachedNetworkImage(
+                              cacheManager: CacheManager(Config(
+                                  "customCacheKey",
+                                  stalePeriod: const Duration(days: 15),
+                                  maxNrOfCacheObjects: 100)),
+                              fit: BoxFit.cover,
+                              imageUrl: homeController.banner2List[index]
+                                  ["image"],
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Center(
+                                child: CircularProgressIndicator(
+                                    value: downloadProgress.progress),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 20),
-                              child: Image.asset(tcLogoImage,
-                                  color: borderColor,
-                                  height: 10,
-                                  fit: BoxFit.cover),
-                            ),
-                          ],
+                              errorWidget: (context, url, error) => Image.asset(
+                                downloadImage,
+                                height: 210,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    );
-                 */
-                  },
-                ),
-              ),
+                    ),
             ),
             const SizedBox(
               height: 20,
