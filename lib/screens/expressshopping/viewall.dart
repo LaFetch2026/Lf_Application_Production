@@ -44,7 +44,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 16, right: 16, top: 10, bottom: 70),
+                                    left: 16, right: 16, top: 10, bottom: 90),
                                 child: GridView.count(
                                   shrinkWrap: true,
                                   crossAxisCount: 2,
@@ -290,7 +290,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                )
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -308,7 +308,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                         bottom: 0,
                         width: MediaQuery.of(context).size.width,
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 30),
+                          padding: const EdgeInsets.only(bottom: 30, top: 20),
                           child: DoubleButton(
                             firstText: "Sort By",
                             secondText: "Filters",

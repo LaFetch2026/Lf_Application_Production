@@ -256,7 +256,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             "logo"]),
                                                                         placeholder:
                                                                             const AssetImage(
-                                                                                chanelLogoImage))
+                                                                                placeHolderImage))
                                                                     : Image.asset(
                                                                         chanelLogoImage,
                                                                         height:
@@ -363,7 +363,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   child: Column(
                                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                                     children: [
-                                                                                      value.brandList[index]["categories"][i]["thumbnail"] != null ? FadeInImage(fit: BoxFit.cover, height: 70, width: 90, image: NetworkImage(value.brandList[index]["categories"][i]["thumbnail"]), placeholder: const AssetImage(backImage)) : Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
+                                                                                      value.brandList[index]["categories"][i]["thumbnail"] != null ? FadeInImage(fit: BoxFit.cover, height: 70, width: 90, image: NetworkImage(value.brandList[index]["categories"][i]["thumbnail"]), placeholder: const AssetImage(placeHolderImage)) : Image.asset(backImage, height: 70, width: 90, fit: BoxFit.cover),
                                                                                       Padding(
                                                                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                                                                         child: Center(
