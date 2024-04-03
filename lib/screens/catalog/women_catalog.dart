@@ -120,6 +120,8 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                   .catalogList[
                                                               index]["name"] ??
                                                           "",
+                                                      catalogText:
+                                                          widget.categorytext,
                                                     ));
                                                   },
                                                   child: Image.asset(

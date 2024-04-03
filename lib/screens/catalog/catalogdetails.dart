@@ -13,10 +13,12 @@ import '../searchscreen.dart';
 
 class CatalogDetailsScreen extends StatefulWidget {
   final String title;
+  final String catalogText;
 
   const CatalogDetailsScreen({
     Key? key,
     required this.title,
+    required this.catalogText,
   }) : super(key: key);
 
   @override
@@ -85,7 +87,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                             ),
                           ),
                           AppText(
-                            text: "For Women",
+                            text: "For ${widget.catalogText}",
                             color: textHintColor,
                             fontSize: 14.sp,
                             fontFamily: "Franklin Gothic Regular",
