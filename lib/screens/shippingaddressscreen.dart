@@ -519,14 +519,12 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             backgroundColor: colorPrimary,
                             onPressed: () {
                               if (widget.addressId != 0) {
-                                // shipController.callSaveAddress();
+                                if (shipController.checkvalidation()) {
+                                  shipController
+                                      .callUpdateAddress(widget.addressId);
+                                }
                               } else {
-                                if (shipController.checkvalidation(
-                                    shipController.phoneController.text
-                                        .toString()
-                                        .trim())) {
-                                  shipController.phonenumber.value =
-                                      "+91${shipController.phoneController.text.toString().trim()}";
+                                if (shipController.checkvalidation()) {
                                   shipController.callSaveAddress();
                                 }
                               }

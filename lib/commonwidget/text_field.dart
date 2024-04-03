@@ -18,14 +18,14 @@ class TextFieldWidget extends StatelessWidget {
       child: SizedBox(
         height: 44,
         child: TextField(
-          //  textCapitalization: TextCapitalization.words,
+          textCapitalization: TextCapitalization.words,
           style: const TextStyle(
             color: textColor,
             fontFamily: "Franklin Gothic Regular",
           ),
           controller: controller,
           //  maxLines: 3,
-          keyboardType: TextInputType.multiline,
+          keyboardType: TextInputType.text,
           decoration: InputDecoration(
             filled: true,
             fillColor: whiteTextColor,

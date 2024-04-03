@@ -21,7 +21,6 @@ class ShipAddressController extends BaseController {
   RxBool isDetails = false.obs;
   dynamic addressDetails = "".obs;
   RxString type = "".obs;
-  RxString phonenumber = "".obs;
   List cityList = [].obs;
   RxInt current = 3.obs;
   RxInt cityId = 0.obs;
@@ -32,24 +31,24 @@ class ShipAddressController extends BaseController {
   final cityController = TextEditingController();
   final addressController = TextEditingController();
   final localityController = TextEditingController();
-  bool checkvalidation(String phone) {
+  bool checkvalidation() {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
     if (nameController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Name");
       return false;
     }
-    if (phone.isEmpty) {
+    if (phoneController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Phone Number");
       return false;
     }
-    if (phone.length < 10) {
+    if (phoneController.text.toString().trim().length < 10) {
       getSnackBar(
         "Enter 10 digit Phone Number",
       );
       return false;
     }
-    if (!regExp.hasMatch(phone)) {
+    if (!regExp.hasMatch(phoneController.text.toString().trim())) {
       getSnackBar(
         "Enter valid Phone Number",
       );
@@ -126,7 +125,7 @@ class ShipAddressController extends BaseController {
     try {
       final Map<String, dynamic> sendData = {
         "name": nameController.text.toString().trim(),
-        "phone": phonenumber.value,
+        "phone": phoneController.text.toString().trim(),
         "city_id": cityId.value,
         "type": type.value,
         "address": addressController.text.toString().trim(),
@@ -165,6 +164,53 @@ class ShipAddressController extends BaseController {
     hideLoading();
   }
 
+  callUpdateAddress(int id) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "name": nameController.text.toString().trim(),
+        "phone": phoneController.text.toString().trim(),
+        "city_id": cityId.value,
+        "type": type.value,
+        "address": addressController.text.toString().trim(),
+        "zip": pincodeController.text.toString().trim(),
+        "locality": localityController.text.toString().trim(),
+        "default_billing": defaultBilling.value,
+        "default_shipping": defaultShipping.value,
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses/$id"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar("Address updated");
+        Get.close(1);
+      } else if (response.statusCode == 201) {
+        print(responseData);
+        getSnackBar("Address updated");
+        Get.close(1);
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
   getAddressDetails(int id) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -181,7 +227,6 @@ class ShipAddressController extends BaseController {
         if (responseData != null) {
           nameController.text = responseData["name"] ?? "";
           phoneController.text = responseData["phone"] ?? "";
-          phonenumber.value = responseData["phone"];
           pincodeController.text = responseData["zip"].toString();
           addressController.text = responseData["address"];
           localityController.text = responseData["locality"];
@@ -199,10 +244,10 @@ class ShipAddressController extends BaseController {
           }
           if (responseData["type"] == "Work") {
             type.value = "Work";
-            current.value = 0;
+            current.value = 1;
           } else {
             type.value = "Home";
-            current.value = 1;
+            current.value = 0;
           }
           if (responseData["default_billing"]) {
             onButton.value = true;
