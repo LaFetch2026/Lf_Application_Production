@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -11,11 +13,17 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
 
 class HomeController extends BaseController {
-  RxBool isBanner = false.obs;
+  RxBool isBanner1 = false.obs;
+  RxBool isBanner2 = false.obs;
   RxBool isCategory = false.obs;
   List banner2List = [].obs;
   List banner1List = [].obs;
   List categoryList = [].obs;
+  RxInt currentPage = 0.obs;
+  Timer? timer;
+  final PageController pageController = PageController(
+    initialPage: 0,
+  );
 
   getCategoryData() async {
     isCategory.value = true;
@@ -51,7 +59,7 @@ class HomeController extends BaseController {
   }
 
   getBannar1Data() async {
-    isBanner.value = true;
+    isBanner1.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -80,11 +88,11 @@ class HomeController extends BaseController {
     } catch (e) {
       print("error$e");
     }
-    isBanner.value = false;
+    isBanner1.value = false;
   }
 
   getBannar2Data() async {
-    isBanner.value = true;
+    isBanner2.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -113,6 +121,6 @@ class HomeController extends BaseController {
     } catch (e) {
       print("error$e");
     }
-    isBanner.value = false;
+    isBanner2.value = false;
   }
 }

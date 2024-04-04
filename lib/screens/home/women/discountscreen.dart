@@ -34,17 +34,10 @@ class DiscountScreenState extends State<DiscountScreen> {
     "500",
   ];
 
-  int _currentPage = 0;
-
-  Timer? timer;
-  final PageController _pageController = PageController(
-    initialPage: 0,
-  );
-
   @override
   void dispose() {
     super.dispose();
-    timer?.cancel();
+    homeController.timer?.cancel();
   }
 
   @override
@@ -58,18 +51,19 @@ class DiscountScreenState extends State<DiscountScreen> {
         .addPostFrameCallback((_) => homeController.getCategoryData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
-    timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
-      if (_currentPage < 2) {
-        _currentPage++;
+    homeController.timer =
+        Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+      if (homeController.currentPage.value < 2) {
+        homeController.currentPage.value++;
       } else {
-        _currentPage = 0;
+        homeController.currentPage.value = 0;
       }
-      _pageController.animateToPage(
-        _currentPage,
+      homeController.pageController.animateToPage(
+        homeController.currentPage.value,
         duration: const Duration(milliseconds: 2000),
         curve: Curves.easeIn,
       );
-      setState(() {});
+      homeController.update();
     });
   }
 
@@ -83,7 +77,7 @@ class DiscountScreenState extends State<DiscountScreen> {
           children: [
             // const SaleCardWidget(),
             Obx(
-              () => homeController.isBanner.value
+              () => homeController.isBanner1.value
                   ? const Padding(
                       padding: EdgeInsets.all(40.0),
                       child: Center(child: CircularProgressIndicator()),
@@ -95,10 +89,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                         height: 210,
                         child: PageView.builder(
                           scrollDirection: Axis.horizontal,
-                          controller: _pageController,
+                          //  controller: homeController..pageController,
                           itemCount: homeController.banner1List.length,
                           itemBuilder: (context, int index) {
-                            return /*  CachedNetworkImage(
+                            return CachedNetworkImage(
                               cacheManager: CacheManager(Config(
                                   "customCacheKey",
                                   stalePeriod: const Duration(days: 15),
@@ -115,17 +109,32 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 downloadImage,
                                 height: 210,
                               ),
-                            ) */
-                                FadeInImage(
+                            );
+                            /* FadeInImage(
                                     fit: BoxFit.cover,
                                     height: 210,
                                     width: double.infinity,
                                     image: NetworkImage(homeController
                                         .banner1List[index]["image"]),
                                     placeholder:
-                                        const AssetImage(placeHolderImage));
+                                        const AssetImage(placeHolderImage)); */
                           },
                         ),
+                        /* ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: homeController.banner1List.length,
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.zero,
+                                itemBuilder: (ctx, index) {
+                                  return FadeInImage(
+                                      fit: BoxFit.cover,
+                                      height: 210,
+                                      width: MediaQuery.of(context).size.width,
+                                      image: NetworkImage(homeController
+                                          .banner1List[index]["image"]),
+                                      placeholder:
+                                          const AssetImage(downloadImage));
+                                }), */
                       ),
                     ),
             ),
@@ -549,75 +558,85 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
             Obx(
-              () => homeController.isBanner.value
+              () => homeController.isBanner2.value
                   ? const Padding(
                       padding: EdgeInsets.all(40.0),
                       child: Center(child: CircularProgressIndicator()),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: SizedBox(
-                        height: 210,
-                        child: PageView.builder(
-                          scrollDirection: Axis.horizontal,
-                          controller: _pageController,
-                          itemCount: homeController.banner2List.length,
-                          itemBuilder: (context, int index) {
-                            return /* CachedNetworkImage(
-                              cacheManager: CacheManager(Config(
-                                  "customCacheKey",
-                                  stalePeriod: const Duration(days: 15),
-                                  maxNrOfCacheObjects: 100)),
-                              fit: BoxFit.cover,
-                              imageUrl: homeController.banner2List[index]
-                                  ["image"],
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) => Center(
-                                child: CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                downloadImage,
-                                height: 210,
-                              ),
-                            ) */
-                                FadeInImage(
-                                    fit: BoxFit.cover,
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            height: 210,
+                            child: PageView.builder(
+                              scrollDirection: Axis.horizontal,
+                              controller: homeController.pageController,
+                              itemCount: homeController.banner2List.length,
+                              itemBuilder: (context, int index) {
+                                return /* CachedNetworkImage(
+                                  cacheManager: CacheManager(Config(
+                                      "customCacheKey",
+                                      stalePeriod: const Duration(days: 15),
+                                      maxNrOfCacheObjects: 100)),
+                                  fit: BoxFit.cover,
+                                  imageUrl: homeController.banner2List[index]
+                                      ["image"],
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) => Center(
+                                    child: CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                                  ),
+                                  errorWidget: (context, url, error) => Image.asset(
+                                    downloadImage,
                                     height: 210,
-                                    width: double.infinity,
-                                    image: NetworkImage(homeController
-                                        .banner2List[index]["image"]),
-                                    placeholder:
-                                        const AssetImage(placeHolderImage));
-                          },
+                                  ),
+                                ) */
+                                    FadeInImage(
+                                        fit: BoxFit.cover,
+                                        height: 210,
+                                        width: double.infinity,
+                                        image: NetworkImage(homeController
+                                            .banner2List[index]["image"]),
+                                        placeholder:
+                                            const AssetImage(downloadImage));
+                              },
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List<Widget>.generate(
+                                    homeController.banner2List.length,
+                                    (int index) {
+                                  return AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 400),
+                                      height: 6,
+                                      width: 40,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      decoration: BoxDecoration(
+                                          color: (index ==
+                                                  homeController
+                                                      .currentPage.value)
+                                              ? colorPrimary
+                                              : colorSecondary));
+                                })),
+                          ),
+                        )
+                      ],
                     ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List<Widget>.generate(
-                        homeController.banner2List.length, (int index) {
-                      return AnimatedContainer(
-                          duration: const Duration(milliseconds: 400),
-                          height: 6,
-                          width: 40,
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          decoration: BoxDecoration(
-                              color: (index == _currentPage)
-                                  ? colorPrimary
-                                  : colorSecondary));
-                    })),
-              ),
-            ),
+
             const SizedBox(
               height: 20,
             ),
