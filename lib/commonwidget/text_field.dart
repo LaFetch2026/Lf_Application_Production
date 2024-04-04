@@ -24,8 +24,8 @@ class TextFieldWidget extends StatelessWidget {
             fontFamily: "Franklin Gothic Regular",
           ),
           controller: controller,
-          //  maxLines: 3,
-          keyboardType: TextInputType.text,
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
             filled: true,
             fillColor: whiteTextColor,
@@ -39,6 +39,7 @@ class TextFieldWidget extends StatelessWidget {
               borderSide: const BorderSide(color: borderColor),
             ),
             counterText: "",
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             hintText: hint,
             hintStyle: const TextStyle(fontSize: 14),
           ),
