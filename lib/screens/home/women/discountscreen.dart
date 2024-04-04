@@ -98,7 +98,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           controller: _pageController,
                           itemCount: homeController.banner1List.length,
                           itemBuilder: (context, int index) {
-                            return CachedNetworkImage(
+                            return /*  CachedNetworkImage(
                               cacheManager: CacheManager(Config(
                                   "customCacheKey",
                                   stalePeriod: const Duration(days: 15),
@@ -115,7 +115,15 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 downloadImage,
                                 height: 210,
                               ),
-                            );
+                            ) */
+                                FadeInImage(
+                                    fit: BoxFit.cover,
+                                    height: 210,
+                                    width: double.infinity,
+                                    image: NetworkImage(homeController
+                                        .banner1List[index]["image"]),
+                                    placeholder:
+                                        const AssetImage(placeHolderImage));
                           },
                         ),
                       ),
@@ -555,7 +563,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           controller: _pageController,
                           itemCount: homeController.banner2List.length,
                           itemBuilder: (context, int index) {
-                            return CachedNetworkImage(
+                            return /* CachedNetworkImage(
                               cacheManager: CacheManager(Config(
                                   "customCacheKey",
                                   stalePeriod: const Duration(days: 15),
@@ -572,7 +580,15 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 downloadImage,
                                 height: 210,
                               ),
-                            );
+                            ) */
+                                FadeInImage(
+                                    fit: BoxFit.cover,
+                                    height: 210,
+                                    width: double.infinity,
+                                    image: NetworkImage(homeController
+                                        .banner2List[index]["image"]),
+                                    placeholder:
+                                        const AssetImage(placeHolderImage));
                           },
                         ),
                       ),
