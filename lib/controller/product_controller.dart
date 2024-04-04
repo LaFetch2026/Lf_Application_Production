@@ -16,6 +16,7 @@ class ProductController extends BaseController {
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
   RxInt currentpage = 0.obs;
+  RxString selectedSize = "".obs;
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
