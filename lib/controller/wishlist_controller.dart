@@ -146,7 +146,7 @@ class WishlistController extends BaseController {
           productList = responseData;
           selected.clear();
           deleteidList.clear();
-          selected = List.generate(wishlistList.length, (i) => false);
+          selected = List.generate(productList.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
