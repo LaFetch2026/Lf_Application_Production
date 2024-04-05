@@ -130,8 +130,8 @@ class WishlistController extends BaseController {
     }
   }
 
-  /*  getProductData(String type) async {
-    isProduct.value = true;
+  getProductData(String type) async {
+    isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -143,10 +143,11 @@ class WishlistController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
-          productList = responseData;
+          wishListProduct.clear();
+          wishListProduct = responseData;
           selected.clear();
           deleteidList.clear();
-          selected = List.generate(productList.length, (i) => false);
+          selected = List.generate(wishListProduct.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -163,9 +164,9 @@ class WishlistController extends BaseController {
     } catch (e) {
       print("error$e");
     }
-    isProduct.value = false;
+    isDetails.value = false;
   }
- */
+
   getWishlistDetails(int wishlistId) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -182,6 +183,7 @@ class WishlistController extends BaseController {
         if (responseData != null) {
           wishlistDetails = responseData;
           if (responseData["products"].isNotEmpty) {
+            wishListProduct.clear();
             wishListProduct = responseData["products"];
             selected.clear();
             deleteidList.clear();
