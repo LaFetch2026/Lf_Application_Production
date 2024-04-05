@@ -15,7 +15,7 @@ import '../utils/constants.dart';
 class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
-  RxBool isProduct = false.obs;
+  // RxBool isProduct = false.obs;
   dynamic wishlistDetails = "".obs;
   List wishlistList = [].obs;
   List deleteidList = [].obs;
@@ -130,7 +130,7 @@ class WishlistController extends BaseController {
     }
   }
 
-  getProductData(String type) async {
+  /*  getProductData(String type) async {
     isProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -165,7 +165,7 @@ class WishlistController extends BaseController {
     }
     isProduct.value = false;
   }
-
+ */
   getWishlistDetails(int wishlistId) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -183,7 +183,9 @@ class WishlistController extends BaseController {
           wishlistDetails = responseData;
           if (responseData["products"].isNotEmpty) {
             wishListProduct = responseData["products"];
-            print(wishListProduct);
+            selected.clear();
+            deleteidList.clear();
+            selected = List.generate(wishListProduct.length, (i) => false);
           }
         }
       } else if (response.statusCode == 500) {
@@ -221,8 +223,9 @@ class WishlistController extends BaseController {
         print(responseData);
         getSnackBar("Board Created");
         Get.to(
-          () => const CreateBoardScreen(
-            btnText: "Create board",
+          () => CreateBoardScreen(
+            btnText: "Add",
+            wishlistId: responseData["id"],
           ),
         );
       } else if (response.statusCode == 400) {
@@ -290,7 +293,7 @@ class WishlistController extends BaseController {
       );
       if (response.statusCode == 200) {
         getSnackBar("Board deleted");
-        getProductData("express");
+        Get.close(3);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -299,6 +302,39 @@ class WishlistController extends BaseController {
         getSnackBar("Authentication failed");
       } else {
         print("delete wishlist failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  callDeleteProduct(int wishlistId) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "product_ids": deleteidList,
+        "wishlist_id": wishlistId,
+      };
+      var response = await http.post(
+          Uri.parse("${ApiConstants.baseUrl}/wishlists/delete/products"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        deleteidList.clear();
+        getSnackBar("Product deleted");
+        Get.close(4);
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print("delete product failed");
       }
     } catch (e) {
       print(e.toString());

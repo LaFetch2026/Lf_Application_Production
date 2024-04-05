@@ -76,9 +76,10 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     controller: wishlistController,
                     onPressed: () {
                       if (widget.boardId == 0) {
-                        wishlistController.callCreateWishlist(wishlistController
-                            .boardNameController.text
-                            .toString());
+                        wishlistController.callCreateWishlist(
+                          wishlistController.boardNameController.text
+                              .toString(),
+                        );
                       } else {
                         wishlistController.callUpdateWishlist(
                             wishlistController.boardNameController.text

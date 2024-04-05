@@ -16,10 +16,11 @@ class ProductController extends BaseController {
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
   RxInt currentpage = 0.obs;
-  RxString selectedSize = "".obs;
+  RxInt inventoryId = 0.obs;
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
+  List sizeList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
   final pincodeController = TextEditingController();
@@ -34,6 +35,16 @@ class ProductController extends BaseController {
     if (pin.length < 6) {
       getSnackBar(
         "The pincode must be 6 digit.",
+      );
+      return false;
+    }
+    return true;
+  }
+
+  bool checkDetailsValidation() {
+    if (inventoryId.value == 0) {
+      getSnackBar(
+        "Select Size",
       );
       return false;
     }
@@ -88,6 +99,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productDetails = responseData;
+          sizeList = responseData["inventories"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

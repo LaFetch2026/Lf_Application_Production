@@ -53,8 +53,9 @@ class BoardScreenState extends State<BoardScreen> {
               scaffoldKey.currentState?.showBottomSheet((context) =>
                   BottomSheetBoard(
                     onPressedEdit: () {
-                      Get.to(const CreateBoardScreen(
+                      Get.to(CreateBoardScreen(
                         btnText: "",
+                        wishlistId: widget.boardId,
                       ));
                     },
                     onPressedAddItem: () {
@@ -62,8 +63,9 @@ class BoardScreenState extends State<BoardScreen> {
                       Navigator.of(context)
                           .push(MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const CreateBoardScreen(
+                                  CreateBoardScreen(
                                     btnText: "Add",
+                                    wishlistId: widget.boardId,
                                   )))
                           .then((value) => setState(
                                 () {
@@ -82,7 +84,6 @@ class BoardScreenState extends State<BoardScreen> {
                                 Get.back();
                               },
                               click2: () {
-                                Get.close(3);
                                 wishlistController
                                     .callDeleteWishlist(widget.boardId);
                               },

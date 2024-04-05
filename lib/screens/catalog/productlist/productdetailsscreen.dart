@@ -130,8 +130,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         onTap: () {
                           selectedProductSize = i;
                           print(selectedProductSize["title"]);
-                          productController.selectedSize.value =
-                              selectedProductSize["title"] ?? "";
                           setState(() {});
                         },
                         child: Container(
