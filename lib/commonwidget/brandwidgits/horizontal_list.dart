@@ -94,9 +94,8 @@ class HorizontalBrandList extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 5),
                                   child: AppText(
-                                    text: productController.productList[index]
-                                            ["name"] ??
-                                        "",
+                                    text:
+                                        "${productController.productList[index]["name"]}\n",
                                     color: nameText,
                                     maxLines: 2,
                                     fontSize: 11.sp,

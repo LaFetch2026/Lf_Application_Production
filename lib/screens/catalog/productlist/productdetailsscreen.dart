@@ -270,7 +270,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   IconButton(
                                                     icon: CircleAvatar(
                                                         backgroundColor:
-                                                            colorSecondary,
+                                                            whiteColor,
                                                         child: Image.asset(
                                                             shareImage)),
                                                     onPressed: () {},
@@ -288,7 +288,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8.0),
                                             height: 30,
-                                            color: whiteBack,
+                                            color: const Color(0xB3F7F7F5),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:

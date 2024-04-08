@@ -371,7 +371,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         ) */
                       HorizontalBrandList(
                           text: "Bestsellers",
-                          productController: productController))
+                          productController: productController)),
+                  const SizedBox(
+                    height: 40,
+                  ),
                 ],
               ),
             ),
