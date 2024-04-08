@@ -603,11 +603,8 @@ class CartScreenState extends State<CartScreen> {
                                                                     vertical:
                                                                         5),
                                                             child: AppText(
-                                                              text: value.productList[
-                                                                          index]
-                                                                      [
-                                                                      "name"] ??
-                                                                  "",
+                                                              text:
+                                                                  "${value.productList[index]["name"]}\n",
                                                               color: nameText,
                                                               fontSize: 12.sp,
                                                               fontFamily:

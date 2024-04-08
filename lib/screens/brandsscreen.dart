@@ -219,6 +219,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                     .brandList[
                                                                 index]["logo"];
                                                             brandController
+                                                                .brandName
+                                                                .value = value
+                                                                    .brandList[
+                                                                index]["name"];
+                                                            brandController
                                                                 .showAllBrand
                                                                 .value = true;
                                                             brandController

@@ -95,7 +95,7 @@ class HorizontalHomeList extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 5),
                                 child: AppText(
-                                  text: list[index]["name"] ?? "",
+                                  text: "${list[index]["name"]}\n",
                                   color: nameText,
                                   maxLines: 2,
                                   fontSize: 11.sp,
