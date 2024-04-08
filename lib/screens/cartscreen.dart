@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
+import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
 import 'package:lafetch/screens/checkoutscreen.dart';
 import '../commonwidget/app_text.dart';
@@ -25,7 +26,8 @@ class CartScreenState extends State<CartScreen> {
   final controller = Get.put(CartController());
   final productController = Get.put(ProductController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  List list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  List sizeList = ["XS", "S", "M", "L", "XL"];
 
   @override
   void initState() {
@@ -336,14 +338,22 @@ class CartScreenState extends State<CartScreen> {
                                                                             child:
                                                                                 Row(
                                                                               children: [
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                                                                  child: AppText(
-                                                                                    text: "Size : S",
-                                                                                    color: blackColor,
-                                                                                    fontSize: 10.sp,
-                                                                                    fontFamily: "Franklin Gothic Regular",
-                                                                                    fontWeight: FontWeight.w400,
+                                                                                GestureDetector(
+                                                                                  onTap: () {
+                                                                                    scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                          sizeList: sizeList,
+                                                                                          selectedSize: "M",
+                                                                                        ));
+                                                                                  },
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                                                                    child: AppText(
+                                                                                      text: "Size : S",
+                                                                                      color: blackColor,
+                                                                                      fontSize: 10.sp,
+                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
                                                                                   ),
                                                                                 ),
                                                                                 const ImageIcon(
@@ -358,7 +368,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             onTap:
                                                                                 () {
                                                                               scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
-                                                                                    qtyList: list,
+                                                                                    qtyList: qtyList,
                                                                                     selectedQty: "1",
                                                                                   ));
                                                                             },

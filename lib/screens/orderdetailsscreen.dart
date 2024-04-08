@@ -854,7 +854,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   Expanded(
                                     flex: 1,
                                     child: AppText(
-                                      text: "Total Item Price",
+                                      text: "Total Order Price",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: loginText,

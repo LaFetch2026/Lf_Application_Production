@@ -8,27 +8,27 @@ import '../../utils/constants.dart';
 import '../app_text.dart';
 import '../common_widgets.dart';
 
-class BottomQuantity extends StatefulWidget {
+class BottomSize extends StatefulWidget {
   final Function? onPressed;
-  final List qtyList;
-  final String selectedQty;
+  final List sizeList;
+  final String selectedSize;
 
-  const BottomQuantity({
+  const BottomSize({
     Key? key,
     this.onPressed,
-    required this.qtyList,
-    required this.selectedQty,
+    required this.sizeList,
+    required this.selectedSize,
   }) : super(key: key);
 
   @override
-  State<BottomQuantity> createState() => _BottomQuantityState();
+  State<BottomSize> createState() => _BottomQuantityState();
 }
 
-class _BottomQuantityState extends State<BottomQuantity> {
-  String text = "0";
+class _BottomQuantityState extends State<BottomSize> {
+  String size = "0";
   @override
   void initState() {
-    text = widget.selectedQty;
+    size = widget.selectedSize;
     super.initState();
   }
 
@@ -54,7 +54,7 @@ class _BottomQuantityState extends State<BottomQuantity> {
                   Expanded(
                     flex: 1,
                     child: Text(
-                      "Select Quantity",
+                      "Select Size",
                       style: TextStyle(
                         color: loginText,
                         fontSize: 14.sp,
@@ -83,7 +83,7 @@ class _BottomQuantityState extends State<BottomQuantity> {
                 height: 50,
                 child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    itemCount: widget.qtyList.length,
+                    itemCount: widget.sizeList.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (ctx, index) {
                       return Column(
@@ -91,8 +91,8 @@ class _BottomQuantityState extends State<BottomQuantity> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              text = widget.qtyList[index];
-                              print(text);
+                              size = widget.sizeList[index];
+                              print(size);
                               setState(() {});
                             },
                             child: Padding(
@@ -100,24 +100,23 @@ class _BottomQuantityState extends State<BottomQuantity> {
                                   const EdgeInsets.symmetric(horizontal: 4),
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: text == widget.qtyList[index]
-                                        ? btnTextColor
-                                        : whiteColor,
-                                    border: Border.all(
-                                      width: 1,
-                                      color: text == widget.qtyList[index]
-                                          ? whiteColor
-                                          : btnTextColor,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20))),
-                                width: 30,
-                                height: 30,
+                                  color: size == widget.sizeList[index]
+                                      ? btnTextColor
+                                      : whiteColor,
+                                  border: Border.all(
+                                    width: 1,
+                                    color: size == widget.sizeList[index]
+                                        ? whiteColor
+                                        : btnTextColor,
+                                  ),
+                                ),
+                                width: 48,
+                                height: 48,
                                 child: Center(
                                   child: AppText(
                                     textAlign: TextAlign.center,
-                                    text: widget.qtyList[index],
-                                    color: text == widget.qtyList[index]
+                                    text: widget.sizeList[index],
+                                    color: size == widget.sizeList[index]
                                         ? whiteColor
                                         : btnTextColor,
                                     fontSize: 10.sp,
