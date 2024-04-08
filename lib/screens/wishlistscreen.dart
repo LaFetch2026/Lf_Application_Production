@@ -32,6 +32,10 @@ class WishlistScreenState extends State<WishlistScreen> {
         wishlistController.update();
       });
     });
+    wishlistController.hasnextpage.value = true;
+    wishlistController.loadMore.value = false;
+    wishlistController.isWishlist.value = false;
+    wishlistController.page.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();

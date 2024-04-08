@@ -27,7 +27,7 @@ class WishlistController extends BaseController {
   List<bool> selected = List.generate(50, (i) => false).obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
-  int page = 1;
+  RxInt page = 1.obs;
   ScrollController listController = ScrollController();
   /*  final List<Map<String, String>> wishlistList = [
     {'id': '1', "name": 'All item'},
@@ -90,12 +90,12 @@ class WishlistController extends BaseController {
         isWishlist.value == false &&
         loadMore.value == false) {
       loadMore.value = true;
-      page += 1;
-      print(page);
+      page.value += 1;
+      print(page.value);
       final prefs = await SharedPreferences.getInstance();
       try {
         var response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/wishlists?page=$page"),
+            Uri.parse("${ApiConstants.baseUrl}/wishlists?page=${page.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",

@@ -30,6 +30,10 @@ class BrandsScreenState extends State<BrandsScreen> {
         brandController.update();
       });
     });
+    brandController.hasnextpage.value = true;
+    brandController.loadMore.value = false;
+    brandController.isBrand.value = false;
+    brandController.page.value = 1;
     brandController.showAllBrand.value = false;
     brandController.searchController.clear();
     brandController.queryText.value = "";

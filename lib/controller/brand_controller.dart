@@ -12,7 +12,7 @@ import '../utils/constants.dart';
 
 class BrandController extends BaseController {
   TextEditingController searchController = TextEditingController();
-  int page = 1;
+  RxInt page = 1.obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   ScrollController listController = ScrollController();
@@ -79,12 +79,13 @@ class BrandController extends BaseController {
         isBrand.value == false &&
         loadMore.value == false) {
       loadMore.value = true;
-      page += 1;
-      print(page);
+      page.value += 1;
+      print(page.value);
       final prefs = await SharedPreferences.getInstance();
       try {
         var response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/brands?q=$queryText&page=$page"),
+            Uri.parse(
+                "${ApiConstants.baseUrl}/brands?q=$queryText&page=${page.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
