@@ -25,7 +25,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     'https://s3-alpha-sig.figma.com/img/2f0d/21cc/22d5c0b59802d64433ee57355546f23b?Expires=1710115200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=irBTQhEp97J~f93ETyTr6PkEV6zJvSvvObu9q0GfUCD1P503BBR-KR0wStaqg7ZsrEhYI0BUprdto~1LDD4JdkXjnvLc-CeoECBUYTcESzoC~I-dfqASDSETa2twg6nYR2D8DCPajI709rF0zgJrmly-ZmlQTOtSz4u05CtjVB4eeky-G6OrJP5~Ku2Qq8zSqC7uD397pK3eSPgGUgC0g2PL4G3cp0gsZapnLHeNCxCVmDYCaQhZB09cxz8z8ukyqLhlwHyBHxHHg5uYyc0X3yQphDGQt2xsynBTY33SpcAtQ5k-Q6f1r2AfFTDjB-1Ju1yqTmvlEPLh0StG7PezIw__',
     'https://s3-alpha-sig.figma.com/img/40fa/03ef/017df2ddaadae8ddc39cc06fb579a5b9?Expires=1710115200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dTZI800itjgyI~~ybXeDYqA9K4g4-n-LTAcVrqe8uKgBEAdfbIxq2Sb7eRAIiBAx5tbt9m7WXOWdSK9Wb2EeG3T3qH39m-bFQPlr03-7OynKxDHUMEd8EYCAWOR9Aq-7cszgSBKrp6LPjzOLyasGWdzTDvNgJ9w71C3nlB~GYCE4Z3iHpkUKu-KHRg16-a7bw~fSQmf2IU9vFRcirhfuVtdUdFbKYO1Ve6GMUIwVJcbJUIgJ73Oh2Rlx4f~dvkOmgx~Y4zB1BkTU6C6C0sU~pE7-lSXolMBZSm3S51sa9coUAQ7uiZ88cxTQwheDvGxndv~a6GYnr7HitM6EtmDGXQ__'
   ]; */
-  Map<String, String> selectedProductSize = {};
+  Map<String, dynamic> selectedProductSize = {};
   final List<Map<String, String>> sizes = [
     {'id': '1', 'title': 'XS', 'left': '3'},
     {'id': '2', 'title': 'S', 'left': '6'},
@@ -123,13 +123,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               runSpacing: 8.0,
               runAlignment: WrapAlignment.spaceEvenly,
               children: [
-                for (var i in sizes)
+                for (var i in productController.inventoryList.where((element) => int.parse(element['stocks'].toString()) > 0))
                   Column(
                     children: [
                       GestureDetector(
                         onTap: () {
                           selectedProductSize = i;
-                          print(selectedProductSize["title"]);
+                          print(selectedProductSize);
                           setState(() {});
                         },
                         child: Container(
@@ -146,7 +146,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: AppText(
-                                  text: i['title'].toString(),
+                                  text: i['product_matrix']['name'].toString(),
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: selectedProductSize.isNotEmpty &&
@@ -158,12 +158,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             )),
                       ),
-                      int.parse(i['left'].toString()) > 3
+                      int.parse(i['stocks'].toString()) > 10
                           ? const SizedBox()
                           : Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: AppText(
-                                text: '${i['left'].toString()} left',
+                                text: '${i['stocks'].toString()} left',
                                 fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
                                 color: redColor,
