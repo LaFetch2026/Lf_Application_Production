@@ -20,7 +20,7 @@ class ProductController extends BaseController {
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
-  List sizeList = [].obs;
+  List inventoryList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
   final pincodeController = TextEditingController();
@@ -99,7 +99,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productDetails = responseData;
-          sizeList = responseData["inventories"];
+          inventoryList = responseData["inventories"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
