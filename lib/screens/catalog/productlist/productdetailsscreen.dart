@@ -386,9 +386,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       children: [
                                         Expanded(
                                           child: AppText(
-                                            text: productController
-                                                    .productDetails["name"] ??
-                                                "",
+                                            text:
+                                                "${productController.productDetails["name"]} \n",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w600,
@@ -398,11 +397,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           ),
                                         ),
                                         AppText(
-                                          text: 'Explore Brand',
+                                          text: 'Explore Brand \n',
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w600,
                                           color: colorPrimary,
-                                          maxLines: 1,
+                                          maxLines: 2,
                                           fontSize: 12.sp,
                                         ),
                                       ],

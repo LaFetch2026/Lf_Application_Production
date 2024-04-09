@@ -55,7 +55,7 @@ class CartScreenState extends State<CartScreen> {
             child: SingleChildScrollView(
               child: GestureDetector(
                 onTap: () {
-                  Get.back();
+                  //  Get.back();
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,13 +342,13 @@ class CartScreenState extends State<CartScreen> {
                                                                                   onTap: () {
                                                                                     scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
                                                                                           sizeList: sizeList,
-                                                                                          selectedSize: "M",
+                                                                                          selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S",
                                                                                         ));
                                                                                   },
                                                                                   child: Padding(
                                                                                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                                                                     child: AppText(
-                                                                                      text: "Size : S",
+                                                                                      text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S"}",
                                                                                       color: blackColor,
                                                                                       fontSize: 10.sp,
                                                                                       fontFamily: "Franklin Gothic Regular",

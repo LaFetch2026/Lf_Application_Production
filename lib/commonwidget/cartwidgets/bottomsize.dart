@@ -119,7 +119,7 @@ class _BottomQuantityState extends State<BottomSize> {
                                     color: size == widget.sizeList[index]
                                         ? whiteColor
                                         : btnTextColor,
-                                    fontSize: 10.sp,
+                                    fontSize: 14.sp,
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                   ),

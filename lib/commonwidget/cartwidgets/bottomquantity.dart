@@ -105,14 +105,12 @@ class _BottomQuantityState extends State<BottomQuantity> {
                                         : whiteColor,
                                     border: Border.all(
                                       width: 1,
-                                      color: text == widget.qtyList[index]
-                                          ? whiteColor
-                                          : btnTextColor,
+                                      color: btnTextColor,
                                     ),
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(20))),
-                                width: 30,
-                                height: 30,
+                                width: 35,
+                                height: 35,
                                 child: Center(
                                   child: AppText(
                                     textAlign: TextAlign.center,
@@ -120,7 +118,7 @@ class _BottomQuantityState extends State<BottomQuantity> {
                                     color: text == widget.qtyList[index]
                                         ? whiteColor
                                         : btnTextColor,
-                                    fontSize: 10.sp,
+                                    fontSize: 12.sp,
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
