@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/screens/paymentscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
 import '../utils/constants.dart';
@@ -17,6 +19,9 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class CheckoutScreenState extends State<CheckoutScreen> {
+  final Razorpay razorpay = Razorpay();
+  final razorPayKey = "rzp_test_qByVM96GsY8Ydt";
+  final razorPaySecret = "Mo5w1Av5SV84qO0c4k1Uc0Ob";
   List<String> items = [
     " In next 6 hours",
     " In next 6 hours",
@@ -27,6 +32,38 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     "Estimated delivery :",
     "Estimated delivery by",
   ];
+
+  @override
+  void initState() {
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
+    super.initState();
+  }
+
+  void handlePaymentSuccess(PaymentSuccessResponse response) {
+    print("Success ${response.orderId}");
+    print("Success ${response.paymentId}");
+    print("Success ${response.signature}");
+    // Do something when payment succeeds
+  }
+
+  void handlePaymentError(PaymentFailureResponse response) {
+    print("Error ${response.message}");
+    // Do something when payment fails
+  }
+
+  void handleExternalWallet(ExternalWalletResponse response) {
+    print("Wallet ${response.walletName}");
+    // Do something when an external wallet is selected
+  }
+
+  @override
+  void dispose() {
+    razorpay.clear();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,48 +86,55 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: AppText(
-                                  text: "Shipping Address",
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                  color: loginText,
-                                  fontSize: 16.sp,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(const ShippingAddressScreen(
+                          addressId: 0,
+                        ));
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: AppText(
+                                    text: "Shipping Address",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: loginText,
+                                    fontSize: 16.sp,
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, top: 2),
-                                child: AppText(
-                                  text: "Add a shipping address",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: greyTextColor,
-                                  fontSize: 14.sp,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 16, top: 2),
+                                  child: AppText(
+                                    text: "Add a shipping address",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: greyTextColor,
+                                    fontSize: 14.sp,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 22),
-                          child: Image.asset(rightArrowImage,
-                              color: loginText,
-                              height: 18,
-                              width: 18,
-                              fit: BoxFit.cover),
-                        )
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(right: 22),
+                            child: Image.asset(rightArrowImage,
+                                color: loginText,
+                                height: 18,
+                                width: 18,
+                                fit: BoxFit.cover),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -104,48 +148,53 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: AppText(
-                                  text: "Payment",
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                  color: loginText,
-                                  fontSize: 16.sp,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(const PaymentScreen());
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: AppText(
+                                    text: "Payment",
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: loginText,
+                                    fontSize: 16.sp,
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, top: 2),
-                                child: AppText(
-                                  text: "Select payment method",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: greyTextColor,
-                                  fontSize: 14.sp,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 16, top: 2),
+                                  child: AppText(
+                                    text: "Select payment method",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: greyTextColor,
+                                    fontSize: 14.sp,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 22),
-                          child: Image.asset(rightArrowImage,
-                              color: loginText,
-                              height: 18,
-                              width: 18,
-                              fit: BoxFit.cover),
-                        )
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(right: 22),
+                            child: Image.asset(rightArrowImage,
+                                color: loginText,
+                                height: 18,
+                                width: 18,
+                                fit: BoxFit.cover),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -589,9 +638,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         textColor: whiteBorderColor,
                         backgroundColor: colorPrimary,
                         onPressed: () {
-                          Get.to(const ShippingAddressScreen(
-                            addressId: 0,
-                          ));
+                          var options = {
+                            'key': razorPayKey,
+                            'amount': 1 * 100,
+                            'name': 'Lafetch',
+                            // 'order_id': orderId,
+                            'description': 'Lafetch Customer',
+                            'timeout': 60,
+                            'prefill': {
+                              'contact': '9002973232',
+                              'email': 'sonamagrahari11@gmail.com'
+                            }
+                          };
+                          razorpay.open(options);
                         },
                         borderColor: colorPrimary),
                   ),
