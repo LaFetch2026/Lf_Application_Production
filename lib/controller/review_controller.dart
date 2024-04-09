@@ -47,6 +47,7 @@ class ReviewController extends BaseController {
           body: json.encode(sendData));
       if (response.statusCode == 200) {
         getSnackBar("Review added");
+        print(response.body);
         Get.close(1);
       } else if (response.statusCode == 201) {
         getSnackBar("Review added");

@@ -10,14 +10,14 @@ import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../utils/constants.dart';
 
-class ReviewproductsScreen extends StatefulWidget {
-  const ReviewproductsScreen({super.key});
+class ReviewProductScreen extends StatefulWidget {
+  const ReviewProductScreen({super.key});
 
   @override
-  State<ReviewproductsScreen> createState() => ReviewproductsScreenState();
+  State<ReviewProductScreen> createState() => ReviewProductScreenState();
 }
 
-class ReviewproductsScreenState extends State<ReviewproductsScreen> {
+class ReviewProductScreenState extends State<ReviewProductScreen> {
   final controller = Get.put(ReviewController());
 
   @override
