@@ -233,6 +233,7 @@ class ProductController extends BaseController {
       final Map<String, dynamic> sendData = {
         "product_id": productId,
         "quantity": quantity,
+        "inventory_id": inventoryId.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
