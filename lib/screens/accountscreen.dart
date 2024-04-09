@@ -358,7 +358,7 @@ class AccountScreenState extends State<AccountScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  Get.to(const ReviewproductsScreen());
+                                  Get.to(const ReviewProductScreen());
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
