@@ -13,6 +13,7 @@ import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
+import 'package:lafetch/screens/reviewproducts.dart';
 import '../commonwidget/app_text.dart';
 import '../utils/constants.dart';
 
@@ -356,7 +357,9 @@ class AccountScreenState extends State<AccountScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Get.to(const ReviewproductsScreen());
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       top: 20, left: 16, right: 16),
