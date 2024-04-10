@@ -141,7 +141,7 @@ class BoardScreenState extends State<BoardScreen> {
                       padding:
                           const EdgeInsets.only(left: 16, right: 16, top: 10),
                       child: AppText(
-                        text: "2 items selected",
+                        text: "0 items selected",
                         color: textHintColor,
                         fontSize: 12.sp,
                         fontFamily: "Franklin Gothic Regular",

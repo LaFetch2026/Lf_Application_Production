@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,6 +38,12 @@ class DiscountScreenState extends State<DiscountScreen> {
     homeController.timer?.cancel();
   }
 
+  callOnchanged(int index) {
+    setState(() {
+      homeController.currentPage.value = index;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +55,7 @@ class DiscountScreenState extends State<DiscountScreen> {
         .addPostFrameCallback((_) => homeController.getCategoryData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
-    homeController.timer =
+    /* homeController.timer =
         Timer.periodic(const Duration(seconds: 10), (Timer timer) {
       if (homeController.currentPage.value < 2) {
         homeController.currentPage.value++;
@@ -64,7 +68,7 @@ class DiscountScreenState extends State<DiscountScreen> {
         curve: Curves.easeIn,
       );
       homeController.update();
-    });
+    }); */
   }
 
   @override
@@ -571,6 +575,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             height: 210,
                             child: PageView.builder(
                               scrollDirection: Axis.horizontal,
+                              onPageChanged: callOnchanged,
                               controller: homeController.pageController,
                               itemCount: homeController.banner2List.length,
                               itemBuilder: (context, int index) {
