@@ -69,6 +69,7 @@ class BoardScreenState extends State<BoardScreen> {
                                   )))
                           .then((value) => setState(
                                 () {
+                                  wishlistController.wishListProduct.clear();
                                   wishlistController
                                       .getWishlistDetails(widget.boardId);
                                 },
@@ -107,6 +108,7 @@ class BoardScreenState extends State<BoardScreen> {
                                   )))
                           .then((value) => setState(
                                 () {
+                                  wishlistController.wishListProduct.clear();
                                   wishlistController
                                       .getWishlistDetails(widget.boardId);
                                 },

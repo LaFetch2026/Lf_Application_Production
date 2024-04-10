@@ -92,7 +92,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                               padding: const EdgeInsets.only(
                                   left: 16, right: 16, top: 10),
                               child: AppText(
-                                text: "2 items selected",
+                                text:
+                                    "${wishlistController.addItem.value} items selected",
                                 color: textHintColor,
                                 fontSize: 12.sp,
                                 fontFamily: "Franklin Gothic Regular",
