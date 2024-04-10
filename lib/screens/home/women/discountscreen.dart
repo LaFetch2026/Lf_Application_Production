@@ -31,6 +31,13 @@ class DiscountScreenState extends State<DiscountScreen> {
     "400",
     "500",
   ];
+  List<String> menu = [
+    "Discounts",
+    "New Arrivals",
+    "Clothing",
+    "Footwear",
+  ];
+  int current = 0;
 
   @override
   void dispose() {
@@ -80,6 +87,62 @@ class DiscountScreenState extends State<DiscountScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // const SaleCardWidget(),
+            const SizedBox(
+              height: 16,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: menu.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (ctx, index) {
+                      return Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                current = index;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: const EdgeInsets.only(right: 5),
+                              width: 100,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: current == index
+                                    ? btnTextColor
+                                    : whiteTextColor,
+                                borderRadius: current == index
+                                    ? BorderRadius.circular(20)
+                                    : BorderRadius.circular(20),
+                                border: current == index
+                                    ? Border.all(color: btnTextColor, width: 1)
+                                    : Border.all(
+                                        color: textHintColor, width: 1),
+                              ),
+                              child: Center(
+                                child: AppText(
+                                  text: menu[index],
+                                  color: current == index
+                                      ? whiteBorderColor
+                                      : textHintColor,
+                                  fontSize: 12.sp,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+            ),
             Obx(
               () => homeController.isBanner1.value
                   ? const Padding(
@@ -87,8 +150,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   : Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.only(
+                          left: 16, bottom: 10, right: 16),
                       child: SizedBox(
                         height: 210,
                         child: PageView.builder(

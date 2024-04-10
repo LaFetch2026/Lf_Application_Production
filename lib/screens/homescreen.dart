@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalogscreen.dart';
-import 'package:lafetch/screens/home/womenscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
 import 'cartscreen.dart';
+import 'home/women/discountscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -127,9 +127,9 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             const Expanded(
               child: TabBarView(children: [
-                WomenScreen(),
-                WomenScreen(),
-                WomenScreen(),
+                DiscountScreen(),
+                DiscountScreen(),
+                DiscountScreen(),
               ]),
             ),
           ],
