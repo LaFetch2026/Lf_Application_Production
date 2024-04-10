@@ -11,7 +11,8 @@ import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../utils/constants.dart';
 
 class ReviewProductScreen extends StatefulWidget {
-  const ReviewProductScreen({super.key});
+  final String productName;
+  const ReviewProductScreen({super.key, required this.productName});
 
   @override
   State<ReviewProductScreen> createState() => ReviewProductScreenState();

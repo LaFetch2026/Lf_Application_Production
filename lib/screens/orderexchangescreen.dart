@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/singleiconbtn.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
+import 'package:lafetch/screens/reviewproducts.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
@@ -539,6 +540,34 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                   ],
                                                 ),
                                               ),
+                                              items[index] == "Delivered"
+                                                  ? GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(const ReviewProductScreen(
+                                                            productName:
+                                                                "Topman super skinny suit jacket and trousers in light blue"));
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 20,
+                                                                vertical: 5),
+                                                        child: AppText(
+                                                          text:
+                                                              "Write a Review",
+                                                          color: blue,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : const SizedBox(
+                                                      height: 0,
+                                                    ),
                                               Column(
                                                 children: [
                                                   if (items[index] ==
