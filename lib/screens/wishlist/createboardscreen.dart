@@ -27,7 +27,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
     wishlistController.deleteidList.clear();
     wishlistController.addItem.value = 0;
     wishlistController.productId.value = 0;
-    wishlistController.wishListProduct.clear();
+    //  wishlistController.wishListProduct.clear();
     widget.btnText == ""
         ? WidgetsBinding.instance.addPostFrameCallback(
             (_) => wishlistController.getWishlistDetails(widget.wishlistId))
@@ -461,7 +461,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                         onPressed: () {
                           if (wishlistController.checkIdvalidation(
                               wishlistController.productId.value)) {
-                            wishlistController.callAddItemWishlist();
+                            wishlistController
+                                .callAddItemWishlist(widget.wishlistId);
                           }
                         },
                         borderColor: colorPrimary),
