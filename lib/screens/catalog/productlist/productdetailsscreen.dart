@@ -3,10 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
+import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -20,6 +22,8 @@ class ProductDetailsScreen extends StatefulWidget {
 class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final PageController controller = PageController();
   final productController = Get.put(ProductController());
+  final wishlistController = Get.put(WishlistController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _curr = 0;
   Map<String, dynamic> selectedProductSize = {};
 
@@ -179,12 +183,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.getProductDetails(widget.productId);
     productController.getProductReview(widget.productId);
     productController.getProductRecommendations(widget.productId);
+    wishlistController.getWishlistData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: whiteTextColor,
       body: SafeArea(
         child: Column(
@@ -1530,7 +1536,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         border: Border.all(color: btnTextColor, width: 1),
                       ),
                       child: IconButton(
-                          onPressed: () {}, icon: Image.asset(heartIcon24))),
+                          onPressed: () {
+                            scaffoldKey.currentState?.showBottomSheet(
+                                (context) => BottomWishlist(
+                                    controller: wishlistController,
+                                    onPressed: (p0) {
+                                      wishlistController.callAddProductWishlist(
+                                          p0,
+                                          productController
+                                              .productDetails["id"]);
+                                    },
+                                    wishlistList:
+                                        wishlistController.wishlistList));
+                          },
+                          icon: Image.asset(heartIcon24))),
                   Obx(
                     () => Expanded(
                       child: getSingleButton(

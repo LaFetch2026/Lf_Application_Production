@@ -348,13 +348,12 @@ class WishlistController extends BaseController {
     }
   } */
 
-  /* callAddItemWishlist(int wishlistId) async {
+  callAddProductWishlist(int wishlistId, int id) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
-        Uri.parse(
-            "${ApiConstants.baseUrl}/products/$productId/wishlist/$wishlistId"),
+        Uri.parse("${ApiConstants.baseUrl}/products/$id/wishlist/$wishlistId"),
         headers: <String, String>{
           'Accept': 'application/json; charset=UTF-8',
           'Content-Type': 'application/json;charset=UTF-8',
@@ -375,7 +374,7 @@ class WishlistController extends BaseController {
       print(e.toString());
     }
     hideLoading();
-  } */
+  }
 
   callAddWishlist(int wishlistId) async {
     showLoading();
