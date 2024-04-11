@@ -371,4 +371,38 @@ class WishlistController extends BaseController {
     }
     hideLoading();
   }
+
+  callMovetoCart(int wishlistId, int productId) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "wishlist_id": wishlistId,
+      };
+      var response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/products/$productId/move-to-cart"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        getSnackBar("Product moved to bag");
+        wishListProduct.clear();
+        getWishlistDetails(wishlistId);
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
 }

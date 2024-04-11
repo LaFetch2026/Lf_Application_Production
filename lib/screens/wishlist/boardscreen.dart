@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/smallbtn.dart';
 import 'package:lafetch/commonwidget/wishlistwidgets/bottomsheetboard.dart';
 import 'package:lafetch/screens/wishlist/createboardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
@@ -401,7 +400,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                             const EdgeInsets
                                                                 .only(top: 5),
                                                         child: Center(
-                                                          child: SmallButton(
+                                                          child: getSmallButton(
                                                               label:
                                                                   "Move to bag",
                                                               textColor:
@@ -410,7 +409,14 @@ class BoardScreenState extends State<BoardScreen> {
                                                                   whiteTextColor,
                                                               borderColor:
                                                                   btnTextColor,
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                wishlistController.callMovetoCart(
+                                                                    widget
+                                                                        .boardId,
+                                                                    value.wishListProduct[
+                                                                            index]
+                                                                        ["id"]);
+                                                              },
                                                               width: 152),
                                                         ),
                                                       )
