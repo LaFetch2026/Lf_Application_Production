@@ -15,14 +15,13 @@ import '../utils/constants.dart';
 class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
-  // RxBool isProduct = false.obs;
   dynamic wishlistDetails = "".obs;
   List wishlistList = [].obs;
   List deleteidList = [].obs;
+  List addList = [].obs;
   List productList = [].obs;
   List wishListProduct = [].obs;
   RxInt addItem = 0.obs;
-  RxInt productId = 0.obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
   RxBool loadMore = false.obs;
@@ -42,8 +41,8 @@ class WishlistController extends BaseController {
     super.onInit();
   } */
 
-  bool checkIdvalidation(int id) {
-    if (id == 0) {
+  bool checkIdvalidation() {
+    if (addItem.value == 0) {
       getSnackBar(
         "Select item",
       );
@@ -146,7 +145,6 @@ class WishlistController extends BaseController {
           wishListProduct.clear();
           wishListProduct = responseData;
           selected.clear();
-          deleteidList.clear();
           selected = List.generate(wishListProduct.length, (i) => false);
         }
       } else if (response.statusCode == 500) {
@@ -167,7 +165,7 @@ class WishlistController extends BaseController {
     isDetails.value = false;
   }
 
-  getWishlistDetails(int wishlistId) async {
+  getWishlistDetails(int wishlistId, int value) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -185,8 +183,15 @@ class WishlistController extends BaseController {
           if (responseData["products"].isNotEmpty) {
             wishListProduct.clear();
             wishListProduct = responseData["products"];
+            if (value == 1) {
+              for (var i = 0; i < wishListProduct.length; i++) {
+                deleteidList.add(wishListProduct[i]["id"]);
+                addList.add(wishListProduct[i]["id"]);
+              }
+              print("object delete $deleteidList");
+              print("object add $deleteidList");
+            }
             selected.clear();
-            deleteidList.clear();
             selected = List.generate(wishListProduct.length, (i) => false);
           }
         }
@@ -310,7 +315,7 @@ class WishlistController extends BaseController {
     }
   }
 
-  callDeleteProduct(int wishlistId) async {
+  /* callDeleteProduct(int wishlistId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -341,9 +346,9 @@ class WishlistController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-  }
+  } */
 
-  callAddItemWishlist(int wishlistId) async {
+  /* callAddItemWishlist(int wishlistId) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -370,6 +375,83 @@ class WishlistController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  } */
+
+  callAddWishlist(int wishlistId) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "product_ids": addList,
+      };
+      var response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId/products"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
+
+      if (response.statusCode == 200) {
+        addList.clear();
+        getSnackBar("item added");
+        Get.close(2);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("item add failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
+  callDeleteProductWishlist(int wishlistId) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      dynamic response;
+      if (deleteidList.isNotEmpty) {
+        final Map<String, dynamic> sendData = {
+          "product_ids": deleteidList,
+        };
+        response = await http.put(
+            Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId/products"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            },
+            body: json.encode(sendData));
+      } else {
+        response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId/products"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+        );
+      }
+      if (response.statusCode == 200) {
+        deleteidList.clear();
+        getSnackBar("Product deleted");
+        Get.close(4);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("product delete failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
   }
 
   callMovetoCart(int wishlistId, int productId) async {
@@ -390,7 +472,9 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         getSnackBar("Product moved to bag");
         wishListProduct.clear();
-        getWishlistDetails(wishlistId);
+        addList.clear();
+        deleteidList.clear();
+        getWishlistDetails(wishlistId, 1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

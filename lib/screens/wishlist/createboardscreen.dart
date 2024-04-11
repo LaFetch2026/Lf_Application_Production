@@ -24,13 +24,10 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   final wishlistController = Get.put(WishlistController());
   @override
   void initState() {
-    wishlistController.deleteidList.clear();
     wishlistController.addItem.value = 0;
-    wishlistController.productId.value = 0;
-    //  wishlistController.wishListProduct.clear();
     widget.btnText == ""
         ? WidgetsBinding.instance.addPostFrameCallback(
-            (_) => wishlistController.getWishlistDetails(widget.wishlistId))
+            (_) => wishlistController.getWishlistDetails(widget.wishlistId, 2))
         : WidgetsBinding.instance.addPostFrameCallback(
             (_) => wishlistController.getProductData("relevant"));
     super.initState();
@@ -55,9 +52,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                               Get.back();
                             },
                             click2: () {
-                              if (wishlistController.deleteidList.isNotEmpty) {
-                                wishlistController
-                                    .callDeleteProduct(widget.wishlistId);
+                              if (wishlistController.addItem.value != 0) {
+                                wishlistController.callDeleteProductWishlist(
+                                    widget.wishlistId);
                               } else {
                                 Get.back();
                                 getSnackBar("Select product");
@@ -146,21 +143,28 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     false) {
                                                                   value
                                                                       .deleteidList
-                                                                      .removeWhere((item) =>
-                                                                          item ==
-                                                                          value.wishListProduct[index]
-                                                                              [
-                                                                              "id"]);
+                                                                      .add(value
+                                                                              .wishListProduct[index]
+                                                                          [
+                                                                          "id"]);
+                                                                  value.addList.removeWhere((item) =>
+                                                                      item ==
+                                                                      value.wishListProduct[
+                                                                              index]
+                                                                          [
+                                                                          "id"]);
                                                                 }
-                                                                print(value
-                                                                    .deleteidList);
+                                                                print(
+                                                                    "delete${value.deleteidList}");
+                                                                print(
+                                                                    "add${value.addList}");
                                                                 value.addItem
                                                                     .value--;
                                                                 print(value
                                                                     .addItem
                                                                     .value);
-                                                                value.productId
-                                                                    .value = 0;
+                                                                /*  value.productId
+                                                                    .value = 0; */
                                                                 value.update();
                                                               },
                                                               child: Padding(
@@ -210,22 +214,30 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     index]) {
                                                                   value
                                                                       .deleteidList
-                                                                      .add(value
-                                                                              .wishListProduct[index]
+                                                                      .removeWhere((item) =>
+                                                                          item ==
+                                                                          value.wishListProduct[index]
+                                                                              [
+                                                                              "id"]);
+                                                                  value.addList.add(
+                                                                      value.wishListProduct[
+                                                                              index]
                                                                           [
                                                                           "id"]);
                                                                 }
-                                                                print(value
-                                                                    .deleteidList);
+                                                                print(
+                                                                    "delete${value.deleteidList}");
+                                                                print(
+                                                                    "add${value.addList}");
                                                                 value.addItem
                                                                     .value++;
                                                                 print(value
                                                                     .addItem
                                                                     .value);
-                                                                value.productId
+                                                                /*    value.productId
                                                                     .value = value
                                                                         .wishListProduct[
-                                                                    index]["id"];
+                                                                    index]["id"]; */
                                                                 value.update();
                                                               },
                                                               child:
@@ -459,10 +471,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                         controller: wishlistController,
                         backgroundColor: colorPrimary,
                         onPressed: () {
-                          if (wishlistController.checkIdvalidation(
-                              wishlistController.productId.value)) {
+                          if (wishlistController.checkIdvalidation()) {
                             wishlistController
-                                .callAddItemWishlist(widget.wishlistId);
+                                .callAddWishlist(widget.wishlistId);
                           }
                         },
                         borderColor: colorPrimary),

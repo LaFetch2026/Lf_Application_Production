@@ -32,8 +32,10 @@ class BoardScreenState extends State<BoardScreen> {
   @override
   void initState() {
     wishlistController.wishListProduct.clear();
+    wishlistController.addList.clear();
+    wishlistController.deleteidList.clear();
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => wishlistController.getWishlistDetails(widget.boardId));
+        (_) => wishlistController.getWishlistDetails(widget.boardId, 1));
     super.initState();
   }
 
@@ -69,8 +71,10 @@ class BoardScreenState extends State<BoardScreen> {
                           .then((value) => setState(
                                 () {
                                   wishlistController.wishListProduct.clear();
-                                  wishlistController
-                                      .getWishlistDetails(widget.boardId);
+                                  wishlistController.addList.clear();
+                                  wishlistController.deleteidList.clear();
+                                  wishlistController.getWishlistDetails(
+                                      widget.boardId, 1);
                                 },
                               ));
                     },
@@ -108,8 +112,10 @@ class BoardScreenState extends State<BoardScreen> {
                           .then((value) => setState(
                                 () {
                                   wishlistController.wishListProduct.clear();
-                                  wishlistController
-                                      .getWishlistDetails(widget.boardId);
+                                  wishlistController.addList.clear();
+                                  wishlistController.deleteidList.clear();
+                                  wishlistController.getWishlistDetails(
+                                      widget.boardId, 1);
                                 },
                               ));
                     },
