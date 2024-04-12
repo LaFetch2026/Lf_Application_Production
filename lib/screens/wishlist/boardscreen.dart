@@ -197,32 +197,67 @@ class BoardScreenState extends State<BoardScreen> {
                                                                 fit: BoxFit
                                                                     .cover),
                                                           ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        10),
-                                                            child: Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topRight,
-                                                              child: InkWell(
-                                                                child: SizedBox(
-                                                                  height: 24,
-                                                                  width: 24,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              showDialog(
+                                                                barrierColor:
+                                                                    Colors
+                                                                        .black26,
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return showDoubleBtnDailog(
+                                                                      click1:
+                                                                          () {
+                                                                        Get.back();
+                                                                      },
+                                                                      click2:
+                                                                          () {
+                                                                        value.deleteId.removeWhere((item) =>
+                                                                            item ==
+                                                                            value.wishListProduct[index]["id"]);
+                                                                        wishlistController
+                                                                            .callDeleteSingleProduct(widget.boardId);
+                                                                      },
+                                                                      btncolor:
+                                                                          colorPrimary,
+                                                                      text:
+                                                                          "Remove this from wishlist?",
+                                                                      btn1Text:
+                                                                          "No",
+                                                                      btn2Text:
+                                                                          "Yes");
+                                                                },
+                                                              );
+                                                            },
+                                                            child: Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      16,
+                                                                  vertical: 10),
+                                                              child: Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topRight,
+                                                                child: InkWell(
                                                                   child:
-                                                                      CircleAvatar(
-                                                                    backgroundColor:
-                                                                        whiteColor,
-                                                                    child: Image
-                                                                        .asset(
-                                                                      whiteCrossCircleImage,
-                                                                      height:
-                                                                          24,
-                                                                      width: 24,
+                                                                      SizedBox(
+                                                                    height: 24,
+                                                                    width: 24,
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundColor:
+                                                                          whiteColor,
+                                                                      child: Image
+                                                                          .asset(
+                                                                        whiteCrossCircleImage,
+                                                                        height:
+                                                                            24,
+                                                                        width:
+                                                                            24,
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),

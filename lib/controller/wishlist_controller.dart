@@ -24,6 +24,7 @@ class WishlistController extends BaseController {
   RxInt addItem = 0.obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
+  List deleteId = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
@@ -180,13 +181,17 @@ class WishlistController extends BaseController {
         print(responseData);
         if (responseData != null) {
           wishlistDetails = responseData;
+          wishListProduct.clear();
           if (responseData["products"].isNotEmpty) {
-            wishListProduct.clear();
             wishListProduct = responseData["products"];
             if (value == 1) {
+              deleteidList.clear();
+              addList.clear();
+              deleteId.clear();
               for (var i = 0; i < wishListProduct.length; i++) {
                 deleteidList.add(wishListProduct[i]["id"]);
                 addList.add(wishListProduct[i]["id"]);
+                deleteId.add(wishListProduct[i]["id"]);
               }
               print("object delete $deleteidList");
               print("object add $deleteidList");
@@ -440,6 +445,51 @@ class WishlistController extends BaseController {
         deleteidList.clear();
         getSnackBar("Product deleted");
         Get.close(4);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("product delete failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
+  callDeleteSingleProduct(int wishlistId) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      dynamic response;
+      if (deleteId.isNotEmpty) {
+        final Map<String, dynamic> sendData = {
+          "product_ids": deleteId,
+        };
+        response = await http.put(
+            Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId/products"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            },
+            body: json.encode(sendData));
+      } else {
+        response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId/products"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+        );
+      }
+      if (response.statusCode == 200) {
+        deleteId.clear();
+        getSnackBar("Product deleted");
+        Get.close(1);
+        getWishlistDetails(wishlistId, 1);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
