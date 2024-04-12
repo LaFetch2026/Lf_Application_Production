@@ -191,7 +191,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                             index]["name"] ??
                                                         "",
                                                     color: nameText,
-                                                    maxLines: 2,
+                                                    maxLines: 1,
                                                     fontSize: 12.sp,
                                                     fontFamily:
                                                         "Franklin Gothic",
@@ -209,7 +209,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                             "short_description"] ??
                                                         "",
                                                     color: nameText,
-                                                    maxLines: 2,
+                                                    maxLines: 1,
                                                     fontSize: 11.sp,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",

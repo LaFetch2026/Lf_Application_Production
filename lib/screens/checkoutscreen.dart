@@ -9,16 +9,25 @@ import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
+import '../controller/cart_controller.dart';
 import '../utils/constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final String orderId;
+  final double amount;
+  final int cartId;
+  const CheckoutScreen(
+      {super.key,
+      required this.orderId,
+      required this.amount,
+      required this.cartId});
 
   @override
   State<CheckoutScreen> createState() => CheckoutScreenState();
 }
 
 class CheckoutScreenState extends State<CheckoutScreen> {
+  final controller = Get.put(CartController());
   final Razorpay razorpay = Razorpay();
   final razorPayKey = "rzp_test_qByVM96GsY8Ydt";
   final razorPaySecret = "Mo5w1Av5SV84qO0c4k1Uc0Ob";
@@ -42,14 +51,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Success order ${response.orderId}");
-    print("Success pay id ${response.paymentId}");
-    print("Success sing ${response.signature}");
+    print("order id ${response.orderId}");
+    print("payment id ${response.paymentId}");
+    print("singature ${response.signature}");
+    print("data ${response.data}");
+    controller.callProcessPayment(widget.cartId, response.paymentId!,
+        response.orderId!, response.signature!);
     // Do something when payment succeeds
   }
 
   void handlePaymentError(PaymentFailureResponse response) {
     print("Error ${response.message}");
+    print("Error ${response.code}");
+    print("Error ${response.error}");
     // Do something when payment fails
   }
 
@@ -608,7 +622,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        text: "INR 3,785",
+                        text: "INR ${widget.amount}",
                         textAlign: TextAlign.center,
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
@@ -640,9 +654,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         onPressed: () {
                           var options = {
                             'key': razorPayKey,
-                            'amount': 1 * 100,
+                            'amount': widget.amount * 100,
                             'name': 'Lafetch',
-                            'order_id': "order_Nxe2PeaRDVgPVf",
+                            'order_id': widget.orderId,
                             'description': 'Lafetch Customer',
                             'timeout': 60,
                             'prefill': {

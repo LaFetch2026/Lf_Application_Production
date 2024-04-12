@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
+import 'package:lafetch/screens/checkoutscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -80,7 +81,7 @@ class CartController extends BaseController {
   }
 
   callAddtoCart(int productId, int quantity, String page) async {
-    showLoading();
+    // showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -123,10 +124,81 @@ class CartController extends BaseController {
         print(response.body);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
+        print(response.body);
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
         print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    //  hideLoading();
+  }
+
+  callInitiatePayment() async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.post(
+        Uri.parse("${ApiConstants.baseUrl}/orders/${cartId.value}/payment"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        Get.to(CheckoutScreen(
+          orderId: responseData["payment"]["transaction_id"],
+          amount: responseData["payment"]["amount"],
+          cartId: responseData["id"],
+        ));
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
+  callProcessPayment(
+      int cartId, String paymentId, String orderId, String signature) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "razorpay_payment_id": paymentId,
+        "razorpay_order_id": orderId,
+        "razorpay_signature": signature,
+      };
+      var response = await http.post(
+          Uri.parse("${ApiConstants.baseUrl}/orders/$cartId/process-payment"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        print(response.body);
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+        print(response.body);
       }
     } catch (e) {
       print(e.toString());

@@ -7,10 +7,8 @@ import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
-import 'package:lafetch/screens/checkoutscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
-import '../commonwidget/singlebtn.dart';
 import '../controller/cart_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -603,10 +601,14 @@ class CartScreenState extends State<CartScreen> {
                                                                     vertical:
                                                                         5),
                                                             child: AppText(
-                                                              text:
-                                                                  "${value.productList[index]["name"]}\n",
+                                                              text: value.productList[
+                                                                          index]
+                                                                      [
+                                                                      "name"] ??
+                                                                  "",
                                                               color: nameText,
                                                               fontSize: 12.sp,
+                                                              maxLines: 1,
                                                               fontFamily:
                                                                   "Franklin Gothic",
                                                               fontWeight:
@@ -629,7 +631,7 @@ class CartScreenState extends State<CartScreen> {
                                                                       "short_description"] ??
                                                                   "",
                                                               color: nameText,
-                                                              maxLines: 2,
+                                                              maxLines: 1,
                                                               fontSize: 11.sp,
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
@@ -694,8 +696,8 @@ class CartScreenState extends State<CartScreen> {
                                                                     top: 10),
                                                             child:
                                                                 getSmallButton(
-                                                                    controller:
-                                                                        value,
+                                                                    /*   controller:
+                                                                        value, */
                                                                     label:
                                                                         "Add to bag",
                                                                     onPressed:
@@ -1257,17 +1259,20 @@ class CartScreenState extends State<CartScreen> {
                           ),
                         ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: SingleButton(
-                      label: "Proceed to checkout",
-                      textColor: whiteBorderColor,
-                      backgroundColor: colorPrimary,
-                      onPressed: () {
-                        Get.to(const CheckoutScreen());
-                      },
-                      borderColor: colorPrimary),
-                ),
+                Obx(
+                  () => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: getSingleButton(
+                        label: "Proceed to checkout",
+                        textColor: whiteBorderColor,
+                        backgroundColor: colorPrimary,
+                        controller: controller,
+                        onPressed: () {
+                          controller.callInitiatePayment();
+                        },
+                        borderColor: colorPrimary),
+                  ),
+                )
               ],
             ),
           )
