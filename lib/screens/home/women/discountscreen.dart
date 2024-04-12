@@ -513,7 +513,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             fontSize: 16.sp,
                           ),
                         ),
-                        Padding(
+                        /*  Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
                           child: SizedBox(
@@ -568,61 +568,182 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   );
                                 }),
                           ),
+                        ), */
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // ignore: prefer_is_empty
+                              homeController.categoryList.length >= 1
+                                  ? GestureDetector(
+                                      onTap: () {},
+                                      child: Expanded(
+                                        flex: 1,
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          //  width: 150,
+                                          height: 180,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Image.asset(categoryImage,
+                                                  height: 144,
+                                                  width: 150,
+                                                  fit: BoxFit.cover),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                child: AppText(
+                                                  text: homeController
+                                                              .categoryList[0]
+                                                          ["name"] ??
+                                                      "",
+                                                  color: greyTextColor,
+                                                  fontSize: 10.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox(
+                                      width: 0,
+                                    ),
+                              const Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width: 10,
+                                ),
+                              ),
+                              homeController.categoryList.length >= 2
+                                  ? GestureDetector(
+                                      onTap: () {},
+                                      child: Expanded(
+                                        flex: 1,
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          // width: 150,
+                                          height: 180,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Image.asset(categoryImage,
+                                                  height: 144,
+                                                  width: 150,
+                                                  fit: BoxFit.cover),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                child: AppText(
+                                                  text: homeController
+                                                              .categoryList[1]
+                                                          ["name"] ??
+                                                      "",
+                                                  color: greyTextColor,
+                                                  fontSize: 10.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox(
+                                      width: 0,
+                                    ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Center(
-                child: GridView.count(
-                  shrinkWrap: true,
-                  crossAxisCount: 4,
-                  scrollDirection: Axis.vertical,
-                  padding: EdgeInsets.zero,
-                  childAspectRatio: 0.7,
-                  physics: const ScrollPhysics(),
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 1,
-                  children: List.generate(
-                    items.length,
-                    (index) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {},
-                            child: SizedBox(
-                              height: 100,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: Image.asset(sneakerImage,
-                                        width: 80,
-                                        height: 72,
-                                        fit: BoxFit.cover),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    child: AppText(
-                                      text: "Sneakers${index + 1}",
-                                      color: greyTextColor,
-                                      fontSize: 10.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
+                        homeController.categoryList.length >= 3
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Center(
+                                  child: GridView.count(
+                                    shrinkWrap: true,
+                                    crossAxisCount: 4,
+                                    scrollDirection: Axis.vertical,
+                                    padding: EdgeInsets.zero,
+                                    childAspectRatio: 0.7,
+                                    physics: const ScrollPhysics(),
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 1,
+                                    children: List.generate(
+                                      homeController.categoryList.length - 2,
+                                      (index) {
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {},
+                                              child: SizedBox(
+                                                height: 100,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Center(
+                                                      child: Image.asset(
+                                                          categoryImage,
+                                                          width: 80,
+                                                          height: 72,
+                                                          fit: BoxFit.cover),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 5),
+                                                      child: AppText(
+                                                        text: homeController
+                                                                    .categoryList[
+                                                                index +
+                                                                    2]["name"] ??
+                                                            "",
+                                                        color: greyTextColor,
+                                                        fontSize: 10.sp,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     ),
                                   ),
-                                ],
+                                ),
+                              )
+                            : const SizedBox(
+                                width: 0,
                               ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
+                      ],
+                    ),
             ),
             Obx(
               () => homeController.isBanner2.value

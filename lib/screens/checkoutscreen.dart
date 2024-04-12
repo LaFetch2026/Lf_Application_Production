@@ -42,9 +42,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Success ${response.orderId}");
-    print("Success ${response.paymentId}");
-    print("Success ${response.signature}");
+    print("Success order ${response.orderId}");
+    print("Success pay id ${response.paymentId}");
+    print("Success sing ${response.signature}");
     // Do something when payment succeeds
   }
 
@@ -642,7 +642,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                             'key': razorPayKey,
                             'amount': 1 * 100,
                             'name': 'Lafetch',
-                            // 'order_id': orderId,
+                            'order_id': "order_Nxe2PeaRDVgPVf",
                             'description': 'Lafetch Customer',
                             'timeout': 60,
                             'prefill': {
