@@ -524,6 +524,12 @@ class WishlistController extends BaseController {
         addList.clear();
         deleteidList.clear();
         getWishlistDetails(wishlistId, 1);
+      } else if (response.statusCode == 201) {
+        getSnackBar("Product moved to bag");
+        wishListProduct.clear();
+        addList.clear();
+        deleteidList.clear();
+        getWishlistDetails(wishlistId, 1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
