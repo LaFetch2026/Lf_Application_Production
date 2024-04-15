@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/screens/paymentscreen.dart';
+import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
@@ -64,11 +65,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     print("Error ${response.message}");
     print("Error ${response.code}");
     print("Error ${response.error}");
+    Get.to(const PaymentSuccessScreen(
+        text1: "Payment Failed",
+        text2: "Thank you for placing your order",
+        image: paymentFailImage));
     // Do something when payment fails
   }
 
   void handleExternalWallet(ExternalWalletResponse response) {
     print("Wallet ${response.walletName}");
+    Get.to(const PaymentSuccessScreen(
+        text1: "Uh-oh something went wrong!",
+        text2: "Thank you for placing your order",
+        image: errorImage));
     // Do something when an external wallet is selected
   }
 

@@ -410,7 +410,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 child: Row(
                                                                                   children: [
                                                                                     AppText(
-                                                                                      text: "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
+                                                                                      text: "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
                                                                                       color: blackColor,
                                                                                       fontSize: 12.sp,
                                                                                       fontFamily: "Franklin Gothic Regular",
@@ -419,7 +419,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     Padding(
                                                                                       padding: const EdgeInsets.only(left: 10),
                                                                                       child: Text(
-                                                                                        "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
+                                                                                        "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
                                                                                         style: TextStyle(
                                                                                           color: textHintColor,
                                                                                           fontSize: 12.sp,

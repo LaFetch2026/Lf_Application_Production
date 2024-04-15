@@ -11,6 +11,7 @@ import 'package:lafetch/screens/reviewproducts.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
+import '../controller/order_controller.dart';
 import '../utils/constants.dart';
 
 class OrderExchangeScreen extends StatefulWidget {
@@ -21,10 +22,8 @@ class OrderExchangeScreen extends StatefulWidget {
 }
 
 class OrderExchangeScreenState extends State<OrderExchangeScreen> {
-  TextEditingController searchController = TextEditingController();
+  final orderController = Get.put(OrderController());
   String? filter;
-  List<int> genderId = [1, 2, 3];
-  int genderPos = 0;
   final List<String> filterList = [
     'Fil1',
     'Fil2',
@@ -146,7 +145,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                       color: textColor,
                                       fontFamily: "Franklin Gothic Regular",
                                     ),
-                                    controller: searchController,
+                                    controller:
+                                        orderController.searchController,
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
                                       filled: true,
@@ -222,9 +222,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 },
                                 onChanged: (value) {
                                   filter = value;
-                                  genderPos =
+                                  /*   genderPos =
                                       filterList.indexOf(filter.toString());
-                                  print(genderId[genderPos]);
+                                  print(genderId[genderPos]); */
                                   setState(() {});
                                 },
                                 onSaved: (value) {},

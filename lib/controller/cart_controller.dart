@@ -8,6 +8,7 @@ import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import '../screens/paymentsuccessscreen.dart';
 import '../utils/constants.dart';
 
 class CartController extends BaseController {
@@ -190,8 +191,16 @@ class CartController extends BaseController {
           body: json.encode(sendData));
       if (response.statusCode == 200) {
         print(response.body);
+        Get.to(const PaymentSuccessScreen(
+            text1: "Order Placed Successfully",
+            text2: "Thank you for placing your order",
+            image: orderSucessImage));
       } else if (response.statusCode == 400) {
         print(response.body);
+        Get.to(const PaymentSuccessScreen(
+            text1: "Payment Failed",
+            text2: "Thank you for placing your order",
+            image: paymentFailImage));
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
