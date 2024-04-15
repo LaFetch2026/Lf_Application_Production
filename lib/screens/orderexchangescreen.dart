@@ -73,6 +73,23 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      orderController.listController.addListener(() {
+        orderController.fetchMoreData();
+        orderController.update();
+      });
+    });
+    orderController.hasnextpage.value = true;
+    orderController.loadMore.value = false;
+    orderController.isOrder.value = false;
+    orderController.page.value = 1;
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => orderController.getOrderData());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -145,6 +162,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                       color: textColor,
                                       fontFamily: "Franklin Gothic Regular",
                                     ),
+                                    onChanged: (value) {
+                                      orderController.queryText.value = value;
+                                      orderController.getOrderData();
+                                    },
                                     controller:
                                         orderController.searchController,
                                     keyboardType: TextInputType.text,
@@ -249,135 +270,116 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: ListView.builder(
-                          primary: false,
-                          shrinkWrap: true,
-                          physics: const ScrollPhysics(),
-                          itemCount: items.length,
-                          padding: EdgeInsets.zero,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (ctx, index) {
-                            return Padding(
+                    Obx(
+                      () => orderController.isOrder.value
+                          ? const Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : Padding(
                               padding: const EdgeInsets.only(bottom: 10),
-                              child: Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.to(const OrderDetailsScreen());
-                                    },
-                                    child: Container(
-                                      color: whiteColor,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 10),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16),
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Image.asset(
-                                                          backImage,
-                                                          height: 85,
-                                                          width: 70,
-                                                          fit: BoxFit.cover),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    right: 5,
-                                                                    left: 12),
-                                                            child: AppText(
-                                                              text:
-                                                                  "Topman super skinny suit jacket and trousers in light blue",
-                                                              maxLines: 1,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 14.sp,
-                                                              color: nameText,
+                              child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  itemCount: orderController.orderList.length,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (ctx, index) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.to(
+                                                  const OrderDetailsScreen());
+                                            },
+                                            child: Container(
+                                              color: whiteColor,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10),
+                                                child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 16),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Image.asset(
+                                                                  backImage,
+                                                                  height: 85,
+                                                                  width: 70,
+                                                                  fit: BoxFit
+                                                                      .cover),
                                                             ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    right: 5,
-                                                                    left: 12,
-                                                                    top: 5,
-                                                                    bottom: 5),
-                                                            child: AppText(
-                                                              text:
-                                                                  "Jack & Jones Core",
-                                                              color:
-                                                                  greyTextColor,
-                                                              maxLines: 2,
-                                                              fontSize: 12.sp,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    right: 5,
-                                                                    left: 12,
-                                                                    top: 5,
-                                                                    bottom: 5),
-                                                            child: Row(
-                                                              children: [
-                                                                AppText(
-                                                                  text:
-                                                                      "Size :M",
-                                                                  color:
-                                                                      greyTextColor,
-                                                                  maxLines: 2,
-                                                                  fontSize:
-                                                                      12.sp,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 1,
-                                                                  child:
-                                                                      Padding(
+                                                            Expanded(
+                                                              flex: 3,
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Padding(
                                                                     padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                        horizontal:
-                                                                            10),
+                                                                            .only(
+                                                                        right:
+                                                                            5,
+                                                                        left:
+                                                                            12),
                                                                     child:
                                                                         AppText(
-                                                                      text:
-                                                                          "Qty :1",
+                                                                      text: orderController.orderList[index]["order_lines"][0]["product"] !=
+                                                                              null
+                                                                          ? orderController.orderList[index]["order_lines"][0]["product"]
+                                                                              [
+                                                                              "name"]
+                                                                          : "",
+                                                                      maxLines:
+                                                                          1,
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      fontSize:
+                                                                          14.sp,
+                                                                      color:
+                                                                          nameText,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        right:
+                                                                            5,
+                                                                        left:
+                                                                            12,
+                                                                        top: 5,
+                                                                        bottom:
+                                                                            5),
+                                                                    child:
+                                                                        AppText(
+                                                                      text: orderController.orderList[index]["order_lines"][0]["product"] !=
+                                                                              null
+                                                                          ? orderController.orderList[index]["order_lines"][0]["product"]
+                                                                              [
+                                                                              "short_description"]
+                                                                          : "",
                                                                       color:
                                                                           greyTextColor,
                                                                       maxLines:
@@ -391,300 +393,378 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               .w400,
                                                                     ),
                                                                   ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        right:
+                                                                            5,
+                                                                        left:
+                                                                            12,
+                                                                        top: 5,
+                                                                        bottom:
+                                                                            5),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        AppText(
+                                                                          text:
+                                                                              "Size :M",
+                                                                          color:
+                                                                              greyTextColor,
+                                                                          maxLines:
+                                                                              2,
+                                                                          fontSize:
+                                                                              12.sp,
+                                                                          fontFamily:
+                                                                              "Franklin Gothic Regular",
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex:
+                                                                              1,
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(horizontal: 10),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: "Qty :${orderController.orderList[index]["order_lines"][0]["quantity"] ?? "0"}",
+                                                                              color: greyTextColor,
+                                                                              maxLines: 2,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                              fontWeight: FontWeight.w400,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        AppText(
+                                                                          text:
+                                                                              "\u{20B9} ${orderController.orderList[index]["order_lines"][0]["total"] ?? "0"}",
+                                                                          color:
+                                                                              greyTextColor,
+                                                                          fontSize:
+                                                                              12.sp,
+                                                                          textAlign:
+                                                                              TextAlign.right,
+                                                                          fontFamily:
+                                                                              "Franklin Gothic Regular",
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 10,
+                                                                horizontal: 16),
+                                                        child: Row(
+                                                          children: [
+                                                            AnimatedContainer(
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      right: 5),
+                                                              height: 30,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: containerColor(
+                                                                    items[
+                                                                        index]),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20),
+                                                                border: Border.all(
+                                                                    color:
+                                                                        textHintColor,
+                                                                    width: 1),
+                                                              ),
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              2),
+                                                                      child:
+                                                                          ImageIcon(
+                                                                        AssetImage(
+                                                                            selectedIcon(items[index])),
+                                                                        color: selectedColor(
+                                                                            items[index]),
+                                                                        size:
+                                                                            14,
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .only(
+                                                                          left:
+                                                                              5,
+                                                                          right:
+                                                                              2),
+                                                                      child:
+                                                                          AppText(
+                                                                        text: items[
+                                                                            index],
+                                                                        color: selectedColor(
+                                                                            items[index]),
+                                                                        fontSize:
+                                                                            12.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic",
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                                AppText(
+                                                              ),
+                                                            ),
+                                                            const Expanded(
+                                                              child: SizedBox(
+                                                                width: 0,
+                                                              ),
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          5,
+                                                                      vertical:
+                                                                          5),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Delivered on",
+                                                                    color:
+                                                                        greyTextColor,
+                                                                    fontSize:
+                                                                        11.sp,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          5,
+                                                                      vertical:
+                                                                          5),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Jul 24, at 3:30 PM",
+                                                                    color:
+                                                                        greyTextColor,
+                                                                    fontSize:
+                                                                        11.sp,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      items[index] ==
+                                                              "Delivered"
+                                                          ? GestureDetector(
+                                                              onTap: () {
+                                                                Get.to(const ReviewProductScreen(
+                                                                    productName:
+                                                                        "Topman super skinny suit jacket and trousers in light blue"));
+                                                              },
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        5),
+                                                                child: AppText(
                                                                   text:
-                                                                      "\u{20B9} ${120.00}",
-                                                                  color:
-                                                                      greyTextColor,
+                                                                      "Write a Review",
+                                                                  color: blue,
                                                                   fontSize:
-                                                                      12.sp,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .right,
+                                                                      11.sp,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 16),
-                                                child: Row(
-                                                  children: [
-                                                    AnimatedContainer(
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              right: 5),
-                                                      height: 30,
-                                                      decoration: BoxDecoration(
-                                                        color: containerColor(
-                                                            items[index]),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                        border: Border.all(
-                                                            color:
-                                                                textHintColor,
-                                                            width: 1),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 5),
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      2),
-                                                              child: ImageIcon(
-                                                                AssetImage(
-                                                                    selectedIcon(
-                                                                        items[
-                                                                            index])),
-                                                                color: selectedColor(
-                                                                    items[
-                                                                        index]),
-                                                                size: 14,
                                                               ),
+                                                            )
+                                                          : const SizedBox(
+                                                              height: 0,
                                                             ),
+                                                      Column(
+                                                        children: [
+                                                          if (items[index] ==
+                                                              "Delivered") ...[
                                                             Padding(
                                                               padding:
                                                                   const EdgeInsets
                                                                           .only(
-                                                                      left: 5,
-                                                                      right: 2),
-                                                              child: AppText(
-                                                                text: items[
-                                                                    index],
-                                                                color: selectedColor(
-                                                                    items[
-                                                                        index]),
-                                                                fontSize: 12.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                            ),
+                                                                      left: 16,
+                                                                      right: 16,
+                                                                      bottom:
+                                                                          20),
+                                                              child: DoubleIconButton(
+                                                                  firstText:
+                                                                      "Exchange Item",
+                                                                  secondText:
+                                                                      "Rate Order",
+                                                                  firstTextColor:
+                                                                      btnTextColor,
+                                                                  secondTextColor:
+                                                                      btnTextColor,
+                                                                  firstBackgroundColor:
+                                                                      whiteColor,
+                                                                  secondBackgroundColor:
+                                                                      whiteColor,
+                                                                  firstBorderColor:
+                                                                      btnTextColor,
+                                                                  secondBorderColor:
+                                                                      btnTextColor,
+                                                                  firstIcon:
+                                                                      exchangeItemImage,
+                                                                  onPressedFirst:
+                                                                      () {},
+                                                                  onPressedSecond:
+                                                                      () {},
+                                                                  secondIcon:
+                                                                      rateOrderImage),
+                                                            )
+                                                          ] else if (items[
+                                                                  index] ==
+                                                              "Order Confirmed") ...[
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 16,
+                                                                      right: 16,
+                                                                      bottom:
+                                                                          20),
+                                                              child: DoubleIconButton(
+                                                                  firstText:
+                                                                      "Cancel Item",
+                                                                  secondText:
+                                                                      "Track Order",
+                                                                  firstTextColor:
+                                                                      btnTextColor,
+                                                                  secondTextColor:
+                                                                      btnTextColor,
+                                                                  firstBackgroundColor:
+                                                                      whiteColor,
+                                                                  secondBackgroundColor:
+                                                                      whiteColor,
+                                                                  firstBorderColor:
+                                                                      btnTextColor,
+                                                                  secondBorderColor:
+                                                                      btnTextColor,
+                                                                  firstIcon:
+                                                                      blackCrossImage,
+                                                                  onPressedFirst:
+                                                                      () {},
+                                                                  onPressedSecond:
+                                                                      () {},
+                                                                  secondIcon:
+                                                                      locationIcon),
+                                                            )
+                                                          ] else if (items[
+                                                                  index] ==
+                                                              "Shipped") ...[
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 16,
+                                                                      right: 16,
+                                                                      top: 10,
+                                                                      bottom:
+                                                                          30),
+                                                              child: SingleIconButton(
+                                                                  label:
+                                                                      "Track Order",
+                                                                  textColor:
+                                                                      btnTextColor,
+                                                                  backgroundColor:
+                                                                      whiteColor,
+                                                                  onPressed:
+                                                                      () {},
+                                                                  borderColor:
+                                                                      btnTextColor,
+                                                                  icon:
+                                                                      locationIcon),
+                                                            )
+                                                          ] else ...[
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      top: 10,
+                                                                      bottom:
+                                                                          30),
+                                                              child: SingleButton(
+                                                                  label:
+                                                                      "View details",
+                                                                  height: 40,
+                                                                  textColor:
+                                                                      btnTextColor,
+                                                                  backgroundColor:
+                                                                      whiteColor,
+                                                                  onPressed:
+                                                                      () {},
+                                                                  borderColor:
+                                                                      btnTextColor),
+                                                            )
                                                           ],
-                                                        ),
+                                                        ],
                                                       ),
-                                                    ),
-                                                    const Expanded(
-                                                      child: SizedBox(
-                                                        width: 0,
-                                                      ),
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .end,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal: 5,
-                                                                  vertical: 5),
-                                                          child: AppText(
-                                                            text:
-                                                                "Delivered on",
-                                                            color:
-                                                                greyTextColor,
-                                                            fontSize: 11.sp,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal: 5,
-                                                                  vertical: 5),
-                                                          child: AppText(
-                                                            text:
-                                                                "Jul 24, at 3:30 PM",
-                                                            color:
-                                                                greyTextColor,
-                                                            fontSize: 11.sp,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
+                                                    ]),
                                               ),
-                                              items[index] == "Delivered"
-                                                  ? GestureDetector(
-                                                      onTap: () {
-                                                        Get.to(const ReviewProductScreen(
-                                                            productName:
-                                                                "Topman super skinny suit jacket and trousers in light blue"));
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 20,
-                                                                vertical: 5),
-                                                        child: AppText(
-                                                          text:
-                                                              "Write a Review",
-                                                          color: blue,
-                                                          fontSize: 11.sp,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : const SizedBox(
-                                                      height: 0,
-                                                    ),
-                                              Column(
-                                                children: [
-                                                  if (items[index] ==
-                                                      "Delivered") ...[
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 16,
-                                                              right: 16,
-                                                              bottom: 20),
-                                                      child: DoubleIconButton(
-                                                          firstText:
-                                                              "Exchange Item",
-                                                          secondText:
-                                                              "Rate Order",
-                                                          firstTextColor:
-                                                              btnTextColor,
-                                                          secondTextColor:
-                                                              btnTextColor,
-                                                          firstBackgroundColor:
-                                                              whiteColor,
-                                                          secondBackgroundColor:
-                                                              whiteColor,
-                                                          firstBorderColor:
-                                                              btnTextColor,
-                                                          secondBorderColor:
-                                                              btnTextColor,
-                                                          firstIcon:
-                                                              exchangeItemImage,
-                                                          onPressedFirst: () {},
-                                                          onPressedSecond:
-                                                              () {},
-                                                          secondIcon:
-                                                              rateOrderImage),
-                                                    )
-                                                  ] else if (items[index] ==
-                                                      "Order Confirmed") ...[
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 16,
-                                                              right: 16,
-                                                              bottom: 20),
-                                                      child: DoubleIconButton(
-                                                          firstText:
-                                                              "Cancel Item",
-                                                          secondText:
-                                                              "Track Order",
-                                                          firstTextColor:
-                                                              btnTextColor,
-                                                          secondTextColor:
-                                                              btnTextColor,
-                                                          firstBackgroundColor:
-                                                              whiteColor,
-                                                          secondBackgroundColor:
-                                                              whiteColor,
-                                                          firstBorderColor:
-                                                              btnTextColor,
-                                                          secondBorderColor:
-                                                              btnTextColor,
-                                                          firstIcon:
-                                                              blackCrossImage,
-                                                          onPressedFirst: () {},
-                                                          onPressedSecond:
-                                                              () {},
-                                                          secondIcon:
-                                                              locationIcon),
-                                                    )
-                                                  ] else if (items[index] ==
-                                                      "Shipped") ...[
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 16,
-                                                              right: 16,
-                                                              top: 10,
-                                                              bottom: 30),
-                                                      child: SingleIconButton(
-                                                          label: "Track Order",
-                                                          textColor:
-                                                              btnTextColor,
-                                                          backgroundColor:
-                                                              whiteColor,
-                                                          onPressed: () {},
-                                                          borderColor:
-                                                              btnTextColor,
-                                                          icon: locationIcon),
-                                                    )
-                                                  ] else ...[
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 10,
-                                                              bottom: 30),
-                                                      child: SingleButton(
-                                                          label: "View details",
-                                                          height: 40,
-                                                          textColor:
-                                                              btnTextColor,
-                                                          backgroundColor:
-                                                              whiteColor,
-                                                          onPressed: () {},
-                                                          borderColor:
-                                                              btnTextColor),
-                                                    )
-                                                  ],
-                                                ],
-                                              ),
-                                            ]),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
-                          }),
-                    ),
+                                    );
+                                  }),
+                            ),
+                    )
                   ],
                 ),
               ),

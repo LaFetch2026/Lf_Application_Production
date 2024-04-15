@@ -13,6 +13,9 @@ import '../utils/constants.dart';
 
 class OrderController extends BaseController {
   RxBool isOrder = false.obs;
+  RxBool isDetails = false.obs;
+  dynamic orderDetails = "".obs;
+  RxString queryText = "".obs;
   List orderList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
@@ -20,11 +23,12 @@ class OrderController extends BaseController {
   ScrollController listController = ScrollController();
   final searchController = TextEditingController();
 
-  getWishlistData() async {
+  getOrderData() async {
     isOrder.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/orders"),
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/orders?status=1&q=$queryText"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -44,7 +48,7 @@ class OrderController extends BaseController {
         );
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get wishlist failed");
+        getSnackBar("get order failed ${response.statusCode}");
       }
     } catch (e) {
       print("error$e");
@@ -62,7 +66,8 @@ class OrderController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       try {
         var response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/orders?page=${page.value}"),
+            Uri.parse(
+                "${ApiConstants.baseUrl}/orders?page=${page.value}&status=1&q=$queryText"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -94,5 +99,39 @@ class OrderController extends BaseController {
       }
       loadMore.value = false;
     }
+  }
+
+  getOrderDetails(int orderId) async {
+    isDetails.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/orders/$orderId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        if (responseData != null) {
+          orderDetails = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get order details failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isDetails.value = false;
   }
 }
