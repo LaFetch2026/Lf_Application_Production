@@ -20,12 +20,35 @@ class OrderController extends BaseController {
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
+  RxInt status = 1.obs;
   ScrollController listController = ScrollController();
   final searchController = TextEditingController();
-  final List<String> filterList = [
-    'Fil1',
-    'Fil2',
-    'Fil3',
+  final List filterList = [
+    'Cart',
+    'Pending',
+    'Confirmed',
+    'Processing',
+    'Shipped',
+    'Delivered',
+    'Cancelled',
+    'Completed',
+    'Exchange',
+    'Approved',
+    'Rejected',
+  ].obs;
+
+  final List filterId = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
   ].obs;
 
   getOrderData() async {
@@ -33,7 +56,8 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/orders?status=1&q=$queryText"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/orders?status=${status.value}&q=$queryText"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -72,7 +96,7 @@ class OrderController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/orders?page=${page.value}&status=1&q=$queryText"),
+                "${ApiConstants.baseUrl}/orders?page=${page.value}&status=${status.value}&q=$queryText"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",

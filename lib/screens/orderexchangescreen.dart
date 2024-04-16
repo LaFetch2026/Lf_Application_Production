@@ -148,7 +148,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                             ),
                             SizedBox(
                               height: 40,
-                              width: 120,
+                              width: 130,
                               child: DropdownButtonFormField2(
                                 value: filter,
                                 decoration: InputDecoration(
@@ -164,10 +164,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                   ),
                                   isDense: true,
                                   contentPadding:
-                                      const EdgeInsets.only(left: 16),
+                                      const EdgeInsets.only(left: 10, right: 0),
                                   hintText: 'Filter',
                                   hintStyle: const TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 12,
                                       fontFamily: "Franklin Gothic Regular"),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(1),
@@ -180,7 +180,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                           child: Text(
                                             item,
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 12,
                                               color: textColor,
                                               fontFamily:
                                                   "Franklin Gothic Regular",
@@ -196,10 +196,14 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 },
                                 onChanged: (value) {
                                   filter = value;
-                                  /*   genderPos =
-                                      filterList.indexOf(filter.toString());
-                                  print(genderId[genderPos]); */
-                                  setState(() {});
+                                  print(orderController.filterId[orderController
+                                      .filterList
+                                      .indexOf(filter.toString())]);
+                                  orderController.status.value =
+                                      orderController.filterId[orderController
+                                          .filterList
+                                          .indexOf(filter.toString())];
+                                  orderController.getOrderData();
                                 },
                                 onSaved: (value) {},
                                 buttonStyleData: const ButtonStyleData(
@@ -208,7 +212,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 ),
                                 iconStyleData: const IconStyleData(
                                   icon: ImageIcon(AssetImage(dropdownImage)),
-                                  iconSize: 30,
+                                  iconSize: 10,
                                 ),
                                 dropdownStyleData: DropdownStyleData(
                                   maxHeight: 200,
