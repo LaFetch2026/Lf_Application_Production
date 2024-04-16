@@ -22,6 +22,11 @@ class OrderController extends BaseController {
   RxInt page = 1.obs;
   ScrollController listController = ScrollController();
   final searchController = TextEditingController();
+  final List<String> filterList = [
+    'Fil1',
+    'Fil2',
+    'Fil3',
+  ].obs;
 
   getOrderData() async {
     isOrder.value = true;

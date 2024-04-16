@@ -1,21 +1,24 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../controller/order_controller.dart';
 import '../utils/constants.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key});
+  final int orderId;
+  const OrderDetailsScreen({required this.orderId, super.key});
 
   @override
   State<OrderDetailsScreen> createState() => OrderDetailsScreenState();
 }
 
 class OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  final orderController = Get.put(OrderController());
   double _rating = 0;
   List<String> items = [
     "1",
@@ -28,19 +31,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     "Delivered"
   ];
   List<String> orderItem = ["Confirmed", "Packed", "Shipped", "Delivered"];
-  /* List<TextDto> orderList = [
-    TextDto("Sun, 27th Mar '22 - 10:19am", null),
-  ];
 
-  List<TextDto> shippedList = [
-    TextDto("Sun, 27th Mar '22 - 10:19am", null),
-  ];
-
-  List<TextDto> outOfDeliveryList = [
-    TextDto("Sun, 27th Mar '22 - 10:19am", null)
-  ];
-
-  List<TextDto> deliveredList = [TextDto("Sun, 27th Mar '22 - 10:19am", null)]; */
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => orderController.getOrderDetails(widget.orderId));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,70 +148,74 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             color: loginText,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 5),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: Image.asset(backImage,
-                                    height: 85, width: 70, fit: BoxFit.cover),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 5,
+                        Obx(
+                          () => orderController.isDetails.value
+                              ? const Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 5),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Image.asset(backImage,
+                                            height: 85,
+                                            width: 70,
+                                            fit: BoxFit.cover),
                                       ),
-                                      child: AppText(
-                                        text:
-                                            "Topman super skinny suit jacket and trousers in light blue",
-                                        maxLines: 1,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14.sp,
-                                        color: nameText,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 5),
-                                      child: AppText(
-                                        text: "Jack & Jones Core",
-                                        color: greyTextColor,
-                                        maxLines: 2,
-                                        fontSize: 12.sp,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 5),
-                                      child: Row(
-                                        children: [
-                                          AppText(
-                                            text: "Size :M",
-                                            color: greyTextColor,
-                                            maxLines: 2,
-                                            fontSize: 12.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Padding(
+                                      Expanded(
+                                        flex: 3,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 10),
+                                                horizontal: 5,
+                                              ),
                                               child: AppText(
-                                                text: "Qty :1",
+                                                text: orderController
+                                                                    .orderDetails[
+                                                                "order_lines"]
+                                                            [0]["product"] !=
+                                                        null
+                                                    ? orderController
+                                                                .orderDetails[
+                                                            "order_lines"][0]
+                                                        ["product"]["name"]
+                                                    : "",
+                                                maxLines: 1,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14.sp,
+                                                color: nameText,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5,
+                                                      vertical: 5),
+                                              child: AppText(
+                                                text: orderController
+                                                                    .orderDetails[
+                                                                "order_lines"]
+                                                            [0]["product"] !=
+                                                        null
+                                                    ? orderController
+                                                                    .orderDetails[
+                                                                "order_lines"]
+                                                            [0]["product"]
+                                                        ["short_description"]
+                                                    : "",
                                                 color: greyTextColor,
                                                 maxLines: 2,
                                                 fontSize: 12.sp,
@@ -223,24 +224,60 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                          ),
-                                          AppText(
-                                            text: "\u{20B9} ${120.00}",
-                                            color: greyTextColor,
-                                            fontSize: 12.sp,
-                                            textAlign: TextAlign.right,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5,
+                                                      vertical: 5),
+                                              child: Row(
+                                                children: [
+                                                  AppText(
+                                                    text: "Size :M",
+                                                    color: greyTextColor,
+                                                    maxLines: 2,
+                                                    fontSize: 12.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 10),
+                                                      child: AppText(
+                                                        text:
+                                                            "Qty :${orderController.orderDetails["order_lines"][0]["quantity"] ?? "0"}",
+                                                        color: greyTextColor,
+                                                        maxLines: 2,
+                                                        fontSize: 12.sp,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  AppText(
+                                                    text:
+                                                        "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
+                                                    color: greyTextColor,
+                                                    fontSize: 12.sp,
+                                                    textAlign: TextAlign.right,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              )
-                            ],
-                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -577,7 +614,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
                                     child: AppText(
-                                      text: "\u{20B9} ${125.00}",
+                                      text:
+                                          "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
                                       fontFamily: "Franklin Gothic",
                                       fontWeight: FontWeight.w500,
                                       color: loginText,
@@ -865,7 +903,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
                                     child: AppText(
-                                      text: "\u{20B9} ${1330.00}",
+                                      text:
+                                          "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
                                       fontFamily: "Franklin Gothic",
                                       fontWeight: FontWeight.w500,
                                       color: loginText,
