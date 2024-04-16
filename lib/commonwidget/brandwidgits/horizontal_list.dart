@@ -6,17 +6,18 @@ import '../app_text.dart';
 
 class HorizontalBrandList extends StatelessWidget {
   final String text;
-  // final List list;
+  final Function(int)? onPressed;
   final ProductController productController;
-
-  final Function? onPressed;
+  final Function? onPressedExpress;
+  final Function? onPressedHeart;
 
   const HorizontalBrandList({
     Key? key,
     required this.text,
-    // required this.list,
-    required this.productController,
     this.onPressed,
+    this.onPressedHeart,
+    this.onPressedExpress,
+    required this.productController,
   }) : super(key: key);
 
   @override
@@ -48,7 +49,8 @@ class HorizontalBrandList extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          onPressed?.call();
+                          onPressed?.call(
+                              productController.productList[index]["id"]);
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -66,22 +68,27 @@ class HorizontalBrandList extends StatelessWidget {
                                         height: 150,
                                         width: 122,
                                         fit: BoxFit.cover),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 10),
-                                      child: Align(
-                                        alignment: Alignment.topRight,
-                                        child: InkWell(
-                                          child: SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: CircleAvatar(
-                                              backgroundColor: whiteColor,
-                                              child: Image.asset(
-                                                heartImage,
-                                                height: 16,
-                                                color: bottomnavBack,
-                                                width: 16,
+                                    GestureDetector(
+                                      onTap: () {
+                                        onPressedHeart!.call();
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 10),
+                                        child: Align(
+                                          alignment: Alignment.topRight,
+                                          child: InkWell(
+                                            child: SizedBox(
+                                              height: 24,
+                                              width: 24,
+                                              child: CircleAvatar(
+                                                backgroundColor: whiteColor,
+                                                child: Image.asset(
+                                                  heartImage,
+                                                  height: 16,
+                                                  color: bottomnavBack,
+                                                  width: 16,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -146,16 +153,22 @@ class HorizontalBrandList extends StatelessWidget {
                                         color: expressText,
                                         size: 14,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        child: AppText(
-                                          text: "Express",
-                                          color: expressText,
-                                          maxLines: 2,
-                                          fontSize: 11.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
+                                      GestureDetector(
+                                        onTap: () {
+                                          onPressedExpress!.call();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          child: AppText(
+                                            text: "Express",
+                                            color: expressText,
+                                            maxLines: 2,
+                                            fontSize: 11.sp,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
                                       ),
                                     ],

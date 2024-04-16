@@ -7,6 +7,7 @@ import '../../commonwidget/app_text.dart';
 import '../../commonwidget/doublebtn.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
+import '../catalog/productlist/productdetailsscreen.dart';
 
 class ViewAllScreen extends StatefulWidget {
   const ViewAllScreen({super.key});
@@ -60,7 +61,13 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                       return Column(
                                         children: [
                                           GestureDetector(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Get.to(() => ProductDetailsScreen(
+                                                    productId: productController
+                                                            .productList[index]
+                                                        ["id"],
+                                                  ));
+                                            },
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,

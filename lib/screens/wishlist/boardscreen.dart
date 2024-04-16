@@ -11,6 +11,7 @@ import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/common_widgets.dart';
 import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
+import '../catalog/productlist/productdetailsscreen.dart';
 
 class BoardScreen extends StatefulWidget {
   final String boardName;
@@ -181,7 +182,14 @@ class BoardScreenState extends State<BoardScreen> {
                                               value.wishListProduct.length,
                                               (index) {
                                                 return GestureDetector(
-                                                  onTap: () {},
+                                                  onTap: () {
+                                                    Get.to(() =>
+                                                        ProductDetailsScreen(
+                                                          productId: value
+                                                                  .wishListProduct[
+                                                              index]["id"],
+                                                        ));
+                                                  },
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment

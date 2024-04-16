@@ -11,6 +11,7 @@ import '../../controller/brand_controller.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
+import '../catalog/productlist/productdetailsscreen.dart';
 import '../searchscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
@@ -173,9 +174,17 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               padding: EdgeInsets.all(40.0),
                               child: Center(child: CircularProgressIndicator()),
                             )
-                          : HorizontalBrandList(
-                              text: "New Arrivals",
-                              productController: productController),
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 40),
+                              child: HorizontalBrandList(
+                                  text: "New Arrivals",
+                                  onPressed: (p0) {
+                                    Get.to(() => ProductDetailsScreen(
+                                          productId: p0,
+                                        ));
+                                  },
+                                  productController: productController),
+                            ),
                     ),
                     Obx(() => productController.isProduct.value
                         ? const Padding(
@@ -375,9 +384,17 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               ),
                             ],
                           ) */
-                        HorizontalBrandList(
-                            text: "Bestsellers",
-                            productController: productController)),
+                        Padding(
+                            padding: const EdgeInsets.only(top: 25),
+                            child: HorizontalBrandList(
+                                text: "Bestsellers",
+                                onPressed: (p0) {
+                                  Get.to(() => ProductDetailsScreen(
+                                        productId: p0,
+                                      ));
+                                },
+                                productController: productController),
+                          )),
                     const SizedBox(
                       height: 40,
                     ),

@@ -12,6 +12,7 @@ import '../commonwidget/common_widgets.dart';
 import '../controller/cart_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
+import 'catalog/productlist/productdetailsscreen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -557,7 +558,15 @@ class CartScreenState extends State<CartScreen> {
                                                             return Column(
                                                               children: [
                                                                 GestureDetector(
-                                                                  onTap: () {},
+                                                                  onTap: () {
+                                                                    Get.to(
+                                                                        ProductDetailsScreen(
+                                                                      productId:
+                                                                          value.productList[index]
+                                                                              [
+                                                                              "id"],
+                                                                    ));
+                                                                  },
                                                                   child:
                                                                       AnimatedContainer(
                                                                     duration: const Duration(

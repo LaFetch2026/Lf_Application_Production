@@ -83,8 +83,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        Get.to(const ProductDetailsScreen(
-                                          productId: 0,
+                                        Get.to(ProductDetailsScreen(
+                                          productId: productController
+                                              .productList[index]["id"],
                                         ));
                                       },
                                       child: Column(

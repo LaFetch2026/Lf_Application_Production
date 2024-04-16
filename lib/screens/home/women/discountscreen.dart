@@ -24,13 +24,6 @@ class DiscountScreen extends StatefulWidget {
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
-  List<String> items = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "500",
-  ];
   List<String> menu = [
     "Discounts",
     "New Arrivals",

@@ -9,6 +9,7 @@ import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/common_widgets.dart';
 import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
+import '../catalog/productlist/productdetailsscreen.dart';
 
 class CreateBoardScreen extends StatefulWidget {
   final String btnText;
@@ -118,7 +119,13 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                         return Column(
                                           children: [
                                             GestureDetector(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Get.to(ProductDetailsScreen(
+                                                  productId:
+                                                      value.wishListProduct[
+                                                          index]["id"],
+                                                ));
+                                              },
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,

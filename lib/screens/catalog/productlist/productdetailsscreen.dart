@@ -1530,31 +1530,40 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  productController.productDetails["wishlisted"]
-                      ? const SizedBox(
-                          width: 0,
-                        )
-                      : Container(
-                          margin: const EdgeInsets.only(left: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: btnTextColor, width: 1),
-                          ),
-                          child: IconButton(
-                              onPressed: () {
-                                scaffoldKey.currentState?.showBottomSheet(
-                                    (context) => BottomWishlist(
-                                        controller: wishlistController,
-                                        onPressed: (p0) {
-                                          wishlistController
-                                              .callAddProductWishlist(
-                                                  p0,
-                                                  productController
-                                                      .productDetails["id"]);
-                                        },
-                                        wishlistList:
-                                            wishlistController.wishlistList));
-                              },
-                              icon: Image.asset(heartIcon24))),
+                  Obx(
+                    () => productController.isDetails.value
+                        ? const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : productController.productDetails["wishlisted"]
+                            ? const SizedBox(
+                                width: 0,
+                              )
+                            : Container(
+                                margin: const EdgeInsets.only(left: 10.0),
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: btnTextColor, width: 1),
+                                ),
+                                child: IconButton(
+                                    onPressed: () {
+                                      scaffoldKey.currentState?.showBottomSheet(
+                                          (context) => BottomWishlist(
+                                              controller: wishlistController,
+                                              onPressed: (p0) {
+                                                wishlistController
+                                                    .callAddProductWishlist(
+                                                        p0,
+                                                        productController
+                                                                .productDetails[
+                                                            "id"]);
+                                              },
+                                              wishlistList: wishlistController
+                                                  .wishlistList));
+                                    },
+                                    icon: Image.asset(heartIcon24))),
+                  ),
                   Obx(
                     () => Expanded(
                       child: getSingleButton(
