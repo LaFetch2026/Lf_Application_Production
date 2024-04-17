@@ -113,24 +113,45 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                   },
                                                 ),
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
-                                                child: Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: InkWell(
-                                                    child: SizedBox(
-                                                      height: 30,
-                                                      width: 30,
-                                                      child: CircleAvatar(
-                                                        backgroundColor:
-                                                            whiteColor,
-                                                        child: Image.asset(
-                                                          heartImage,
-                                                          height: 30,
-                                                          width: 30,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  productController
+                                                      .callAddProductToWishlist(
+                                                          productController
+                                                                  .productList[
+                                                              index]["id"],
+                                                          "product",
+                                                          0);
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 10),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    child: InkWell(
+                                                      child: SizedBox(
+                                                        height: 30,
+                                                        width: 30,
+                                                        child: CircleAvatar(
+                                                          backgroundColor:
+                                                              whiteColor,
+                                                          child: productController
+                                                                          .productList[
+                                                                      index]
+                                                                  ["wishlisted"]
+                                                              ? Image.asset(
+                                                                  wishlistSelectImage,
+                                                                  height: 22,
+                                                                  width: 22,
+                                                                )
+                                                              : Image.asset(
+                                                                  heartImage,
+                                                                  height: 30,
+                                                                  width: 30,
+                                                                ),
                                                         ),
                                                       ),
                                                     ),

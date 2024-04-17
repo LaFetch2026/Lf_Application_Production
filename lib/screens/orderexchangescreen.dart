@@ -60,6 +60,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                controller: orderController.listController,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -238,6 +239,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                               child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
+                                  controller: orderController.listController,
                                   physics: const ScrollPhysics(),
                                   itemCount: orderController.orderList.length,
                                   padding: EdgeInsets.zero,
@@ -1044,7 +1046,15 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                     );
                                   }),
                             ),
-                    )
+                    ),
+                    orderController.loadMore.value
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          ),
                   ],
                 ),
               ),
