@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
@@ -62,10 +64,43 @@ class HorizontalBrandList extends StatelessWidget {
                               children: [
                                 Stack(
                                   children: [
-                                    Image.asset(backImage,
-                                        height: 150,
-                                        width: 122,
-                                        fit: BoxFit.cover),
+                                    list[index]["images"].isNotEmpty &&
+                                            list[index]["images"] != null
+                                        ? SizedBox(
+                                            height: 150,
+                                            width: 122,
+                                            child: CachedNetworkImage(
+                                              cacheManager: CacheManager(Config(
+                                                  "customCacheKey",
+                                                  stalePeriod:
+                                                      const Duration(days: 15),
+                                                  maxNrOfCacheObjects: 100)),
+                                              fit: BoxFit.cover,
+                                              imageUrl: list[index]["images"][0]
+                                                  ["name"],
+                                              progressIndicatorBuilder:
+                                                  (context, url,
+                                                          downloadProgress) =>
+                                                      Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        value: downloadProgress
+                                                            .progress),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                dummyWishlistImage,
+                                                fit: BoxFit.cover,
+                                                height: 150,
+                                                width: 122,
+                                              ),
+                                            ),
+                                          )
+                                        : Image.asset(dummyWishlistImage,
+                                            height: 150,
+                                            width: 122,
+                                            fit: BoxFit.cover),
                                     GestureDetector(
                                       onTap: () {
                                         onPressedHeart?.call(list[index]["id"]);

@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
@@ -585,14 +587,27 @@ class CartScreenState extends State<CartScreen> {
                                                                           CrossAxisAlignment
                                                                               .start,
                                                                       children: [
-                                                                        Image.asset(
-                                                                            backImage,
-                                                                            height:
-                                                                                150,
-                                                                            width:
-                                                                                122,
-                                                                            fit:
-                                                                                BoxFit.cover),
+                                                                        productController.productList[index]["images"].isNotEmpty &&
+                                                                                productController.productList[index]["images"] != null
+                                                                            ? SizedBox(
+                                                                                height: 150,
+                                                                                width: 122,
+                                                                                child: CachedNetworkImage(
+                                                                                  cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                  fit: BoxFit.cover,
+                                                                                  imageUrl: productController.productList[index]["images"][0]["name"],
+                                                                                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                    child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                                  ),
+                                                                                  errorWidget: (context, url, error) => Image.asset(
+                                                                                    dummyWishlistImage,
+                                                                                    fit: BoxFit.cover,
+                                                                                    height: 150,
+                                                                                    width: 122,
+                                                                                  ),
+                                                                                ),
+                                                                              )
+                                                                            : Image.asset(dummyWishlistImage, height: 150, width: 122, fit: BoxFit.cover),
                                                                         Padding(
                                                                           padding: const EdgeInsets.symmetric(
                                                                               horizontal: 10,

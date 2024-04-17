@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
@@ -240,10 +242,52 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           8.0),
-                                                  child: Image.asset(backImage,
-                                                      height: 156,
-                                                      width: 156,
-                                                      fit: BoxFit.cover),
+                                                  child: wishlistController
+                                                          .wishlistList[index]
+                                                              ["images"]
+                                                          .isNotEmpty
+                                                      ? SizedBox(
+                                                          height: 156,
+                                                          width: 156,
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            cacheManager: CacheManager(Config(
+                                                                "customCacheKey",
+                                                                stalePeriod:
+                                                                    const Duration(
+                                                                        days:
+                                                                            15),
+                                                                maxNrOfCacheObjects:
+                                                                    100)),
+                                                            fit: BoxFit.cover,
+                                                            imageUrl:
+                                                                wishlistController
+                                                                            .wishlistList[
+                                                                        index][
+                                                                    "images"][0],
+                                                            progressIndicatorBuilder:
+                                                                (context, url,
+                                                                        downloadProgress) =>
+                                                                    Center(
+                                                              child: CircularProgressIndicator(
+                                                                  value: downloadProgress
+                                                                      .progress),
+                                                            ),
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                              dummyWishlistImage,
+                                                              height: 156,
+                                                              width: 156,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : Image.asset(
+                                                          dummyWishlistImage,
+                                                          height: 156,
+                                                          width: 156,
+                                                          fit: BoxFit.cover),
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets

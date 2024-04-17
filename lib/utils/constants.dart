@@ -140,6 +140,7 @@ const sneakerImage = 'assets/images/sneaker.png';
 const editImage = 'assets/images/edit.png';
 const downloadImage = 'assets/images/download.jpeg';
 const placeHolderImage = 'assets/images/placeholder.png';
+const dummyWishlistImage = 'assets/images/dummy_wishlist.jpeg';
 
 class ApiConstants {
   ApiConstants._();

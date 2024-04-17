@@ -585,10 +585,50 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Image.asset(categoryImage,
-                                                  height: 144,
-                                                  width: 150,
-                                                  fit: BoxFit.cover),
+                                              homeController.categoryList[0]
+                                                          ["thumbnail"] !=
+                                                      null
+                                                  ? SizedBox(
+                                                      height: 144,
+                                                      width: 150,
+                                                      child: CachedNetworkImage(
+                                                        cacheManager:
+                                                            CacheManager(Config(
+                                                                "customCacheKey",
+                                                                stalePeriod:
+                                                                    const Duration(
+                                                                        days:
+                                                                            15),
+                                                                maxNrOfCacheObjects:
+                                                                    100)),
+                                                        fit: BoxFit.cover,
+                                                        imageUrl: homeController
+                                                                .categoryList[0]
+                                                            ["thumbnail"],
+                                                        progressIndicatorBuilder:
+                                                            (context, url,
+                                                                    downloadProgress) =>
+                                                                Center(
+                                                          child: CircularProgressIndicator(
+                                                              value:
+                                                                  downloadProgress
+                                                                      .progress),
+                                                        ),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
+                                                          dummyWishlistImage,
+                                                          fit: BoxFit.cover,
+                                                          height: 144,
+                                                          width: 150,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Image.asset(
+                                                      dummyWishlistImage,
+                                                      height: 144,
+                                                      width: 150,
+                                                      fit: BoxFit.cover),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -636,10 +676,50 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Image.asset(categoryImage,
-                                                  height: 144,
-                                                  width: 150,
-                                                  fit: BoxFit.cover),
+                                              homeController.categoryList[1]
+                                                          ["thumbnail"] !=
+                                                      null
+                                                  ? SizedBox(
+                                                      height: 144,
+                                                      width: 150,
+                                                      child: CachedNetworkImage(
+                                                        cacheManager:
+                                                            CacheManager(Config(
+                                                                "customCacheKey",
+                                                                stalePeriod:
+                                                                    const Duration(
+                                                                        days:
+                                                                            15),
+                                                                maxNrOfCacheObjects:
+                                                                    100)),
+                                                        fit: BoxFit.cover,
+                                                        imageUrl: homeController
+                                                                .categoryList[1]
+                                                            ["thumbnail"],
+                                                        progressIndicatorBuilder:
+                                                            (context, url,
+                                                                    downloadProgress) =>
+                                                                Center(
+                                                          child: CircularProgressIndicator(
+                                                              value:
+                                                                  downloadProgress
+                                                                      .progress),
+                                                        ),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
+                                                          dummyWishlistImage,
+                                                          fit: BoxFit.cover,
+                                                          height: 144,
+                                                          width: 150,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Image.asset(
+                                                      dummyWishlistImage,
+                                                      height: 144,
+                                                      width: 150,
+                                                      fit: BoxFit.cover),
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -696,11 +776,59 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                       CrossAxisAlignment.center,
                                                   children: [
                                                     Center(
-                                                      child: Image.asset(
-                                                          categoryImage,
-                                                          width: 80,
-                                                          height: 72,
-                                                          fit: BoxFit.cover),
+                                                      child: homeController
+                                                                          .categoryList[
+                                                                      index + 2]
+                                                                  [
+                                                                  "thumbnail"] !=
+                                                              null
+                                                          ? SizedBox(
+                                                              width: 80,
+                                                              height: 72,
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                cacheManager: CacheManager(Config(
+                                                                    "customCacheKey",
+                                                                    stalePeriod:
+                                                                        const Duration(
+                                                                            days:
+                                                                                15),
+                                                                    maxNrOfCacheObjects:
+                                                                        100)),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                imageUrl: homeController
+                                                                            .categoryList[
+                                                                        index +
+                                                                            2][
+                                                                    "thumbnail"],
+                                                                progressIndicatorBuilder:
+                                                                    (context,
+                                                                            url,
+                                                                            downloadProgress) =>
+                                                                        Center(
+                                                                  child: CircularProgressIndicator(
+                                                                      value: downloadProgress
+                                                                          .progress),
+                                                                ),
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                                  dummyWishlistImage,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  width: 80,
+                                                                  height: 72,
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : Image.asset(
+                                                              dummyWishlistImage,
+                                                              width: 80,
+                                                              height: 72,
+                                                              fit:
+                                                                  BoxFit.cover),
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
