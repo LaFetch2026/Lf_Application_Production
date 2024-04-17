@@ -263,4 +263,34 @@ class ProductController extends BaseController {
     }
     hideLoading();
   }
+
+  callAddProductToWishlist(int id, String type, int productId) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+        Uri.parse("${ApiConstants.baseUrl}/products/$id/wishlist"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      if (response.statusCode == 200) {
+        getSnackBar("product added to wishlist");
+        if (type == "product") {
+          getProductData("relevant");
+        } else {
+          getProductRecommendations(productId);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("item add failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

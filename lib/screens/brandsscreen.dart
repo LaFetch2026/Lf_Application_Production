@@ -47,7 +47,7 @@ class BrandsScreenState extends State<BrandsScreen> {
     return Obx(() => brandController.showAllBrand.value
         ? AllBrandScreen(
             title: brandController.brandName.value,
-            brandLogo: brandController.brandlogo.value,
+            brandbackground: brandController.brandbackground.value,
           )
         : Scaffold(
             backgroundColor: colorSecondary,
@@ -218,6 +218,13 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                 .value = value
                                                                     .brandList[
                                                                 index]["logo"];
+                                                            brandController
+                                                                .brandbackground
+                                                                .value = value
+                                                                            .brandList[
+                                                                        index][
+                                                                    "background_image"] ??
+                                                                "";
                                                             brandController
                                                                 .brandName
                                                                 .value = value

@@ -15,7 +15,7 @@ class HorizontalHomeList extends StatelessWidget {
   //final ProductController productController;
   final Function(int)? onPressed;
   final Function? onPressedExpress;
-  final Function? onPressedHeart;
+  final Function(int)? onPressedHeart;
 
   const HorizontalHomeList(
       {Key? key,
@@ -83,9 +83,15 @@ class HorizontalHomeList extends StatelessWidget {
                                       icon: CircleAvatar(
                                           radius: 12.0,
                                           backgroundColor: whiteColor,
-                                          child: Image.asset(heartImage)),
+                                          child: list[index]["wishlisted"]
+                                              ? Image.asset(
+                                                  wishlistSelectImage,
+                                                  height: 16,
+                                                  width: 16,
+                                                )
+                                              : Image.asset(heartImage)),
                                       onPressed: () {
-                                        onPressedHeart?.call();
+                                        onPressedHeart?.call(list[index]["id"]);
                                       },
                                     ),
                                   ),

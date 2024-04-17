@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
 class HorizontalBrandList extends StatelessWidget {
   final String text;
   final Function(int)? onPressed;
-  final ProductController productController;
+  final List list;
   final Function? onPressedExpress;
-  final Function? onPressedHeart;
+  final Function(int)? onPressedHeart;
 
   const HorizontalBrandList({
     Key? key,
@@ -17,7 +16,7 @@ class HorizontalBrandList extends StatelessWidget {
     this.onPressed,
     this.onPressedHeart,
     this.onPressedExpress,
-    required this.productController,
+    required this.list,
   }) : super(key: key);
 
   @override
@@ -42,15 +41,14 @@ class HorizontalBrandList extends StatelessWidget {
             height: 250,
             child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
-                itemCount: productController.productList.length,
+                itemCount: list.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (ctx, index) {
                   return Column(
                     children: [
                       GestureDetector(
                         onTap: () {
-                          onPressed?.call(
-                              productController.productList[index]["id"]);
+                          onPressed?.call(list[index]["id"]);
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -70,7 +68,7 @@ class HorizontalBrandList extends StatelessWidget {
                                         fit: BoxFit.cover),
                                     GestureDetector(
                                       onTap: () {
-                                        onPressedHeart!.call();
+                                        onPressedHeart?.call(list[index]["id"]);
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -83,12 +81,18 @@ class HorizontalBrandList extends StatelessWidget {
                                               width: 24,
                                               child: CircleAvatar(
                                                 backgroundColor: whiteColor,
-                                                child: Image.asset(
-                                                  heartImage,
-                                                  height: 16,
-                                                  color: bottomnavBack,
-                                                  width: 16,
-                                                ),
+                                                child: list[index]["wishlisted"]
+                                                    ? Image.asset(
+                                                        wishlistSelectImage,
+                                                        height: 16,
+                                                        width: 16,
+                                                      )
+                                                    : Image.asset(
+                                                        heartImage,
+                                                        height: 16,
+                                                        color: bottomnavBack,
+                                                        width: 16,
+                                                      ),
                                               ),
                                             ),
                                           ),
@@ -101,8 +105,7 @@ class HorizontalBrandList extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 5),
                                   child: AppText(
-                                    text:
-                                        "${productController.productList[index]["name"]}\n",
+                                    text: "${list[index]["name"]}\n",
                                     color: nameText,
                                     maxLines: 2,
                                     fontSize: 11.sp,
@@ -117,7 +120,7 @@ class HorizontalBrandList extends StatelessWidget {
                                     children: [
                                       AppText(
                                         text:
-                                            "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                            "\u{20B9} ${list[index]["price"] ?? ""}",
                                         color: deepGreytextColor,
                                         maxLines: 2,
                                         fontSize: 11.sp,
@@ -128,7 +131,7 @@ class HorizontalBrandList extends StatelessWidget {
                                         padding:
                                             const EdgeInsets.only(left: 10),
                                         child: Text(
-                                          "\u{20B9} ${productController.productList[index]["mrp"]}",
+                                          "\u{20B9} ${list[index]["mrp"]}",
                                           style: TextStyle(
                                             color: textHintColor,
                                             fontSize: 11.sp,

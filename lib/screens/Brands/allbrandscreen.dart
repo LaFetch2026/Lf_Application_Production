@@ -16,9 +16,9 @@ import '../searchscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
   final String title;
-  final String brandLogo;
+  final String brandbackground;
   const AllBrandScreen(
-      {required this.title, required this.brandLogo, super.key});
+      {required this.title, required this.brandbackground, super.key});
 
   @override
   State<AllBrandScreen> createState() => AllBrandScreenState();
@@ -75,10 +75,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   children: [
                     Stack(
                       children: [
-                        Image.asset(brandback,
-                            height: 112,
-                            width: double.infinity,
-                            fit: BoxFit.cover),
+                        widget.brandbackground == ""
+                            ? Image.asset(brandback,
+                                height: 112,
+                                width: double.infinity,
+                                fit: BoxFit.cover)
+                            : FadeInImage(
+                                fit: BoxFit.cover,
+                                height: 112,
+                                width: double.infinity,
+                                image: NetworkImage(
+                                    brandController.brandbackground.value),
+                                placeholder: const AssetImage(brandback)),
                         /*  FadeInImage(
                             fit: BoxFit.cover,
                             height: 112,
@@ -177,13 +185,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           : Padding(
                               padding: const EdgeInsets.only(top: 40),
                               child: HorizontalBrandList(
-                                  text: "New Arrivals",
-                                  onPressed: (p0) {
-                                    Get.to(() => ProductDetailsScreen(
-                                          productId: p0,
-                                        ));
-                                  },
-                                  productController: productController),
+                                text: "New Arrivals",
+                                onPressed: (p0) {
+                                  Get.to(() => ProductDetailsScreen(
+                                        productId: p0,
+                                      ));
+                                },
+                                onPressedHeart: (p0) {
+                                  productController.callAddProductToWishlist(
+                                      p0, "product", 0);
+                                },
+                                list: productController.productList,
+                              ),
                             ),
                     ),
                     Obx(() => productController.isProduct.value
@@ -387,13 +400,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         Padding(
                             padding: const EdgeInsets.only(top: 25),
                             child: HorizontalBrandList(
-                                text: "Bestsellers",
-                                onPressed: (p0) {
-                                  Get.to(() => ProductDetailsScreen(
-                                        productId: p0,
-                                      ));
-                                },
-                                productController: productController),
+                              text: "Bestsellers",
+                              onPressed: (p0) {
+                                Get.to(() => ProductDetailsScreen(
+                                      productId: p0,
+                                    ));
+                              },
+                              onPressedHeart: (p0) {
+                                productController.callAddProductToWishlist(
+                                    p0, "product", 0);
+                              },
+                              list: productController.productList,
+                            ),
                           )),
                     const SizedBox(
                       height: 40,

@@ -180,6 +180,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     productController.inventoryId.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
     productController.getProductDetails(widget.productId);
     productController.getProductReview(widget.productId);
     productController.getProductRecommendations(widget.productId);
@@ -1296,9 +1298,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       text: "Recommended for you",
                                       height: 250,
                                       leftPadding: 0,
-                                      list: productController.productList,
+                                      list: productController.recommendedList,
                                       visibleExpress: true,
                                       visibleheart: true,
+                                      onPressedHeart: (p0) {
+                                        productController
+                                            .callAddProductToWishlist(p0,
+                                                "recommened", widget.productId);
+                                      },
                                       onPressed: (p0) {},
                                     ),
                                     const Divider(
@@ -1306,7 +1313,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ),
                                   ],
                                 )),
-                          Obx(() => productController.isRecommendations.value
+                          Obx(() => productController.isProduct.value
                               ? const Padding(
                                   padding: EdgeInsets.all(40.0),
                                   child: Center(
@@ -1509,6 +1516,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       list: productController.productList,
                                       visibleExpress: true,
                                       visibleheart: true,
+                                      onPressedHeart: (p0) {
+                                        productController
+                                            .callAddProductToWishlist(p0,
+                                                "product", widget.productId);
+                                      },
                                       onPressed: (p0) {},
                                     ),
                                     const Divider(

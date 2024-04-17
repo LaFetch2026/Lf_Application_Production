@@ -81,28 +81,57 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           width: 152,
                                                           fit: BoxFit.cover),
                                                     ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 10),
-                                                      child: Align(
-                                                        alignment:
-                                                            Alignment.topRight,
-                                                        child: InkWell(
-                                                          child: SizedBox(
-                                                            height: 24,
-                                                            width: 24,
-                                                            child: CircleAvatar(
-                                                              backgroundColor:
-                                                                  whiteColor,
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        productController
+                                                            .callAddProductToWishlist(
+                                                                productController
+                                                                        .productList[
+                                                                    index]["id"],
+                                                                "product",
+                                                                0);
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 10),
+                                                        child: Align(
+                                                          alignment: Alignment
+                                                              .topRight,
+                                                          child: InkWell(
+                                                            child: SizedBox(
+                                                              height: 24,
+                                                              width: 24,
                                                               child:
-                                                                  Image.asset(
-                                                                heartImage,
-                                                                height: 16,
-                                                                color:
-                                                                    bottomnavBack,
-                                                                width: 16,
+                                                                  CircleAvatar(
+                                                                backgroundColor:
+                                                                    whiteColor,
+                                                                child: productController
+                                                                            .productList[index]
+                                                                        [
+                                                                        "wishlisted"]
+                                                                    ? Image
+                                                                        .asset(
+                                                                        wishlistSelectImage,
+                                                                        height:
+                                                                            16,
+                                                                        color:
+                                                                            bottomnavBack,
+                                                                        width:
+                                                                            16,
+                                                                      )
+                                                                    : Image
+                                                                        .asset(
+                                                                        heartImage,
+                                                                        height:
+                                                                            16,
+                                                                        color:
+                                                                            bottomnavBack,
+                                                                        width:
+                                                                            16,
+                                                                      ),
                                                               ),
                                                             ),
                                                           ),
