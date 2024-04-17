@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
@@ -133,11 +135,64 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                   Stack(
                                                     children: [
                                                       Center(
-                                                        child: Image.asset(
-                                                            backImage,
-                                                            height: 190,
-                                                            width: 152,
-                                                            fit: BoxFit.cover),
+                                                        child: value
+                                                                    .wishListProduct[
+                                                                        index][
+                                                                        "images"]
+                                                                    .isNotEmpty &&
+                                                                value.wishListProduct[
+                                                                            index]
+                                                                        [
+                                                                        "images"] !=
+                                                                    null
+                                                            ? SizedBox(
+                                                                height: 190,
+                                                                width: 152,
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  imageUrl: value
+                                                                              .wishListProduct[index]
+                                                                          [
+                                                                          "images"]
+                                                                      [
+                                                                      0]["name"],
+                                                                  progressIndicatorBuilder:
+                                                                      (context,
+                                                                              url,
+                                                                              downloadProgress) =>
+                                                                          Center(
+                                                                    child: CircularProgressIndicator(
+                                                                        value: downloadProgress
+                                                                            .progress),
+                                                                  ),
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    dummyWishlistImage,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    height: 190,
+                                                                    width: 152,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Image.asset(
+                                                                dummyWishlistImage,
+                                                                height: 190,
+                                                                width: 152,
+                                                                fit: BoxFit
+                                                                    .cover),
                                                       ),
                                                       value.selected[index]
                                                           ? GestureDetector(

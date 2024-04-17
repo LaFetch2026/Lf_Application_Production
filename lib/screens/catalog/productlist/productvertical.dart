@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -34,17 +36,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   );
 
   callOnchanged(int index) {
-    productController.currentpage.value = index;
-    print("index$index");
-    /*  if (productController.currentpage.value == 0) {
-      print(1);
-    }
-    if (productController.currentpage.value == 1) {
-      print(2);
-    }
-    if (productController.currentpage.value == 2) {
-      print(3);
-    } */
+    setState(() {
+      productController.currentpage.value = index;
+    });
   }
 
   @override
@@ -94,25 +88,90 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                         children: [
                                           Stack(
                                             children: [
-                                              SizedBox(
-                                                height: 400,
-                                                width: double.infinity,
-                                                child: PageView.builder(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  controller: _pageController,
-                                                  onPageChanged: callOnchanged,
-                                                  itemCount: images.length,
-                                                  itemBuilder:
-                                                      (context, int i) {
-                                                    return Image.asset(
-                                                        images[i],
-                                                        height: 400,
-                                                        width: double.infinity,
-                                                        fit: BoxFit.cover);
-                                                  },
-                                                ),
-                                              ),
+                                              productController.productList[
+                                                          index]["images"] !=
+                                                      null
+                                                  ? SizedBox(
+                                                      height: 400,
+                                                      width: double.infinity,
+                                                      child: PageView.builder(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        controller:
+                                                            _pageController,
+                                                        onPageChanged:
+                                                            callOnchanged,
+                                                        itemCount:
+                                                            productController
+                                                                .productList[
+                                                                    index]
+                                                                    ["images"]
+                                                                .length,
+                                                        itemBuilder:
+                                                            (context, int i) {
+                                                          return productController
+                                                                  .productList[
+                                                                      index]
+                                                                      ["images"]
+                                                                  .isNotEmpty
+                                                              ? SizedBox(
+                                                                  height: 400,
+                                                                  width: double
+                                                                      .infinity,
+                                                                  child:
+                                                                      CachedNetworkImage(
+                                                                    cacheManager: CacheManager(Config(
+                                                                        "customCacheKey",
+                                                                        stalePeriod: const Duration(
+                                                                            days:
+                                                                                15),
+                                                                        maxNrOfCacheObjects:
+                                                                            100)),
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    imageUrl: productController.productList[index]
+                                                                            [
+                                                                            "images"][0]
+                                                                        [
+                                                                        "name"],
+                                                                    progressIndicatorBuilder: (context,
+                                                                            url,
+                                                                            downloadProgress) =>
+                                                                        Center(
+                                                                      child: CircularProgressIndicator(
+                                                                          value:
+                                                                              downloadProgress.progress),
+                                                                    ),
+                                                                    errorWidget: (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Image
+                                                                            .asset(
+                                                                      dummyWishlistImage,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      height:
+                                                                          400,
+                                                                      width: double
+                                                                          .infinity,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : Image.asset(
+                                                                  backImage,
+                                                                  height: 400,
+                                                                  width: double
+                                                                      .infinity,
+                                                                  fit: BoxFit
+                                                                      .cover);
+                                                        },
+                                                      ),
+                                                    )
+                                                  : Image.asset(
+                                                      dummyWishlistImage,
+                                                      height: 400,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.cover),
                                               GestureDetector(
                                                 onTap: () {
                                                   productController
