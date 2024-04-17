@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
@@ -76,62 +78,122 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                               return Column(
                                 children: [
                                   GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.to(CatalogDetailsScreen(
+                                          title: controller.catalogList[index]
+                                                  ["name"] ??
+                                              "",
+                                          catalogText: widget.categorytext,
+                                        ));
+                                      },
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 10),
-                                        child: Container(
+                                        child: SizedBox(
                                           width: double.infinity,
                                           height: 100,
-                                          decoration: const BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(backImage),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 10),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                AppText(
-                                                  text: controller.catalogList[
-                                                          index]["name"] ??
-                                                      "",
-                                                  color: whiteBorderColor,
-                                                  fontSize: 16.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                const Expanded(
-                                                  child: SizedBox(
-                                                    width: 0,
+                                          child: Stack(
+                                            children: [
+                                              controller.catalogList[index]
+                                                          ["thumbnail"] !=
+                                                      null
+                                                  ? SizedBox(
+                                                      height: 100,
+                                                      width: double.infinity,
+                                                      child: CachedNetworkImage(
+                                                        cacheManager:
+                                                            CacheManager(Config(
+                                                                "customCacheKey",
+                                                                stalePeriod:
+                                                                    const Duration(
+                                                                        days:
+                                                                            15),
+                                                                maxNrOfCacheObjects:
+                                                                    100)),
+                                                        fit: BoxFit.cover,
+                                                        imageUrl: controller
+                                                                .catalogList[
+                                                            index]["thumbnail"],
+                                                        progressIndicatorBuilder:
+                                                            (context, url,
+                                                                    downloadProgress) =>
+                                                                Center(
+                                                          child: CircularProgressIndicator(
+                                                              value:
+                                                                  downloadProgress
+                                                                      .progress),
+                                                        ),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
+                                                          downloadImage,
+                                                          height: 210,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 100,
+                                                      width: double.infinity,
+                                                      child: Image.asset(
+                                                          backImage,
+                                                          height: 100,
+                                                          fit: BoxFit.cover),
+                                                    ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 10),
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      AppText(
+                                                        text: controller
+                                                                    .catalogList[
+                                                                index]["name"] ??
+                                                            "",
+                                                        color: whiteBorderColor,
+                                                        fontSize: 16.sp,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                      const Expanded(
+                                                        child: SizedBox(
+                                                          width: 0,
+                                                        ),
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Get.to(
+                                                              CatalogDetailsScreen(
+                                                            title: controller
+                                                                            .catalogList[
+                                                                        index]
+                                                                    ["name"] ??
+                                                                "",
+                                                            catalogText: widget
+                                                                .categorytext,
+                                                          ));
+                                                        },
+                                                        child: Image.asset(
+                                                            rightArrowImage,
+                                                            height: 20,
+                                                            width: 20,
+                                                            fit: BoxFit.cover),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Get.to(CatalogDetailsScreen(
-                                                      title: controller
-                                                                  .catalogList[
-                                                              index]["name"] ??
-                                                          "",
-                                                      catalogText:
-                                                          widget.categorytext,
-                                                    ));
-                                                  },
-                                                  child: Image.asset(
-                                                      rightArrowImage,
-                                                      height: 20,
-                                                      width: 20,
-                                                      fit: BoxFit.cover),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       )),
