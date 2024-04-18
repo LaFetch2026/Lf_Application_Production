@@ -17,11 +17,13 @@ class CheckoutScreen extends StatefulWidget {
   final String orderId;
   final double amount;
   final int cartId;
-  const CheckoutScreen(
-      {super.key,
-      required this.orderId,
-      required this.amount,
-      required this.cartId});
+
+  const CheckoutScreen({
+    super.key,
+    required this.orderId,
+    required this.amount,
+    required this.cartId,
+  });
 
   @override
   State<CheckoutScreen> createState() => CheckoutScreenState();
@@ -111,8 +113,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
                       onTap: () {
-                        Get.to(const ShippingAddressScreen(
+                        Get.to(ShippingAddressScreen(
                           addressId: 0,
+                          cartId: widget.cartId,
                         ));
                       },
                       child: Row(

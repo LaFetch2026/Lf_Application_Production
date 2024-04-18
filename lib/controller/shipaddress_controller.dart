@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../commonwidget/common_widgets.dart';
 import '../screens/loginscreen.dart';
-import '../screens/paymentscreen.dart';
 import '../utils/constants.dart';
 
 class ShipAddressController extends BaseController {
@@ -24,6 +23,8 @@ class ShipAddressController extends BaseController {
   List cityList = [].obs;
   RxInt current = 3.obs;
   RxInt cityId = 0.obs;
+  RxInt cartId = 0.obs;
+  RxInt addressId = 0.obs;
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();
   final stateController = TextEditingController();
@@ -145,10 +146,18 @@ class ShipAddressController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        Get.to(const PaymentScreen());
+        addressId.value = responseData["id"];
+        if (cartId.value != 0) {
+          callCartAddressUpdate();
+        }
+        Get.close(1);
       } else if (response.statusCode == 201) {
         print(responseData);
-        Get.to(const PaymentScreen());
+        addressId.value = responseData["id"];
+        if (cartId.value != 0) {
+          callCartAddressUpdate();
+        }
+        Get.close(1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -190,11 +199,19 @@ class ShipAddressController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        addressId.value = responseData["id"];
         getSnackBar("Address updated");
+        if (cartId.value != 0) {
+          callCartAddressUpdate();
+        }
         Get.close(1);
       } else if (response.statusCode == 201) {
         print(responseData);
+        addressId.value = responseData["id"];
         getSnackBar("Address updated");
+        if (cartId.value != 0) {
+          callCartAddressUpdate();
+        }
         Get.close(1);
       } else if (response.statusCode == 400) {
         print(response.body);
@@ -209,6 +226,35 @@ class ShipAddressController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  }
+
+  callCartAddressUpdate() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+        Uri.parse(
+            "${ApiConstants.baseUrl}/orders/${cartId.value}/addresses/${addressId.value}"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   getAddressDetails(int id) async {

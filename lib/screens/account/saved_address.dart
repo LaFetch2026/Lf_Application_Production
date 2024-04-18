@@ -57,6 +57,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                 builder: (BuildContext context) =>
                                     const ShippingAddressScreen(
                                       addressId: 0,
+                                      cartId: 0,
                                     )))
                             .then((value) => setState(
                                   () {
@@ -229,6 +230,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                       addressId: controller
                                                               .addressList[
                                                           index]["id"],
+                                                      cartId: 0,
                                                     ));
                                                   },
                                                   secondIcon: editImage),

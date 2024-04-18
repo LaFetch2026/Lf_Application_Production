@@ -13,7 +13,12 @@ import '../utils/constants.dart';
 
 class ShippingAddressScreen extends StatefulWidget {
   final int addressId;
-  const ShippingAddressScreen({super.key, required this.addressId});
+  final int cartId;
+  const ShippingAddressScreen({
+    super.key,
+    required this.addressId,
+    required this.cartId,
+  });
 
   @override
   State<ShippingAddressScreen> createState() => ShippingAddressScreenState();
@@ -33,6 +38,9 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
         .addPostFrameCallback((_) => shipController.getCitiesData());
     if (widget.addressId != 0) {
       shipController.getAddressDetails(widget.addressId);
+    }
+    if (widget.cartId != 0) {
+      shipController.cartId.value = widget.cartId;
     }
     super.initState();
   }
