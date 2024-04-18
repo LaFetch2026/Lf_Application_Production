@@ -3,10 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/catalog_product_appbar.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
-import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
-import '../../commonwidget/appbarwidgets/home_appbar.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 
@@ -28,12 +27,9 @@ class ProductListScreenState extends State<ProductListScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HomeAppbar(
+            CatalogProductAppbar(
               onPressedSearch: () {
                 Get.to(const SearchScreen());
-              },
-              onPressedCatalog: () {
-                Get.to(const CatalogScreen());
               },
               onPressedCart: () {
                 Get.to(const CartScreen());

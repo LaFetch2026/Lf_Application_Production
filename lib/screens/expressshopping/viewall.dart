@@ -6,6 +6,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../commonwidget/app_text.dart';
+import '../../commonwidget/catalogwidgets/bottomfiltters.dart';
+import '../../commonwidget/catalogwidgets/bottomsortby.dart';
 import '../../commonwidget/doublebtn.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
@@ -20,6 +22,7 @@ class ViewAllScreen extends StatefulWidget {
 
 class ViewAllScreenState extends State<ViewAllScreen> {
   final productController = Get.put(ProductController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -31,6 +34,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
         backgroundColor: whiteTextColor,
         body: Obx(() => productController.isProduct.value
             ? const Padding(
@@ -410,11 +414,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             secondBackgroundColor: backWhite,
                             firstBorderColor: deepGreytextColor,
                             secondBorderColor: deepGreytextColor,
-                            onPressedFirst: () {},
+                            onPressedFirst: () {
+                              scaffoldKey.currentState?.showBottomSheet(
+                                  (context) => const BottomSortBy());
+                            },
                             onPressedSecond: () {
-                              /*  Get.to(
-                          () => const LoginScreen(),
-                        ); */
+                              Get.to(const BottomFilters());
                             },
                           ),
                         ),
