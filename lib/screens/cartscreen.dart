@@ -144,7 +144,7 @@ class CartScreenState extends State<CartScreen> {
                                                           ),
                                                           AppText(
                                                             text:
-                                                                "\u{20B9} ${125.0}",
+                                                                "\u{20B9} ${controller.cartDetails["total"] ?? "0"}",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
@@ -285,16 +285,30 @@ class CartScreenState extends State<CartScreen> {
                                                                             .start,
                                                                     children: [
                                                                       Expanded(
-                                                                        flex: 1,
-                                                                        child: Image.asset(
-                                                                            backImage,
-                                                                            height:
-                                                                                78,
-                                                                            width:
-                                                                                64,
-                                                                            fit:
-                                                                                BoxFit.cover),
-                                                                      ),
+                                                                          flex:
+                                                                              1,
+                                                                          child: value.orderList[index]["product"]["product"] != null
+                                                                              ? value.orderList[index]["product"]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["product"]["images"] != null
+                                                                                  ? SizedBox(
+                                                                                      height: 78,
+                                                                                      width: 64,
+                                                                                      child: CachedNetworkImage(
+                                                                                        cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                        fit: BoxFit.cover,
+                                                                                        imageUrl: value.orderList[index]["product"]["product"]["images"][0]["name"],
+                                                                                        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                          child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                                        ),
+                                                                                        errorWidget: (context, url, error) => Image.asset(
+                                                                                          dummyWishlistImage,
+                                                                                          fit: BoxFit.cover,
+                                                                                          height: 78,
+                                                                                          width: 64,
+                                                                                        ),
+                                                                                      ),
+                                                                                    )
+                                                                                  : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)
+                                                                              : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)),
                                                                       Expanded(
                                                                         flex: 3,
                                                                         child:
@@ -837,7 +851,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "\u{20B9} ${2537.00}",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["total_mrp"] ?? "0"}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -874,7 +889,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "\u{20B9} ${112.32}",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["express_delivery_charges"] ?? "0"}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -910,7 +926,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "\u{20B9} ${-36.00}",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["discount_on_mrp"] ?? "0"}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -946,7 +963,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "\u{20B9} ${-36.00}",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["coupon_discount"] ?? "0"}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -992,7 +1010,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "Free",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["convenience_fee"] ?? "Free"}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -1038,7 +1057,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "\u{20B9} ${36}",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["total"] ?? "0"}", //will change
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -1082,7 +1102,8 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text: "\u{20B9} ${2501}",
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["total"] ?? "0"}",
                                                 fontFamily:
                                                     "Franklin Gothic Bold",
                                                 fontWeight: FontWeight.w700,

@@ -15,6 +15,7 @@ class CartController extends BaseController {
   RxBool isOrder = false.obs;
   List orderList = [].obs;
   RxInt cartId = 0.obs;
+  dynamic cartDetails = "".obs;
 
   getCartData() async {
     isOrder.value = true;
@@ -29,6 +30,7 @@ class CartController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
+          cartDetails = responseData;
           orderList = responseData["order_lines"];
           print(orderList);
           cartId.value = responseData["id"];

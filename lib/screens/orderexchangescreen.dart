@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/doubleiconbtn.dart';
@@ -277,14 +279,46 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                         child: Row(
                                                           children: [
                                                             Expanded(
-                                                              flex: 1,
-                                                              child: Image.asset(
-                                                                  backImage,
-                                                                  height: 85,
-                                                                  width: 70,
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                            ),
+                                                                flex: 1,
+                                                                child: orderController.orderList[index]["order_lines"][0]["product"] !=
+                                                                        null
+                                                                    ? orderController.orderList[index]["order_lines"][0]["product"]["images"].isNotEmpty &&
+                                                                            orderController.orderList[index]["order_lines"][0]["product"]["images"] !=
+                                                                                null
+                                                                        ? SizedBox(
+                                                                            height:
+                                                                                85,
+                                                                            width:
+                                                                                70,
+                                                                            child:
+                                                                                CachedNetworkImage(
+                                                                              cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                              fit: BoxFit.cover,
+                                                                              imageUrl: orderController.orderList[index]["order_lines"][0]["product"]["images"][0]["name"],
+                                                                              progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                              ),
+                                                                              errorWidget: (context, url, error) => Image.asset(
+                                                                                dummyWishlistImage,
+                                                                                fit: BoxFit.cover,
+                                                                                height: 85,
+                                                                                width: 70,
+                                                                              ),
+                                                                            ),
+                                                                          )
+                                                                        : Image.asset(
+                                                                            dummyWishlistImage,
+                                                                            height:
+                                                                                85,
+                                                                            width:
+                                                                                70,
+                                                                            fit: BoxFit
+                                                                                .cover)
+                                                                    : Image.asset(
+                                                                        dummyWishlistImage,
+                                                                        height: 85,
+                                                                        width: 70,
+                                                                        fit: BoxFit.cover)),
                                                             Expanded(
                                                               flex: 3,
                                                               child: Column(
