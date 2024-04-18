@@ -399,7 +399,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                         bottom: 0,
                         width: MediaQuery.of(context).size.width,
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 30, top: 20),
+                          padding: const EdgeInsets.only(
+                              bottom: 30, top: 20, left: 4, right: 12),
                           child: DoubleButton(
                             firstText: "Sort By",
                             secondText: "Filters",

@@ -76,15 +76,23 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     controller: wishlistController,
                     onPressed: () {
                       if (widget.boardId == 0) {
-                        wishlistController.callCreateWishlist(
-                          wishlistController.boardNameController.text
-                              .toString(),
-                        );
-                      } else {
-                        wishlistController.callUpdateWishlist(
+                        if (wishlistController.checkIdNamevalidation(
+                            wishlistController.boardNameController.text
+                                .toString())) {
+                          wishlistController.callCreateWishlist(
                             wishlistController.boardNameController.text
                                 .toString(),
-                            widget.boardId);
+                          );
+                        }
+                      } else {
+                        if (wishlistController.checkIdNamevalidation(
+                            wishlistController.boardNameController.text
+                                .toString())) {
+                          wishlistController.callUpdateWishlist(
+                              wishlistController.boardNameController.text
+                                  .toString(),
+                              widget.boardId);
+                        }
                       }
                     },
                     borderColor: colorPrimary),

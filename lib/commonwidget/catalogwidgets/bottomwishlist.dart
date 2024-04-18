@@ -149,6 +149,8 @@ class _BottomWishlistState extends State<BottomWishlist> {
                     onPressed: () {
                       if (id != 0) {
                         widget.onPressed?.call(id);
+                      } else {
+                        getSnackBar("Select Wishlist");
                       }
                     },
                     borderColor: colorPrimary),

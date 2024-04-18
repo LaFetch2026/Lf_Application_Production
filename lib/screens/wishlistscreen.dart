@@ -99,6 +99,10 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     )))
                             .then((value) => setState(
                                   () {
+                                    wishlistController.hasnextpage.value = true;
+                                    wishlistController.loadMore.value = false;
+                                    wishlistController.isWishlist.value = false;
+                                    wishlistController.page.value = 1;
                                     wishlistController.getWishlistData();
                                   },
                                 ));
@@ -227,6 +231,17 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                             )))
                                                 .then((value) => setState(
                                                       () {
+                                                        wishlistController
+                                                            .hasnextpage
+                                                            .value = true;
+                                                        wishlistController
+                                                            .loadMore
+                                                            .value = false;
+                                                        wishlistController
+                                                            .isWishlist
+                                                            .value = false;
+                                                        wishlistController
+                                                            .page.value = 1;
                                                         wishlistController
                                                             .getWishlistData();
                                                       },

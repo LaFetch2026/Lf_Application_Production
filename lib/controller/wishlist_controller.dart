@@ -52,6 +52,16 @@ class WishlistController extends BaseController {
     return true;
   }
 
+  bool checkIdNamevalidation(String name) {
+    if (name.isEmpty) {
+      getSnackBar(
+        "Enter Board Name",
+      );
+      return false;
+    }
+    return true;
+  }
+
   getWishlistData() async {
     isWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();

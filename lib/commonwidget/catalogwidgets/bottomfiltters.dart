@@ -239,7 +239,7 @@ class BottomFiltersState extends State<BottomFilters> {
                           ]
                           ), */
                           Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.only(bottom: 10),
                         child: SizedBox(
                           height: 150,
                           child: ListView.builder(
