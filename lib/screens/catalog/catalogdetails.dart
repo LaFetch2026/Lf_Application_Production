@@ -38,7 +38,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteTextColor,
+      backgroundColor: whiteColor,
       body: Column(
         children: [
           CatalogAppbar(

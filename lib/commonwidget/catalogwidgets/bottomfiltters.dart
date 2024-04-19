@@ -296,7 +296,7 @@ class BottomFiltersState extends State<BottomFilters> {
                     Container(
                       color: whiteBorderColor,
                       width: MediaQuery.of(context).size.width - 150,
-                      height: MediaQuery.of(context).size.height - 110,
+                      height: MediaQuery.of(context).size.height - 112,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),
@@ -318,7 +318,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                     const EdgeInsets.symmetric(vertical: 10),
                                 child: SizedBox(
                                   height:
-                                      MediaQuery.of(context).size.height - 170,
+                                      MediaQuery.of(context).size.height - 172,
                                   child: ListView.builder(
                                       physics: const ScrollPhysics(),
                                       itemCount: items.length,

@@ -84,7 +84,7 @@ class ProductListScreenState extends State<ProductListScreen> {
             ),
             Container(
               width: double.infinity,
-              color: lightText,
+              color: whiteTextColor,
               height: 1,
             ),
             const Expanded(

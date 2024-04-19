@@ -76,7 +76,7 @@ class CatalogScreenState extends State<CatalogScreen> {
             ),
             Container(
               width: double.infinity,
-              color: lightText,
+              color: whiteTextColor,
               height: 1,
             ),
             const Expanded(
