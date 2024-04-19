@@ -154,7 +154,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                         padding:
                                                             const EdgeInsets
                                                                     .symmetric(
-                                                                horizontal: 16,
+                                                                horizontal: 22,
                                                                 vertical: 10),
                                                         child: Align(
                                                           alignment: Alignment
@@ -200,7 +200,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     Padding(
                                                       padding: const EdgeInsets
                                                               .symmetric(
-                                                          horizontal: 16,
+                                                          horizontal: 22,
                                                           vertical: 10),
                                                       child: Align(
                                                         alignment: Alignment
@@ -298,13 +298,11 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           .symmetric(
                                                       horizontal: 10),
                                                   child: AppText(
-                                                    text: productController
-                                                                    .productList[
-                                                                index][
-                                                            "short_description"] ??
+                                                    text:
+                                                        "${productController.productList[index]["short_description"]} \n"
                                                         "",
                                                     color: nameText,
-                                                    maxLines: 1,
+                                                    maxLines: 2,
                                                     fontSize: 11.sp,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",

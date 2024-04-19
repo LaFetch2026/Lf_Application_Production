@@ -8,7 +8,8 @@ import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 
 class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen({super.key});
+  final int? index;
+  const BottomNavScreen({super.key, this.index});
 
   @override
   State<BottomNavScreen> createState() => BottomNavScreenState();
@@ -23,6 +24,15 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     const AccountScreen(),
     const ExpressShoppingScreen(),
   ];
+
+  @override
+  void initState() {
+    if (widget.index != null) {
+      _currentIndex = widget.index!;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

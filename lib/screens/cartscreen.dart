@@ -9,6 +9,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
 import '../controller/cart_controller.dart';
@@ -50,7 +51,11 @@ class CartScreenState extends State<CartScreen> {
             text: "Shopping Bag",
             threeDot: true,
             icon: bigHeartImage,
-            onPressedHeart: () {},
+            onPressedHeart: () {
+              Get.off(const BottomNavScreen(
+                index: 2,
+              ));
+            },
           ),
           Expanded(
             child: SingleChildScrollView(
