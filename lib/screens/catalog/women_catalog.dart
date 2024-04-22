@@ -89,10 +89,11 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 10),
-                                        child: SizedBox(
+                                        child: Container(
+                                          color: whiteColor,
                                           width: double.infinity,
-                                          height: 100,
-                                          child: Stack(
+                                          height: 145,
+                                          child: Column(
                                             children: [
                                               controller.catalogList[index]
                                                           ["thumbnail"] !=
@@ -149,7 +150,8 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                       Alignment.bottomCenter,
                                                   child: Row(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
+                                                        CrossAxisAlignment
+                                                            .center,
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
@@ -158,7 +160,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                     .catalogList[
                                                                 index]["name"] ??
                                                             "",
-                                                        color: whiteBorderColor,
+                                                        color: appbarText,
                                                         fontSize: 16.sp,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
@@ -187,6 +189,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                             rightArrowImage,
                                                             height: 20,
                                                             width: 20,
+                                                            color: appbarText,
                                                             fit: BoxFit.cover),
                                                       ),
                                                     ],

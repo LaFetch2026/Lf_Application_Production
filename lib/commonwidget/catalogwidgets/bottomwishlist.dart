@@ -73,70 +73,84 @@ class _BottomWishlistState extends State<BottomWishlist> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
               child: SizedBox(
-                width: double.infinity,
-                height: 250,
-                child: ListView.builder(
-                    physics: const ScrollPhysics(),
-                    itemCount: widget.wishlistList.length,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              text = widget.wishlistList[index]["name"];
-                              id = widget.wishlistList[index]["id"];
-                              print(text);
-                              setState(() {});
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              color: whiteColor,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  index == 0
-                                      ? const Divider(
-                                          color: colorSecondary,
-                                        )
-                                      : const SizedBox(
-                                          height: 0,
-                                        ),
-                                  Container(
+                  width: double.infinity,
+                  height: 250,
+                  child: widget.wishlistList.isNotEmpty
+                      ? ListView.builder(
+                          physics: const ScrollPhysics(),
+                          itemCount: widget.wishlistList.length,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (ctx, index) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    text = widget.wishlistList[index]["name"];
+                                    id = widget.wishlistList[index]["id"];
+                                    print(text);
+                                    setState(() {});
+                                  },
+                                  child: Container(
                                     width: double.infinity,
-                                    color: text ==
-                                            widget.wishlistList[index]["name"]
-                                        ? blackColor
-                                        : whiteColor,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                      child: Text(
-                                        widget.wishlistList[index]["name"],
-                                        style: TextStyle(
-                                          fontSize: 14,
+                                    color: whiteColor,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        index == 0
+                                            ? const Divider(
+                                                color: colorSecondary,
+                                              )
+                                            : const SizedBox(
+                                                height: 0,
+                                              ),
+                                        Container(
+                                          width: double.infinity,
                                           color: text ==
                                                   widget.wishlistList[index]
                                                       ["name"]
-                                              ? whiteColor
-                                              : nameText,
-                                          fontFamily: "Franklin Gothic Regular",
+                                              ? blackColor
+                                              : whiteColor,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10, horizontal: 10),
+                                            child: Text(
+                                              widget.wishlistList[index]
+                                                  ["name"],
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: text ==
+                                                        widget.wishlistList[
+                                                            index]["name"]
+                                                    ? whiteColor
+                                                    : nameText,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        const Divider(
+                                          color: colorSecondary,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const Divider(
-                                    color: colorSecondary,
-                                  ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              ],
+                            );
+                          })
+                      : const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(
+                            child: Text("No Wishlist Found",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontFamily: "Franklin Gothic Regular")),
                           ),
-                        ],
-                      );
-                    }),
-              ),
+                        )),
             ),
             Obx(
               () => Padding(

@@ -57,7 +57,7 @@ class OrderController extends BaseController {
     try {
       var response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/orders?status=${status.value}&q=$queryText"),
+              "${ApiConstants.baseUrl}/orders?status=${status.value}&q=${queryText.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -96,7 +96,7 @@ class OrderController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/orders?page=${page.value}&status=${status.value}&q=$queryText"),
+                "${ApiConstants.baseUrl}/orders?page=${page.value}&status=${status.value}&q=${queryText.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
