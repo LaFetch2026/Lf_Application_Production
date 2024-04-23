@@ -43,7 +43,7 @@ class BrandController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/brands?q=$queryText"),
+          Uri.parse("${ApiConstants.baseUrl}/brands?q=${queryText.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -85,7 +85,7 @@ class BrandController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/brands?q=$queryText&page=${page.value}"),
+                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
