@@ -141,6 +141,7 @@ const editImage = 'assets/images/edit.png';
 const downloadImage = 'assets/images/download.jpeg';
 const placeHolderImage = 'assets/images/placeholder.png';
 const dummyWishlistImage = 'assets/images/dummy_wishlist.jpeg';
+const razorpayImage = 'assets/images/razorpay.png';
 
 class ApiConstants {
   ApiConstants._();

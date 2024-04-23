@@ -248,7 +248,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           horizontal: 10),
                                                       child: AppText(
                                                         text:
-                                                            "Qty :${orderController.orderDetails["order_lines"][0]["quantity"] ?? "0"}",
+                                                            "Qty :${orderController.orderDetails["order_lines"][0]["quantity"].toString()}",
                                                         color: greyTextColor,
                                                         maxLines: 2,
                                                         fontSize: 12.sp,
@@ -479,482 +479,536 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ],
                         )),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Container(
-                      color: whiteColor,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              text: "Delivery Address",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: loginText,
-                              fontSize: 18.sp,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: AppText(
-                                text: "Jane Doe",
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
-                                color: nameText,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: AppText(
-                                      text: "+9178xxxxxx23",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: textHintColor,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                  Padding(
+                  Obx(
+                    () => orderController.isDetails.value
+                        ? const Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : orderController.orderDetails["address"] != null
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  color: whiteColor,
+                                  child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: AppText(
-                                      text: "example@mail.com",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: textHintColor,
-                                      fontSize: 14.sp,
+                                        vertical: 10, horizontal: 16),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          text: "Delivery Address",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: loginText,
+                                          fontSize: 18.sp,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: AppText(
+                                            text: orderController
+                                                        .orderDetails["address"]
+                                                    ["name"] ??
+                                                "",
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                            color: nameText,
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 10),
+                                                child: AppText(
+                                                  text: orderController
+                                                              .orderDetails[
+                                                          "address"]["phone"] ??
+                                                      "",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textHintColor,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                child: AppText(
+                                                  text: "example@mail.com",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textHintColor,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8),
+                                          child: AppText(
+                                            text: orderController
+                                                        .orderDetails["address"]
+                                                    ["city"]["name"] ??
+                                                "",
+                                            maxLines: 2,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textHintColor,
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5),
+                                          child: Text(
+                                            "View on Maps",
+                                            style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: underlineColor,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 20),
+                                          child: AppText(
+                                            text: "Billing Address",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: bottomnavBack,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: AppText(
+                                            text: "Same as Delivery Address",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textHintColor,
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: AppText(
-                                text:
-                                    "123 Green Park, New Delhi, Delhi, 110016, India",
-                                maxLines: 2,
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: textHintColor,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: Text(
-                                "View on Maps",
-                                style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                  color: underlineColor,
-                                  fontSize: 14.sp,
                                 ),
+                              )
+                            : const SizedBox(
+                                height: 0,
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: AppText(
-                                text: "Billing Address",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: bottomnavBack,
-                                fontSize: 12.sp,
+                  ),
+                  Obx(
+                    () => orderController.isDetails.value
+                        ? const Padding(
+                            padding: EdgeInsets.all(40.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : orderController.orderDetails["payment"] != null
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: Container(
+                                  color: whiteColor,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 16),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Total Item Price",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: loginText,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                child: AppText(
+                                                  text:
+                                                      "\u{20B9} ${orderController.orderDetails["payment"]["amount"] ?? "0"}",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: loginText,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Row(
+                                            children: [
+                                              AppText(
+                                                text: "You saved",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: greyTextColor,
+                                                fontSize: 12.sp,
+                                              ),
+                                              AppText(
+                                                text: " \u{20B9} ${125.00}",
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                                color: greenText,
+                                                fontSize: 12.sp,
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: " on this item",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: greyTextColor,
+                                                  fontSize: 12.sp,
+                                                ),
+                                              ),
+                                              AppText(
+                                                text: "View Breakup",
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                                color: blackColor,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Payment Method",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: bottomnavBack,
+                                                  fontSize: 12.sp,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16),
+                                                child: AppText(
+                                                  text: orderController
+                                                                  .orderDetails[
+                                                              "payment"]
+                                                          ["payment_service"] ??
+                                                      "",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textHintColor,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                              Image.asset(razorpayImage,
+                                                  fit: BoxFit.cover),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(
+                                height: 0,
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: AppText(
-                                text: "Same as Delivery Address",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: textHintColor,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Container(
-                      color: whiteColor,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: AppText(
-                                      text: "Total Item Price",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: loginText,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: AppText(
-                                      text:
-                                          "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
-                                      color: loginText,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Row(
-                                children: [
-                                  AppText(
-                                    text: "You saved",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: greyTextColor,
-                                    fontSize: 12.sp,
-                                  ),
-                                  AppText(
-                                    text: " \u{20B9} ${125.00}",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: greenText,
-                                    fontSize: 12.sp,
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: AppText(
-                                      text: " on this item",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: greyTextColor,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  AppText(
-                                    text: "View Breakup",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: blackColor,
-                                    fontSize: 12.sp,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: AppText(
-                                      text: "Payment Method",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: bottomnavBack,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: AppText(
-                                      text: "Google Pay",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: textHintColor,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                  Image.asset(gPayImage,
-                                      height: 18, fit: BoxFit.cover),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Container(
-                      color: whiteColor,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: AppText(
-                                text: "Other items in this order",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: loginText,
-                                fontSize: 18.sp,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: AppText(
-                                text: "Order ID #123456789 ",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: greyTextColor,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Obx(
-                              () => orderController.isDetails.value
-                                  ? const Padding(
-                                      padding: EdgeInsets.all(40.0),
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    )
-                                  : Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 20, top: 10),
-                                      child: ListView.builder(
-                                          primary: false,
-                                          shrinkWrap: true,
-                                          physics: const ScrollPhysics(),
-                                          itemCount: orderController
-                                              .orderDetails["order_lines"]
-                                              .length,
-                                          padding: EdgeInsets.zero,
-                                          scrollDirection: Axis.vertical,
-                                          itemBuilder: (ctx, index) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5),
-                                              child: Column(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {},
-                                                    child: Container(
-                                                      color: whiteColor,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(top: 10),
-                                                        child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    flex: 1,
-                                                                    child: Image.asset(
-                                                                        backImage,
-                                                                        height:
-                                                                            85,
-                                                                        width:
-                                                                            70,
-                                                                        fit: BoxFit
-                                                                            .cover),
-                                                                  ),
-                                                                  Expanded(
-                                                                    flex: 3,
-                                                                    child:
-                                                                        Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.symmetric(
-                                                                            horizontal:
-                                                                                5,
-                                                                          ),
-                                                                          child:
-                                                                              AppText(
-                                                                            text: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                ? orderController.orderDetails["order_lines"][index]["product"]["name"]
-                                                                                : "",
-                                                                            maxLines:
-                                                                                1,
-                                                                            fontFamily:
-                                                                                "Franklin Gothic Regular",
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                            fontSize:
-                                                                                14.sp,
-                                                                            color:
-                                                                                nameText,
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Container(
+                        color: whiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 16),
+                          child: Obx(
+                            () => orderController.isDetails.value
+                                ? const Padding(
+                                    padding: EdgeInsets.all(40.0),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 16),
+                                        child: AppText(
+                                          text: "Other items in this order",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: loginText,
+                                          fontSize: 18.sp,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: AppText(
+                                          text:
+                                              "Order ID ${orderController.orderDetails["payment"] != null ? orderController.orderDetails["payment"]["transaction_id"] : ""} ",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: greyTextColor,
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 20, top: 10),
+                                        child: ListView.builder(
+                                            primary: false,
+                                            shrinkWrap: true,
+                                            physics: const ScrollPhysics(),
+                                            itemCount: orderController
+                                                .orderDetails["order_lines"]
+                                                .length,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (ctx, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5),
+                                                child: Column(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {},
+                                                      child: Container(
+                                                        color: whiteColor,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10),
+                                                          child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child: Image.asset(
+                                                                          backImage,
+                                                                          height:
+                                                                              85,
+                                                                          width:
+                                                                              70,
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                    ),
+                                                                    Expanded(
+                                                                      flex: 3,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(
                                                                               horizontal: 5,
-                                                                              vertical: 5),
-                                                                          child:
-                                                                              AppText(
-                                                                            text: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                ? orderController.orderDetails["order_lines"][index]["product"]["short_description"]
-                                                                                : "",
-                                                                            color:
-                                                                                greyTextColor,
-                                                                            maxLines:
-                                                                                2,
-                                                                            fontSize:
-                                                                                12.sp,
-                                                                            fontFamily:
-                                                                                "Franklin Gothic Regular",
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
+                                                                            ),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                              maxLines: 1,
+                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                              fontWeight: FontWeight.w400,
+                                                                              fontSize: 14.sp,
+                                                                              color: nameText,
+                                                                            ),
                                                                           ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.symmetric(
-                                                                              horizontal: 5,
-                                                                              vertical: 5),
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              AppText(
-                                                                                text: "Size :M",
-                                                                                color: greyTextColor,
-                                                                                maxLines: 2,
-                                                                                fontSize: 12.sp,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                                                                child: AppText(
-                                                                                  text: "Qty :${orderController.orderDetails["order_lines"][index]["quantity"] ?? "0"}",
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : "",
+                                                                              color: greyTextColor,
+                                                                              maxLines: 2,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                              fontWeight: FontWeight.w400,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                AppText(
+                                                                                  text: "Size :M",
                                                                                   color: greyTextColor,
                                                                                   maxLines: 2,
                                                                                   fontSize: 12.sp,
                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                   fontWeight: FontWeight.w400,
                                                                                 ),
-                                                                              ),
-                                                                            ],
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                                                  child: AppText(
+                                                                                    text: "Qty :${orderController.orderDetails["order_lines"][index]["quantity"].toString()}",
+                                                                                    color: greyTextColor,
+                                                                                    maxLines: 2,
+                                                                                    fontSize: 12.sp,
+                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
                                                                           ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ]),
+                                                                        ],
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ]),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  )
-                                                ],
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: AppText(
+                                                text: "Total Order Price",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: loginText,
+                                                fontSize: 14.sp,
                                               ),
-                                            );
-                                          }),
-                                    ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: AppText(
-                                      text: "Total Order Price",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: loginText,
-                                      fontSize: 14.sp,
-                                    ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                              child: AppText(
+                                                text:
+                                                    "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                                color: loginText,
+                                                fontSize: 14.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        child: Row(
+                                          children: [
+                                            AppText(
+                                              text: "You saved",
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: greyTextColor,
+                                              fontSize: 12.sp,
+                                            ),
+                                            AppText(
+                                              text: " \u{20B9} ${125.00}",
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: greenText,
+                                              fontSize: 12.sp,
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: AppText(
+                                                text: " on this item",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: greyTextColor,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ),
+                                            AppText(
+                                              text: "View Breakup",
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: blackColor,
+                                              fontSize: 12.sp,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: AppText(
-                                      text:
-                                          "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
-                                      color: loginText,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                children: [
-                                  AppText(
-                                    text: "You saved",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: greyTextColor,
-                                    fontSize: 12.sp,
-                                  ),
-                                  AppText(
-                                    text: " \u{20B9} ${125.00}",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: greenText,
-                                    fontSize: 12.sp,
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: AppText(
-                                      text: " on this item",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: greyTextColor,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  AppText(
-                                    text: "View Breakup",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: blackColor,
-                                    fontSize: 12.sp,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  )
+                      )),
                 ],
               ),
             ),
