@@ -17,7 +17,8 @@ import 'cartscreen.dart';
 import 'catalogscreen.dart';
 
 class WishlistScreen extends StatefulWidget {
-  const WishlistScreen({super.key});
+  final Function? onPressed;
+  const WishlistScreen({this.onPressed, super.key});
 
   @override
   State<WishlistScreen> createState() => WishlistScreenState();
@@ -192,7 +193,9 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       label: "Continue Shopping",
                                       textColor: btnTextColor,
                                       backgroundColor: whiteTextColor,
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        widget.onPressed?.call();
+                                      },
                                       borderColor: btnTextColor),
                                 )
                               ],

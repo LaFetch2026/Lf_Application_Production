@@ -52,7 +52,7 @@ class CartScreenState extends State<CartScreen> {
             threeDot: true,
             icon: bigHeartImage,
             onPressedHeart: () {
-              Get.off(const BottomNavScreen(
+              Get.offAll(const BottomNavScreen(
                 index: 2,
               ));
             },
@@ -76,7 +76,9 @@ class CartScreenState extends State<CartScreen> {
                                   image: shopBagImage,
                                   text1: "There is still room for more",
                                   onPressed: () {
-                                    Get.back();
+                                    Get.offAll(const BottomNavScreen(
+                                      index: 0,
+                                    ));
                                   },
                                   text2:
                                       "Looking for items you previously saved?\nSign in to pick up where you left out",

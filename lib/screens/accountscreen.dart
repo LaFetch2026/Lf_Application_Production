@@ -18,7 +18,8 @@ import '../utils/constants.dart';
 import 'bottomnavscreen.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  final Function? onPressed;
+  const AccountScreen({this.onPressed, super.key});
 
   @override
   State<AccountScreen> createState() => AccountScreenState();
@@ -335,7 +336,9 @@ class AccountScreenState extends State<AccountScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              widget.onPressed?.call();
+                            },
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   top: 20, left: 16, right: 16),

@@ -17,7 +17,7 @@ class BottomNavScreen extends StatefulWidget {
 
 class BottomNavScreenState extends State<BottomNavScreen> {
   int _currentIndex = 0;
-  final screen = [
+  var screen = [
     const HomeScreen(),
     const BrandsScreen(),
     const WishlistScreen(),
@@ -27,10 +27,29 @@ class BottomNavScreenState extends State<BottomNavScreen> {
 
   @override
   void initState() {
+    screen = [
+      const HomeScreen(),
+      const BrandsScreen(),
+      WishlistScreen(
+        onPressed: () {
+          setState(() {
+            _currentIndex = 0;
+          });
+        },
+      ),
+      AccountScreen(onPressed: changeTab),
+      const ExpressShoppingScreen(),
+    ];
     if (widget.index != null) {
       _currentIndex = widget.index!;
     }
     super.initState();
+  }
+
+  void changeTab() {
+    setState(() {
+      _currentIndex = 2;
+    });
   }
 
   @override
