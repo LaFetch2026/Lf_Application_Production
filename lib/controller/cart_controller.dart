@@ -16,6 +16,13 @@ class CartController extends BaseController {
   List orderList = [].obs;
   RxInt cartId = 0.obs;
   dynamic cartDetails = "".obs;
+  RxString mrp = "".obs;
+  RxString expressDelivery = "".obs;
+  RxString discount = "".obs;
+  RxString coupanDiscount = "".obs;
+  RxString convenienceFee = "".obs;
+  RxString tax = "".obs;
+  RxString total = "".obs;
 
   getCartData() async {
     isOrder.value = true;
@@ -157,6 +164,13 @@ class CartController extends BaseController {
           orderId: responseData["payment"]["transaction_id"],
           amount: responseData["payment"]["amount"],
           cartId: responseData["id"],
+          mrp: mrp.value,
+          expressDelivery: expressDelivery.value,
+          convenienceFee: convenienceFee.value,
+          coupanDiscount: coupanDiscount.value,
+          discount: discount.value,
+          tax: tax.value,
+          total: total.value,
         ));
       } else if (response.statusCode == 400) {
         print(response.body);

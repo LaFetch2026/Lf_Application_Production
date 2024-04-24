@@ -17,12 +17,26 @@ class CheckoutScreen extends StatefulWidget {
   final String orderId;
   final double amount;
   final int cartId;
+  final String mrp;
+  final String expressDelivery;
+  final String discount;
+  final String coupanDiscount;
+  final String convenienceFee;
+  final String tax;
+  final String total;
 
   const CheckoutScreen({
     super.key,
     required this.orderId,
     required this.amount,
     required this.cartId,
+    required this.mrp,
+    required this.expressDelivery,
+    required this.discount,
+    required this.coupanDiscount,
+    required this.convenienceFee,
+    required this.tax,
+    required this.total,
   });
 
   @override
@@ -374,7 +388,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "\u{20B9} ${2537.00}",
+                                  text: "\u{20B9} ${widget.mrp}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: textColor,
@@ -405,7 +419,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "\u{20B9} ${112.32}",
+                                  text: "\u{20B9} ${widget.expressDelivery}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: textColor,
@@ -436,7 +450,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "\u{20B9} ${-36.00}",
+                                  text: "\u{20B9} ${widget.discount}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
@@ -467,7 +481,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "\u{20B9} ${-36.00}",
+                                  text: "\u{20B9} ${widget.coupanDiscount}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
@@ -506,7 +520,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "Free",
+                                  text: widget.convenienceFee,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
@@ -545,7 +559,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "\u{20B9} ${36}",
+                                  text: "\u{20B9} ${widget.tax}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: textColor,
@@ -584,7 +598,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: "\u{20B9} ${2501}",
+                                  text: "\u{20B9} ${widget.total}",
                                   fontFamily: "Franklin Gothic Bold",
                                   fontWeight: FontWeight.w700,
                                   color: colorPrimary,

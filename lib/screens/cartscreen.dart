@@ -1065,7 +1065,7 @@ class CartScreenState extends State<CartScreen> {
                                               ),
                                               AppText(
                                                 text:
-                                                    "\u{20B9} ${controller.cartDetails["total"] ?? "0"}", //will change
+                                                    "\u{20B9} ${controller.cartDetails["total_tax"].toString()}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -1353,6 +1353,27 @@ class CartScreenState extends State<CartScreen> {
                                 backgroundColor: colorPrimary,
                                 controller: controller,
                                 onPressed: () {
+                                  controller.mrp.value =
+                                      controller.cartDetails["total_mrp"] ?? "";
+                                  controller.expressDelivery.value =
+                                      controller.cartDetails[
+                                              "express_delivery_charges"] ??
+                                          "";
+                                  controller.discount.value = controller
+                                          .cartDetails["discount_on_mrp"] ??
+                                      "";
+                                  controller.coupanDiscount.value = controller
+                                          .cartDetails["coupon_discount"] ??
+                                      "";
+                                  controller.convenienceFee.value = controller
+                                          .cartDetails["convenience_fee"] ??
+                                      "";
+                                  controller.tax.value = controller
+                                      .cartDetails["total_tax"]
+                                      .toString();
+                                  controller.total.value = controller
+                                      .cartDetails["total"]
+                                      .toString();
                                   controller.callInitiatePayment();
                                 },
                                 borderColor: colorPrimary),
