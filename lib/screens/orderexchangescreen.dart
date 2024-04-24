@@ -15,6 +15,7 @@ import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
 import '../controller/order_controller.dart';
 import '../utils/constants.dart';
+import 'package:intl/intl.dart';
 
 class OrderExchangeScreen extends StatefulWidget {
   const OrderExchangeScreen({super.key});
@@ -775,8 +776,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             5),
                                                                     child:
                                                                         AppText(
-                                                                      text:
-                                                                          "Delivered on",
+                                                                      text: orderController.orderList[index]["delivered_at"] !=
+                                                                              null
+                                                                          ? "Delivered on"
+                                                                          : "",
                                                                       color:
                                                                           greyTextColor,
                                                                       fontSize:
@@ -797,8 +800,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             5),
                                                                     child:
                                                                         AppText(
-                                                                      text:
-                                                                          "Jul 24, at 3:30 PM",
+                                                                      text: orderController.orderList[index]["delivered_at"] !=
+                                                                              null
+                                                                          ? "${DateFormat.MMMM().format(DateTime.parse(orderController.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(orderController.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(orderController.orderList[index]["delivered_at"]))}"
+                                                                          : "",
                                                                       color:
                                                                           greyTextColor,
                                                                       fontSize:
