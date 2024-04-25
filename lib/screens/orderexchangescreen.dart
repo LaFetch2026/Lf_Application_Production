@@ -767,54 +767,164 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     CrossAxisAlignment
                                                                         .end,
                                                                 children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                        horizontal:
-                                                                            5,
-                                                                        vertical:
-                                                                            5),
-                                                                    child:
-                                                                        AppText(
-                                                                      text: orderController.orderList[index]["delivered_at"] !=
-                                                                              null
-                                                                          ? "Delivered on"
-                                                                          : "",
-                                                                      color:
-                                                                          greyTextColor,
-                                                                      fontSize:
-                                                                          11.sp,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
+                                                                  if (orderController
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "delivered_at"] !=
+                                                                      null) ...[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5,
+                                                                          vertical:
+                                                                              5),
+                                                                      child:
+                                                                          AppText(
+                                                                        text:
+                                                                            "Delivered on",
+                                                                        color:
+                                                                            greyTextColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                        horizontal:
-                                                                            5,
-                                                                        vertical:
-                                                                            5),
-                                                                    child:
-                                                                        AppText(
-                                                                      text: orderController.orderList[index]["delivered_at"] !=
-                                                                              null
-                                                                          ? "${DateFormat.MMMM().format(DateTime.parse(orderController.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(orderController.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(orderController.orderList[index]["delivered_at"]))}"
-                                                                          : "",
-                                                                      color:
-                                                                          greyTextColor,
-                                                                      fontSize:
-                                                                          11.sp,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
+                                                                  ] else if (orderController
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "estimated_delivery_at"] !=
+                                                                      null) ...[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5,
+                                                                          vertical:
+                                                                              5),
+                                                                      child:
+                                                                          AppText(
+                                                                        text:
+                                                                            "Estimated Delivery",
+                                                                        color:
+                                                                            greyTextColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
                                                                     ),
-                                                                  ),
+                                                                  ] else if (orderController
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "cancelled_at"] !=
+                                                                      null) ...[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5,
+                                                                          vertical:
+                                                                              5),
+                                                                      child:
+                                                                          AppText(
+                                                                        text:
+                                                                            "Cancelled on",
+                                                                        color:
+                                                                            greyTextColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                  if (orderController
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "delivered_at"] !=
+                                                                      null) ...[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5,
+                                                                          vertical:
+                                                                              5),
+                                                                      child:
+                                                                          AppText(
+                                                                        text:
+                                                                            "${DateFormat.MMMM().format(DateTime.parse(orderController.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(orderController.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(orderController.orderList[index]["delivered_at"]))}",
+                                                                        color:
+                                                                            greyTextColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    )
+                                                                  ] else if (orderController
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "estimated_delivery_at"] !=
+                                                                      null) ...[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5,
+                                                                          vertical:
+                                                                              5),
+                                                                      child:
+                                                                          AppText(
+                                                                        text:
+                                                                            "${DateFormat.MMMM().format(DateTime.parse(orderController.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(orderController.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(orderController.orderList[index]["estimated_delivery_at"]).year}",
+                                                                        color:
+                                                                            greyTextColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    )
+                                                                  ] else if (orderController
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "cancelled_at"] !=
+                                                                      null) ...[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5,
+                                                                          vertical:
+                                                                              5),
+                                                                      child:
+                                                                          AppText(
+                                                                        text:
+                                                                            "${DateFormat.MMMM().format(DateTime.parse(orderController.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(orderController.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(orderController.orderList[index]["cancelled_at"]).year}",
+                                                                        color:
+                                                                            greyTextColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    )
+                                                                  ],
                                                                 ],
                                                               )
                                                             ],
