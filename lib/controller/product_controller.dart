@@ -275,8 +275,13 @@ class ProductController extends BaseController {
           "Authorization": "Bearer ${prefs.getString('token')} ",
         },
       );
+      var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        getSnackBar("product added to wishlist");
+        if (responseData["wishlisted"]) {
+          getSnackBar("product added to the wishlist");
+        } else {
+          getSnackBar("product removed to the wishlist");
+        }
         if (type == "product") {
           getProductData("relevant");
         } else {

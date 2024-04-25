@@ -223,7 +223,11 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                   secondBorderColor:
                                                       btnTextColor,
                                                   firstIcon: blackCrossImage,
-                                                  onPressedFirst: () {},
+                                                  onPressedFirst: () {
+                                                    controller.callRemoveAddress(
+                                                        controller.addressList[
+                                                            index]["id"]);
+                                                  },
                                                   onPressedSecond: () {
                                                     Get.to(
                                                         ShippingAddressScreen(

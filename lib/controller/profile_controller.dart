@@ -172,4 +172,32 @@ class ProfileController extends BaseController {
     }
     isAddress.value = false;
   }
+
+  callRemoveAddress(int addressId) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.delete(
+        Uri.parse("${ApiConstants.baseUrl}/addresses/$addressId"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      if (response.statusCode == 200) {
+        getSnackBar("Address removed");
+        getAddressData();
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print("delete address failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
