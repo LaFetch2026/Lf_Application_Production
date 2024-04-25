@@ -24,6 +24,7 @@ class BrandsScreenState extends State<BrandsScreen> {
 
   @override
   void initState() {
+    brandController.text.value = "Expand All";
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.listController.addListener(() {
         brandController.fetchMoreData();
