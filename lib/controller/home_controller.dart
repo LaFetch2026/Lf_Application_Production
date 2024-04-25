@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -11,11 +12,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class HomeController extends BaseController {
   RxBool isBanner1 = false.obs;
   RxBool isBanner2 = false.obs;
   RxBool isCategory = false.obs;
+  RxString playerId = "".obs;
+  RxString fcmToken = "".obs;
+  String devicename = "";
+  String platform = "";
   List banner2List = [].obs;
   List banner1List = [].obs;
   List categoryList = [].obs;
@@ -24,6 +30,19 @@ class HomeController extends BaseController {
   final PageController pageController = PageController(
     initialPage: 0,
   );
+
+  void getDeviceName() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      devicename = androidInfo.model;
+      platform = "Android";
+    } else {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      devicename = iosInfo.utsname.machine;
+      platform = "IOS";
+    }
+  }
 
   getCategoryData() async {
     isCategory.value = true;
@@ -122,5 +141,42 @@ class HomeController extends BaseController {
       print("error$e");
     }
     isBanner2.value = false;
+  }
+
+  void callSendDeviceToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "player_id": playerId.value,
+        "device_model": devicename,
+        "apn_token": fcmToken.value,
+        "fcm_token": fcmToken.value,
+        "platform": platform,
+      };
+      var response =
+          await http.put(Uri.parse("${ApiConstants.baseUrl}/device-tokens"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      if (response.statusCode == 201) {
+        print("device token sent");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else {
+        print("device token failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
