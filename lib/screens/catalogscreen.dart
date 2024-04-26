@@ -41,6 +41,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                 alignment: Alignment.topCenter,
                 child: TabBar(
                     isScrollable: false,
+                    physics: const NeverScrollableScrollPhysics(),
                     indicatorColor: btnTextColor,
                     unselectedLabelColor: textHintColor,
                     labelColor: btnTextColor,
@@ -80,20 +81,22 @@ class CatalogScreenState extends State<CatalogScreen> {
               height: 1,
             ),
             const Expanded(
-              child: TabBarView(children: [
-                WomenCatalogScreen(
-                  categorytext: "women",
-                  type: 3,
-                ),
-                WomenCatalogScreen(
-                  categorytext: "men",
-                  type: 2,
-                ),
-                WomenCatalogScreen(
-                  categorytext: "kids",
-                  type: 1,
-                ),
-              ]),
+              child: TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    WomenCatalogScreen(
+                      categorytext: "women",
+                      type: 3,
+                    ),
+                    WomenCatalogScreen(
+                      categorytext: "men",
+                      type: 2,
+                    ),
+                    WomenCatalogScreen(
+                      categorytext: "kids",
+                      type: 1,
+                    ),
+                  ]),
             ),
           ],
         ),

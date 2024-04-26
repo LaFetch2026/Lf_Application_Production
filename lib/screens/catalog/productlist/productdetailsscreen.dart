@@ -97,14 +97,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   List<Widget> getListForPageView() {
     List<Widget> list = [];
-    for (var i = 0;
-        i < productController.productDetails["images"].length;
-        i++) {
-      list.add(Container(
-          color: colorSecondary,
-          child: Image.network(
-              productController.productDetails["images"][i]["name"],
-              fit: BoxFit.fitHeight)));
+    if (productController.productDetails["images"].isNotEmpty) {
+      for (var i = 0;
+          i < productController.productDetails["images"].length;
+          i++) {
+        list.add(Container(
+            color: colorSecondary,
+            child: Image.network(
+                productController.productDetails["images"][i]["name"],
+                fit: BoxFit.fitHeight)));
+      }
+    } else {
+      list.add(Image.asset(dummyWishlistImage, fit: BoxFit.fitHeight));
     }
     return list;
   }

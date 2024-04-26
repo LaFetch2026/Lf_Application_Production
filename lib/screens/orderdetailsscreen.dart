@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../controller/order_controller.dart';
@@ -20,6 +21,7 @@ class OrderDetailsScreen extends StatefulWidget {
 class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final orderController = Get.put(OrderController());
   double _rating = 0;
+  String email = "";
   List<String> items = [
     "1",
     "2",
@@ -34,9 +36,17 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   @override
   void initState() {
+    getPrefrenceValue();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => orderController.getOrderDetails(widget.orderId));
     super.initState();
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('email') != null) {
+      email = prefs.getString('email')!;
+    }
   }
 
   @override
@@ -546,7 +556,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 5),
                                                 child: AppText(
-                                                  text: "example@mail.com",
+                                                  text: email,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
@@ -688,7 +698,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 fontSize: 12.sp,
                                               ),
                                               AppText(
-                                                text: " \u{20B9} ${125.00}",
+                                                text:
+                                                    " \u{20B9} ${orderController.orderDetails["saved_total"] ?? ""}",
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
                                                 color: greenText,
@@ -953,7 +964,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       horizontal: 5),
                                               child: AppText(
                                                 text:
-                                                    "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
+                                                    "\u{20B9} ${orderController.orderDetails["total"] ?? "0"}",
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
                                                 color: loginText,
@@ -977,7 +988,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               fontSize: 12.sp,
                                             ),
                                             AppText(
-                                              text: " \u{20B9} ${125.00}",
+                                              text:
+                                                  " \u{20B9} ${orderController.orderDetails["saved_total"] ?? ""}",
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
                                               color: greenText,

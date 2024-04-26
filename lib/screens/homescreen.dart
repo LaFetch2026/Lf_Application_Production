@@ -168,11 +168,13 @@ class HomeScreenState extends State<HomeScreen> {
               height: 1,
             ),
             const Expanded(
-              child: TabBarView(children: [
-                DiscountScreen(),
-                DiscountScreen(),
-                DiscountScreen(),
-              ]),
+              child: TabBarView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    DiscountScreen(),
+                    DiscountScreen(),
+                    DiscountScreen(),
+                  ]),
             ),
           ],
         ),
