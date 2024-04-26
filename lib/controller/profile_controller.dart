@@ -200,4 +200,40 @@ class ProfileController extends BaseController {
       print(e.toString());
     }
   }
+
+  void callLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.post(
+          Uri.parse("${ApiConstants.baseUrl}/logout"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else {
+        getSnackBar("logout failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

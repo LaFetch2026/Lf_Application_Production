@@ -14,6 +14,7 @@ import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
 import '../commonwidget/app_text.dart';
+import '../commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
 import 'bottomnavscreen.dart';
 
@@ -417,7 +418,26 @@ class AccountScreenState extends State<AccountScreen> {
                             child: SingleButton(
                                 label: "Logout",
                                 textColor: redColor,
-                                onPressed: () {},
+                                onPressed: () {
+                                  showDialog(
+                                    barrierColor: Colors.black26,
+                                    context: context,
+                                    builder: (context) {
+                                      return showDoubleBtnDailog(
+                                          click1: () {
+                                            Get.back();
+                                          },
+                                          click2: () {
+                                            //  controller.callLogout();
+                                          },
+                                          btncolor: colorPrimary,
+                                          text:
+                                              "Are you sure you want to logout?",
+                                          btn1Text: "No",
+                                          btn2Text: "Yes");
+                                    },
+                                  );
+                                },
                                 backgroundColor: whiteTextColor,
                                 borderColor: redColor),
                           ),
