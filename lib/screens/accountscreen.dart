@@ -16,7 +16,6 @@ import 'package:lafetch/screens/orderexchangescreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
-import 'bottomnavscreen.dart';
 
 class AccountScreen extends StatefulWidget {
   final Function? onPressed;
