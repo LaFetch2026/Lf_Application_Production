@@ -921,26 +921,31 @@ class DiscountScreenState extends State<DiscountScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: SizedBox(
                             width: double.infinity,
-                            child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List<Widget>.generate(
-                                    homeController.banner2List.length,
-                                    (int index) {
-                                  return AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 400),
-                                      height: 6,
-                                      width: 40,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      decoration: BoxDecoration(
-                                          color: (index ==
-                                                  homeController
-                                                      .currentPage.value)
-                                              ? colorPrimary
-                                              : colorSecondary));
-                                })),
+                            child: Center(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List<Widget>.generate(
+                                        homeController.banner2List.length,
+                                        (int index) {
+                                      return AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          height: 6,
+                                          width: 40,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          decoration: BoxDecoration(
+                                              color: (index ==
+                                                      homeController
+                                                          .currentPage.value)
+                                                  ? colorPrimary
+                                                  : colorSecondary));
+                                    })),
+                              ),
+                            ),
                           ),
                         )
                       ],

@@ -157,7 +157,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       ),
                                                                     )
                                                                   : Image.asset(
-                                                                      backImage,
+                                                                      dummyWishlistImage,
                                                                       height:
                                                                           400,
                                                                       width: double
@@ -304,10 +304,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         vertical: 10),
                                                 child: SizedBox(
                                                   width: double.infinity,
-                                                  child: /* SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: */
-                                                      Row(
+                                                  child: Center(
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.min,
                                                           mainAxisAlignment:
@@ -342,7 +344,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         ? colorPrimary
                                                                         : colorSecondary));
                                                           })),
-                                                  //  ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                               const SizedBox(
