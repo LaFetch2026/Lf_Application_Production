@@ -379,13 +379,17 @@ class CartScreenState extends State<CartScreen> {
                                                                                             onTap: () {
                                                                                               scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
                                                                                                     sizeList: sizeList,
-                                                                                                    selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S",
+                                                                                                    selectedSize: value.orderList[index]["inventory"] != null
+                                                                                                        ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
+                                                                                                            ? value.orderList[index]["inventory"]["product_matrix"]["name"]
+                                                                                                            : "S"
+                                                                                                        : "S",
                                                                                                   ));
                                                                                             },
                                                                                             child: Padding(
                                                                                               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                                                                               child: AppText(
-                                                                                                text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S"}",
+                                                                                                text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size" ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S" : "S"}",
                                                                                                 color: blackColor,
                                                                                                 fontSize: 10.sp,
                                                                                                 fontFamily: "Franklin Gothic Regular",
