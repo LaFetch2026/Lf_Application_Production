@@ -22,6 +22,7 @@ class WishlistController extends BaseController {
   List productList = [].obs;
   List wishListProduct = [].obs;
   RxInt addItem = 0.obs;
+  RxInt totalBoard = 0.obs;
   final boardNameController = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
   List deleteId = [].obs;
@@ -76,6 +77,7 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           wishlistList = responseData["data"];
+          totalBoard.value = responseData["meta"]["total"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

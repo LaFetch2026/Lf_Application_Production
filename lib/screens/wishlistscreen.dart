@@ -126,7 +126,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     child: Row(
                                       children: [
                                         AppText(
-                                          text: "",
+                                          text: "0 boards",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: textHintColor,
@@ -238,7 +238,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       children: [
                                         AppText(
                                           text:
-                                              "${wishlistController.wishlistList.length} boards",
+                                              "${wishlistController.totalBoard.value} boards",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: textHintColor,
