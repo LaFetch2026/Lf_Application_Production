@@ -26,6 +26,16 @@ class ViewAllScreenState extends State<ViewAllScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     super.initState();
@@ -46,6 +56,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                     children: [
                       Positioned.fill(
                         child: SingleChildScrollView(
+                          controller: productController.listController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -55,6 +66,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                 child: GridView.count(
                                   shrinkWrap: true,
                                   crossAxisCount: 2,
+                                  controller: productController.listController,
                                   scrollDirection: Axis.vertical,
                                   padding: EdgeInsets.zero,
                                   childAspectRatio: 0.5,
@@ -393,6 +405,16 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                   ),
                                 ),
                               ),
+                              productController.loadMore.value
+                                  ? const Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 10, bottom: 10),
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    )
+                                  : const SizedBox(
+                                      height: 0,
+                                    ),
                             ],
                           ),
                         ),

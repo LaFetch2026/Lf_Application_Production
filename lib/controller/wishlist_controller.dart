@@ -30,6 +30,11 @@ class WishlistController extends BaseController {
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
   ScrollController listController = ScrollController();
+  RxBool pLoadMore = false.obs;
+  RxBool pHasnextpage = true.obs;
+  RxInt productPage = 1.obs;
+  ScrollController productListController = ScrollController();
+
   /*  final List<Map<String, String>> wishlistList = [
     {'id': '1', "name": 'All item'},
     {'id': '2', "name": 'Bag'},
@@ -154,11 +159,11 @@ class WishlistController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
+        if (responseData["data"] != null) {
           wishListProduct.clear();
-          wishListProduct = responseData;
+          wishListProduct = responseData["data"];
           selected.clear();
-          selected = List.generate(wishListProduct.length, (i) => false);
+          selected = List.generate(responseData['meta']["total"], (i) => false);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -176,6 +181,54 @@ class WishlistController extends BaseController {
       print("error$e");
     }
     isDetails.value = false;
+  }
+
+  fetchProductMoreData(String type) async {
+    if (pHasnextpage.value == true &&
+        isDetails.value == false &&
+        pLoadMore.value == false) {
+      pLoadMore.value = true;
+      productPage.value += 1;
+      print(productPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=$type&page=${productPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              wishListProduct.addAll(responseData['data']);
+              selected.clear();
+              selected =
+                  List.generate(responseData['meta']["total"], (i) => false);
+            } else {
+              pHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      pLoadMore.value = false;
+    }
   }
 
   getWishlistDetails(int wishlistId, int value) async {

@@ -37,6 +37,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     print(brandController.brandId.value);
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
@@ -186,6 +196,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               padding: const EdgeInsets.only(top: 40),
                               child: HorizontalBrandList(
                                 text: "New Arrivals",
+                                controller: productController.listController,
                                 onPressed: (p0) {
                                   Get.to(() => ProductDetailsScreen(
                                         productId: p0,
@@ -401,6 +412,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             padding: const EdgeInsets.only(top: 25),
                             child: HorizontalBrandList(
                               text: "Bestsellers",
+                              controller: productController.listController,
                               onPressed: (p0) {
                                 Get.to(() => ProductDetailsScreen(
                                       productId: p0,

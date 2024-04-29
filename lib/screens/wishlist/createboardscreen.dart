@@ -28,6 +28,16 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   @override
   void initState() {
     wishlistController.addItem.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      wishlistController.productListController.addListener(() {
+        wishlistController.fetchProductMoreData("relevant");
+        wishlistController.update();
+      });
+    });
+    wishlistController.pHasnextpage.value = true;
+    wishlistController.pLoadMore.value = false;
+    wishlistController.isDetails.value = false;
+    wishlistController.productPage.value = 1;
     widget.btnText == ""
         ? WidgetsBinding.instance.addPostFrameCallback(
             (_) => wishlistController.getWishlistDetails(widget.wishlistId, 2))
@@ -85,6 +95,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
               : wishlistController.wishListProduct.isNotEmpty
                   ? Expanded(
                       child: SingleChildScrollView(
+                        controller: wishlistController.productListController,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -109,6 +120,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                     shrinkWrap: true,
                                     primary: false,
                                     crossAxisCount: 2,
+                                    controller: wishlistController
+                                        .productListController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.6,

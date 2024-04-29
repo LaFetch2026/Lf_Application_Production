@@ -47,6 +47,16 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getBannar1Data());
     WidgetsBinding.instance
@@ -356,6 +366,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                 HorizontalHomeList(
                     text: "6 hour Express Delivery",
                     height: 250,
+                    controller: productController.listController,
                     list: productController.productList,
                     visibleExpress: true,
                     onPressed: (p0) {
@@ -478,6 +489,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                   ) */
                 HorizontalHomeList(
                     text: "We think you might also like",
+                    controller: productController.listController,
                     height: 250,
                     visibleExpress: false,
                     onPressed: (p0) {

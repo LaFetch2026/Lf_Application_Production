@@ -33,6 +33,16 @@ class CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback(
@@ -569,6 +579,9 @@ class CartScreenState extends State<CartScreen> {
                                                       ListView.builder(
                                                           shrinkWrap: true,
                                                           primary: false,
+                                                          controller:
+                                                              productController
+                                                                  .listController,
                                                           physics:
                                                               const BouncingScrollPhysics(),
                                                           itemCount: value
@@ -686,7 +699,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
                                                                               Padding(
-                                                                                padding: const EdgeInsets.only(left: 10),
+                                                                                padding: const EdgeInsets.only(left: 7),
                                                                                 child: Text(
                                                                                   "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
                                                                                   style: TextStyle(

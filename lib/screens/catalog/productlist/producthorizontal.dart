@@ -34,6 +34,16 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     super.initState();
@@ -54,6 +64,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                   ? Stack(
                       children: [
                         SingleChildScrollView(
+                          controller: productController.listController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -63,6 +74,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                 child: GridView.count(
                                   shrinkWrap: true,
                                   crossAxisCount: 2,
+                                  controller: productController.listController,
                                   scrollDirection: Axis.vertical,
                                   padding: EdgeInsets.zero,
                                   childAspectRatio: 0.5,
@@ -363,6 +375,16 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                   ),
                                 ),
                               ),
+                              productController.loadMore.value
+                                  ? const Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 10, bottom: 10),
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    )
+                                  : const SizedBox(
+                                      height: 0,
+                                    ),
                             ],
                           ),
                         ),

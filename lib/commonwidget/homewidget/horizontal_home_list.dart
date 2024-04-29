@@ -14,7 +14,7 @@ class HorizontalHomeList extends StatelessWidget {
   final String fontFamily;
   final Color textColor;
   final double leftPadding;
-  //final ProductController productController;
+  final ScrollController controller;
   final Function(int)? onPressed;
   final Function? onPressedExpress;
   final Function(int)? onPressedHeart;
@@ -29,7 +29,7 @@ class HorizontalHomeList extends StatelessWidget {
       this.leftPadding = 16,
       this.visibleheart = false,
       this.fontFamily = "Franklin Gothic",
-      // required this.productController,
+      required this.controller,
       this.onPressed,
       this.onPressedHeart,
       this.onPressedExpress})
@@ -57,6 +57,7 @@ class HorizontalHomeList extends StatelessWidget {
             child: ListView.builder(
                 shrinkWrap: true,
                 primary: false,
+                controller: controller,
                 physics: const BouncingScrollPhysics(),
                 itemCount: list.length,
                 scrollDirection: Axis.horizontal,
@@ -158,7 +159,7 @@ class HorizontalHomeList extends StatelessWidget {
                                       fontWeight: FontWeight.w500,
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 10),
+                                      padding: const EdgeInsets.only(left: 7),
                                       child: Text(
                                         "\u{20B9} ${list[index]["mrp"] ?? ""}",
                                         style: TextStyle(

@@ -36,6 +36,16 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     super.initState();
@@ -56,6 +66,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                   ? Stack(
                       children: [
                         SingleChildScrollView(
+                          controller: productController.listController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -68,6 +79,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                 child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
+                                  controller: productController.listController,
                                   padding: EdgeInsets.zero,
                                   physics: const ScrollPhysics(),
                                   itemCount:
@@ -465,6 +477,16 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                   },
                                 ),
                               ),
+                              productController.loadMore.value
+                                  ? const Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 10, bottom: 10),
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    )
+                                  : const SizedBox(
+                                      height: 0,
+                                    ),
                             ],
                           ),
                         ),

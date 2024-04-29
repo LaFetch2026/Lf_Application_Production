@@ -24,6 +24,10 @@ class ProductController extends BaseController {
   List reviewList = [].obs;
   List recommendedList = [].obs;
   final pincodeController = TextEditingController();
+  RxBool loadMore = false.obs;
+  RxBool hasnextpage = true.obs;
+  RxInt page = 1.obs;
+  ScrollController listController = ScrollController();
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -63,8 +67,8 @@ class ProductController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
-          productList = responseData;
+        if (responseData["data"] != null) {
+          productList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -82,6 +86,51 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isProduct.value = false;
+  }
+
+  fetchMoreData(String type) async {
+    if (hasnextpage.value == true &&
+        isProduct.value == false &&
+        loadMore.value == false) {
+      loadMore.value = true;
+      page.value += 1;
+      print(page.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=$type&page=${page.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              productList.addAll(responseData['data']);
+            } else {
+              hasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      loadMore.value = false;
+    }
   }
 
   getProductDetails(int productId) async {

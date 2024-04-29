@@ -183,6 +183,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     productController.inventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
@@ -1301,6 +1311,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     HorizontalHomeList(
                                       text: "Recommended for you",
                                       height: 250,
+                                      controller:
+                                          productController.listController,
                                       leftPadding: 0,
                                       list: productController.recommendedList,
                                       visibleExpress: true,
@@ -1517,6 +1529,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       text: "Frequently bought with",
                                       height: 250,
                                       leftPadding: 0,
+                                      controller:
+                                          productController.listController,
                                       list: productController.productList,
                                       visibleExpress: true,
                                       visibleheart: true,

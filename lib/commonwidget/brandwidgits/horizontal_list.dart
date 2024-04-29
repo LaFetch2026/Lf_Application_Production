@@ -9,6 +9,7 @@ class HorizontalBrandList extends StatelessWidget {
   final String text;
   final Function(int)? onPressed;
   final List list;
+  final ScrollController controller;
   final Function? onPressedExpress;
   final Function(int)? onPressedHeart;
 
@@ -18,6 +19,7 @@ class HorizontalBrandList extends StatelessWidget {
     this.onPressed,
     this.onPressedHeart,
     this.onPressedExpress,
+    required this.controller,
     required this.list,
   }) : super(key: key);
 
@@ -44,6 +46,7 @@ class HorizontalBrandList extends StatelessWidget {
             child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 itemCount: list.length,
+                controller: controller,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (ctx, index) {
                   return Column(
@@ -163,8 +166,7 @@ class HorizontalBrandList extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                       ),
                                       Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
+                                        padding: const EdgeInsets.only(left: 7),
                                         child: Text(
                                           "\u{20B9} ${list[index]["mrp"]}",
                                           style: TextStyle(

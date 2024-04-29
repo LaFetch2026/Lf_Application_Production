@@ -55,6 +55,16 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
+    });
+    productController.hasnextpage.value = true;
+    productController.loadMore.value = false;
+    productController.isProduct.value = false;
+    productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductData("relevant")); //most viewed item list
     super.initState();
@@ -459,6 +469,7 @@ class SearchScreenState extends State<SearchScreen> {
                             : HorizontalHomeList(
                                 text: "Items you have viewed",
                                 height: 250,
+                                controller: productController.listController,
                                 visibleExpress: false,
                                 textColor: bottomnavBack,
                                 fontFamily: "Franklin Gothic Regular",
