@@ -8,8 +8,10 @@ import 'package:get/get.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomfiltters.dart';
 import '../../commonwidget/catalogwidgets/bottomsortby.dart';
+import '../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../commonwidget/doublebtn.dart';
 import '../../controller/product_controller.dart';
+import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 
@@ -22,6 +24,7 @@ class ViewAllScreen extends StatefulWidget {
 
 class ViewAllScreenState extends State<ViewAllScreen> {
   final productController = Get.put(ProductController());
+  final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -38,6 +41,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
     productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
+    wishlistController.getWishlistData();
     super.initState();
   }
 
@@ -154,13 +158,38 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        productController
-                                                            .callAddProductToWishlist(
-                                                                productController
-                                                                        .productList[
-                                                                    index]["id"],
-                                                                "product",
-                                                                0);
+                                                        if (productController
+                                                                    .productList[
+                                                                index]
+                                                            ["wishlisted"]) {
+                                                          productController
+                                                              .callRemoveProductToWishlist(
+                                                                  productController
+                                                                          .productList[
+                                                                      index]["id"],
+                                                                  "product");
+                                                        } else {
+                                                          scaffoldKey
+                                                              .currentState
+                                                              ?.showBottomSheet((context) =>
+                                                                  BottomWishlist(
+                                                                      controller:
+                                                                          wishlistController,
+                                                                      onPressed:
+                                                                          (p0) {
+                                                                        productController
+                                                                            .callAddProductToWishlist(
+                                                                          p0,
+                                                                          "product",
+                                                                          productController.productList[index]
+                                                                              [
+                                                                              "id"],
+                                                                        );
+                                                                      },
+                                                                      wishlistList:
+                                                                          wishlistController
+                                                                              .wishlistList));
+                                                        }
                                                       },
                                                       child: Padding(
                                                         padding:
