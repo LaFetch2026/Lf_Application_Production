@@ -47,11 +47,10 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
-        productController.update();
-      });
+    productController.listController.addListener(() {
+      print("pages ${productController.page.value}");
+      productController.fetchMoreData("relevant");
+      productController.update();
     });
     productController.hasnextpage.value = true;
     productController.loadMore.value = false;
@@ -370,9 +369,21 @@ class DiscountScreenState extends State<DiscountScreen> {
                     list: productController.productList,
                     visibleExpress: true,
                     onPressed: (p0) {
-                      Get.to(() => ProductDetailsScreen(
-                            productId: p0,
-                          ));
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ProductDetailsScreen(
+                                    productId: p0,
+                                  )))
+                          .then((value) => setState(
+                                () {
+                                  productController.hasnextpage.value = true;
+                                  productController.loadMore.value = false;
+                                  productController.isProduct.value = false;
+                                  productController.page.value = 1;
+                                  productController.getProductData("relevant");
+                                },
+                              ));
                     },
                   )),
             Obx(() => productController.isProduct.value
@@ -493,9 +504,21 @@ class DiscountScreenState extends State<DiscountScreen> {
                     height: 250,
                     visibleExpress: false,
                     onPressed: (p0) {
-                      Get.to(() => ProductDetailsScreen(
-                            productId: p0,
-                          ));
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ProductDetailsScreen(
+                                    productId: p0,
+                                  )))
+                          .then((value) => setState(
+                                () {
+                                  productController.hasnextpage.value = true;
+                                  productController.loadMore.value = false;
+                                  productController.isProduct.value = false;
+                                  productController.page.value = 1;
+                                  productController.getProductData("relevant");
+                                },
+                              ));
                     },
                     list: productController.productList,
                   )),
