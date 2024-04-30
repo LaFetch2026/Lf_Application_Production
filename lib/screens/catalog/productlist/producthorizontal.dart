@@ -310,7 +310,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                 children: [
                                                   AppText(
                                                     text:
-                                                        "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                        "\u{20B9} ${productController.productList[index]["price"].round() ?? ""}",
                                                     color: deepGreytextColor,
                                                     maxLines: 2,
                                                     fontSize: 11.sp,
@@ -323,7 +323,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                         const EdgeInsets.only(
                                                             left: 10),
                                                     child: Text(
-                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      "\u{20B9} ${productController.productList[index]["mrp"].round() ?? ""}",
                                                       style: TextStyle(
                                                         color: textHintColor,
                                                         fontSize: 11.sp,

@@ -460,7 +460,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                           children: [
                                                             AppText(
                                                               text:
-                                                                  "\u{20B9} ${value.wishListProduct[index]["price"] ?? ""}",
+                                                                  "\u{20B9} ${value.wishListProduct[index]["price"].round() ?? ""}",
                                                               color:
                                                                   deepGreytextColor,
                                                               maxLines: 2,
@@ -477,7 +477,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                           .only(
                                                                       left: 10),
                                                               child: Text(
-                                                                "\u{20B9} ${value.wishListProduct[index]["mrp"] ?? ""}",
+                                                                "\u{20B9} ${value.wishListProduct[index]["mrp"].round() ?? ""}",
                                                                 style:
                                                                     TextStyle(
                                                                   color:

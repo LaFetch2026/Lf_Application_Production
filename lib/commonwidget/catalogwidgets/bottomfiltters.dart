@@ -296,7 +296,7 @@ class BottomFiltersState extends State<BottomFilters> {
                     Container(
                       color: whiteBorderColor,
                       width: MediaQuery.of(context).size.width - 150,
-                      height: MediaQuery.of(context).size.height - 112,
+                      height: MediaQuery.of(context).size.height - 115,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),

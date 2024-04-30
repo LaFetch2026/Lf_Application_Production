@@ -196,10 +196,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.inventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
-    productController.getProductDetails(widget.productId);
-    productController.getProductReview(widget.productId);
-    productController.getProductRecommendations(widget.productId);
-    wishlistController.getWishlistData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductDetails(widget.productId));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductReview(widget.productId));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductRecommendations(widget.productId));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
   }
 
@@ -465,7 +469,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             horizontal: 10.0),
                                         child: AppText(
                                           text:
-                                              "\u{20B9} ${productController.productDetails["price"] ?? "0"}",
+                                              "\u{20B9} ${productController.productDetails["price"].round() ?? "0"}",
                                           color: colorPrimary,
                                           fontSize: 16.sp,
                                           fontFamily: "Franklin Gothic",
@@ -1322,7 +1326,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             .callAddProductToWishlist(p0,
                                                 "recommened", widget.productId);
                                       },
-                                      onPressed: (p0) {},
+                                      onPressed: (p0) {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        ProductDetailsScreen(
+                                                          productId: p0,
+                                                        )));
+                                      },
                                     ),
                                     const Divider(
                                       color: colorSecondary,
@@ -1539,7 +1551,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             .callAddProductToWishlist(p0,
                                                 "product", widget.productId);
                                       },
-                                      onPressed: (p0) {},
+                                      onPressed: (p0) {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        ProductDetailsScreen(
+                                                          productId: p0,
+                                                        )));
+                                      },
                                     ),
                                     const Divider(
                                       color: colorSecondary,

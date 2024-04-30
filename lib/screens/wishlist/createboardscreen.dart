@@ -473,7 +473,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                       children: [
                                                         AppText(
                                                           text:
-                                                              "\u{20B9} ${wishlistController.wishListProduct[index]["price"] ?? ""}",
+                                                              "\u{20B9} ${wishlistController.wishListProduct[index]["price"].round() ?? ""}",
                                                           color:
                                                               deepGreytextColor,
                                                           maxLines: 2,
@@ -489,7 +489,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                       .only(
                                                                   left: 10),
                                                           child: Text(
-                                                            "\u{20B9} ${wishlistController.wishListProduct[index]["mrp"] ?? ""}",
+                                                            "\u{20B9} ${wishlistController.wishListProduct[index]["mrp"].round() ?? ""}",
                                                             style: TextStyle(
                                                               color:
                                                                   textHintColor,

@@ -407,7 +407,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                   children: [
                                                     AppText(
                                                       text:
-                                                          "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                          "\u{20B9} ${productController.productList[index]["price"].round() ?? ""}",
                                                       color: deepGreytextColor,
                                                       maxLines: 2,
                                                       fontSize: 14.sp,
@@ -421,7 +421,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           const EdgeInsets.only(
                                                               left: 10),
                                                       child: Text(
-                                                        "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                        "\u{20B9} ${productController.productList[index]["mrp"].round() ?? ""}",
                                                         style: TextStyle(
                                                           color: textHintColor,
                                                           fontSize: 11.sp,
