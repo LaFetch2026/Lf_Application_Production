@@ -448,7 +448,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 child: Row(
                                                                                   children: [
                                                                                     AppText(
-                                                                                      text: "\u{20B9} ${value.orderList[index]["product"]["price"].round() ?? "0"}",
+                                                                                      text: "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
                                                                                       color: blackColor,
                                                                                       fontSize: 12.sp,
                                                                                       fontFamily: "Franklin Gothic Regular",
@@ -457,7 +457,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     Padding(
                                                                                       padding: const EdgeInsets.only(left: 10),
                                                                                       child: Text(
-                                                                                        "\u{20B9} ${value.orderList[index]["product"]["mrp"].round() ?? "0"}",
+                                                                                        "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
                                                                                         style: TextStyle(
                                                                                           color: textHintColor,
                                                                                           fontSize: 12.sp,
@@ -690,12 +690,12 @@ class CartScreenState extends State<CartScreen> {
                                                                           padding: const EdgeInsets.only(
                                                                               top: 10,
                                                                               left: 10,
-                                                                              right: 10),
+                                                                              right: 1),
                                                                           child:
                                                                               Row(
                                                                             children: [
                                                                               AppText(
-                                                                                text: "\u{20B9} ${value.productList[index]["price"].round() ?? "0"}",
+                                                                                text: "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
                                                                                 color: deepGreytextColor,
                                                                                 maxLines: 2,
                                                                                 fontSize: 11.sp,
@@ -703,9 +703,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
                                                                               Padding(
-                                                                                padding: const EdgeInsets.only(left: 7),
+                                                                                padding: const EdgeInsets.only(left: 5),
                                                                                 child: Text(
-                                                                                  "\u{20B9} ${value.productList[index]["mrp"].round() ?? "0"}",
+                                                                                  "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
                                                                                   style: TextStyle(
                                                                                     color: textHintColor,
                                                                                     fontSize: 11.sp,

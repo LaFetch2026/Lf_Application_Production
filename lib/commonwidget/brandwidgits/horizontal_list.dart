@@ -161,12 +161,12 @@ class HorizontalBrandList extends StatelessWidget {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
+                                        top: 10, left: 10, right: 1),
                                     child: Row(
                                       children: [
                                         AppText(
                                           text:
-                                              "\u{20B9} ${list[index]["price"].round() ?? ""}",
+                                              "\u{20B9} ${list[index]["price"] ?? ""}",
                                           color: deepGreytextColor,
                                           maxLines: 2,
                                           fontSize: 11.sp,
@@ -175,9 +175,9 @@ class HorizontalBrandList extends StatelessWidget {
                                         ),
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 7),
+                                              const EdgeInsets.only(left: 5),
                                           child: Text(
-                                            "\u{20B9} ${list[index]["mrp"].round()}",
+                                            "\u{20B9} ${list[index]["mrp"]}",
                                             style: TextStyle(
                                               color: textHintColor,
                                               fontSize: 11.sp,

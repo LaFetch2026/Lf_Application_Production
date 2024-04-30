@@ -455,12 +455,12 @@ class BoardScreenState extends State<BoardScreen> {
                                                                     .only(
                                                                 top: 10,
                                                                 left: 10,
-                                                                right: 10),
+                                                                right: 1),
                                                         child: Row(
                                                           children: [
                                                             AppText(
                                                               text:
-                                                                  "\u{20B9} ${value.wishListProduct[index]["price"].round() ?? ""}",
+                                                                  "\u{20B9} ${value.wishListProduct[index]["price"] ?? ""}",
                                                               color:
                                                                   deepGreytextColor,
                                                               maxLines: 2,
@@ -475,9 +475,9 @@ class BoardScreenState extends State<BoardScreen> {
                                                               padding:
                                                                   const EdgeInsets
                                                                           .only(
-                                                                      left: 10),
+                                                                      left: 5),
                                                               child: Text(
-                                                                "\u{20B9} ${value.wishListProduct[index]["mrp"].round() ?? ""}",
+                                                                "\u{20B9} ${value.wishListProduct[index]["mrp"] ?? ""}",
                                                                 style:
                                                                     TextStyle(
                                                                   color:

@@ -468,12 +468,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                         const EdgeInsets.only(
                                                             top: 10,
                                                             left: 10,
-                                                            right: 10),
+                                                            right: 1),
                                                     child: Row(
                                                       children: [
                                                         AppText(
                                                           text:
-                                                              "\u{20B9} ${wishlistController.wishListProduct[index]["price"].round() ?? ""}",
+                                                              "\u{20B9} ${wishlistController.wishListProduct[index]["price"] ?? ""}",
                                                           color:
                                                               deepGreytextColor,
                                                           maxLines: 2,
@@ -487,9 +487,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                           padding:
                                                               const EdgeInsets
                                                                       .only(
-                                                                  left: 10),
+                                                                  left: 5),
                                                           child: Text(
-                                                            "\u{20B9} ${wishlistController.wishListProduct[index]["mrp"].round() ?? ""}",
+                                                            "\u{20B9} ${wishlistController.wishListProduct[index]["mrp"] ?? ""}",
                                                             style: TextStyle(
                                                               color:
                                                                   textHintColor,

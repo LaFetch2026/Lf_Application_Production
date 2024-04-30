@@ -469,7 +469,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             horizontal: 10.0),
                                         child: AppText(
                                           text:
-                                              "\u{20B9} ${productController.productDetails["price"].round() ?? "0"}",
+                                              "\u{20B9} ${productController.productDetails["price"] ?? "0"}",
                                           color: colorPrimary,
                                           fontSize: 16.sp,
                                           fontFamily: "Franklin Gothic",

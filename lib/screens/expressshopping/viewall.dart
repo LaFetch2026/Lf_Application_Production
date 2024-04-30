@@ -355,12 +355,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       const EdgeInsets.only(
                                                           top: 10,
                                                           left: 10,
-                                                          right: 10),
+                                                          right: 1),
                                                   child: Row(
                                                     children: [
                                                       AppText(
                                                         text:
-                                                            "\u{20B9} ${productController.productList[index]["price"].round() ?? ""}",
+                                                            "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
                                                         color:
                                                             deepGreytextColor,
                                                         maxLines: 2,
@@ -373,9 +373,9 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .only(left: 10),
+                                                                .only(left: 5),
                                                         child: Text(
-                                                          "\u{20B9} ${productController.productList[index]["mrp"].round() ?? ""}",
+                                                          "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
                                                           style: TextStyle(
                                                             color:
                                                                 textHintColor,
