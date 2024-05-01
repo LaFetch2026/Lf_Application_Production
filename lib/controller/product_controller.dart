@@ -315,41 +315,6 @@ class ProductController extends BaseController {
     hideLoading();
   }
 
-  callRemoveProductToWishlist(int productId, String type) async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.put(
-        Uri.parse("${ApiConstants.baseUrl}/products/$productId/wishlist"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          'Content-Type': 'application/json;charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
-      var responseData = jsonDecode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["wishlisted"]) {
-          getSnackBar("product added to the wishlist");
-        } else {
-          getSnackBar("product removed to the wishlist");
-        }
-        if (type == "product") {
-          getProductData("relevant");
-        } else {
-          getProductRecommendations(productId);
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("item add failed");
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
   callAddProductToWishlist(int wishlistId, String type, int id) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
@@ -364,8 +329,8 @@ class ProductController extends BaseController {
       );
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        Get.close(1);
         if (responseData["wishlisted"]) {
+          Get.close(1);
           getSnackBar("product added to the wishlist");
         } else {
           getSnackBar("product removed to the wishlist");

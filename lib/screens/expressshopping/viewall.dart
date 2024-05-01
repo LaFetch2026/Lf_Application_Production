@@ -163,11 +163,16 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 index]
                                                             ["wishlisted"]) {
                                                           productController
-                                                              .callRemoveProductToWishlist(
-                                                                  productController
-                                                                          .productList[
-                                                                      index]["id"],
-                                                                  "product");
+                                                              .callAddProductToWishlist(
+                                                            productController
+                                                                        .productList[
+                                                                    index]
+                                                                ["wishlist_id"],
+                                                            "product",
+                                                            productController
+                                                                    .productList[
+                                                                index]["id"],
+                                                          );
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
