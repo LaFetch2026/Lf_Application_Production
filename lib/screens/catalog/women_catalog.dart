@@ -83,6 +83,10 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                           title: controller.catalogList[index]
                                                   ["name"] ??
                                               "",
+                                          catalogImage:
+                                              controller.catalogList[index]
+                                                      ["thumbnail"] ??
+                                                  "",
                                           catalogText: widget.categorytext,
                                         ));
                                       },
@@ -180,6 +184,11 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                             .catalogList[
                                                                         index]
                                                                     ["name"] ??
+                                                                "",
+                                                            catalogImage: controller
+                                                                            .catalogList[
+                                                                        index][
+                                                                    "thumbnail"] ??
                                                                 "",
                                                             catalogText: widget
                                                                 .categorytext,

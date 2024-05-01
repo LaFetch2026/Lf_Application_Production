@@ -4,11 +4,13 @@ import '../../utils/constants.dart';
 class TextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
+  final bool readonly;
 
   const TextFieldWidget({
     Key? key,
     required this.controller,
     required this.hint,
+    this.readonly = false,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,7 @@ class TextFieldWidget extends StatelessWidget {
             fontFamily: "Franklin Gothic Regular",
           ),
           controller: controller,
+          readOnly: readonly,
           maxLines: null,
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(

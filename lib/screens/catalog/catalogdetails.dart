@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlistscreen.dart';
@@ -14,11 +16,13 @@ import '../searchscreen.dart';
 class CatalogDetailsScreen extends StatefulWidget {
   final String title;
   final String catalogText;
+  final String catalogImage;
 
   const CatalogDetailsScreen({
     Key? key,
     required this.title,
     required this.catalogText,
+    required this.catalogImage,
   }) : super(key: key);
 
   @override
@@ -55,16 +59,37 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    height: 100,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(backImage),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  widget.catalogImage.isNotEmpty
+                      ? SizedBox(
+                          height: 100,
+                          width: double.infinity,
+                          child: CachedNetworkImage(
+                            cacheManager: CacheManager(Config("customCacheKey",
+                                stalePeriod: const Duration(days: 15),
+                                maxNrOfCacheObjects: 100)),
+                            fit: BoxFit.cover,
+                            imageUrl: widget.catalogImage,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Center(
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                            ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              downloadImage,
+                              height: 210,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(backImage),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                   Container(
                     height: 65,
                     color: whiteBorderColor,

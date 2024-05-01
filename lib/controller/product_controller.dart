@@ -20,6 +20,7 @@ class ProductController extends BaseController {
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
+  RxInt total = 0.obs;
   List inventoryList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
@@ -69,6 +70,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productList = responseData["data"];
+          total.value = responseData["meta"]["total"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

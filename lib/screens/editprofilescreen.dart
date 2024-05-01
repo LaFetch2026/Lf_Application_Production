@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import '../commonwidget/loginwidgets/number_widget.dart';
 import '../utils/constants.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -32,7 +32,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     profileController.nameController.text = widget.name;
     profileController.emailController.text = widget.email;
-    profileController.phoneController.text = widget.number;
+    profileController.phoneController.text =
+        widget.number.replaceAll("+91", "");
     profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
       profileController.gerderController.text = "Female";

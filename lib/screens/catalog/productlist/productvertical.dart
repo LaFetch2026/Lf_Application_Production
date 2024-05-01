@@ -1,8 +1,5 @@
 // ignore_for_file: avoid_print
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -23,16 +20,17 @@ class ProductVerticalScreen extends StatefulWidget {
 class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final productController = Get.find<ProductController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  int _curr = 0;
 
-  final PageController _pageController = PageController(
+  /*  final PageController _pageController = PageController(
     initialPage: 0,
-  );
+  ); */
 
-  callOnchanged(int index) {
+  /* callOnchanged(int index) {
     setState(() {
       productController.currentpage.value = index;
     });
-  }
+  } */
 
   @override
   void initState() {
@@ -49,6 +47,24 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     super.initState();
+  }
+
+  List<Widget> getListForPageView(int index) {
+    List<Widget> list = [];
+    if (productController.productList[index]["images"].isNotEmpty) {
+      for (var i = 0;
+          i < productController.productList[index]["images"].length;
+          i++) {
+        list.add(Container(
+            color: colorSecondary,
+            child: Image.network(
+                productController.productList[index]["images"][i]["name"],
+                fit: BoxFit.cover)));
+      }
+    } else {
+      list.add(Image.asset(dummyWishlistImage, fit: BoxFit.cover));
+    }
+    return list;
   }
 
   @override
@@ -102,6 +118,42 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                               Stack(
                                                 children: [
                                                   productController.productList[
+                                                                  index]
+                                                              ["images"] !=
+                                                          null
+                                                      ? Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 0),
+                                                          child: SizedBox(
+                                                            height: 400,
+                                                            width:
+                                                                double.infinity,
+                                                            child: PageView(
+                                                                allowImplicitScrolling:
+                                                                    true,
+                                                                scrollDirection:
+                                                                    Axis
+                                                                        .horizontal,
+                                                                onPageChanged:
+                                                                    (number) {
+                                                                  setState(() {
+                                                                    _curr =
+                                                                        number;
+                                                                  });
+                                                                },
+                                                                children:
+                                                                    getListForPageView(
+                                                                        index)),
+                                                          ))
+                                                      : Image.asset(
+                                                          dummyWishlistImage,
+                                                          height: 400,
+                                                          width:
+                                                              double.infinity,
+                                                          fit: BoxFit.cover),
+                                                  /*  productController.productList[
                                                                   index]
                                                               ["images"] !=
                                                           null
@@ -184,7 +236,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           height: 400,
                                                           width:
                                                               double.infinity,
-                                                          fit: BoxFit.cover),
+                                                          fit: BoxFit.cover), */
                                                   GestureDetector(
                                                     onTap: () {
                                                       productController
@@ -309,57 +361,64 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                   ),
                                                 ],
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
-                                                child: SizedBox(
-                                                  width: double.infinity,
-                                                  child: Center(
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: List<
-                                                                  Widget>.generate(
-                                                              productController
-                                                                  .productList[
-                                                                      index]
-                                                                      ["images"]
-                                                                  .length,
-                                                              (int index) {
-                                                            return AnimatedContainer(
-                                                                duration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            400),
-                                                                height: 6,
-                                                                width: 6,
-                                                                margin: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        5),
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5),
-                                                                    color: (index ==
-                                                                            productController.currentpage.value)
-                                                                        ? colorPrimary
-                                                                        : colorSecondary));
-                                                          })),
+                                              productController
+                                                          .productList[index]
+                                                              ["images"]
+                                                          .length ==
+                                                      1
+                                                  ? const SizedBox(
+                                                      height: 0,
+                                                    )
+                                                  : Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 10),
+                                                      child: SizedBox(
+                                                        width: double.infinity,
+                                                        child: Center(
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: List<
+                                                                        Widget>.generate(
+                                                                    productController
+                                                                        .productList[
+                                                                            index]
+                                                                            [
+                                                                            "images"]
+                                                                        .length,
+                                                                    (int
+                                                                        index) {
+                                                                  return AnimatedContainer(
+                                                                      duration: const Duration(
+                                                                          milliseconds:
+                                                                              400),
+                                                                      height: 6,
+                                                                      width: 6,
+                                                                      margin: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              5),
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              5),
+                                                                          color: (index == _curr)
+                                                                              ? colorPrimary
+                                                                              : colorSecondary));
+                                                                })),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              ),
                                               const SizedBox(
                                                 height: 10,
                                               ),

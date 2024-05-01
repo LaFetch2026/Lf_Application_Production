@@ -89,7 +89,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         color: colorPrimary,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.max,
+          // mainAxisSize: MainAxisSize.max,
           children: [
             MaterialButton(
               color: _currentIndex == 0 ? colorSecondary : colorPrimary,

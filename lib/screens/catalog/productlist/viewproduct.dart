@@ -56,7 +56,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                     child: Row(
                       children: [
                         AppText(
-                          text: "${productController.productList.length} items",
+                          text: "${productController.total.value} items",
                           fontFamily: "Franklin Gothic Regular",
                           fontWeight: FontWeight.w400,
                           color: textHintColor,
