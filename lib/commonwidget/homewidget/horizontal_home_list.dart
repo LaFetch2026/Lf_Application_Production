@@ -17,7 +17,7 @@ class HorizontalHomeList extends StatelessWidget {
   final ScrollController controller;
   final Function(int)? onPressed;
   final Function? onPressedExpress;
-  final Function(int)? onPressedHeart;
+  final Function(int, int)? onPressedHeart;
 
   const HorizontalHomeList(
       {Key? key,
@@ -130,8 +130,8 @@ class HorizontalHomeList extends StatelessWidget {
                                                   )
                                                 : Image.asset(heartImage)),
                                         onPressed: () {
-                                          onPressedHeart
-                                              ?.call(list[index]["id"]);
+                                          onPressedHeart?.call(
+                                              list[index]["id"], index);
                                         },
                                       ),
                                     ),

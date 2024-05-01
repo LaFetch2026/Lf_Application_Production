@@ -1324,10 +1324,38 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       list: productController.recommendedList,
                                       visibleExpress: true,
                                       visibleheart: true,
-                                      onPressedHeart: (p0) {
-                                        productController
-                                            .callAddProductToWishlist(p0,
-                                                "recommened", widget.productId);
+                                      onPressedHeart: (p0, p1) {
+                                        if (productController
+                                                .recommendedList[p1]
+                                            ["wishlisted"]) {
+                                          productController
+                                              .callAddProductToWishlist(
+                                            productController
+                                                    .recommendedList[p1]
+                                                ["wishlist_id"],
+                                            "recommended",
+                                            p0,
+                                          );
+                                        } else {
+                                          scaffoldKey.currentState
+                                              ?.showBottomSheet((context) =>
+                                                  BottomWishlist(
+                                                      controller:
+                                                          wishlistController,
+                                                      onPressed: (p0) {
+                                                        productController
+                                                            .callAddProductToWishlist(
+                                                          p0,
+                                                          "recommended",
+                                                          productController
+                                                                  .recommendedList[
+                                                              p1]["id"],
+                                                        );
+                                                      },
+                                                      wishlistList:
+                                                          wishlistController
+                                                              .wishlistList));
+                                        }
                                       },
                                       onPressed: (p0) {
                                         Navigator.of(context).push(
@@ -1549,10 +1577,36 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       list: productController.productList,
                                       visibleExpress: true,
                                       visibleheart: true,
-                                      onPressedHeart: (p0) {
-                                        productController
-                                            .callAddProductToWishlist(p0,
-                                                "product", widget.productId);
+                                      onPressedHeart: (p0, p1) {
+                                        if (productController.productList[p1]
+                                            ["wishlisted"]) {
+                                          productController
+                                              .callAddProductToWishlist(
+                                            productController.productList[p1]
+                                                ["wishlist_id"],
+                                            "product",
+                                            p0,
+                                          );
+                                        } else {
+                                          scaffoldKey.currentState
+                                              ?.showBottomSheet((context) =>
+                                                  BottomWishlist(
+                                                      controller:
+                                                          wishlistController,
+                                                      onPressed: (p0) {
+                                                        productController
+                                                            .callAddProductToWishlist(
+                                                          p0,
+                                                          "product",
+                                                          productController
+                                                                  .productList[
+                                                              p1]["id"],
+                                                        );
+                                                      },
+                                                      wishlistList:
+                                                          wishlistController
+                                                              .wishlistList));
+                                        }
                                       },
                                       onPressed: (p0) {
                                         Navigator.of(context).push(

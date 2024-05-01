@@ -316,7 +316,6 @@ class ProductController extends BaseController {
   }
 
   callAddProductToWishlist(int wishlistId, String type, int id) async {
-    showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -350,6 +349,5 @@ class ProductController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    hideLoading();
   }
 }

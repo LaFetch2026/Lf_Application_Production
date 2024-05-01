@@ -6,8 +6,10 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomfiltters.dart';
 import '../../../commonwidget/catalogwidgets/bottomsortby.dart';
+import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../commonwidget/doublebtn.dart';
 import '../../../controller/product_controller.dart';
+import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 
 class ProductVerticalScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class ProductVerticalScreen extends StatefulWidget {
 
 class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final productController = Get.find<ProductController>();
+  final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _curr = 0;
 
@@ -34,6 +37,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
+    wishlistController.getWishlistData();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
@@ -239,13 +245,42 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           fit: BoxFit.cover), */
                                                   GestureDetector(
                                                     onTap: () {
-                                                      productController
-                                                          .callAddProductToWishlist(
-                                                              productController
+                                                      if (productController
+                                                                  .productList[
+                                                              index]
+                                                          ["wishlisted"]) {
+                                                        productController
+                                                            .callAddProductToWishlist(
+                                                          productController
                                                                       .productList[
-                                                                  index]["id"],
-                                                              "product",
-                                                              0);
+                                                                  index]
+                                                              ["wishlist_id"],
+                                                          "product",
+                                                          productController
+                                                                  .productList[
+                                                              index]["id"],
+                                                        );
+                                                      } else {
+                                                        scaffoldKey.currentState
+                                                            ?.showBottomSheet((context) =>
+                                                                BottomWishlist(
+                                                                    controller:
+                                                                        wishlistController,
+                                                                    onPressed:
+                                                                        (p0) {
+                                                                      productController
+                                                                          .callAddProductToWishlist(
+                                                                        p0,
+                                                                        "product",
+                                                                        productController.productList[index]
+                                                                            [
+                                                                            "id"],
+                                                                      );
+                                                                    },
+                                                                    wishlistList:
+                                                                        wishlistController
+                                                                            .wishlistList));
+                                                      }
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets

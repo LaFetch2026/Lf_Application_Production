@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_list.dart';
 import '../../commonwidget/app_text.dart';
+import '../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../controller/brand_controller.dart';
 import '../../controller/product_controller.dart';
+import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
@@ -27,6 +29,8 @@ class AllBrandScreen extends StatefulWidget {
 class AllBrandScreenState extends State<AllBrandScreen> {
   final productController = Get.put(ProductController());
   final brandController = Get.put(BrandController());
+  final wishlistController = Get.put(WishlistController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> gridList = [
     "New In",
     "Clothing",
@@ -37,6 +41,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
+    wishlistController.getWishlistData();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
@@ -63,6 +70,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         return false;
       },
       child: Scaffold(
+        key: scaffoldKey,
         backgroundColor: colorPrimary,
         body: Column(
           children: [
@@ -202,9 +210,31 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         productId: p0,
                                       ));
                                 },
-                                onPressedHeart: (p0) {
-                                  productController.callAddProductToWishlist(
-                                      p0, "product", 0);
+                                onPressedHeart: (p0, p1) {
+                                  if (productController.productList[p1]
+                                      ["wishlisted"]) {
+                                    productController.callAddProductToWishlist(
+                                      productController.productList[p1]
+                                          ["wishlist_id"],
+                                      "product",
+                                      p0,
+                                    );
+                                  } else {
+                                    scaffoldKey.currentState?.showBottomSheet(
+                                        (context) => BottomWishlist(
+                                            controller: wishlistController,
+                                            onPressed: (p0) {
+                                              productController
+                                                  .callAddProductToWishlist(
+                                                p0,
+                                                "product",
+                                                productController
+                                                    .productList[p1]["id"],
+                                              );
+                                            },
+                                            wishlistList: wishlistController
+                                                .wishlistList));
+                                  }
                                 },
                                 list: productController.productList,
                               ),
@@ -418,9 +448,31 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       productId: p0,
                                     ));
                               },
-                              onPressedHeart: (p0) {
-                                productController.callAddProductToWishlist(
-                                    p0, "product", 0);
+                              onPressedHeart: (p0, p1) {
+                                if (productController.productList[p1]
+                                    ["wishlisted"]) {
+                                  productController.callAddProductToWishlist(
+                                    productController.productList[p1]
+                                        ["wishlist_id"],
+                                    "product",
+                                    p0,
+                                  );
+                                } else {
+                                  scaffoldKey.currentState?.showBottomSheet(
+                                      (context) => BottomWishlist(
+                                          controller: wishlistController,
+                                          onPressed: (p0) {
+                                            productController
+                                                .callAddProductToWishlist(
+                                              p0,
+                                              "product",
+                                              productController.productList[p1]
+                                                  ["id"],
+                                            );
+                                          },
+                                          wishlistList:
+                                              wishlistController.wishlistList));
+                                }
                               },
                               list: productController.productList,
                             ),

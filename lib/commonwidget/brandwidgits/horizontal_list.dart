@@ -11,7 +11,7 @@ class HorizontalBrandList extends StatelessWidget {
   final List list;
   final ScrollController controller;
   final Function? onPressedExpress;
-  final Function(int)? onPressedHeart;
+  final Function(int, int)? onPressedHeart;
 
   const HorizontalBrandList({
     Key? key,
@@ -112,8 +112,8 @@ class HorizontalBrandList extends StatelessWidget {
                                               fit: BoxFit.cover),
                                       GestureDetector(
                                         onTap: () {
-                                          onPressedHeart
-                                              ?.call(list[index]["id"]);
+                                          onPressedHeart?.call(
+                                              list[index]["id"], index);
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
