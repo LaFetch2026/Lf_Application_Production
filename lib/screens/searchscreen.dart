@@ -1,11 +1,14 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 import '../commonwidget/homewidget/horizontal_home_list.dart';
+import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -19,6 +22,7 @@ class SearchScreenState extends State<SearchScreen> {
   TextEditingController searchController = TextEditingController();
   final productController =
       Get.put(ProductController()); //most viewed item list
+  final brandController = Get.put(BrandController());
   bool isSearch = false;
   List<String> products = [
     "Salwar Suits",
@@ -47,12 +51,6 @@ class SearchScreenState extends State<SearchScreen> {
     "500",
   ];
 
-  List<String> images = [
-    image,
-    backImage,
-    otpImage,
-  ];
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -67,6 +65,8 @@ class SearchScreenState extends State<SearchScreen> {
     productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductData("relevant")); //most viewed item list
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();
   }
 
@@ -286,72 +286,134 @@ class SearchScreenState extends State<SearchScreen> {
                             fontSize: 16.sp,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 230,
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                primary: false,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: items.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (ctx, index) {
-                                  return Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {},
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          margin:
-                                              const EdgeInsets.only(right: 5),
-                                          width: 130,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                        Obx(
+                          () => brandController.isBrand.value
+                              ? const Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 20),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: 230,
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        primary: false,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount:
+                                            brandController.brandList.length,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (ctx, index) {
+                                          return Column(
                                             children: [
-                                              Image.asset(backImage,
-                                                  height: 180,
+                                              GestureDetector(
+                                                onTap: () {},
+                                                child: AnimatedContainer(
+                                                  duration: const Duration(
+                                                      milliseconds: 300),
+                                                  margin: const EdgeInsets.only(
+                                                      right: 5),
                                                   width: 130,
-                                                  fit: BoxFit.cover),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5),
-                                                child: AppText(
-                                                  text: "Balenciaga",
-                                                  color: greyTextColor,
-                                                  fontSize: 14.sp,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 3),
-                                                child: AppText(
-                                                  text: "Bags",
-                                                  color: greyTextColor,
-                                                  fontSize: 10.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      brandController.brandList[
+                                                                      index]
+                                                                  ["logo"] !=
+                                                              null
+                                                          ? SizedBox(
+                                                              height: 180,
+                                                              width: 130,
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                cacheManager: CacheManager(Config(
+                                                                    "customCacheKey",
+                                                                    stalePeriod:
+                                                                        const Duration(
+                                                                            days:
+                                                                                15),
+                                                                    maxNrOfCacheObjects:
+                                                                        100)),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                imageUrl: brandController
+                                                                        .brandList[
+                                                                    index]["logo"],
+                                                                progressIndicatorBuilder:
+                                                                    (context,
+                                                                            url,
+                                                                            downloadProgress) =>
+                                                                        Center(
+                                                                  child: CircularProgressIndicator(
+                                                                      value: downloadProgress
+                                                                          .progress),
+                                                                ),
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                                  dummyWishlistImage,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  height: 180,
+                                                                  width: 130,
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : Image.asset(
+                                                              dummyWishlistImage,
+                                                              height: 180,
+                                                              width: 130,
+                                                              fit:
+                                                                  BoxFit.cover),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 5),
+                                                        child: AppText(
+                                                          text: brandController
+                                                                  .brandList[
+                                                              index]["name"],
+                                                          color: greyTextColor,
+                                                          fontSize: 14.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 3),
+                                                        child: AppText(
+                                                          text: "Bags",
+                                                          color: greyTextColor,
+                                                          fontSize: 10.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                          ),
+                                          );
+                                        }),
+                                  ),
+                                ),
                         ),
                         /*  Padding(
                           padding: const EdgeInsets.only(top: 10, left: 16),
