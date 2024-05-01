@@ -183,6 +183,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
+    productController.pincodeController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
@@ -592,7 +593,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      right: 6, bottom: 3),
+                                      right: 6, bottom: 0),
                                   child: productController.isPincode.value
                                       ? const SizedBox(
                                           height: 10,
@@ -603,6 +604,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         )
                                       : const AppText(
                                           text: 'Check',
+                                          textAlign: TextAlign.center,
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w500,
                                           color: blackColor,
@@ -621,6 +623,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     const BorderSide(color: borderColor),
                               ),
                               counterText: "",
+                              contentPadding: const EdgeInsets.only(left: 10),
                               hintText: 'Enter pincode',
                               hintStyle: const TextStyle(
                                   fontSize: 14,
