@@ -300,7 +300,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                   child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                 ),
                                                                                 errorWidget: (context, url, error) => Image.asset(
-                                                                                  dummyWishlistImage,
+                                                                                  downloadImage,
                                                                                   fit: BoxFit.cover,
                                                                                   height: 85,
                                                                                   width: 70,

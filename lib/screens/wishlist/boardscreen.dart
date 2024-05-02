@@ -242,7 +242,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                               error) =>
                                                                           Image
                                                                               .asset(
-                                                                        dummyWishlistImage,
+                                                                        downloadImage,
                                                                         fit: BoxFit
                                                                             .cover,
                                                                         height:

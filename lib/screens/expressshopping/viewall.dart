@@ -141,7 +141,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         url,
                                                                         error) =>
                                                                     Image.asset(
-                                                                  dummyWishlistImage,
+                                                                  downloadImage,
                                                                   fit: BoxFit
                                                                       .cover,
                                                                   height: 190,

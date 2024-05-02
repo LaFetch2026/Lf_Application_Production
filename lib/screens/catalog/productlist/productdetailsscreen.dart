@@ -10,6 +10,7 @@ import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
+import '../../cartscreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
@@ -140,7 +141,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: Container(
                             decoration: BoxDecoration(
                                 border:
-                                    Border.all(color: colorSecondary, width: 1),
+                                    Border.all(color: btnTextColor, width: 1),
                                 color: selectedProductSize.isNotEmpty &&
                                         selectedProductSize['id'] == i['id']
                                     ? colorPrimary
@@ -157,7 +158,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   color: selectedProductSize.isNotEmpty &&
                                           selectedProductSize['id'] == i['id']
                                       ? whiteTextColor
-                                      : colorPrimary,
+                                      : btnTextColor,
                                   fontSize: 14.sp,
                                 ),
                               ),
@@ -290,7 +291,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             colorPrimary,
                                                         child: Image.asset(
                                                             cartIconWhite)),
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      Get.to(
+                                                          const CartScreen());
+                                                    },
                                                   ),
                                                   IconButton(
                                                     icon: CircleAvatar(

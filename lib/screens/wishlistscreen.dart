@@ -370,7 +370,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                                 (context, url,
                                                                         error) =>
                                                                     Image.asset(
-                                                              dummyWishlistImage,
+                                                              downloadImage,
                                                               height: 156,
                                                               width: 156,
                                                             ),

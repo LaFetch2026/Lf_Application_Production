@@ -192,7 +192,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                           error) =>
                                                                       Image
                                                                           .asset(
-                                                                    dummyWishlistImage,
+                                                                    downloadImage,
                                                                     fit: BoxFit
                                                                         .cover,
                                                                     height: 190,

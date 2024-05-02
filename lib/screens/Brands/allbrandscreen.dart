@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -55,8 +57,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     productController.isProduct.value = false;
     productController.page.value = 1;
     print(brandController.brandId.value);
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getCategoryData(brandController.brandId.value));
     super.initState();
@@ -157,12 +157,51 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       children: [
                                         Stack(
                                           children: [
-                                            Center(
-                                              child: Image.asset(backImage,
-                                                  height: ht,
-                                                  width: 156,
-                                                  fit: BoxFit.cover),
-                                            ),
+                                            brandController.categoryList[index]
+                                                        ["thumbnail"] !=
+                                                    null
+                                                ? SizedBox(
+                                                    height: ht,
+                                                    width: 156,
+                                                    child: CachedNetworkImage(
+                                                      cacheManager:
+                                                          CacheManager(Config(
+                                                              "customCacheKey",
+                                                              stalePeriod:
+                                                                  const Duration(
+                                                                      days: 15),
+                                                              maxNrOfCacheObjects:
+                                                                  100)),
+                                                      fit: BoxFit.cover,
+                                                      imageUrl: brandController
+                                                              .categoryList[
+                                                          index]["thumbnail"],
+                                                      progressIndicatorBuilder:
+                                                          (context, url,
+                                                                  downloadProgress) =>
+                                                              Center(
+                                                        child: CircularProgressIndicator(
+                                                            value:
+                                                                downloadProgress
+                                                                    .progress),
+                                                      ),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                        downloadImage,
+                                                        fit: BoxFit.cover,
+                                                        height: ht,
+                                                        width: 156,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Center(
+                                                    child: Image.asset(
+                                                        dummyWishlistImage,
+                                                        height: ht,
+                                                        width: 156,
+                                                        fit: BoxFit.cover),
+                                                  ),
                                             Positioned.fill(
                                               child: Align(
                                                 alignment: Alignment.bottomLeft,

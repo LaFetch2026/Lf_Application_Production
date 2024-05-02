@@ -357,7 +357,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         url,
                                                                         error) =>
                                                                     Image.asset(
-                                                                  dummyWishlistImage,
+                                                                  downloadImage,
                                                                   fit: BoxFit
                                                                       .cover,
                                                                   height: 180,

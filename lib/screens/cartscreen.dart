@@ -317,7 +317,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                           child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                         ),
                                                                                         errorWidget: (context, url, error) => Image.asset(
-                                                                                          dummyWishlistImage,
+                                                                                          downloadImage,
                                                                                           fit: BoxFit.cover,
                                                                                           height: 78,
                                                                                           width: 64,
@@ -638,7 +638,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                   ),
                                                                                   errorWidget: (context, url, error) => Image.asset(
-                                                                                    dummyWishlistImage,
+                                                                                    downloadImage,
                                                                                     fit: BoxFit.cover,
                                                                                     height: 150,
                                                                                     width: 122,

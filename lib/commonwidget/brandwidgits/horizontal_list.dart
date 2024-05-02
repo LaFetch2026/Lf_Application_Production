@@ -99,7 +99,7 @@ class HorizontalBrandList extends StatelessWidget {
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(
-                                                  dummyWishlistImage,
+                                                  downloadImage,
                                                   fit: BoxFit.cover,
                                                   height: 150,
                                                   width: 122,

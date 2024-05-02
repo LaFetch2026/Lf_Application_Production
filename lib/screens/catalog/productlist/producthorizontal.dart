@@ -144,7 +144,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                 (context, url,
                                                                         error) =>
                                                                     Image.asset(
-                                                              dummyWishlistImage,
+                                                              downloadImage,
                                                               fit: BoxFit.cover,
                                                               height: 190,
                                                               width: 152,

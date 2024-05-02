@@ -12,6 +12,7 @@ import '../utils/constants.dart';
 
 class ProductController extends BaseController {
   RxBool isProduct = false.obs;
+  RxBool isExpress = false.obs;
   RxBool isDetails = false.obs;
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
@@ -20,7 +21,9 @@ class ProductController extends BaseController {
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
+  List expressProductList = [].obs;
   RxInt total = 0.obs;
+  RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
@@ -29,6 +32,10 @@ class ProductController extends BaseController {
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
   ScrollController listController = ScrollController();
+  RxBool expressLoadMore = false.obs;
+  RxBool expressHasnextpage = true.obs;
+  RxInt expressPage = 1.obs;
+  ScrollController expressListController = ScrollController();
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -88,6 +95,85 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isProduct.value = false;
+  }
+
+  getExpressProductData() async {
+    isExpress.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          expressProductList = responseData["data"];
+          totalExpress.value = responseData["meta"]["total"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isExpress.value = false;
+  }
+
+  fetchExpressMoreData() async {
+    if (expressHasnextpage.value == true &&
+        isExpress.value == false &&
+        expressLoadMore.value == false) {
+      expressLoadMore.value = true;
+      expressPage.value += 1;
+      print(expressPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              expressProductList.addAll(responseData['data']);
+            } else {
+              expressHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch express product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      expressLoadMore.value = false;
+    }
   }
 
   fetchMoreData(String type) async {

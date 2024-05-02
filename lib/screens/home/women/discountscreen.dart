@@ -56,6 +56,14 @@ class DiscountScreenState extends State<DiscountScreen> {
     productController.loadMore.value = false;
     productController.isProduct.value = false;
     productController.page.value = 1;
+    productController.expressListController.addListener(() {
+      productController.fetchExpressMoreData();
+      productController.update();
+    });
+    productController.expressHasnextpage.value = true;
+    productController.expressLoadMore.value = false;
+    productController.isExpress.value = false;
+    productController.expressPage.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getBannar1Data());
     WidgetsBinding.instance
@@ -64,6 +72,8 @@ class DiscountScreenState extends State<DiscountScreen> {
         .addPostFrameCallback((_) => homeController.getCategoryData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.getExpressProductData());
     /* homeController.timer =
         Timer.periodic(const Duration(seconds: 10), (Timer timer) {
       if (homeController.currentPage.value < 2) {
@@ -215,7 +225,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                 height: 1,
               ),
             ),
-            Obx(() => productController.isProduct.value
+            Obx(() => productController.isExpress.value
                 ? const Padding(
                     padding: EdgeInsets.all(40.0),
                     child: Center(child: CircularProgressIndicator()),
@@ -365,8 +375,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                 HorizontalHomeList(
                     text: "6 hour Express Delivery",
                     height: 250,
-                    controller: productController.listController,
-                    list: productController.productList,
+                    controller: productController.expressListController,
+                    list: productController.expressProductList,
                     visibleExpress: true,
                     onPressed: (p0) {
                       Navigator.of(context)
@@ -377,11 +387,13 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   )))
                           .then((value) => setState(
                                 () {
-                                  productController.hasnextpage.value = true;
-                                  productController.loadMore.value = false;
-                                  productController.isProduct.value = false;
-                                  productController.page.value = 1;
-                                  productController.getProductData("relevant");
+                                  productController.expressHasnextpage.value =
+                                      true;
+                                  productController.expressLoadMore.value =
+                                      false;
+                                  productController.isExpress.value = false;
+                                  productController.expressPage.value = 1;
+                                  //  productController.getExpressProductData();
                                 },
                               ));
                     },
@@ -516,7 +528,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   productController.loadMore.value = false;
                                   productController.isProduct.value = false;
                                   productController.page.value = 1;
-                                  productController.getProductData("relevant");
+                                  //   productController.getProductData("relevant");
                                 },
                               ));
                     },
@@ -652,7 +664,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                          dummyWishlistImage,
+                                                          downloadImage,
                                                           fit: BoxFit.cover,
                                                           height: 144,
                                                           width: 150,
@@ -743,7 +755,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
-                                                          dummyWishlistImage,
+                                                          downloadImage,
                                                           fit: BoxFit.cover,
                                                           height: 144,
                                                           width: 150,
@@ -850,7 +862,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                         url,
                                                                         error) =>
                                                                     Image.asset(
-                                                                  dummyWishlistImage,
+                                                                  downloadImage,
                                                                   fit: BoxFit
                                                                       .cover,
                                                                   width: 80,
