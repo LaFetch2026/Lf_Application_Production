@@ -909,44 +909,41 @@ class DiscountScreenState extends State<DiscountScreen> {
                     )
                   : Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: SizedBox(
-                            height: 210,
-                            child: PageView.builder(
-                              scrollDirection: Axis.horizontal,
-                              onPageChanged: callOnchanged,
-                              controller: homeController.pageController,
-                              itemCount: homeController.banner2List.length,
-                              itemBuilder: (context, int index) {
-                                return /* CachedNetworkImage(
-                                  cacheManager: CacheManager(Config(
-                                      "customCacheKey",
-                                      stalePeriod: const Duration(days: 15),
-                                      maxNrOfCacheObjects: 100)),
-                                  fit: BoxFit.cover,
-                                  imageUrl: homeController.banner2List[index]
-                                      ["image"],
-                                  progressIndicatorBuilder:
-                                      (context, url, downloadProgress) => Center(
-                                    child: CircularProgressIndicator(
-                                        value: downloadProgress.progress),
-                                  ),
-                                  errorWidget: (context, url, error) => Image.asset(
-                                    downloadImage,
-                                    height: 210,
-                                  ),
-                                ) */
-                                    FadeInImage(
-                                        fit: BoxFit.cover,
-                                        height: 210,
-                                        width: double.infinity,
-                                        image: NetworkImage(homeController
-                                            .banner2List[index]["image"]),
-                                        placeholder:
-                                            const AssetImage(downloadImage));
-                              },
-                            ),
+                        SizedBox(
+                          height: 210,
+                          child: PageView.builder(
+                            scrollDirection: Axis.horizontal,
+                            onPageChanged: callOnchanged,
+                            controller: homeController.pageController,
+                            itemCount: homeController.banner2List.length,
+                            itemBuilder: (context, int index) {
+                              return /* CachedNetworkImage(
+                                cacheManager: CacheManager(Config(
+                                    "customCacheKey",
+                                    stalePeriod: const Duration(days: 15),
+                                    maxNrOfCacheObjects: 100)),
+                                fit: BoxFit.cover,
+                                imageUrl: homeController.banner2List[index]
+                                    ["image"],
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Center(
+                                  child: CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                                ),
+                                errorWidget: (context, url, error) => Image.asset(
+                                  downloadImage,
+                                  height: 210,
+                                ),
+                              ) */
+                                  FadeInImage(
+                                      fit: BoxFit.cover,
+                                      height: 210,
+                                      width: double.infinity,
+                                      image: NetworkImage(homeController
+                                          .banner2List[index]["image"]),
+                                      placeholder:
+                                          const AssetImage(downloadImage));
+                            },
                           ),
                         ),
                         const SizedBox(

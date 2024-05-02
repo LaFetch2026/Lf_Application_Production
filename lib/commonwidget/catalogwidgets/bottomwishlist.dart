@@ -152,24 +152,26 @@ class _BottomWishlistState extends State<BottomWishlist> {
                           ),
                         )),
             ),
-            Obx(
-              () => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: getSingleButton(
-                    label: "Done",
-                    textColor: whiteBorderColor,
-                    backgroundColor: colorPrimary,
-                    controller: widget.controller,
-                    onPressed: () {
-                      if (id != 0) {
-                        widget.onPressed?.call(id);
-                      } else {
-                        getSnackBar("Select Wishlist");
-                      }
-                    },
-                    borderColor: colorPrimary),
-              ),
-            )
+            widget.wishlistList.isNotEmpty
+                ? Obx(() => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: getSingleButton(
+                          label: "Done",
+                          textColor: whiteBorderColor,
+                          backgroundColor: colorPrimary,
+                          controller: widget.controller,
+                          onPressed: () {
+                            if (id != 0) {
+                              widget.onPressed?.call(id);
+                            } else {
+                              getSnackBar("Select Wishlist");
+                            }
+                          },
+                          borderColor: colorPrimary),
+                    ))
+                : const SizedBox(
+                    height: 0,
+                  ),
           ],
         ),
       ),

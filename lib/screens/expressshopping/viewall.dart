@@ -31,7 +31,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
+        productController.fetchMoreData("express");
         productController.update();
       });
     });
@@ -40,7 +40,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
     productController.isProduct.value = false;
     productController.page.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+        (_) => productController.getProductData("express"));
     wishlistController.getWishlistData();
     super.initState();
   }
