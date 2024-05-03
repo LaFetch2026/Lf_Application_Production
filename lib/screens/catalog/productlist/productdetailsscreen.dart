@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:mime/mime.dart';
+import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/wishlist_controller.dart';
@@ -25,6 +27,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  late VideoPlayerController videoController;
   int _curr = 0;
   Map<String, dynamic> selectedProductSize = {};
   Map<String, dynamic> selectedProductColor = {};
@@ -104,16 +107,42 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       for (var i = 0;
           i < productController.productDetails["images"].length;
           i++) {
+        print(
+            "show video${isImage(productController.productDetails["images"][i]["name"])}");
+        // if (isImage(productController.productDetails["images"][i]["name"])) {
         list.add(Container(
             color: colorSecondary,
             child: Image.network(
                 productController.productDetails["images"][i]["name"],
                 fit: BoxFit.fitHeight)));
+        /*  } else {
+          videoController = VideoPlayerController.networkUrl(
+              Uri.parse(productController.productDetails["images"][i]["name"]))
+            ..initialize().then((_) {
+              videoController.play();
+              setState(() {});
+            });
+          list.add(Container(
+              color: colorSecondary,
+              child: Center(
+                child: videoController.value.isInitialized
+                    ? AspectRatio(
+                        aspectRatio: videoController.value.aspectRatio,
+                        child: VideoPlayer(videoController),
+                      )
+                    : Container(),
+              )));
+        } */
       }
     } else {
       list.add(Image.asset(dummyWishlistImage, fit: BoxFit.fitHeight));
     }
     return list;
+  }
+
+  bool isImage(String path) {
+    final mimeType = lookupMimeType(path);
+    return mimeType != null ? mimeType.startsWith('image/') : false;
   }
 
   SizedBox getListForProductSize() {
@@ -370,6 +399,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
+    videoController = VideoPlayerController.networkUrl(Uri.parse(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
     productController.pincodeController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
@@ -393,6 +428,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    videoController.dispose();
+    super.dispose();
   }
 
   @override
@@ -565,7 +606,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     height: 6,
                                                     width: 40,
                                                     margin: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 5),
                                                     decoration: BoxDecoration(
                                                         color: (index == _curr)
