@@ -18,6 +18,9 @@ class ProductController extends BaseController {
   RxBool isPincode = false.obs;
   RxInt currentpage = 0.obs;
   RxInt inventoryId = 0.obs;
+  RxInt sizeInventoryId = 0.obs;
+  RxInt colorInventoryId = 0.obs;
+  RxInt fabricInventoryId = 0.obs;
   dynamic productDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
@@ -25,6 +28,9 @@ class ProductController extends BaseController {
   RxInt total = 0.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
+  List sizeInventoryList = [].obs;
+  List colorInventoryList = [].obs;
+  List fabricInventoryList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
   final pincodeController = TextEditingController();
@@ -54,9 +60,21 @@ class ProductController extends BaseController {
   }
 
   bool checkDetailsValidation() {
-    if (inventoryId.value == 0) {
+    if (sizeInventoryId.value == 0) {
       getSnackBar(
         "Select Size",
+      );
+      return false;
+    }
+      if (colorInventoryId.value == 0) {
+      getSnackBar(
+        "Select color",
+      );
+      return false;
+    }
+    if (fabricInventoryId.value == 0) {
+      getSnackBar(
+        "Select fabric",
       );
       return false;
     }
@@ -237,6 +255,13 @@ class ProductController extends BaseController {
         if (responseData != null) {
           productDetails = responseData;
           inventoryList = responseData["inventories"];
+
+  sizeInventoryList = inventoryList.where((i)=> i['product_matrix']['product_matrix_group']['name'] == 'Size').toList();
+  
+  colorInventoryList = inventoryList.where((i)=> i['product_matrix']['product_matrix_group']['name'] == 'Color').toList();
+  
+  
+  fabricInventoryList = inventoryList.where((i)=> i['product_matrix']['product_matrix_group']['name'] == 'Fabric').toList();
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -370,7 +395,7 @@ class ProductController extends BaseController {
       final Map<String, dynamic> sendData = {
         "product_id": productId,
         "quantity": quantity,
-        "inventory_id": inventoryId.value
+        "inventory_id": sizeInventoryId.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),

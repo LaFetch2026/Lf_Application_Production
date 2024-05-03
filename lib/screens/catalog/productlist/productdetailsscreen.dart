@@ -27,6 +27,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _curr = 0;
   Map<String, dynamic> selectedProductSize = {};
+  Map<String, dynamic> selectedProductColor = {};
+  Map<String, dynamic> selectedProductFabric = {};
 
   /* final List<String> images = [
     'https://s3-alpha-sig.figma.com/img/2f0d/21cc/22d5c0b59802d64433ee57355546f23b?Expires=1710115200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=irBTQhEp97J~f93ETyTr6PkEV6zJvSvvObu9q0GfUCD1P503BBR-KR0wStaqg7ZsrEhYI0BUprdto~1LDD4JdkXjnvLc-CeoECBUYTcESzoC~I-dfqASDSETa2twg6nYR2D8DCPajI709rF0zgJrmly-ZmlQTOtSz4u05CtjVB4eeky-G6OrJP5~Ku2Qq8zSqC7uD397pK3eSPgGUgC0g2PL4G3cp0gsZapnLHeNCxCVmDYCaQhZB09cxz8z8ukyqLhlwHyBHxHHg5uYyc0X3yQphDGQt2xsynBTY33SpcAtQ5k-Q6f1r2AfFTDjB-1Ju1yqTmvlEPLh0StG7PezIw__',
@@ -116,69 +118,253 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   SizedBox getListForProductSize() {
     return SizedBox(
-        height: 100,
         width: MediaQuery.of(context).size.width,
         child: Padding(
-          padding: const EdgeInsets.only(top: 20.0, left: 12, right: 12),
-          child: Wrap(
-              direction: Axis.horizontal,
-              spacing: 12.0,
-              runSpacing: 8.0,
-              runAlignment: WrapAlignment.spaceEvenly,
-              children: [
-                for (var i in productController.inventoryList.where(
-                    (element) => int.parse(element['stocks'].toString()) > 0))
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          selectedProductSize = i;
-                          productController.inventoryId.value =
-                              selectedProductSize["id"];
-                          print(productController.inventoryId.value);
-                          setState(() {});
-                        },
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: btnTextColor, width: 1),
-                                color: selectedProductSize.isNotEmpty &&
-                                        selectedProductSize['id'] == i['id']
-                                    ? colorPrimary
-                                    : whiteTextColor),
-                            child: SizedBox(
-                              width: 40,
-                              height: 40,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: AppText(
-                                  text: i['product_matrix']['name'].toString(),
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: selectedProductSize.isNotEmpty &&
-                                          selectedProductSize['id'] == i['id']
-                                      ? whiteTextColor
-                                      : btnTextColor,
-                                  fontSize: 14.sp,
-                                ),
-                              ),
-                            )),
-                      ),
-                      int.parse(i['stocks'].toString()) > 10
-                          ? const SizedBox()
-                          : Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: AppText(
-                                text: '${i['stocks'].toString()} left',
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: redColor,
-                                fontSize: 11.sp,
-                              ),
-                            )
-                    ],
-                  ),
-              ]),
+          padding: const EdgeInsets.only(top: 12.0, left: 12, right: 12),
+          child: productController.sizeInventoryList
+                  .where(
+                      (element) => int.parse(element['stocks'].toString()) > 0)
+                  .toList()
+                  .isNotEmpty
+              ? Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 12.0,
+                  runSpacing: 8.0,
+                  runAlignment: WrapAlignment.spaceEvenly,
+                  children: [
+                      for (var i in productController.sizeInventoryList.where(
+                          (element) =>
+                              int.parse(element['stocks'].toString()) > 0))
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                selectedProductSize = i;
+                                productController.sizeInventoryId.value =
+                                    selectedProductSize["id"];
+                                print(productController.sizeInventoryId.value);
+                                setState(() {});
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: btnTextColor, width: 1),
+                                      color: selectedProductSize.isNotEmpty &&
+                                              selectedProductSize['id'] ==
+                                                  i['id']
+                                          ? colorPrimary
+                                          : whiteTextColor),
+                                  child: SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: AppText(
+                                        text: i['product_matrix']['name']
+                                            .toString(),
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: selectedProductSize.isNotEmpty &&
+                                                selectedProductSize['id'] ==
+                                                    i['id']
+                                            ? whiteTextColor
+                                            : btnTextColor,
+                                        fontSize: 14.sp,
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                            int.parse(i['stocks'].toString()) > 10
+                                ? const SizedBox()
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: AppText(
+                                      text: '${i['stocks'].toString()} left',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: redColor,
+                                      fontSize: 11.sp,
+                                    ),
+                                  )
+                          ],
+                        ),
+                    ])
+              : AppText(
+                  text: 'Out of stock',
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: redColor,
+                  fontSize: 11.sp,
+                ),
+        ));
+  }
+
+  SizedBox getListForProductColor() {
+    return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12.0, left: 12, right: 12),
+          child: productController.colorInventoryList
+                  .where(
+                      (element) => int.parse(element['stocks'].toString()) > 0)
+                  .toList()
+                  .isNotEmpty
+              ? Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 12.0,
+                  runSpacing: 8.0,
+                  runAlignment: WrapAlignment.spaceEvenly,
+                  children: [
+                      for (var i in productController.colorInventoryList.where(
+                          (element) =>
+                              int.parse(element['stocks'].toString()) > 0))
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                selectedProductColor = i;
+                                productController.colorInventoryId.value =
+                                    selectedProductColor["id"];
+                                print(productController.colorInventoryId.value);
+                                setState(() {});
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: btnTextColor, width: 1),
+                                      color: selectedProductColor.isNotEmpty &&
+                                              selectedProductColor['id'] ==
+                                                  i['id']
+                                          ? colorPrimary
+                                          : whiteTextColor),
+                                  child: SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: AppText(
+                                        text: i['product_matrix']['name']
+                                            .toString(),
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: selectedProductColor
+                                                    .isNotEmpty &&
+                                                selectedProductColor['id'] ==
+                                                    i['id']
+                                            ? whiteTextColor
+                                            : btnTextColor,
+                                        fontSize: 14.sp,
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                            int.parse(i['stocks'].toString()) > 10
+                                ? const SizedBox()
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: AppText(
+                                      text: '${i['stocks'].toString()} left',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: redColor,
+                                      fontSize: 11.sp,
+                                    ),
+                                  )
+                          ],
+                        ),
+                    ])
+              : AppText(
+                  text: 'Out of stock',
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: redColor,
+                  fontSize: 11.sp,
+                ),
+        ));
+  }
+
+  SizedBox getListForProductFabric() {
+    return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12.0, left: 12, right: 12),
+          child: productController.fabricInventoryList
+                  .where(
+                      (element) => int.parse(element['stocks'].toString()) > 0)
+                  .toList()
+                  .isNotEmpty
+              ? Wrap(
+                  direction: Axis.horizontal,
+                  spacing: 12.0,
+                  runSpacing: 8.0,
+                  runAlignment: WrapAlignment.spaceEvenly,
+                  children: [
+                      for (var i in productController.fabricInventoryList.where(
+                          (element) =>
+                              int.parse(element['stocks'].toString()) > 0))
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                selectedProductFabric = i;
+                                productController.fabricInventoryId.value =
+                                    selectedProductFabric["id"];
+                                print(
+                                    productController.fabricInventoryId.value);
+                                setState(() {});
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: btnTextColor, width: 1),
+                                      color: selectedProductFabric.isNotEmpty &&
+                                              selectedProductFabric['id'] ==
+                                                  i['id']
+                                          ? colorPrimary
+                                          : whiteTextColor),
+                                  child: SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: AppText(
+                                        text: i['product_matrix']['name']
+                                            .toString(),
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: selectedProductFabric
+                                                    .isNotEmpty &&
+                                                selectedProductFabric['id'] ==
+                                                    i['id']
+                                            ? whiteTextColor
+                                            : btnTextColor,
+                                        fontSize: 14.sp,
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                            int.parse(i['stocks'].toString()) > 10
+                                ? const SizedBox()
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: AppText(
+                                      text: '${i['stocks'].toString()} left',
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: redColor,
+                                      fontSize: 11.sp,
+                                    ),
+                                  )
+                          ],
+                        ),
+                    ])
+              : AppText(
+                  text: 'Out of stock',
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: redColor,
+                  fontSize: 11.sp,
+                ),
         ));
   }
 
@@ -379,7 +565,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     height: 6,
                                                     width: 40,
                                                     margin: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 5),
                                                     decoration: BoxDecoration(
                                                         color: (index == _curr)
@@ -551,7 +737,105 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                 const Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 20.0, horizontal: 12),
+                                      vertical: 14.0, horizontal: 12),
+                                  child: Divider(
+                                    color: colorSecondary,
+                                  ),
+                                ),
+                                productController.inventoryList.isNotEmpty
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 0.0,
+                                                  left: 12,
+                                                  right: 12),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  AppText(
+                                                    text: 'Select color',
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 16.sp,
+                                                  ),
+                                                  // AppText(
+                                                  //   text: 'View Size chart',
+                                                  //   fontFamily:
+                                                  //       "Franklin Gothic Regular",
+                                                  //   fontWeight: FontWeight.w600,
+                                                  //   color: colorPrimary,
+                                                  //   fontSize: 12.sp,
+                                                  // ),
+                                                ],
+                                              )),
+                                          getListForProductColor(),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14.0, horizontal: 12),
+                                  child: Divider(
+                                    color: colorSecondary,
+                                  ),
+                                ),
+                                productController.inventoryList.isNotEmpty
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 0.0,
+                                                  left: 12,
+                                                  right: 12),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  AppText(
+                                                    text: 'Select fabric',
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 16.sp,
+                                                  ),
+                                                  // AppText(
+                                                  //   text: 'View Size chart',
+                                                  //   fontFamily:
+                                                  //       "Franklin Gothic Regular",
+                                                  //   fontWeight: FontWeight.w600,
+                                                  //   color: colorPrimary,
+                                                  //   fontSize: 12.sp,
+                                                  // ),
+                                                ],
+                                              )),
+                                          getListForProductFabric(),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14.0, horizontal: 12),
                                   child: Divider(
                                     color: colorSecondary,
                                   ),
