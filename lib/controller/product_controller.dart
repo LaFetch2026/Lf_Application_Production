@@ -66,7 +66,7 @@ class ProductController extends BaseController {
       );
       return false;
     }
-      if (colorInventoryId.value == 0) {
+    if (colorInventoryId.value == 0) {
       getSnackBar(
         "Select color",
       );
@@ -256,12 +256,22 @@ class ProductController extends BaseController {
           productDetails = responseData;
           inventoryList = responseData["inventories"];
 
-  sizeInventoryList = inventoryList.where((i)=> i['product_matrix']['product_matrix_group']['name'] == 'Size').toList();
-  
-  colorInventoryList = inventoryList.where((i)=> i['product_matrix']['product_matrix_group']['name'] == 'Color').toList();
-  
-  
-  fabricInventoryList = inventoryList.where((i)=> i['product_matrix']['product_matrix_group']['name'] == 'Fabric').toList();
+          sizeInventoryList = inventoryList
+              .where((i) =>
+                  i['product_matrix']['product_matrix_group']['name'] == 'Size')
+              .toList();
+
+          colorInventoryList = inventoryList
+              .where((i) =>
+                  i['product_matrix']['product_matrix_group']['name'] ==
+                  'Color')
+              .toList();
+
+          fabricInventoryList = inventoryList
+              .where((i) =>
+                  i['product_matrix']['product_matrix_group']['name'] ==
+                  'Fabric')
+              .toList();
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -447,6 +457,8 @@ class ProductController extends BaseController {
         }
         if (type == "product") {
           getProductData("relevant");
+        } else if (type == "express") {
+          getProductData("express");
         } else {
           getProductRecommendations(id);
         }

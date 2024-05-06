@@ -422,6 +422,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductDetails(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
+        (_) => wishlistController.getWishlistProductDetails(widget.productId));
+    WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductReview(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductRecommendations(widget.productId));
@@ -1967,15 +1969,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Obx(
-                    () => productController.isDetails.value
+                    () => wishlistController.isProductWishlist.value
                         ? const Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Center(child: CircularProgressIndicator()),
                           )
-                        : productController.productDetails["wishlisted"]
-                            ? const SizedBox(
-                                width: 0,
-                              )
+                        : wishlistController.wishListDetails["wishlisted"]
+                            ? Container(
+                                margin: const EdgeInsets.only(left: 10.0),
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: btnTextColor, width: 1),
+                                ),
+                                child: IconButton(
+                                    onPressed: () {
+                                      wishlistController
+                                          .callAddProductToWishlist(
+                                              wishlistController
+                                                      .wishListDetails[
+                                                  "wishlist_id"],
+                                              productController
+                                                  .productDetails["id"]);
+                                    },
+                                    icon: Image.asset(wishlistSelectImage)))
                             : Container(
                                 margin: const EdgeInsets.only(left: 10.0),
                                 decoration: BoxDecoration(
@@ -1989,7 +2005,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               controller: wishlistController,
                                               onPressed: (p0) {
                                                 wishlistController
-                                                    .callAddProductWishlist(
+                                                    .callAddProductToWishlist(
                                                         p0,
                                                         productController
                                                                 .productDetails[

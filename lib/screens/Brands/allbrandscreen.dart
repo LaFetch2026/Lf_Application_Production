@@ -245,9 +245,25 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 text: "New Arrivals",
                                 controller: productController.listController,
                                 onPressed: (p0) {
-                                  Get.to(() => ProductDetailsScreen(
-                                        productId: p0,
-                                      ));
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ProductDetailsScreen(
+                                                productId: p0,
+                                              )))
+                                      .then((value) => setState(
+                                            () {
+                                              productController
+                                                  .hasnextpage.value = true;
+                                              productController.loadMore.value =
+                                                  false;
+                                              productController
+                                                  .isProduct.value = false;
+                                              productController.page.value = 1;
+                                              productController
+                                                  .getProductData("relevant");
+                                            },
+                                          ));
                                 },
                                 onPressedHeart: (p0, p1) {
                                   if (productController.productList[p1]
@@ -483,9 +499,25 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               text: "Bestsellers",
                               controller: productController.listController,
                               onPressed: (p0) {
-                                Get.to(() => ProductDetailsScreen(
-                                      productId: p0,
-                                    ));
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ProductDetailsScreen(
+                                              productId: p0,
+                                            )))
+                                    .then((value) => setState(
+                                          () {
+                                            productController
+                                                .hasnextpage.value = true;
+                                            productController.loadMore.value =
+                                                false;
+                                            productController.isProduct.value =
+                                                false;
+                                            productController.page.value = 1;
+                                            productController
+                                                .getProductData("relevant");
+                                          },
+                                        ));
                               },
                               onPressedHeart: (p0, p1) {
                                 if (productController.productList[p1]

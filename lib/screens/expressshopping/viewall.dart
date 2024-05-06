@@ -168,7 +168,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         .productList[
                                                                     index]
                                                                 ["wishlist_id"],
-                                                            "product",
+                                                            "express",
                                                             productController
                                                                     .productList[
                                                                 index]["id"],
@@ -185,7 +185,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         productController
                                                                             .callAddProductToWishlist(
                                                                           p0,
-                                                                          "product",
+                                                                          "express",
                                                                           productController.productList[index]
                                                                               [
                                                                               "id"],
