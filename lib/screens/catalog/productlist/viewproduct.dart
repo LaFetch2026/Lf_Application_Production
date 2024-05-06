@@ -17,7 +17,7 @@ class ViewProductScreen extends StatefulWidget {
 }
 
 class ViewProductScreenState extends State<ViewProductScreen> {
-  final productController = Get.find<ProductController>();
+  final productController = Get.put(ProductController());
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
@@ -33,7 +33,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
         backgroundColor: whiteTextColor,
         body: GestureDetector(
           onTap: () {
-            Get.back();
+            // Get.back();
           },
           child: Expanded(
             child: Column(

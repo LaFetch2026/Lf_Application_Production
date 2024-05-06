@@ -219,7 +219,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                     ])
               : AppText(
-                  text: 'Out of stock',
+                  text: 'N/A',
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: redColor,
@@ -303,7 +303,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                     ])
               : AppText(
-                  text: 'Out of stock',
+                  text: 'N/A',
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: redColor,
@@ -388,7 +388,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                     ])
               : AppText(
-                  text: 'Out of stock',
+                  text: 'N/A',
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: redColor,
