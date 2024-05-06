@@ -14,7 +14,6 @@ import 'package:lafetch/utils/constants.dart';
 
 import '../commonwidget/app_text.dart';
 import '../controller/login_controller.dart';
-import 'bottomnavscreen.dart';
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
@@ -51,7 +50,7 @@ class LoginScreenState extends State<LoginScreen> {
       print("id ${googleUser.id}");
       print("token $token");
       if (googleUser.displayName != null) {
-        Get.to(const BottomNavScreen());
+        //  Get.to(const BottomNavScreen());
       }
     }
   }
@@ -73,9 +72,9 @@ class LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.topRight,
                 child: GestureDetector(
                   onTap: () {
-                    Get.to(
+                    /*   Get.to(
                       () => const BottomNavScreen(),
-                    );
+                    ); */
                   },
                   child: const AppText(
                     text: "Skip",
