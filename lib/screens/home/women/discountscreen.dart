@@ -172,6 +172,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           itemCount: homeController.banner1List.length,
                           itemBuilder: (context, int index) {
                             return CachedNetworkImage(
+                              key: UniqueKey(),
                               cacheManager: CacheManager(Config(
                                   "customCacheKey",
                                   stalePeriod: const Duration(days: 15),
@@ -179,11 +180,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                               fit: BoxFit.cover,
                               imageUrl: homeController.banner1List[index]
                                   ["image"],
-                              progressIndicatorBuilder:
+                              /*  progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
                                 child: CircularProgressIndicator(
                                     value: downloadProgress.progress),
-                              ),
+                              ), */
                               errorWidget: (context, url, error) => Image.asset(
                                 downloadImage,
                                 height: 210,
@@ -652,7 +653,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         imageUrl: homeController
                                                                 .categoryList[0]
                                                             ["thumbnail"],
-                                                        progressIndicatorBuilder:
+                                                        /*  progressIndicatorBuilder:
                                                             (context, url,
                                                                     downloadProgress) =>
                                                                 Center(
@@ -660,7 +661,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                               value:
                                                                   downloadProgress
                                                                       .progress),
-                                                        ),
+                                                        ), */
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -743,7 +744,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         imageUrl: homeController
                                                                 .categoryList[1]
                                                             ["thumbnail"],
-                                                        progressIndicatorBuilder:
+                                                        /*  progressIndicatorBuilder:
                                                             (context, url,
                                                                     downloadProgress) =>
                                                                 Center(
@@ -751,7 +752,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                               value:
                                                                   downloadProgress
                                                                       .progress),
-                                                        ),
+                                                        ), */
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -849,7 +850,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                         index +
                                                                             2][
                                                                     "thumbnail"],
-                                                                progressIndicatorBuilder:
+                                                                /*   progressIndicatorBuilder:
                                                                     (context,
                                                                             url,
                                                                             downloadProgress) =>
@@ -857,7 +858,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                   child: CircularProgressIndicator(
                                                                       value: downloadProgress
                                                                           .progress),
-                                                                ),
+                                                                ), */
                                                                 errorWidget: (context,
                                                                         url,
                                                                         error) =>

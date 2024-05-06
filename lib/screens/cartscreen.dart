@@ -370,7 +370,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 child: Row(
                                                                                   children: [
                                                                                     Container(
-                                                                                      color: colorSecondary,
+                                                                                      color: whiteTextColor,
                                                                                       height: 40,
                                                                                       width: 75,
                                                                                       child: Row(
@@ -415,7 +415,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
                                                                                         child: Container(
-                                                                                          color: colorSecondary,
+                                                                                          color: whiteTextColor,
                                                                                           height: 40,
                                                                                           width: 70,
                                                                                           child: Row(

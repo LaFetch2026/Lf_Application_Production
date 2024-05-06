@@ -93,13 +93,13 @@ class HorizontalHomeList extends StatelessWidget {
                                             fit: BoxFit.cover,
                                             imageUrl: list[index]["images"][0]
                                                 ["name"],
-                                            progressIndicatorBuilder: (context,
+                                            /*  progressIndicatorBuilder: (context,
                                                     url, downloadProgress) =>
                                                 Center(
                                               child: CircularProgressIndicator(
                                                   value: downloadProgress
                                                       .progress),
-                                            ),
+                                            ), */
                                             errorWidget:
                                                 (context, url, error) =>
                                                     Image.asset(
