@@ -129,7 +129,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           // Use the controller to loop the video.
           videoController.setLooping(true);
           // videoController.play();
-          videoController.setVolume(0);
+          // videoController.setVolume(0);
 
           list.add(
             FutureBuilder(
