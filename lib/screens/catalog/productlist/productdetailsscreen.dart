@@ -28,6 +28,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
+  late Future<void> _initializeVideoPlayerFuture;
   int _curr = 0;
   Map<String, dynamic> selectedProductSize = {};
   Map<String, dynamic> selectedProductColor = {};
@@ -107,32 +108,86 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       for (var i = 0;
           i < productController.productDetails["images"].length;
           i++) {
-        print(
-            "show video${isImage(productController.productDetails["images"][i]["name"])}");
-        // if (isImage(productController.productDetails["images"][i]["name"])) {
-        list.add(Container(
-            color: colorSecondary,
-            child: Image.network(
-                productController.productDetails["images"][i]["name"],
-                fit: BoxFit.fitHeight)));
-        /*  } else {
-          videoController = VideoPlayerController.networkUrl(
-              Uri.parse(productController.productDetails["images"][i]["name"]))
-            ..initialize().then((_) {
-              videoController.play();
-              setState(() {});
-            });
+        if (isImage(productController.productDetails["images"][i]["name"])) {
+          print(
+              "show video=========${isImage(productController.productDetails["images"][i]["name"])}");
           list.add(Container(
               color: colorSecondary,
-              child: Center(
-                child: videoController.value.isInitialized
-                    ? AspectRatio(
+              child: Image.network(
+                  productController.productDetails["images"][i]["name"],
+                  fit: BoxFit.fitHeight)));
+        } else {
+          productController.isVideoPlaying.value = true;
+          videoController = VideoPlayerController.networkUrl(
+            Uri.parse(
+              productController.productDetails["images"][i]["name"],
+            ),
+          );
+
+          _initializeVideoPlayerFuture = videoController.initialize();
+
+          // Use the controller to loop the video.
+          videoController.setLooping(true);
+          // videoController.play();
+          // videoController.setVolume(0);
+
+          list.add(
+            FutureBuilder(
+              future: _initializeVideoPlayerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // If the VideoPlayerController has finished initialization, use
+                  // the data it provides to limit the aspect ratio of the video.
+                  return Obx(() =>  Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      AspectRatio(
                         aspectRatio: videoController.value.aspectRatio,
+                        // Use the VideoPlayer widget to display the video.
                         child: VideoPlayer(videoController),
-                      )
-                    : Container(),
-              )));
-        } */
+                      ),
+                      IconButton(
+                        icon: CircleAvatar(
+                          backgroundColor: blue,
+                          child: Icon(
+                            !productController.isVideoPlaying.value
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                          ),
+                        ),
+                        onPressed: () {
+                              if (videoController.value.isPlaying) {
+                              videoController.pause();
+                              productController.isVideoPlaying.value = true;
+                            } else {
+                              // If the video is paused, play it.
+                              productController.isVideoPlaying.value = false;
+                              videoController.play();
+                            }
+                          // setState(() {
+                          //   // If the video is playing, pause it.
+                          //   if (videoController.value.isPlaying) {
+                          //     videoController.pause();
+                          //   } else {
+                          //     // If the video is paused, play it.
+                          //     videoController.play();
+                          //   }
+                          // });
+                        },
+                      ),
+                    ],
+                  ));
+                } else {
+                  // If the VideoPlayerController is still initializing, show a
+                  // loading spinner.
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          );
+        }
       }
     } else {
       list.add(Image.asset(dummyWishlistImage, fit: BoxFit.fitHeight));
@@ -141,6 +196,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   bool isImage(String path) {
+    print(path);
+    return path.contains('product_photo');
+    // return path.contains('product_photo') && (path.contains('.jpg') || path.contains('.jpeg') || path.contains('.png'));
     final mimeType = lookupMimeType(path);
     return mimeType != null ? mimeType.startsWith('image/') : false;
   }
@@ -399,12 +457,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
-    videoController = VideoPlayerController.networkUrl(Uri.parse(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
     productController.pincodeController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
@@ -434,6 +486,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void dispose() {
+    productController.isVideoPlaying.value = true;
     videoController.dispose();
     super.dispose();
   }
@@ -608,7 +661,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     height: 6,
                                                     width: 40,
                                                     margin: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 5),
                                                     decoration: BoxDecoration(
                                                         color: (index == _curr)

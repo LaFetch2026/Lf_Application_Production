@@ -43,6 +43,8 @@ class ProductController extends BaseController {
   RxInt expressPage = 1.obs;
   ScrollController expressListController = ScrollController();
 
+  RxBool isVideoPlaying = true.obs;
+
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
       getSnackBar(
@@ -239,6 +241,14 @@ class ProductController extends BaseController {
     }
   }
 
+  checkIfURLisImage(String url) async{
+    final imageUrl = Uri.parse(url);
+    var imageResponse=await http.head(imageUrl);
+      // var responseData = json.decode(imageResponse.body);
+    print('checkIfURLisImage=========${url}');
+
+  }
+
   getProductDetails(int productId) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -254,6 +264,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productDetails = responseData;
+          print('Product Details====>${productDetails["images"]}');
           inventoryList = responseData["inventories"];
 
           sizeInventoryList = inventoryList
