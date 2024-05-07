@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomfiltters.dart';
 import '../../../commonwidget/catalogwidgets/bottomsortby.dart';
@@ -24,6 +25,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   int _curr = 0;
+  late VideoPlayerController videoController;
+  late Future<void> _initializeVideoPlayerFuture;
 
   /*  final PageController _pageController = PageController(
     initialPage: 0,
@@ -55,23 +58,106 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     super.initState();
   }
 
+    bool isImage(String path) {
+    print(path);
+    return path.contains('product_photo');
+  }
+
   List<Widget> getListForPageView(int index) {
     List<Widget> list = [];
     if (productController.productList[index]["images"].isNotEmpty) {
       for (var i = 0;
           i < productController.productList[index]["images"].length;
           i++) {
+        if (isImage(productController.productList[index]["images"][i]["name"])) {
+   print(
+              "show video=========${isImage(productController.productList[index]["images"][i]["name"])}");
+
         list.add(Container(
             color: colorSecondary,
             child: Image.network(
                 productController.productList[index]["images"][i]["name"],
                 fit: BoxFit.cover)));
+        }else{
+
+          productController.isVideoPlaying.value = true;
+          videoController = VideoPlayerController.networkUrl(
+            Uri.parse(
+              productController.productList[index]["images"][i]["name"],
+            ),
+          );
+
+          _initializeVideoPlayerFuture = videoController.initialize();
+          videoController.setLooping(true);
+
+
+
+          list.add(
+            FutureBuilder(
+              future: _initializeVideoPlayerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // If the VideoPlayerController has finished initialization, use
+                  // the data it provides to limit the aspect ratio of the video.
+                  return Obx(() => Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: videoController.value.aspectRatio,
+                            // Use the VideoPlayer widget to display the video.
+                            child: VideoPlayer(videoController),
+                          ),
+                          IconButton(
+                            icon: CircleAvatar(
+                              backgroundColor: blue,
+                              child: Icon(
+                                !productController.isVideoPlaying.value
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                              ),
+                            ),
+                            onPressed: () {
+                              if (videoController.value.isPlaying) {
+                                videoController.pause();
+                                productController.isVideoPlaying.value = true;
+                              } else {
+                                // If the video is paused, play it.
+                                productController.isVideoPlaying.value = false;
+                                videoController.play();
+                              }
+                              // setState(() {
+                              //   // If the video is playing, pause it.
+                              //   if (videoController.value.isPlaying) {
+                              //     videoController.pause();
+                              //   } else {
+                              //     // If the video is paused, play it.
+                              //     videoController.play();
+                              //   }
+                              // });
+                            },
+                          ),
+                        ],
+                      ));
+                } else {
+                  // If the VideoPlayerController is still initializing, show a
+                  // loading spinner.
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          );
+
+
+        }
       }
     } else {
       list.add(Image.asset(dummyWishlistImage, fit: BoxFit.cover));
     }
     return list;
   }
+
 
   @override
   Widget build(BuildContext context) {
