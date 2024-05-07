@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
-import 'package:mime/mime.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
@@ -33,49 +32,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Map<String, dynamic> selectedProductSize = {};
   Map<String, dynamic> selectedProductColor = {};
   Map<String, dynamic> selectedProductFabric = {};
-
-  /* final List<String> images = [
-    'https://s3-alpha-sig.figma.com/img/2f0d/21cc/22d5c0b59802d64433ee57355546f23b?Expires=1710115200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=irBTQhEp97J~f93ETyTr6PkEV6zJvSvvObu9q0GfUCD1P503BBR-KR0wStaqg7ZsrEhYI0BUprdto~1LDD4JdkXjnvLc-CeoECBUYTcESzoC~I-dfqASDSETa2twg6nYR2D8DCPajI709rF0zgJrmly-ZmlQTOtSz4u05CtjVB4eeky-G6OrJP5~Ku2Qq8zSqC7uD397pK3eSPgGUgC0g2PL4G3cp0gsZapnLHeNCxCVmDYCaQhZB09cxz8z8ukyqLhlwHyBHxHHg5uYyc0X3yQphDGQt2xsynBTY33SpcAtQ5k-Q6f1r2AfFTDjB-1Ju1yqTmvlEPLh0StG7PezIw__',
-    'https://s3-alpha-sig.figma.com/img/40fa/03ef/017df2ddaadae8ddc39cc06fb579a5b9?Expires=1710115200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=dTZI800itjgyI~~ybXeDYqA9K4g4-n-LTAcVrqe8uKgBEAdfbIxq2Sb7eRAIiBAx5tbt9m7WXOWdSK9Wb2EeG3T3qH39m-bFQPlr03-7OynKxDHUMEd8EYCAWOR9Aq-7cszgSBKrp6LPjzOLyasGWdzTDvNgJ9w71C3nlB~GYCE4Z3iHpkUKu-KHRg16-a7bw~fSQmf2IU9vFRcirhfuVtdUdFbKYO1Ve6GMUIwVJcbJUIgJ73Oh2Rlx4f~dvkOmgx~Y4zB1BkTU6C6C0sU~pE7-lSXolMBZSm3S51sa9coUAQ7uiZ88cxTQwheDvGxndv~a6GYnr7HitM6EtmDGXQ__'
-  ]; */
-  /* final List<Map<String, String>> sizes = [
-    {'id': '1', 'title': 'XS', 'left': '3'},
-    {'id': '2', 'title': 'S', 'left': '6'},
-    {'id': '3', 'title': 'M', 'left': '100'},
-    {'id': '4', 'title': 'L', 'left': '50'},
-    {'id': '5', 'title': 'XL', 'left': '1'},
-  ]; */
-
-  /*  final List<Map<String, String>> customerReviews = [
-    {
-      'id': '1',
-      'rating': '5',
-      'name': 'Samantha Payne',
-      'comment':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-      'date': '2 years ago',
-      'helpfulCount': '21'
-    },
-    {
-      'id': '1',
-      'rating': '4',
-      'name': 'Payne Samantha',
-      'comment':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-      'date': '6 years ago',
-      'helpfulCount': '2'
-    },
-    {
-      'id': '1',
-      'rating': '1',
-      'name': 'Samantha',
-      'comment':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-      'date': '1 years ago',
-      'helpfulCount': '31'
-    },
-  ];
- */
 
   final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
@@ -138,45 +94,45 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   // If the VideoPlayerController has finished initialization, use
                   // the data it provides to limit the aspect ratio of the video.
-                  return Obx(() =>  Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: videoController.value.aspectRatio,
-                        // Use the VideoPlayer widget to display the video.
-                        child: VideoPlayer(videoController),
-                      ),
-                      IconButton(
-                        icon: CircleAvatar(
-                          backgroundColor: blue,
-                          child: Icon(
-                            !productController.isVideoPlaying.value
-                                ? Icons.pause
-                                : Icons.play_arrow,
+                  return Obx(() => Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: videoController.value.aspectRatio,
+                            // Use the VideoPlayer widget to display the video.
+                            child: VideoPlayer(videoController),
                           ),
-                        ),
-                        onPressed: () {
+                          IconButton(
+                            icon: CircleAvatar(
+                              backgroundColor: blue,
+                              child: Icon(
+                                !productController.isVideoPlaying.value
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                              ),
+                            ),
+                            onPressed: () {
                               if (videoController.value.isPlaying) {
-                              videoController.pause();
-                              productController.isVideoPlaying.value = true;
-                            } else {
-                              // If the video is paused, play it.
-                              productController.isVideoPlaying.value = false;
-                              videoController.play();
-                            }
-                          // setState(() {
-                          //   // If the video is playing, pause it.
-                          //   if (videoController.value.isPlaying) {
-                          //     videoController.pause();
-                          //   } else {
-                          //     // If the video is paused, play it.
-                          //     videoController.play();
-                          //   }
-                          // });
-                        },
-                      ),
-                    ],
-                  ));
+                                videoController.pause();
+                                productController.isVideoPlaying.value = true;
+                              } else {
+                                // If the video is paused, play it.
+                                productController.isVideoPlaying.value = false;
+                                videoController.play();
+                              }
+                              // setState(() {
+                              //   // If the video is playing, pause it.
+                              //   if (videoController.value.isPlaying) {
+                              //     videoController.pause();
+                              //   } else {
+                              //     // If the video is paused, play it.
+                              //     videoController.play();
+                              //   }
+                              // });
+                            },
+                          ),
+                        ],
+                      ));
                 } else {
                   // If the VideoPlayerController is still initializing, show a
                   // loading spinner.
@@ -198,9 +154,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   bool isImage(String path) {
     print(path);
     return path.contains('product_photo');
-    // return path.contains('product_photo') && (path.contains('.jpg') || path.contains('.jpeg') || path.contains('.png'));
-    final mimeType = lookupMimeType(path);
-    return mimeType != null ? mimeType.startsWith('image/') : false;
   }
 
   SizedBox getListForProductSize() {
@@ -661,7 +614,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     height: 6,
                                                     width: 40,
                                                     margin: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 5),
                                                     decoration: BoxDecoration(
                                                         color: (index == _curr)
@@ -864,14 +817,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     color: colorPrimary,
                                                     fontSize: 16.sp,
                                                   ),
-                                                  // AppText(
-                                                  //   text: 'View Size chart',
-                                                  //   fontFamily:
-                                                  //       "Franklin Gothic Regular",
-                                                  //   fontWeight: FontWeight.w600,
-                                                  //   color: colorPrimary,
-                                                  //   fontSize: 12.sp,
-                                                  // ),
                                                 ],
                                               )),
                                           getListForProductColor(),
@@ -913,14 +858,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     color: colorPrimary,
                                                     fontSize: 16.sp,
                                                   ),
-                                                  // AppText(
-                                                  //   text: 'View Size chart',
-                                                  //   fontFamily:
-                                                  //       "Franklin Gothic Regular",
-                                                  //   fontWeight: FontWeight.w600,
-                                                  //   color: colorPrimary,
-                                                  //   fontSize: 12.sp,
-                                                  // ),
                                                 ],
                                               )),
                                           getListForProductFabric(),
