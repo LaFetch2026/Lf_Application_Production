@@ -239,7 +239,7 @@ class BottomFiltersState extends State<BottomFilters> {
                           ]
                           ), */
                           Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.only(bottom: 8),
                         child: SizedBox(
                           height: 150,
                           child: ListView.builder(
@@ -299,7 +299,7 @@ class BottomFiltersState extends State<BottomFilters> {
                       height: MediaQuery.of(context).size.height - 115,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                            horizontal: 16, vertical: 8),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
