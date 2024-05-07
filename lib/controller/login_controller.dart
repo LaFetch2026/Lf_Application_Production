@@ -123,13 +123,13 @@ class LoginController extends BaseController {
     }
   }
 
-  callVerifyOtp() async {
+  callVerifyOtp(String phone) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
-        "phone": number.value,
+        "phone": phone,
         "otp": otp.value,
       });
       var responseData = json.decode(response.body);

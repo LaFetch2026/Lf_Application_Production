@@ -15,6 +15,8 @@ import '../utils/constants.dart';
 class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
+  RxBool isProductWishlist = false.obs;
+  dynamic wishListDetails = "".obs;
   dynamic wishlistDetails = "".obs;
   List wishlistList = [].obs;
   List deleteidList = [].obs;
@@ -418,7 +420,7 @@ class WishlistController extends BaseController {
     }
   } */
 
-  callAddProductWishlist(int wishlistId, int id) async {
+  /*  callAddProductWishlist(int wishlistId, int id) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -444,6 +446,72 @@ class WishlistController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  } */
+
+  getWishlistProductDetails(int productId) async {
+    isProductWishlist.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products/$productId?type=relevant"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          wishListDetails = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product details 2 failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isProductWishlist.value = false;
+  }
+
+  callAddProductToWishlist(int wishlistId, int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+        Uri.parse("${ApiConstants.baseUrl}/products/$id/wishlist/$wishlistId"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["wishlisted"]) {
+          Get.close(1);
+          getSnackBar("product added to the wishlist");
+        } else {
+          getSnackBar("product removed to the wishlist");
+        }
+        getWishlistProductDetails(responseData["id"]);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("item add failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   callAddWishlist(int wishlistId) async {

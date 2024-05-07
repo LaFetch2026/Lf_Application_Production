@@ -128,7 +128,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         [
                                                                         "images"]
                                                                     [0]["name"],
-                                                                progressIndicatorBuilder:
+                                                                /*  progressIndicatorBuilder:
                                                                     (context,
                                                                             url,
                                                                             downloadProgress) =>
@@ -136,7 +136,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                   child: CircularProgressIndicator(
                                                                       value: downloadProgress
                                                                           .progress),
-                                                                ),
+                                                                ), */
                                                                 errorWidget: (context,
                                                                         url,
                                                                         error) =>
@@ -168,7 +168,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         .productList[
                                                                     index]
                                                                 ["wishlist_id"],
-                                                            "product",
+                                                            "express",
                                                             productController
                                                                     .productList[
                                                                 index]["id"],
@@ -185,7 +185,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         productController
                                                                             .callAddProductToWishlist(
                                                                           p0,
-                                                                          "product",
+                                                                          "express",
                                                                           productController.productList[index]
                                                                               [
                                                                               "id"],

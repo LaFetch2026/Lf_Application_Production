@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/screens/paymentscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -190,7 +189,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
                       onTap: () {
-                        Get.to(const PaymentScreen());
+                        // Get.to(const PaymentScreen());
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,

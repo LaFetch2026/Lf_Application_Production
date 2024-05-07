@@ -195,7 +195,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         onPressed: () {
                           if (otpController
                               .checkOtpvalidation(otpController.otp.value)) {
-                            otpController.callVerifyOtp();
+                            otpController.callVerifyOtp(widget.phoneMunber);
                           }
                         },
                         borderColor: btnTextColor),

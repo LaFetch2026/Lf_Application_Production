@@ -152,8 +152,9 @@ class BoardScreenState extends State<BoardScreen> {
                               padding: const EdgeInsets.only(
                                   left: 16, right: 16, top: 10),
                               child: AppText(
-                                text:
-                                    "${wishlistController.wishListProduct.length} items",
+                                text: wishlistController.wishListProduct.isEmpty
+                                    ? ""
+                                    : "${wishlistController.wishListProduct.length} items",
                                 color: textHintColor,
                                 fontSize: 12.sp,
                                 fontFamily: "Franklin Gothic Regular",

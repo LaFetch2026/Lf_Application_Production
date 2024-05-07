@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 import '../commonwidget/homewidget/horizontal_home_list.dart';
@@ -310,12 +311,17 @@ class SearchScreenState extends State<SearchScreen> {
                                           return Column(
                                             children: [
                                               GestureDetector(
-                                                onTap: () {},
+                                                onTap: () {
+                                                  Get.offAll(
+                                                      const BottomNavScreen(
+                                                    index: 1,
+                                                  ));
+                                                },
                                                 child: AnimatedContainer(
                                                   duration: const Duration(
                                                       milliseconds: 300),
                                                   margin: const EdgeInsets.only(
-                                                      right: 5),
+                                                      right: 10),
                                                   width: 130,
                                                   child: Column(
                                                     crossAxisAlignment:
