@@ -125,19 +125,90 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 5),
-                                              child: AppText(
-                                                text: "Sonam Agrahari",
-                                                color: loginText,
-                                                fontSize: 16.sp,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 14,
+                                                        vertical: 5),
+                                                    child: AppText(
+                                                      text: "Sonam Agrahari",
+                                                      color: loginText,
+                                                      fontSize: 16.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                                controller.addressList[index]
+                                                        ["default_shipping"]
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 14,
+                                                        ),
+                                                        child:
+                                                            AnimatedContainer(
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  right: 5),
+                                                          width: 80,
+                                                          height: 20,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color:
+                                                                whiteBorderColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                            border: Border.all(
+                                                                color:
+                                                                    btnTextColor,
+                                                                width: 1),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5),
+                                                            child: Center(
+                                                              child: AppText(
+                                                                text: controller
+                                                                            .addressList[index]
+                                                                        [
+                                                                        "default_shipping"]
+                                                                    ? "Default"
+                                                                    : "",
+                                                                color:
+                                                                    btnTextColor,
+                                                                fontSize: 12.sp,
+                                                                fontFamily:
+                                                                    "Franklin Gothic",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(
+                                                        height: 0,
+                                                      ),
+                                              ],
                                             ),
                                             Padding(
                                               padding:
@@ -229,13 +300,23 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                             index]["id"]);
                                                   },
                                                   onPressedSecond: () {
-                                                    Get.to(
-                                                        ShippingAddressScreen(
-                                                      addressId: controller
-                                                              .addressList[
-                                                          index]["id"],
-                                                      cartId: 0,
-                                                    ));
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                ShippingAddressScreen(
+                                                                  addressId: controller
+                                                                          .addressList[
+                                                                      index]["id"],
+                                                                  cartId: 0,
+                                                                )))
+                                                        .then(
+                                                            (value) => setState(
+                                                                  () {
+                                                                    controller
+                                                                        .getAddressData();
+                                                                  },
+                                                                ));
                                                   },
                                                   secondIcon: editImage),
                                             )

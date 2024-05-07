@@ -68,7 +68,7 @@ class ProductController extends BaseController {
       );
       return false;
     }
-    if (colorInventoryId.value == 0) {
+    /*  if (colorInventoryId.value == 0) {
       getSnackBar(
         "Select color",
       );
@@ -79,7 +79,7 @@ class ProductController extends BaseController {
         "Select fabric",
       );
       return false;
-    }
+    } */
     return true;
   }
 
@@ -241,12 +241,11 @@ class ProductController extends BaseController {
     }
   }
 
-  checkIfURLisImage(String url) async{
+  checkIfURLisImage(String url) async {
     final imageUrl = Uri.parse(url);
-    var imageResponse=await http.head(imageUrl);
-      // var responseData = json.decode(imageResponse.body);
+    var imageResponse = await http.head(imageUrl);
+    // var responseData = json.decode(imageResponse.body);
     print('checkIfURLisImage=========${url}');
-
   }
 
   getProductDetails(int productId) async {

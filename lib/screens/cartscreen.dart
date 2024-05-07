@@ -369,42 +369,50 @@ class CartScreenState extends State<CartScreen> {
                                                                                 padding: const EdgeInsets.symmetric(vertical: 5),
                                                                                 child: Row(
                                                                                   children: [
-                                                                                    Container(
-                                                                                      color: whiteTextColor,
-                                                                                      height: 40,
-                                                                                      width: 75,
-                                                                                      child: Row(
-                                                                                        children: [
-                                                                                          GestureDetector(
-                                                                                            onTap: () {
-                                                                                              scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
-                                                                                                    sizeList: sizeList,
-                                                                                                    selectedSize: value.orderList[index]["inventory"] != null
-                                                                                                        ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
-                                                                                                            ? value.orderList[index]["inventory"]["product_matrix"]["name"]
-                                                                                                            : "S"
-                                                                                                        : "S",
-                                                                                                  ));
-                                                                                            },
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
-                                                                                              child: AppText(
-                                                                                                text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size" ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S" : "S"}",
-                                                                                                color: blackColor,
-                                                                                                fontSize: 10.sp,
-                                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                                fontWeight: FontWeight.w400,
-                                                                                              ),
-                                                                                            ),
+                                                                                    value.orderList[index]["inventory"] != null
+                                                                                        ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
+                                                                                            ? Container(
+                                                                                                color: whiteTextColor,
+                                                                                                height: 40,
+                                                                                                width: 75,
+                                                                                                child: Row(
+                                                                                                  children: [
+                                                                                                    GestureDetector(
+                                                                                                      onTap: () {
+                                                                                                        scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                                              sizeList: sizeList,
+                                                                                                              selectedSize: value.orderList[index]["inventory"] != null
+                                                                                                                  ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
+                                                                                                                      ? value.orderList[index]["inventory"]["product_matrix"]["name"]
+                                                                                                                      : ""
+                                                                                                                  : "",
+                                                                                                            ));
+                                                                                                      },
+                                                                                                      child: Padding(
+                                                                                                        padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
+                                                                                                        child: AppText(
+                                                                                                          text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size" ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S" : "S"}",
+                                                                                                          color: blackColor,
+                                                                                                          fontSize: 10.sp,
+                                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                                          fontWeight: FontWeight.w400,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    const ImageIcon(
+                                                                                                      AssetImage(dropdownImage),
+                                                                                                      color: nameText,
+                                                                                                      size: 16,
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              )
+                                                                                            : const SizedBox(
+                                                                                                height: 0,
+                                                                                              )
+                                                                                        : const SizedBox(
+                                                                                            height: 0,
                                                                                           ),
-                                                                                          const ImageIcon(
-                                                                                            AssetImage(dropdownImage),
-                                                                                            color: nameText,
-                                                                                            size: 16,
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
                                                                                     GestureDetector(
                                                                                       onTap: () {
                                                                                         scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
