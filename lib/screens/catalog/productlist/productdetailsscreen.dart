@@ -277,26 +277,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   i['id']
                                           ? colorPrimary
                                           : whiteTextColor),
-                                  child: SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: AppText(
-                                        text: i['product_matrix']['name']
-                                            .toString(),
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: selectedProductColor
-                                                    .isNotEmpty &&
-                                                selectedProductColor['id'] ==
-                                                    i['id']
-                                            ? whiteTextColor
-                                            : btnTextColor,
-                                        fontSize: 14.sp,
-                                      ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: AppText(
+                                          text: i['product_matrix']['name']
+                                              .toString(),
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: selectedProductColor
+                                                      .isNotEmpty &&
+                                                  selectedProductColor['id'] ==
+                                                      i['id']
+                                              ? whiteTextColor
+                                              : btnTextColor,
+                                          fontSize: 14.sp,
+                                        ),
+                                  ),
                                     ),
-                                  )),
                             ),
                             int.parse(i['stocks'].toString()) > 10
                                 ? const SizedBox()
@@ -362,26 +359,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   i['id']
                                           ? colorPrimary
                                           : whiteTextColor),
-                                  child: SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: AppText(
-                                        text: i['product_matrix']['name']
-                                            .toString(),
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: selectedProductFabric
-                                                    .isNotEmpty &&
-                                                selectedProductFabric['id'] ==
-                                                    i['id']
-                                            ? whiteTextColor
-                                            : btnTextColor,
-                                        fontSize: 14.sp,
-                                      ),
-                                    ),
-                                  )),
+                                  child:Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: AppText(
+                                          text: i['product_matrix']['name']
+                                              .toString(),
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: selectedProductFabric
+                                                      .isNotEmpty &&
+                                                  selectedProductFabric['id'] ==
+                                                      i['id']
+                                              ? whiteTextColor
+                                              : btnTextColor,
+                                          fontSize: 14.sp,
+                                        ),
+                                  ),
+                                  ),
                             ),
                             int.parse(i['stocks'].toString()) > 10
                                 ? const SizedBox()
