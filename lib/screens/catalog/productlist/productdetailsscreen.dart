@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
@@ -662,13 +663,21 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             fontSize: 16.sp,
                                           ),
                                         ),
-                                        AppText(
-                                          text: 'Explore Brand \n',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w600,
-                                          color: colorPrimary,
-                                          maxLines: 2,
-                                          fontSize: 12.sp,
+                                        GestureDetector(
+                                          onTap: () {
+                                            Get.offAll(const BottomNavScreen(
+                                              index: 1,
+                                            ));
+                                          },
+                                          child: AppText(
+                                            text: 'Explore Brand \n',
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w600,
+                                            color: colorPrimary,
+                                            maxLines: 2,
+                                            fontSize: 12.sp,
+                                          ),
                                         ),
                                       ],
                                     )),

@@ -11,6 +11,7 @@ import '../../utils/constants.dart';
 import '../commonwidget/homewidget/horizontal_home_list.dart';
 import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
+import 'catalog/productlist/productdetailsscreen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -541,7 +542,27 @@ class SearchScreenState extends State<SearchScreen> {
                                 visibleExpress: false,
                                 textColor: bottomnavBack,
                                 fontFamily: "Franklin Gothic Regular",
-                                onPressed: (p0) {},
+                                onPressed: (p0) {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ProductDetailsScreen(
+                                                productId: p0,
+                                              )))
+                                      .then((value) => setState(
+                                            () {
+                                              productController
+                                                  .hasnextpage.value = true;
+                                              productController.loadMore.value =
+                                                  false;
+                                              productController
+                                                  .isProduct.value = false;
+                                              productController.page.value = 1;
+                                              productController
+                                                  .getProductData("relevant");
+                                            },
+                                          ));
+                                },
                                 list: productController.productList,
                               )),
                       ],
