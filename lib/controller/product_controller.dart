@@ -65,24 +65,24 @@ class ProductController extends BaseController {
   }
 
   bool checkDetailsValidation() {
-    if (sizeInventoryId.value == 0) {
+    if (sizeInventoryId.value == 0 && sizeInventoryList.isNotEmpty) {
       getSnackBar(
         "Select Size",
       );
       return false;
     }
-    /*  if (colorInventoryId.value == 0) {
+    if (colorInventoryId.value == 0 && colorInventoryList.isNotEmpty) {
       getSnackBar(
         "Select color",
       );
       return false;
     }
-    if (fabricInventoryId.value == 0) {
+    if (fabricInventoryId.value == 0 && fabricInventoryList.isNotEmpty) {
       getSnackBar(
         "Select fabric",
       );
       return false;
-    } */
+    }
     return true;
   }
 
@@ -278,7 +278,6 @@ class ProductController extends BaseController {
           }
           print('Product Details====>${productDetails["images"]}');
           inventoryList = responseData["inventories"];
-
           sizeInventoryList = inventoryList
               .where((i) =>
                   i['product_matrix']['product_matrix_group']['name'] == 'Size')
