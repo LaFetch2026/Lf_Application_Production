@@ -22,6 +22,9 @@ class ProductController extends BaseController {
   RxInt colorInventoryId = 0.obs;
   RxInt fabricInventoryId = 0.obs;
   dynamic productDetails = "".obs;
+  dynamic brandDetails = "".obs;
+  dynamic compositionDetails = "".obs;
+  dynamic returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
   List expressProductList = [].obs;
@@ -263,6 +266,16 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productDetails = responseData;
+
+          if (responseData["brand"] != null) {
+            brandDetails = responseData["brand"];
+          }
+          if (responseData["composition"] != null) {
+            compositionDetails = responseData["composition"];
+          }
+          if (responseData["return_policy"] != null) {
+            returnPolicyDetails = responseData["return_policy"];
+          }
           print('Product Details====>${productDetails["images"]}');
           inventoryList = responseData["inventories"];
 

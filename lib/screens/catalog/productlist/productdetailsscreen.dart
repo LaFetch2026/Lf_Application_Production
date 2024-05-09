@@ -1029,146 +1029,233 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ],
                       ),
                     ),
-                    const Divider(
-                      color: colorSecondary,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          title: AppText(
-                            text: 'Product Description',
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w500,
-                            color: colorPrimary,
-                            fontSize: 16.sp,
-                          ),
-                          tilePadding: const EdgeInsets.all(0),
-                          childrenPadding:
-                              const EdgeInsets.symmetric(vertical: 4.0),
-                          children: [
-                            AppText(
-                              text:
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-                              fontFamily: "Franklin Gothic Regular",
-                              maxLines: 7,
-                              fontWeight: FontWeight.w500,
-                              color: colorPrimary,
-                              fontSize: 12.sp,
+                    Obx(
+                      () => productController.isDetails.value
+                          ? const Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                productController
+                                            .productDetails['description'] !=
+                                        null
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Divider(
+                                            color: colorSecondary,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Theme(
+                                              data: Theme.of(context).copyWith(
+                                                  dividerColor:
+                                                      Colors.transparent),
+                                              child: ExpansionTile(
+                                                title: AppText(
+                                                  text: 'Product Description',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: colorPrimary,
+                                                  fontSize: 16.sp,
+                                                ),
+                                                tilePadding:
+                                                    const EdgeInsets.all(0),
+                                                childrenPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0),
+                                                children: [
+                                                  AppText(
+                                                    text: productController
+                                                                .productDetails[
+                                                            'description'] ??
+                                                        "",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    maxLines: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 12.sp,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                                productController.compositionDetails != null
+                                    ? Column(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Divider(
+                                              color: colorSecondary,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Theme(
+                                              data: Theme.of(context).copyWith(
+                                                  dividerColor:
+                                                      Colors.transparent),
+                                              child: ExpansionTile(
+                                                title: AppText(
+                                                  text: 'Composition & Care',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: colorPrimary,
+                                                  fontSize: 16.sp,
+                                                ),
+                                                tilePadding:
+                                                    const EdgeInsets.all(0),
+                                                childrenPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0),
+                                                children: [
+                                                  AppText(
+                                                    text: productController
+                                                                .compositionDetails[
+                                                            "description"] ??
+                                                        "",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    maxLines: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 12.sp,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                                productController.returnPolicyDetails != null
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Divider(
+                                              color: colorSecondary,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Theme(
+                                              data: Theme.of(context).copyWith(
+                                                  dividerColor:
+                                                      Colors.transparent),
+                                              child: ExpansionTile(
+                                                title: AppText(
+                                                  text: 'Delivery & Returns',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: colorPrimary,
+                                                  fontSize: 16.sp,
+                                                ),
+                                                tilePadding:
+                                                    const EdgeInsets.all(0),
+                                                childrenPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0),
+                                                children: [
+                                                  AppText(
+                                                    text: productController
+                                                                .returnPolicyDetails[
+                                                            "description"] ??
+                                                        "",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    maxLines: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 12.sp,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                                productController.brandDetails != null
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Divider(
+                                              color: colorSecondary,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            child: Theme(
+                                              data: Theme.of(context).copyWith(
+                                                  dividerColor:
+                                                      Colors.transparent),
+                                              child: ExpansionTile(
+                                                title: AppText(
+                                                  text: 'About the Brand',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: colorPrimary,
+                                                  fontSize: 16.sp,
+                                                ),
+                                                tilePadding:
+                                                    const EdgeInsets.all(0),
+                                                childrenPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0),
+                                                children: [
+                                                  AppText(
+                                                    text: productController
+                                                                .brandDetails[
+                                                            "description"] ??
+                                                        "",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    maxLines: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 12.sp,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Divider(
-                        color: colorSecondary,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          title: AppText(
-                            text: 'Composition & Care',
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w500,
-                            color: colorPrimary,
-                            fontSize: 16.sp,
-                          ),
-                          tilePadding: const EdgeInsets.all(0),
-                          childrenPadding:
-                              const EdgeInsets.symmetric(vertical: 4.0),
-                          children: [
-                            AppText(
-                              text:
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-                              fontFamily: "Franklin Gothic Regular",
-                              maxLines: 7,
-                              fontWeight: FontWeight.w500,
-                              color: colorPrimary,
-                              fontSize: 12.sp,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Divider(
-                        color: colorSecondary,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          title: AppText(
-                            text: 'Delivery & Returns',
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w500,
-                            color: colorPrimary,
-                            fontSize: 16.sp,
-                          ),
-                          tilePadding: const EdgeInsets.all(0),
-                          childrenPadding:
-                              const EdgeInsets.symmetric(vertical: 4.0),
-                          children: [
-                            AppText(
-                              text:
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-                              fontFamily: "Franklin Gothic Regular",
-                              maxLines: 7,
-                              fontWeight: FontWeight.w500,
-                              color: colorPrimary,
-                              fontSize: 12.sp,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Divider(
-                        color: colorSecondary,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          title: AppText(
-                            text: 'About the Brand',
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w500,
-                            color: colorPrimary,
-                            fontSize: 16.sp,
-                          ),
-                          tilePadding: const EdgeInsets.all(0),
-                          childrenPadding:
-                              const EdgeInsets.symmetric(vertical: 4.0),
-                          children: [
-                            AppText(
-                              text:
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis accumsan nunc nec placerat. Cras vel ante lorem. Sed mattis, arcu non auctor rhoncus, nulla nisi eleifend mauris, sed venenatis quam eros id lacus. Aliquam ac orci id elit viverra ornare placerat at mauris. Etiam eget lectus vitae tellus bibendum accumsan. Maecenas vitae aliquet diam, a vehicula urna. Praesent at mauris eget nunc viverra tempus et porttitor est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas quis efficitur lorem. ',
-                              fontFamily: "Franklin Gothic Regular",
-                              maxLines: 7,
-                              fontWeight: FontWeight.w500,
-                              color: colorPrimary,
-                              fontSize: 12.sp,
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.all(8.0),
