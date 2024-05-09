@@ -207,9 +207,9 @@ class WishlistController extends BaseController {
             if (responseData["data"].isNotEmpty) {
               print(responseData);
               wishListProduct.addAll(responseData['data']);
-              selected.clear();
+              /*  selected.clear();
               selected =
-                  List.generate(responseData['meta']["total"], (i) => false);
+                  List.generate(responseData['meta']["total"], (i) => false); */
             } else {
               pHasnextpage.value = false;
             }

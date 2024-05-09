@@ -404,13 +404,17 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                           .symmetric(
                                                       horizontal: 10),
                                                   child: AppText(
-                                                    text: wishlistController
-                                                                        .wishlistList[
-                                                                    index][
-                                                                "products_count"] ==
-                                                            1
+                                                    text: wishlistController.wishlistList[
+                                                                        index][
+                                                                    "products_count"] ==
+                                                                1 ||
+                                                            wishlistController
+                                                                            .wishlistList[
+                                                                        index][
+                                                                    "products_count"] ==
+                                                                0
                                                         ? "${wishlistController.wishlistList[index]["products_count"]} item"
-                                                        : "${wishlistController.wishlistList[index]["products_count"] ?? "0"} items",
+                                                        : "${wishlistController.wishlistList[index]["products_count"]} items",
                                                     color: textHintColor,
                                                     fontSize: 12.sp,
                                                     fontFamily:

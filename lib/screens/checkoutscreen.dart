@@ -10,6 +10,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
 import '../controller/cart_controller.dart';
+import '../controller/order_controller.dart';
 import '../utils/constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -44,6 +45,7 @@ class CheckoutScreen extends StatefulWidget {
 
 class CheckoutScreenState extends State<CheckoutScreen> {
   final controller = Get.put(CartController());
+  final orderController = Get.put(OrderController());
   final Razorpay razorpay = Razorpay();
   final razorPayKey = "rzp_test_qByVM96GsY8Ydt";
   final razorPaySecret = "Mo5w1Av5SV84qO0c4k1Uc0Ob";
@@ -63,6 +65,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      orderController.getOrderDetails(widget.cartId);
+    }); */
     super.initState();
   }
 
@@ -127,7 +132,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     child: GestureDetector(
                       onTap: () {
                         Get.to(ShippingAddressScreen(
-                          addressId: 0,
+                          addressId: orderController.addressId.value,
                           cartId: widget.cartId,
                         ));
                       },

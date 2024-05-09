@@ -19,6 +19,7 @@ class OrderController extends BaseController {
   List orderList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
+  RxInt addressId = 0.obs;
   RxInt page = 1.obs;
   RxInt status = 1.obs;
   ScrollController listController = ScrollController();
@@ -145,6 +146,9 @@ class OrderController extends BaseController {
         print(responseData);
         if (responseData != null) {
           orderDetails = responseData;
+          if (responseData["address"] != null) {
+            addressId.value = responseData["address"]["id"];
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
