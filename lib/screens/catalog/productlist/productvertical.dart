@@ -57,7 +57,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
         (_) => productController.getProductData("relevant"));
     super.initState();
   }
-  
+
   @override
   void dispose() {
     productController.isVideoPlaying.value = true;
@@ -65,7 +65,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     super.dispose();
   }
 
-    bool isImage(String path) {
+  bool isImage(String path) {
     print(path);
     return path.contains('product_photo');
   }
@@ -76,17 +76,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       for (var i = 0;
           i < productController.productList[index]["images"].length;
           i++) {
-        if (isImage(productController.productList[index]["images"][i]["name"])) {
-   print(
+        if (isImage(
+            productController.productList[index]["images"][i]["name"])) {
+          print(
               "show video=========${isImage(productController.productList[index]["images"][i]["name"])}");
 
-        list.add(Container(
-            color: colorSecondary,
-            child: Image.network(
-                productController.productList[index]["images"][i]["name"],
-                fit: BoxFit.cover)));
-        }else{
-
+          list.add(Container(
+              color: colorSecondary,
+              child: Image.network(
+                  productController.productList[index]["images"][i]["name"],
+                  fit: BoxFit.cover)));
+        } else {
           productController.isVideoPlaying.value = true;
           videoController = VideoPlayerController.networkUrl(
             Uri.parse(
@@ -96,8 +96,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
 
           _initializeVideoPlayerFuture = videoController.initialize();
           videoController.setLooping(true);
-
-
 
           list.add(
             FutureBuilder(
@@ -155,8 +153,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
               },
             ),
           );
-
-
         }
       }
     } else {
@@ -164,7 +160,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     }
     return list;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +218,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       ? Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   vertical: 0),
                                                           child: SizedBox(
                                                             height: 400,
@@ -377,7 +372,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 16,
                                                           vertical: 10),
                                                       child: Align(
@@ -415,7 +410,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: Align(
@@ -460,10 +455,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       .w400,
                                                             ),
                                                             Padding(
-                                                              padding: const EdgeInsets
+                                                              padding:
+                                                                  const EdgeInsets
                                                                       .symmetric(
-                                                                  horizontal:
-                                                                      10),
+                                                                      horizontal:
+                                                                          10),
                                                               child: Container(
                                                                 width: 1,
                                                                 color:
@@ -499,7 +495,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     )
                                                   : Padding(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 16,
                                                           vertical: 10),
                                                       child: SizedBox(
@@ -524,24 +520,54 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                             [
                                                                             "images"]
                                                                         .length,
-                                                                    (int
-                                                                        index) {
-                                                                  return AnimatedContainer(
-                                                                      duration: const Duration(
-                                                                          milliseconds:
-                                                                              400),
-                                                                      height: 6,
-                                                                      width: 6,
-                                                                      margin: const EdgeInsets
-                                                                              .symmetric(
+                                                                    (int l) {
+                                                                  if (isImage(productController
+                                                                              .productList[index]
+                                                                          [
+                                                                          "images"][l]
+                                                                      [
+                                                                      'name'])) {
+                                                                    return Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              2),
+                                                                      child:
+                                                                          AnimatedContainer(
+                                                                        duration:
+                                                                            const Duration(milliseconds: 400),
+                                                                        height:
+                                                                            6,
+                                                                        width:
+                                                                            6,
+                                                                        margin:
+                                                                            const EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
-                                                                      decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              5),
-                                                                          color: (index == _curr)
-                                                                              ? colorPrimary
-                                                                              : colorSecondary));
+                                                                              5,
+                                                                        ),
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                5),
+                                                                            color: (l == _curr)
+                                                                                ? colorPrimary
+                                                                                : colorSecondary),
+                                                                      ),
+                                                                    );
+                                                                  } else {
+                                                                    return Padding(
+                                                                      padding: const EdgeInsets.symmetric(horizontal:2.0),
+                                                                      child: AppText(
+                                                                        text:
+                                                                            '\u{25B6}',
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: (l ==
+                                                                                _curr)
+                                                                            ? colorPrimary
+                                                                            : colorSecondary,
+                                                                      ),
+                                                                    );
+                                                                  }
                                                                 })),
                                                           ),
                                                         ),
@@ -640,7 +666,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 5),
                                                       child: AppText(
                                                         text: "Express",
