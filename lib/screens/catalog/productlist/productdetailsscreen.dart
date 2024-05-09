@@ -412,6 +412,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     productController.pincodeController.clear();
+    productController.sizeInventoryId.value = 0;
+    productController.colorInventoryId.value = 0;
+    productController.fabricInventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
