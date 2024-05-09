@@ -57,6 +57,13 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
         (_) => productController.getProductData("relevant"));
     super.initState();
   }
+  
+  @override
+  void dispose() {
+    productController.isVideoPlaying.value = true;
+    videoController.dispose();
+    super.dispose();
+  }
 
     bool isImage(String path) {
     print(path);
