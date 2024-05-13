@@ -677,7 +677,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 14.sp,
-                                                color: nameText,
+                                                color: loginText,
                                               ),
                                             ),
                                           ),

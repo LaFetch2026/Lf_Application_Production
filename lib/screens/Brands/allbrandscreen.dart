@@ -115,8 +115,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         Container(
                           alignment: Alignment.bottomCenter,
                           margin: const EdgeInsets.only(top: 70),
-                          decoration: const BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2.0,
+                              ),
+                              color: Colors.white,
+                              shape: BoxShape.circle),
                           child: ClipOval(
                             child: FadeInImage(
                                 fit: BoxFit.cover,
