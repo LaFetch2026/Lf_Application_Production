@@ -86,67 +86,148 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       bottomNavigationBar: BottomAppBar(
         notchMargin: -15,
         shape: const CircularNotchedRectangle(),
+        padding: EdgeInsets.zero,
         color: colorPrimary,
+        height: MediaQuery.of(context).size.height*0.064,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // mainAxisSize: MainAxisSize.max,
           children: [
-            MaterialButton(
-              color: _currentIndex == 0 ? colorSecondary : colorPrimary,
-              onPressed: () {
-                setState(() {
-                  _currentIndex = 0;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ImageIcon(
-                      AssetImage(
-                          _currentIndex == 0 ? homeIcon : homeUnselectImage),
-                      color: _currentIndex == 0 ? bottomnavBack : greyTextColor,
-                      size: 22,
+              Expanded(
+                child: MaterialButton(
+                  color: _currentIndex == 0 ? colorSecondary : colorPrimary,
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 0;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10, top: 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ImageIcon(
+                          AssetImage(
+                              _currentIndex == 0 ? homeIcon : homeUnselectImage),
+                          color: _currentIndex == 0 ? bottomnavBack : greyTextColor,
+                          size: 22,
+                        ),
+                        Text(
+                          "Home",
+                          style: TextStyle(
+                              color: _currentIndex == 0
+                                  ? bottomnavBack
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        )
+                      ],
                     ),
-                    Text(
-                      "Home",
-                      style: TextStyle(
-                          color: _currentIndex == 0
-                              ? bottomnavBack
-                              : greyTextColor,
-                          fontSize: 10.sp,
-                          fontFamily: "Franklin Gothic"),
-                    )
-                  ],
+                  ),
+                            ),
+              ),
+            Expanded(
+              child: Container(
+                // margin: const EdgeInsets.only(right: 4),
+                child: MaterialButton(
+                  color: _currentIndex == 1 ? colorSecondary : colorPrimary,
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 1;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10, top: 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ImageIcon(
+                          AssetImage(
+                              _currentIndex == 1 ? brandSelectImage : brandsIcon),
+                          color:
+                              _currentIndex == 1 ? bottomnavBack : greyTextColor,
+                          size: 22,
+                        ),
+                        Text(
+                          "Brands",
+                          style: TextStyle(
+                              color: _currentIndex == 1
+                                  ? bottomnavBack
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(right: 4),
+            // SizedBox(
+            //   width: MediaQuery.of(context).size.width/4,
+            // ),
+            Expanded(
+              child: Container(
+                // margin: const EdgeInsets.only(left: 4),
+                child: MaterialButton(
+                  color: _currentIndex == 2 ? colorSecondary : colorPrimary,
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 2;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10, top: 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ImageIcon(
+                          AssetImage(_currentIndex == 2
+                              ? wishlistSelectImage
+                              : wishlistIcon),
+                          color:
+                              _currentIndex == 2 ? bottomnavBack : greyTextColor,
+                          size: 22,
+                        ),
+                        Text(
+                          "Wishlist",
+                          style: TextStyle(
+                              color: _currentIndex == 2
+                                  ? bottomnavBack
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
               child: MaterialButton(
-                color: _currentIndex == 1 ? colorSecondary : colorPrimary,
+                color: _currentIndex == 3 ? colorSecondary : colorPrimary,
                 onPressed: () {
                   setState(() {
-                    _currentIndex = 1;
+                    _currentIndex = 3;
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 5),
+                    padding: const EdgeInsets.only(bottom: 10, top: 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ImageIcon(
-                        AssetImage(
-                            _currentIndex == 1 ? brandSelectImage : brandsIcon),
-                        color:
-                            _currentIndex == 1 ? bottomnavBack : greyTextColor,
+                        AssetImage(_currentIndex == 3
+                            ? accountSelectImage
+                            : accountIcon),
+                        color: _currentIndex == 3 ? bottomnavBack : greyTextColor,
                         size: 22,
                       ),
                       Text(
-                        "Brands",
+                        "Account",
                         style: TextStyle(
-                            color: _currentIndex == 1
+                            color: _currentIndex == 3
                                 ? bottomnavBack
                                 : greyTextColor,
                             fontSize: 10.sp,
@@ -154,74 +235,6 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       )
                     ],
                   ),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(left: 4),
-              child: MaterialButton(
-                color: _currentIndex == 2 ? colorSecondary : colorPrimary,
-                onPressed: () {
-                  setState(() {
-                    _currentIndex = 2;
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 5),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(_currentIndex == 2
-                            ? wishlistSelectImage
-                            : wishlistIcon),
-                        color:
-                            _currentIndex == 2 ? bottomnavBack : greyTextColor,
-                        size: 22,
-                      ),
-                      Text(
-                        "Wishlist",
-                        style: TextStyle(
-                            color: _currentIndex == 2
-                                ? bottomnavBack
-                                : greyTextColor,
-                            fontSize: 10.sp,
-                            fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            MaterialButton(
-              color: _currentIndex == 3 ? colorSecondary : colorPrimary,
-              onPressed: () {
-                setState(() {
-                  _currentIndex = 3;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ImageIcon(
-                      AssetImage(_currentIndex == 3
-                          ? accountSelectImage
-                          : accountIcon),
-                      color: _currentIndex == 3 ? bottomnavBack : greyTextColor,
-                      size: 22,
-                    ),
-                    Text(
-                      "Account",
-                      style: TextStyle(
-                          color: _currentIndex == 3
-                              ? bottomnavBack
-                              : greyTextColor,
-                          fontSize: 10.sp,
-                          fontFamily: "Franklin Gothic"),
-                    )
-                  ],
                 ),
               ),
             ),
