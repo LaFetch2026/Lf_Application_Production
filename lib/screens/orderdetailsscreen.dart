@@ -571,10 +571,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8),
                                           child: AppText(
-                                            text: orderController
+                                            text: orderController.orderDetails[
+                                                        "address"]["city"] !=
+                                                    null
+                                                ? orderController
                                                         .orderDetails["address"]
-                                                    ["city"]["name"] ??
-                                                "",
+                                                    ["city"]["name"]
+                                                : "",
                                             maxLines: 2,
                                             fontFamily:
                                                 "Franklin Gothic Regular",

@@ -19,7 +19,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   int _currentIndex = 0;
   var screen = [
     const HomeScreen(),
-    const BrandsScreen(),
+    const BrandsScreen(
+      screen: "home",
+    ),
     const WishlistScreen(),
     const AccountScreen(),
     const ExpressShoppingScreen(),
@@ -29,7 +31,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   void initState() {
     screen = [
       const HomeScreen(),
-      const BrandsScreen(),
+      const BrandsScreen(
+        screen: "home",
+      ),
       WishlistScreen(
         onPressed: () {
           setState(() {

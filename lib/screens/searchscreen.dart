@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/bottomnavscreen.dart';
+import 'package:lafetch/screens/brandsscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 import '../commonwidget/homewidget/horizontal_home_list.dart';
@@ -313,9 +313,21 @@ class SearchScreenState extends State<SearchScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  Get.offAll(
-                                                      const BottomNavScreen(
-                                                    index: 1,
+                                                  Get.to(BrandsScreen(
+                                                    screen: "search",
+                                                    logo: brandController
+                                                            .brandList[index]
+                                                        ["logo"],
+                                                    backImage: brandController
+                                                                    .brandList[
+                                                                index][
+                                                            "background_image"] ??
+                                                        "",
+                                                    name: brandController
+                                                            .brandList[index]
+                                                        ["name"],
+                                                    brandId: brandController
+                                                        .brandList[index]["id"],
                                                   ));
                                                 },
                                                 child: AnimatedContainer(
@@ -351,7 +363,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                 imageUrl: brandController
                                                                         .brandList[
                                                                     index]["logo"],
-                                                                progressIndicatorBuilder:
+                                                                /*  progressIndicatorBuilder:
                                                                     (context,
                                                                             url,
                                                                             downloadProgress) =>
@@ -359,7 +371,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                   child: CircularProgressIndicator(
                                                                       value: downloadProgress
                                                                           .progress),
-                                                                ),
+                                                                ), */
                                                                 errorWidget: (context,
                                                                         url,
                                                                         error) =>
@@ -403,7 +415,18 @@ class SearchScreenState extends State<SearchScreen> {
                                                                 horizontal: 10,
                                                                 vertical: 3),
                                                         child: AppText(
-                                                          text: "Bags",
+                                                          text: brandController
+                                                                  .brandList[
+                                                                      index][
+                                                                      "categories"]
+                                                                  .isNotEmpty
+                                                              ? brandController
+                                                                              .brandList[
+                                                                          index]
+                                                                      [
+                                                                      "categories"]
+                                                                  [0]["name"]
+                                                              : "",
                                                           color: greyTextColor,
                                                           fontSize: 10.sp,
                                                           fontFamily:

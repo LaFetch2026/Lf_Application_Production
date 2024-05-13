@@ -21,8 +21,12 @@ import '../searchscreen.dart';
 class AllBrandScreen extends StatefulWidget {
   final String title;
   final String brandbackground;
+  final String screen;
   const AllBrandScreen(
-      {required this.title, required this.brandbackground, super.key});
+      {required this.title,
+      required this.brandbackground,
+      required this.screen,
+      super.key});
 
   @override
   State<AllBrandScreen> createState() => AllBrandScreenState();
@@ -66,7 +70,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        brandController.showAllBrand.value = false;
+        if (widget.screen == "search") {
+          Get.close(1);
+        } else {
+          brandController.showAllBrand.value = false;
+        }
         return false;
       },
       child: Scaffold(
@@ -77,7 +85,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
             AllBrandAppbar(
               text: widget.title,
               onPressedback: () {
-                brandController.showAllBrand.value = false;
+                print(widget.screen);
+                if (widget.screen == "search") {
+                  Get.close(1);
+                } else {
+                  brandController.showAllBrand.value = false;
+                }
               },
               onPressedSearch: () {
                 Get.to(const SearchScreen());
