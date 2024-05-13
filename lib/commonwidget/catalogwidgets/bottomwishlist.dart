@@ -29,7 +29,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: 410,
       width: double.infinity,
       decoration: const BoxDecoration(
         color: whiteColor,
@@ -154,7 +154,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
             ),
             widget.wishlistList.isNotEmpty
                 ? Obx(() => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
                       child: getSingleButton(
                           label: "Done",
                           textColor: whiteBorderColor,

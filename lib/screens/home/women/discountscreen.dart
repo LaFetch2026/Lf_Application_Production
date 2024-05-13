@@ -47,6 +47,7 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
+    homeController.currentPage.value = 0;
     productController.listController.addListener(() {
       print("pages${productController.page.value}");
       productController.fetchMoreData("relevant");
