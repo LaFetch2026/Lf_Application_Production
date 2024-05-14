@@ -92,13 +92,15 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
         color: colorPrimary,
-        height: MediaQuery.of(context).size.height*0.064,
+        height: MediaQuery.of(context).size.height*0.068,
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // mainAxisSize: MainAxisSize.max,
           children: [
               Expanded(
                 child: MaterialButton(
+        height: MediaQuery.of(context).size.height*0.068,
+
                   color: _currentIndex == 0 ? colorSecondary : colorPrimary,
                   onPressed: () {
                     setState(() {
@@ -134,6 +136,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               child: Container(
                 // margin: const EdgeInsets.only(right: 4),
                 child: MaterialButton(
+        height: MediaQuery.of(context).size.height*0.068,
+
                   color: _currentIndex == 1 ? colorSecondary : colorPrimary,
                   onPressed: () {
                     setState(() {
@@ -174,6 +178,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               child: Container(
                 // margin: const EdgeInsets.only(left: 4),
                 child: MaterialButton(
+        height: MediaQuery.of(context).size.height*0.068,
+
                   color: _currentIndex == 2 ? colorSecondary : colorPrimary,
                   onPressed: () {
                     setState(() {
@@ -210,6 +216,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             Expanded(
               child: MaterialButton(
+        height: MediaQuery.of(context).size.height*0.068,
+
                 color: _currentIndex == 3 ? colorSecondary : colorPrimary,
                 onPressed: () {
                   setState(() {
