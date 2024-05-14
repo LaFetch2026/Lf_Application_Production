@@ -135,7 +135,10 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                         horizontal: 14,
                                                         vertical: 5),
                                                     child: AppText(
-                                                      text: "Sonam Agrahari",
+                                                      text: controller
+                                                                  .addressList[
+                                                              index]["name"] ??
+                                                          "",
                                                       color: loginText,
                                                       fontSize: 16.sp,
                                                       fontFamily:

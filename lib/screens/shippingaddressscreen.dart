@@ -38,6 +38,20 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
         .addPostFrameCallback((_) => shipController.getCitiesData());
     if (widget.addressId != 0) {
       shipController.getAddressDetails(widget.addressId);
+    } else {
+      shipController.nameController.clear();
+      shipController.phoneController.clear();
+      shipController.pincodeController.clear();
+      shipController.addressController.clear();
+      shipController.localityController.clear();
+      shipController.stateController.clear();
+      shipController.defaultBilling.value = 0;
+      shipController.defaultBilling.value = 0;
+      shipController.type.value = "";
+      shipController.cityId.value = 0;
+      shipController.current.value = 3;
+      shipController.onButton.value = false;
+      shipController.isCheck.value = false;
     }
     if (widget.cartId != 0) {
       shipController.cartId.value = widget.cartId;

@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
@@ -26,13 +28,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     "1",
     "2",
   ];
-  List<String> trackOrderItem = [
+  List<String> trackOrderItem2 = [
     "Order Confirmed",
     "Packed",
     "Shipped",
     "Delivered"
   ];
-  List<String> orderItem = ["Confirmed", "Packed", "Shipped", "Delivered"];
+  List<String> trackOrderItem = ["Confirmed", "Packed", "Shipped", "Delivered"];
+  List<String> orderItem = ["CONFIRMED", "PACKED", "SHIPPED", "DELIVERED"];
 
   @override
   void initState() {
@@ -71,81 +74,165 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Center(
-                            child: Image.asset(shippedGif,
-                                height: 250, fit: BoxFit.cover),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 14, right: 14, bottom: 10),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 30,
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                primary: false,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: orderItem.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (ctx, index) {
-                                  return Row(
+                        Obx(() => orderController.isDetails.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(40.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            : orderController.deliveriesList.isNotEmpty
+                                ? Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                        CrossAxisAlignment.start,
                                     children: [
+                                      if (orderController.deliveriesList[
+                                              orderController
+                                                      .deliveriesList.length -
+                                                  1]["status"] ==
+                                          4) ...[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Center(
+                                            child: Image.asset(placedGif,
+                                                height: 250, fit: BoxFit.cover),
+                                          ),
+                                        )
+                                      ] else if (orderController.deliveriesList[
+                                              orderController
+                                                      .deliveriesList.length -
+                                                  1]["status"] ==
+                                          3) ...[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Center(
+                                            child: Image.asset(shippedGif,
+                                                height: 250, fit: BoxFit.cover),
+                                          ),
+                                        )
+                                      ] else if (orderController.deliveriesList[
+                                              orderController
+                                                      .deliveriesList.length -
+                                                  1]["status"] ==
+                                          2) ...[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Center(
+                                            child: Image.asset(truckGif,
+                                                height: 250, fit: BoxFit.cover),
+                                          ),
+                                        )
+                                      ] else ...[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Center(
+                                            child: Image.asset(shippedGif,
+                                                height: 250, fit: BoxFit.cover),
+                                          ),
+                                        )
+                                      ],
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 2),
-                                        child: index < 2
-                                            ? Image.asset(
-                                                greenDotImage,
-                                                height: 8,
-                                                width: 8,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.asset(
-                                                greyDotImage,
-                                                height: 8,
-                                                width: 8,
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        child: AppText(
-                                          text: orderItem[index],
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 10.sp,
-                                          color: index < 2
-                                              ? color5StartReview
-                                              : greyDotColor,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14, bottom: 10),
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          height: 30,
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              primary: false,
+                                              physics:
+                                                  const BouncingScrollPhysics(),
+                                              itemCount: orderItem.length,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (ctx, index) {
+                                                return Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 2),
+                                                      child: orderController
+                                                              .deliveriesList
+                                                              .any((map) =>
+                                                                  map['status_details'] ==
+                                                                  orderItem[
+                                                                      index])
+                                                          ? Image.asset(
+                                                              greenDotImage,
+                                                              height: 8,
+                                                              width: 8,
+                                                              fit: BoxFit.cover,
+                                                            )
+                                                          : Image.asset(
+                                                              greyDotImage,
+                                                              height: 8,
+                                                              width: 8,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 4),
+                                                      child: AppText(
+                                                        text: orderController
+                                                                .deliveriesList
+                                                                .any((map) =>
+                                                                    map['status_details'] ==
+                                                                    orderItem[
+                                                                        index])
+                                                            ? trackOrderItem[
+                                                                index]
+                                                            : trackOrderItem[
+                                                                index],
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 10.sp,
+                                                        color: orderController
+                                                                .deliveriesList
+                                                                .any((map) =>
+                                                                    map['status_details'] ==
+                                                                    orderItem[
+                                                                        index])
+                                                            ? color5StartReview
+                                                            : greyDotColor,
+                                                      ),
+                                                    ),
+                                                    index == 3
+                                                        ? const SizedBox(
+                                                            width: 0,
+                                                          )
+                                                        : Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        2),
+                                                            child: Container(
+                                                              width: 20,
+                                                              height: 2,
+                                                              color: index < 1
+                                                                  ? color5StartReview
+                                                                  : greyDotColor,
+                                                            ),
+                                                          )
+                                                  ],
+                                                );
+                                              }),
                                         ),
                                       ),
-                                      index == 3
-                                          ? const SizedBox(
-                                              width: 0,
-                                            )
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 2),
-                                              child: Container(
-                                                width: 20,
-                                                height: 2,
-                                                color: index < 1
-                                                    ? color5StartReview
-                                                    : greyDotColor,
-                                              ),
-                                            )
                                     ],
-                                  );
-                                }),
-                          ),
-                        ),
+                                  )
+                                : const SizedBox(
+                                    height: 0,
+                                  )),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
@@ -172,10 +259,52 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     children: [
                                       Expanded(
                                         flex: 1,
-                                        child: Image.asset(backImage,
-                                            height: 85,
-                                            width: 70,
-                                            fit: BoxFit.cover),
+                                        child: orderController.orderDetails[
+                                                        "order_lines"][0]
+                                                    ["product"]["image"] !=
+                                                null
+                                            ? SizedBox(
+                                                height: 85,
+                                                width: 70,
+                                                child: CachedNetworkImage(
+                                                  cacheManager: CacheManager(
+                                                      Config(
+                                                          "customCacheKey",
+                                                          stalePeriod:
+                                                              const Duration(
+                                                                  days: 15),
+                                                          maxNrOfCacheObjects:
+                                                              100)),
+                                                  fit: BoxFit.cover,
+                                                  imageUrl: orderController
+                                                                  .orderDetails[
+                                                              "order_lines"][0]
+                                                          ["product"]["image"]
+                                                      [0]["name"],
+                                                  progressIndicatorBuilder:
+                                                      (context, url,
+                                                              downloadProgress) =>
+                                                          Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                            value:
+                                                                downloadProgress
+                                                                    .progress),
+                                                  ),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Image.asset(
+                                                    downloadImage,
+                                                    fit: BoxFit.cover,
+                                                    height: 85,
+                                                    width: 70,
+                                                  ),
+                                                ),
+                                              )
+                                            : Image.asset(dummyWishlistImage,
+                                                height: 85,
+                                                width: 70,
+                                                fit: BoxFit.cover),
                                       ),
                                       Expanded(
                                         flex: 3,
@@ -289,39 +418,113 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   ),
                                 ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          child: Container(
-                            // color: lightGreen,
-                            color: whiteBack,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 16, bottom: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: AppText(
-                                      text: "Order Packed",
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
-                                      color: deepGreen,
-                                      fontSize: 14.sp,
+                        Obx(() => orderController.isDetails.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(40.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            : orderController.deliveriesList.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 10),
+                                    child: Container(
+                                      color: orderController.deliveriesList[
+                                                  orderController.deliveriesList
+                                                          .length -
+                                                      1]["status"] ==
+                                              4
+                                          ? lightGreen
+                                          : whiteBack,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16,
+                                            right: 16,
+                                            top: 16,
+                                            bottom: 16),
+                                        child: Row(
+                                          children: [
+                                            if (orderController.deliveriesList[
+                                                    orderController
+                                                            .deliveriesList
+                                                            .length -
+                                                        1]["status"] ==
+                                                4) ...[
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Delivered",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: deepGreen,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ] else if (orderController
+                                                        .deliveriesList[orderController.deliveriesList.length - 1]
+                                                    ["status"] ==
+                                                3) ...[
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Order Shipped",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: deepGreen,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ] else if (orderController
+                                                        .deliveriesList[orderController.deliveriesList.length - 1]
+                                                    ["status"] ==
+                                                2) ...[
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Order Packed",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: deepGreen,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ] else if (orderController
+                                                        .deliveriesList[orderController.deliveriesList.length - 1]
+                                                    ["status"] ==
+                                                1) ...[
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Order Confirmed",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: deepGreen,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ],
+                                            AppText(
+                                              text: orderController
+                                                  .deliveriesList[
+                                                      orderController
+                                                              .deliveriesList
+                                                              .length -
+                                                          1]["created"]
+                                                  .split(",")
+                                                  .last,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: deepGreen,
+                                              fontSize: 15.sp,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  AppText(
-                                    text: "29 July 2023",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: deepGreen,
-                                    fontSize: 15.sp,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                                  )
+                                : const SizedBox(
+                                    height: 0,
+                                  )),
                         const SizedBox(
                           height: 20,
                         ),
@@ -431,8 +634,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             primary: false,
                                             shrinkWrap: true,
                                             physics: const ScrollPhysics(),
-                                            itemCount: orderController
-                                                .deliveriesList.length,
+                                            itemCount: orderItem.length,
                                             padding: EdgeInsets.zero,
                                             scrollDirection: Axis.vertical,
                                             itemBuilder: (ctx, index) {
@@ -447,11 +649,22 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         CrossAxisAlignment
                                                             .center,
                                                     children: [
-                                                      Image.asset(
-                                                          greenCheckImage,
-                                                          height: 24,
-                                                          fit: BoxFit.cover),
-                                                      index == 1
+                                                      orderController
+                                                              .deliveriesList
+                                                              .any((map) =>
+                                                                  map['status_details'] ==
+                                                                  orderItem[
+                                                                      index])
+                                                          ? Image.asset(
+                                                              greenCheckImage,
+                                                              height: 24,
+                                                              fit: BoxFit.cover)
+                                                          : Image.asset(
+                                                              whiteCircleImage,
+                                                              height: 24,
+                                                              fit:
+                                                                  BoxFit.cover),
+                                                      index == 3
                                                           ? const SizedBox(
                                                               height: 0,
                                                             )
@@ -475,7 +688,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               .start,
                                                       children: [
                                                         AppText(
-                                                          text: "hi",
+                                                          text: orderController
+                                                                  .deliveriesList
+                                                                  .any((map) =>
+                                                                      map['status_details'] ==
+                                                                      orderItem[
+                                                                          index])
+                                                              ? trackOrderItem2[
+                                                                  index]
+                                                              : trackOrderItem2[
+                                                                  index],
                                                           fontFamily:
                                                               "Franklin Gothic",
                                                           fontWeight:
@@ -488,8 +710,17 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               const EdgeInsets
                                                                   .only(top: 8),
                                                           child: AppText(
-                                                            text:
-                                                                "3:30 PM, 24 July 2023",
+                                                            text: orderController
+                                                                    .deliveriesList
+                                                                    .any((map) =>
+                                                                        map['status_details'] ==
+                                                                        orderItem[
+                                                                            index])
+                                                                ? orderController
+                                                                            .deliveriesList[
+                                                                        index]
+                                                                    ["created"]
+                                                                : "",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
@@ -881,14 +1112,31 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                   children: [
                                                                     Expanded(
                                                                       flex: 1,
-                                                                      child: Image.asset(
-                                                                          backImage,
-                                                                          height:
-                                                                              85,
-                                                                          width:
-                                                                              70,
-                                                                          fit: BoxFit
-                                                                              .cover),
+                                                                      child: orderController.orderDetails["order_lines"][index]["product"]["image"] !=
+                                                                              null
+                                                                          ? SizedBox(
+                                                                              height: 85,
+                                                                              width: 70,
+                                                                              child: CachedNetworkImage(
+                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                fit: BoxFit.cover,
+                                                                                imageUrl: orderController.orderDetails["order_lines"][index]["product"]["image"][0]["name"],
+                                                                                progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                  child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                                ),
+                                                                                errorWidget: (context, url, error) => Image.asset(
+                                                                                  downloadImage,
+                                                                                  fit: BoxFit.cover,
+                                                                                  height: 85,
+                                                                                  width: 70,
+                                                                                ),
+                                                                              ),
+                                                                            )
+                                                                          : Image.asset(
+                                                                              dummyWishlistImage,
+                                                                              height: 85,
+                                                                              width: 70,
+                                                                              fit: BoxFit.cover),
                                                                     ),
                                                                     Expanded(
                                                                       flex: 3,

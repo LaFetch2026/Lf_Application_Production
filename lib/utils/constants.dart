@@ -143,6 +143,7 @@ const placeHolderImage = 'assets/images/placeholder.png';
 const dummyWishlistImage = 'assets/images/dummy_wishlist.jpeg';
 const razorpayImage = 'assets/images/razorpay.png';
 const dummyImage = 'assets/images/dummy.jpeg';
+const whiteCircleImage = 'assets/images/whitecircle.png';
 
 class ApiConstants {
   ApiConstants._();
