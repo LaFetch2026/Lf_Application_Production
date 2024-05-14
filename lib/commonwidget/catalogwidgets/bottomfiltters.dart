@@ -108,7 +108,7 @@ class BottomFiltersState extends State<BottomFilters> {
                     Container(
                       color: backWhite,
                       width: 150,
-                      height: MediaQuery.of(context).size.height - 110,
+                      height: MediaQuery.of(context).size.height - 120,
                       child:
                           /*  Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

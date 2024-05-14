@@ -17,6 +17,7 @@ class OrderController extends BaseController {
   dynamic orderDetails = "".obs;
   RxString queryText = "".obs;
   List orderList = [].obs;
+  List deliveriesList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt addressId = 0.obs;
@@ -148,6 +149,9 @@ class OrderController extends BaseController {
           orderDetails = responseData;
           if (responseData["address"] != null) {
             addressId.value = responseData["address"]["id"];
+          }
+          if (responseData["deliveries"] != null) {
+            deliveriesList = responseData["deliveries"];
           }
         }
       } else if (response.statusCode == 500) {

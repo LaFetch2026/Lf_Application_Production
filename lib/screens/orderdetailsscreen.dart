@@ -383,13 +383,19 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    color: whiteColor,
-                    width: double.infinity,
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
-                        child: /* OrderTracker(
+                  Obx(() => orderController.isDetails.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : orderController.deliveriesList.isNotEmpty
+                          ? Container(
+                              color: whiteColor,
+                              width: double.infinity,
+                              child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 16),
+                                  child: /* OrderTracker(
                         status: Status.order,
                         subTitleTextStyle: TextStyle(
                             color: textHintColor,
@@ -406,89 +412,106 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         outOfDeliveryTitleAndDateList: outOfDeliveryList,
                         deliveredTitleAndDateList: deliveredList,
                       ), */
-                            Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            AppText(
-                              text: "Track Item",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: loginText,
-                              fontSize: 18.sp,
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 20, top: 30),
-                              child: ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  itemCount: trackOrderItem.length,
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (ctx, index) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Image.asset(greenCheckImage,
-                                                height: 24, fit: BoxFit.cover),
-                                            index == 3
-                                                ? const SizedBox(
-                                                    height: 0,
+                                      Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      AppText(
+                                        text: "Track Item",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: loginText,
+                                        fontSize: 18.sp,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 20, top: 30),
+                                        child: ListView.builder(
+                                            primary: false,
+                                            shrinkWrap: true,
+                                            physics: const ScrollPhysics(),
+                                            itemCount: orderController
+                                                .deliveriesList.length,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (ctx, index) {
+                                              return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Image.asset(
+                                                          greenCheckImage,
+                                                          height: 24,
+                                                          fit: BoxFit.cover),
+                                                      index == 1
+                                                          ? const SizedBox(
+                                                              height: 0,
+                                                            )
+                                                          : Container(
+                                                              width: 2,
+                                                              height: 60,
+                                                              color: greyBack,
+                                                            )
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 12),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        AppText(
+                                                          text: "hi",
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: loginText,
+                                                          fontSize: 14.sp,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(top: 8),
+                                                          child: AppText(
+                                                            text:
+                                                                "3:30 PM, 24 July 2023",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 14.sp,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   )
-                                                : Container(
-                                                    width: 2,
-                                                    height: 60,
-                                                    color: greyBack,
-                                                  )
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              AppText(
-                                                text: trackOrderItem[index],
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                                color: loginText,
-                                                fontSize: 14.sp,
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8),
-                                                child: AppText(
-                                                  text: "3:30 PM, 24 July 2023",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: textHintColor,
-                                                  fontSize: 14.sp,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  }),
-                            ),
-                          ],
-                        )),
-                  ),
+                                                ],
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  )),
+                            )
+                          : const SizedBox(
+                              height: 0,
+                            )),
                   Obx(
                     () => orderController.isDetails.value
                         ? const Padding(

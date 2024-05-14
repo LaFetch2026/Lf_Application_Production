@@ -15,7 +15,7 @@ import '../utils/constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String orderId;
-  final double amount;
+  final String amount;
   final int cartId;
   final String mrp;
   final String expressDelivery;
@@ -684,7 +684,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         onPressed: () {
                           var options = {
                             'key': razorPayKey,
-                            'amount': widget.amount * 100,
+                            'amount': double.parse(widget.amount) * 100,
                             'name': 'Lafetch',
                             'order_id': widget.orderId,
                             'description': 'Lafetch Customer',

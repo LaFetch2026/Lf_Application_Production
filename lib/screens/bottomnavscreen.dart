@@ -92,52 +92,51 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
         color: colorPrimary,
-        height: MediaQuery.of(context).size.height*0.068,
+        height: MediaQuery.of(context).size.height * 0.074,
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // mainAxisSize: MainAxisSize.max,
           children: [
-              Expanded(
-                child: MaterialButton(
-        height: MediaQuery.of(context).size.height*0.068,
-
-                  color: _currentIndex == 0 ? colorSecondary : colorPrimary,
-                  onPressed: () {
-                    setState(() {
-                      _currentIndex = 0;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10, top: 10),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ImageIcon(
-                          AssetImage(
-                              _currentIndex == 0 ? homeIcon : homeUnselectImage),
-                          color: _currentIndex == 0 ? bottomnavBack : greyTextColor,
-                          size: 22,
-                        ),
-                        Text(
-                          "Home",
-                          style: TextStyle(
-                              color: _currentIndex == 0
-                                  ? bottomnavBack
-                                  : greyTextColor,
-                              fontSize: 10.sp,
-                              fontFamily: "Franklin Gothic"),
-                        )
-                      ],
-                    ),
+            Expanded(
+              child: MaterialButton(
+                height: MediaQuery.of(context).size.height * 0.068,
+                color: _currentIndex == 0 ? colorSecondary : colorPrimary,
+                onPressed: () {
+                  setState(() {
+                    _currentIndex = 0;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ImageIcon(
+                        AssetImage(
+                            _currentIndex == 0 ? homeIcon : homeUnselectImage),
+                        color:
+                            _currentIndex == 0 ? bottomnavBack : greyTextColor,
+                        size: 22,
+                      ),
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                            color: _currentIndex == 0
+                                ? bottomnavBack
+                                : greyTextColor,
+                            fontSize: 10.sp,
+                            fontFamily: "Franklin Gothic"),
+                      )
+                    ],
                   ),
-                            ),
+                ),
               ),
+            ),
             Expanded(
               child: Container(
                 // margin: const EdgeInsets.only(right: 4),
                 child: MaterialButton(
-        height: MediaQuery.of(context).size.height*0.068,
-
+                  height: MediaQuery.of(context).size.height * 0.068,
                   color: _currentIndex == 1 ? colorSecondary : colorPrimary,
                   onPressed: () {
                     setState(() {
@@ -150,10 +149,12 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ImageIcon(
-                          AssetImage(
-                              _currentIndex == 1 ? brandSelectImage : brandsIcon),
-                          color:
-                              _currentIndex == 1 ? bottomnavBack : greyTextColor,
+                          AssetImage(_currentIndex == 1
+                              ? brandSelectImage
+                              : brandsIcon),
+                          color: _currentIndex == 1
+                              ? bottomnavBack
+                              : greyTextColor,
                           size: 22,
                         ),
                         Text(
@@ -178,8 +179,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               child: Container(
                 // margin: const EdgeInsets.only(left: 4),
                 child: MaterialButton(
-        height: MediaQuery.of(context).size.height*0.068,
-
+                  height: MediaQuery.of(context).size.height * 0.068,
                   color: _currentIndex == 2 ? colorSecondary : colorPrimary,
                   onPressed: () {
                     setState(() {
@@ -195,8 +195,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                           AssetImage(_currentIndex == 2
                               ? wishlistSelectImage
                               : wishlistIcon),
-                          color:
-                              _currentIndex == 2 ? bottomnavBack : greyTextColor,
+                          color: _currentIndex == 2
+                              ? bottomnavBack
+                              : greyTextColor,
                           size: 22,
                         ),
                         Text(
@@ -216,8 +217,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             Expanded(
               child: MaterialButton(
-        height: MediaQuery.of(context).size.height*0.068,
-
+                height: MediaQuery.of(context).size.height * 0.068,
                 color: _currentIndex == 3 ? colorSecondary : colorPrimary,
                 onPressed: () {
                   setState(() {
@@ -225,7 +225,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   });
                 },
                 child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: const EdgeInsets.only(bottom: 10, top: 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -233,7 +233,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         AssetImage(_currentIndex == 3
                             ? accountSelectImage
                             : accountIcon),
-                        color: _currentIndex == 3 ? bottomnavBack : greyTextColor,
+                        color:
+                            _currentIndex == 3 ? bottomnavBack : greyTextColor,
                         size: 22,
                       ),
                       Text(
