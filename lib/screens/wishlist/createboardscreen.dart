@@ -540,7 +540,10 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: getSingleButton(
                         label: widget.btnText == "Add"
-                            ? "Add ${wishlistController.addItem.value} items"
+                            ? wishlistController.addItem.value == 1 ||
+                                    wishlistController.addItem.value == 0
+                                ? "Add ${wishlistController.addItem.value} item"
+                                : "Add ${wishlistController.addItem.value} items"
                             : widget.btnText,
                         textColor: whiteBorderColor,
                         controller: wishlistController,

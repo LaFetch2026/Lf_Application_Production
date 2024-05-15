@@ -23,7 +23,7 @@ class CatalogScreenState extends State<CatalogScreen> {
       length: 3,
       initialIndex: 0,
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Column(
           children: [
             CatalogAppbar(

@@ -33,7 +33,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteTextColor,
+      backgroundColor: whiteColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

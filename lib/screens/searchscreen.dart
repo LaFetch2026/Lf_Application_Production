@@ -81,7 +81,7 @@ class SearchScreenState extends State<SearchScreen> {
         setState(() {});
       },
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: isSearch ? const Color(0xF2F7F7F5) : whiteColor,
         body: Stack(
           children: [
             Column(
@@ -188,7 +188,7 @@ class SearchScreenState extends State<SearchScreen> {
                                     height: 33,
                                     margin: const EdgeInsets.only(right: 5),
                                     decoration: BoxDecoration(
-                                        color: whiteTextColor,
+                                        color: whiteColor,
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
                                             color: btnTextColor, width: 1)),

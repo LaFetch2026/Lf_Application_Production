@@ -84,11 +84,34 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                         children: [
                                           GestureDetector(
                                             onTap: () {
-                                              Get.to(() => ProductDetailsScreen(
-                                                    productId: productController
-                                                            .productList[index]
-                                                        ["id"],
-                                                  ));
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          ProductDetailsScreen(
+                                                            productId:
+                                                                productController
+                                                                        .productList[
+                                                                    index]["id"],
+                                                          )))
+                                                  .then((value) => setState(
+                                                        () {
+                                                          productController
+                                                              .hasnextpage
+                                                              .value = true;
+                                                          productController
+                                                              .loadMore
+                                                              .value = false;
+                                                          productController
+                                                              .isProduct
+                                                              .value = false;
+                                                          productController
+                                                              .page.value = 1;
+                                                          productController
+                                                              .getProductData(
+                                                                  "express");
+                                                        },
+                                                      ));
                                             },
                                             child: Column(
                                               crossAxisAlignment:

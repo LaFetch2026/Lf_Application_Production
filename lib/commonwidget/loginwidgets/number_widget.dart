@@ -65,6 +65,7 @@ class NumberWidget extends StatelessWidget {
               ),
             ),
             counterText: "",
+            contentPadding: EdgeInsets.zero,
             hintText: "Mobile Number",
             hintStyle: const TextStyle(
               fontSize: 14,

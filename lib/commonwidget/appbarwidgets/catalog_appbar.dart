@@ -10,16 +10,19 @@ class CatalogAppbar extends StatelessWidget {
   final Function? onPressedCart;
   final String text;
 
-  const CatalogAppbar(
-      {Key? key, required this.text, this.onPressedSearch, this.onPressedCart})
-      : super(key: key);
+  const CatalogAppbar({
+    Key? key,
+    required this.text,
+    this.onPressedSearch,
+    this.onPressedCart,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 80,
       width: MediaQuery.of(context).size.width,
-      color: whiteTextColor,
+      color: whiteColor,
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
