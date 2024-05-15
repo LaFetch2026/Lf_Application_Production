@@ -9,15 +9,17 @@ import '../app_text.dart';
 import '../common_widgets.dart';
 
 class BottomQuantity extends StatefulWidget {
-  final Function? onPressed;
+  final Function(int)? onPressed;
   final List qtyList;
   final String selectedQty;
+  final GetxController controller;
 
   const BottomQuantity({
     Key? key,
     this.onPressed,
     required this.qtyList,
     required this.selectedQty,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -137,8 +139,10 @@ class _BottomQuantityState extends State<BottomQuantity> {
                   label: "Done",
                   textColor: whiteBorderColor,
                   backgroundColor: colorPrimary,
-                  //   controller: profileController,
-                  onPressed: () {},
+                  controller: widget.controller,
+                  onPressed: () {
+                    widget.onPressed?.call(int.parse(text));
+                  },
                   borderColor: colorPrimary),
             ),
           ],

@@ -417,7 +417,11 @@ class CartScreenState extends State<CartScreen> {
                                                                                       onTap: () {
                                                                                         scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
                                                                                               qtyList: qtyList,
-                                                                                              selectedQty: "1",
+                                                                                              selectedQty: value.orderList[index]["quantity"].toString(),
+                                                                                              controller: controller,
+                                                                                              onPressed: (p0) {
+                                                                                                controller.callAddtoCart(value.orderList[index]["product"]["id"], p0, "quantity");
+                                                                                              },
                                                                                             ));
                                                                                       },
                                                                                       child: Padding(

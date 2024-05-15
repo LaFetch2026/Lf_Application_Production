@@ -91,7 +91,9 @@ class CartController extends BaseController {
   }
 
   callAddtoCart(int productId, int quantity, String page) async {
-    // showLoading();
+    if (page == "quantity") {
+      showLoading();
+    }
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -113,6 +115,10 @@ class CartController extends BaseController {
           getCartData();
         } else if (page == "remove") {
           print("remove");
+          Get.close(1);
+          getCartData();
+        } else if (page == "quantity") {
+          getSnackBar("Quantity updated");
           Get.close(1);
           getCartData();
         } else {
@@ -143,7 +149,9 @@ class CartController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    //  hideLoading();
+    if (page == "quantity") {
+      hideLoading();
+    }
   }
 
   callInitiatePayment() async {
