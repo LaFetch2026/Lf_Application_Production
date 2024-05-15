@@ -399,26 +399,31 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       child:
                                                                           Row(
                                                                         children: [
-                                                                          AppText(
-                                                                            text:
-                                                                                "Size :M",
-                                                                            color:
-                                                                                greyTextColor,
-                                                                            maxLines:
-                                                                                2,
-                                                                            fontSize:
-                                                                                12.sp,
-                                                                            fontFamily:
-                                                                                "Franklin Gothic Regular",
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                          ),
+                                                                          orderController.orderList[index]["order_lines"][0]["product"]["inventories"].isNotEmpty
+                                                                              ? orderController.orderList[index]["order_lines"][0]["product"]["inventories"].any((map) => map['product_matrix']['product_matrix_group']["name"] == "Size")
+                                                                                  ? Padding(
+                                                                                      padding: const EdgeInsets.only(right: 10),
+                                                                                      child: AppText(
+                                                                                        text: "Size :${orderController.orderList[index]["order_lines"][0]["product"]["inventories"][orderController.orderList[index]["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
+                                                                                        color: greyTextColor,
+                                                                                        maxLines: 2,
+                                                                                        fontSize: 12.sp,
+                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    )
+                                                                                  : const SizedBox(
+                                                                                      height: 0,
+                                                                                    )
+                                                                              : const SizedBox(
+                                                                                  height: 0,
+                                                                                ),
                                                                           Expanded(
                                                                             flex:
                                                                                 1,
                                                                             child:
                                                                                 Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                                              padding: const EdgeInsets.only(right: 10),
                                                                               child: AppText(
                                                                                 text: "Qty :${orderController.orderList[index]["order_lines"][0]["quantity"] ?? "0"}",
                                                                                 color: greyTextColor,

@@ -261,7 +261,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         flex: 1,
                                         child: orderController.orderDetails[
                                                         "order_lines"][0]
-                                                    ["product"]["image"] !=
+                                                    ["product"]["images"] !=
                                                 null
                                             ? SizedBox(
                                                 height: 85,
@@ -279,7 +279,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   imageUrl: orderController
                                                                   .orderDetails[
                                                               "order_lines"][0]
-                                                          ["product"]["image"]
+                                                          ["product"]["images"]
                                                       [0]["name"],
                                                   progressIndicatorBuilder:
                                                       (context, url,
@@ -370,21 +370,54 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       vertical: 5),
                                               child: Row(
                                                 children: [
-                                                  AppText(
-                                                    text: "Size :M",
-                                                    color: greyTextColor,
-                                                    maxLines: 2,
-                                                    fontSize: 12.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
+                                                  orderController
+                                                          .orderDetails["order_lines"]
+                                                              [0]["product"]
+                                                              ["inventories"]
+                                                          .isNotEmpty
+                                                      ? orderController
+                                                              .orderDetails[
+                                                                  "order_lines"]
+                                                                  [0]["product"]
+                                                                  [
+                                                                  "inventories"]
+                                                              .any((map) =>
+                                                                  map['product_matrix']
+                                                                          ['product_matrix_group']
+                                                                      ["name"] ==
+                                                                  "Size")
+                                                          ? Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          10),
+                                                              child: AppText(
+                                                                text:
+                                                                    "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
+                                                                color:
+                                                                    greyTextColor,
+                                                                maxLines: 2,
+                                                                fontSize: 12.sp,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            )
+                                                          : const SizedBox(
+                                                              height: 0,
+                                                            )
+                                                      : const SizedBox(
+                                                          height: 0,
+                                                        ),
                                                   Expanded(
                                                     flex: 1,
                                                     child: Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 10),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 10),
                                                       child: AppText(
                                                         text:
                                                             "Qty :${orderController.orderDetails["order_lines"][0]["quantity"].toString()}",
@@ -1112,7 +1145,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                   children: [
                                                                     Expanded(
                                                                       flex: 1,
-                                                                      child: orderController.orderDetails["order_lines"][index]["product"]["image"] !=
+                                                                      child: orderController.orderDetails["order_lines"][index]["product"]["images"] !=
                                                                               null
                                                                           ? SizedBox(
                                                                               height: 85,
@@ -1120,7 +1153,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               child: CachedNetworkImage(
                                                                                 cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                 fit: BoxFit.cover,
-                                                                                imageUrl: orderController.orderDetails["order_lines"][index]["product"]["image"][0]["name"],
+                                                                                imageUrl: orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"],
                                                                                 progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                   child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                 ),
@@ -1181,16 +1214,27 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                             child:
                                                                                 Row(
                                                                               children: [
-                                                                                AppText(
-                                                                                  text: "Size :M",
-                                                                                  color: greyTextColor,
-                                                                                  maxLines: 2,
-                                                                                  fontSize: 12.sp,
-                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                  fontWeight: FontWeight.w400,
-                                                                                ),
+                                                                                orderController.orderDetails["order_lines"][0]["product"]["inventories"].isNotEmpty
+                                                                                    ? orderController.orderDetails["order_lines"][0]["product"]["inventories"].any((map) => map['product_matrix']['product_matrix_group']["name"] == "Size")
+                                                                                        ? Padding(
+                                                                                            padding: const EdgeInsets.only(right: 10),
+                                                                                            child: AppText(
+                                                                                              text: "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
+                                                                                              color: greyTextColor,
+                                                                                              maxLines: 2,
+                                                                                              fontSize: 12.sp,
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                            ),
+                                                                                          )
+                                                                                        : const SizedBox(
+                                                                                            height: 0,
+                                                                                          )
+                                                                                    : const SizedBox(
+                                                                                        height: 0,
+                                                                                      ),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                                                  padding: const EdgeInsets.only(right: 10),
                                                                                   child: AppText(
                                                                                     text: "Qty :${orderController.orderDetails["order_lines"][index]["quantity"].toString()}",
                                                                                     color: greyTextColor,
