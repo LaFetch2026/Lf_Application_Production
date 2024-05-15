@@ -6,12 +6,12 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
-import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
+import '../../brandsscreen.dart';
 import '../../cartscreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -270,31 +270,30 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 setState(() {});
                               },
                               child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: btnTextColor, width: 1),
-                                      color: selectedProductColor.isNotEmpty &&
-                                              selectedProductColor['id'] ==
-                                                  i['id']
-                                          ? colorPrimary
-                                          : whiteTextColor),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: AppText(
-                                          text: i['product_matrix']['name']
-                                              .toString(),
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: selectedProductColor
-                                                      .isNotEmpty &&
-                                                  selectedProductColor['id'] ==
-                                                      i['id']
-                                              ? whiteTextColor
-                                              : btnTextColor,
-                                          fontSize: 14.sp,
-                                        ),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: btnTextColor, width: 1),
+                                    color: selectedProductColor.isNotEmpty &&
+                                            selectedProductColor['id'] ==
+                                                i['id']
+                                        ? colorPrimary
+                                        : whiteTextColor),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: AppText(
+                                    text:
+                                        i['product_matrix']['name'].toString(),
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: selectedProductColor.isNotEmpty &&
+                                            selectedProductColor['id'] ==
+                                                i['id']
+                                        ? whiteTextColor
+                                        : btnTextColor,
+                                    fontSize: 14.sp,
                                   ),
-                                    ),
+                                ),
+                              ),
                             ),
                             int.parse(i['stocks'].toString()) > 10
                                 ? const SizedBox()
@@ -352,31 +351,30 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 setState(() {});
                               },
                               child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: btnTextColor, width: 1),
-                                      color: selectedProductFabric.isNotEmpty &&
-                                              selectedProductFabric['id'] ==
-                                                  i['id']
-                                          ? colorPrimary
-                                          : whiteTextColor),
-                                  child:Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: AppText(
-                                          text: i['product_matrix']['name']
-                                              .toString(),
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: selectedProductFabric
-                                                      .isNotEmpty &&
-                                                  selectedProductFabric['id'] ==
-                                                      i['id']
-                                              ? whiteTextColor
-                                              : btnTextColor,
-                                          fontSize: 14.sp,
-                                        ),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: btnTextColor, width: 1),
+                                    color: selectedProductFabric.isNotEmpty &&
+                                            selectedProductFabric['id'] ==
+                                                i['id']
+                                        ? colorPrimary
+                                        : whiteTextColor),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: AppText(
+                                    text:
+                                        i['product_matrix']['name'].toString(),
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: selectedProductFabric.isNotEmpty &&
+                                            selectedProductFabric['id'] ==
+                                                i['id']
+                                        ? whiteTextColor
+                                        : btnTextColor,
+                                    fontSize: 14.sp,
                                   ),
-                                  ),
+                                ),
+                              ),
                             ),
                             int.parse(i['stocks'].toString()) > 10
                                 ? const SizedBox()
@@ -660,22 +658,36 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             fontSize: 16.sp,
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.offAll(const BottomNavScreen(
-                                              index: 1,
-                                            ));
-                                          },
-                                          child: AppText(
-                                            text: 'Explore Brand \n',
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w600,
-                                            color: colorPrimary,
-                                            maxLines: 2,
-                                            fontSize: 12.sp,
-                                          ),
-                                        ),
+                                        productController.brandDetails != null
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  Get.to(BrandsScreen(
+                                                    screen: "search",
+                                                    logo: productController
+                                                        .brandDetails["logo"],
+                                                    backImage: productController
+                                                                .brandDetails[
+                                                            "background_image"] ??
+                                                        "",
+                                                    name: productController
+                                                        .brandDetails["name"],
+                                                    brandId: productController
+                                                        .brandDetails["id"],
+                                                  ));
+                                                },
+                                                child: AppText(
+                                                  text: 'Explore Brand \n',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w600,
+                                                  color: colorPrimary,
+                                                  maxLines: 2,
+                                                  fontSize: 12.sp,
+                                                ),
+                                              )
+                                            : const SizedBox(
+                                                height: 0,
+                                              )
                                       ],
                                     )),
                                 Padding(

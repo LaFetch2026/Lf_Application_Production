@@ -23,7 +23,7 @@ class ProductListScreenState extends State<ProductListScreen> {
       length: 4,
       initialIndex: 0,
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

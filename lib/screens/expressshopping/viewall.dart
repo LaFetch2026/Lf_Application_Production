@@ -16,7 +16,8 @@ import '../../utils/constants.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 
 class ViewAllScreen extends StatefulWidget {
-  const ViewAllScreen({super.key});
+  final int brandId;
+  const ViewAllScreen({super.key, required this.brandId});
 
   @override
   State<ViewAllScreen> createState() => ViewAllScreenState();

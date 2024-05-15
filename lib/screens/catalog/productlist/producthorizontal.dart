@@ -59,7 +59,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Obx(
           () => productController.isProduct.value
               ? const Padding(

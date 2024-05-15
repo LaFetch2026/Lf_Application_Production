@@ -21,13 +21,8 @@ class ExpressShoppingScreen extends StatefulWidget {
 
 class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   final brandController = Get.put(BrandController());
-  /* final screen = [
-    const ViewAllScreen(),
-    const ViewAllScreen(),
-    const ViewAllScreen(),
-    const ViewAllScreen(),
-  ]; */
   int current = 0;
+  int brandId = 0;
   PageController pageController = PageController();
 
   @override
@@ -118,16 +113,21 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                           height: 50,
                           child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
-                              itemCount: brandController.brandList.length,
+                              itemCount: brandController.brandList.length + 1,
                               scrollDirection: Axis.horizontal,
                               controller: brandController.listController,
                               itemBuilder: (ctx, index) {
                                 return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
                                           current = index;
+                                          brandId = index == 0
+                                              ? 0
+                                              : brandController
+                                                  .brandList[index - 1]["id"];
                                         });
                                         pageController.animateToPage(
                                           current,
@@ -161,8 +161,11 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                               horizontal: 5),
                                           child: Center(
                                             child: AppText(
-                                              text: brandController
-                                                  .brandList[index]["name"],
+                                              text: index == 0
+                                                  ? "View All"
+                                                  : brandController
+                                                          .brandList[index - 1]
+                                                      ["name"],
                                               color: current == index
                                                   ? whiteBorderColor
                                                   : textHintColor,
@@ -194,7 +197,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                       controller: pageController,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return const ViewAllScreen();
+                        return ViewAllScreen(
+                          brandId: brandId,
+                        );
                       },
                     ),
                   ),

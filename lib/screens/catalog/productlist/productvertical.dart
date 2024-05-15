@@ -165,7 +165,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Obx(
           () => productController.isProduct.value
               ? const Padding(
@@ -218,7 +218,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       ? Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .symmetric(
+                                                                      .symmetric(
                                                                   vertical: 0),
                                                           child: SizedBox(
                                                             height: 400,
@@ -372,7 +372,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 16,
                                                           vertical: 10),
                                                       child: Align(
@@ -410,7 +410,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: Align(
@@ -455,11 +455,10 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       .w400,
                                                             ),
                                                             Padding(
-                                                              padding:
-                                                                  const EdgeInsets
+                                                              padding: const EdgeInsets
                                                                       .symmetric(
-                                                                      horizontal:
-                                                                          10),
+                                                                  horizontal:
+                                                                      10),
                                                               child: Container(
                                                                 width: 1,
                                                                 color:
@@ -495,7 +494,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     )
                                                   : Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 16,
                                                           vertical: 10),
                                                       child: SizedBox(
@@ -529,7 +528,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       'name'])) {
                                                                     return Padding(
                                                                       padding: const EdgeInsets
-                                                                          .only(
+                                                                              .only(
                                                                           top:
                                                                               2),
                                                                       child:
@@ -555,8 +554,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                     );
                                                                   } else {
                                                                     return Padding(
-                                                                      padding: const EdgeInsets.symmetric(horizontal:2.0),
-                                                                      child: AppText(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              2.0),
+                                                                      child:
+                                                                          AppText(
                                                                         text:
                                                                             '\u{25B6}',
                                                                         fontSize:
@@ -666,7 +669,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 5),
                                                       child: AppText(
                                                         text: "Express",

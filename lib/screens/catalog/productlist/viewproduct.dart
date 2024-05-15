@@ -30,7 +30,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: GestureDetector(
           onTap: () {
             // Get.back();
