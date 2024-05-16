@@ -37,6 +37,7 @@ class BoardScreenState extends State<BoardScreen> {
     wishlistController.wishListProduct.clear();
     wishlistController.addList.clear();
     wishlistController.deleteidList.clear();
+    wishlistController.isDrawer.value = false;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => wishlistController.getWishlistDetails(widget.boardId, 1));
     super.initState();
@@ -44,93 +45,98 @@ class BoardScreenState extends State<BoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: whiteTextColor,
-      body: Column(
-        children: [
-          BackButtonAppbar(
-            text: "Board",
-            threeDot: true,
-            icon: threeDotImage,
-            onPressedThreeDot: () {
-              scaffoldKey.currentState?.showBottomSheet((context) =>
-                  BottomSheetBoard(
-                    onPressedEdit: () {
-                      Get.to(CreateBoardScreen(
-                        btnText: "",
-                        wishlistId: widget.boardId,
-                      ));
-                    },
-                    onPressedAddItem: () {
-                      Get.back();
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  CreateBoardScreen(
-                                    btnText: "Add",
-                                    wishlistId: widget.boardId,
-                                  )))
-                          .then((value) => setState(
-                                () {
-                                  wishlistController.wishListProduct.clear();
-                                  wishlistController.addList.clear();
-                                  wishlistController.deleteidList.clear();
-                                  wishlistController.getWishlistDetails(
-                                      widget.boardId, 1);
+    return GestureDetector(
+      onTap: () {
+        if (wishlistController.isDrawer.value) {
+          Get.back();
+          wishlistController.isDrawer.value = false;
+        }
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: whiteTextColor,
+        body: Column(
+          children: [
+            BackButtonAppbar(
+              text: "Board",
+              threeDot: true,
+              icon: threeDotImage,
+              onPressedThreeDot: () {
+                wishlistController.isDrawer.value = true;
+                scaffoldKey.currentState?.showBottomSheet((context) =>
+                    BottomSheetBoard(
+                      onPressedEdit: () {
+                        Get.to(CreateBoardScreen(
+                          btnText: "",
+                          wishlistId: widget.boardId,
+                        ));
+                      },
+                      onPressedAddItem: () {
+                        Get.back();
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    CreateBoardScreen(
+                                      btnText: "Add",
+                                      wishlistId: widget.boardId,
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    wishlistController.wishListProduct.clear();
+                                    wishlistController.addList.clear();
+                                    wishlistController.deleteidList.clear();
+                                    wishlistController.getWishlistDetails(
+                                        widget.boardId, 1);
+                                  },
+                                ));
+                      },
+                      onPressedDelete: () {
+                        showDialog(
+                          barrierColor: Colors.black26,
+                          context: context,
+                          builder: (context) {
+                            return showDoubleBtnDailog(
+                                click1: () {
+                                  Get.back();
                                 },
-                              ));
-                    },
-                    onPressedDelete: () {
-                      showDialog(
-                        barrierColor: Colors.black26,
-                        context: context,
-                        builder: (context) {
-                          return showDoubleBtnDailog(
-                              click1: () {
-                                Get.back();
-                              },
-                              click2: () {
-                                wishlistController
-                                    .callDeleteWishlist(widget.boardId);
-                              },
-                              btncolor: colorPrimary,
-                              text: "Are you sure you want to delete board?",
-                              btn1Text: "No",
-                              btn2Text: "Yes");
-                        },
-                      );
-                    },
-                    onPressedRename: () {
-                      Get.back();
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (BuildContext context) => NewBoardScreen(
-                                    title: "Edit Board Name",
-                                    hintName: "",
-                                    boardId: widget.boardId,
-                                    boardName: widget.boardName,
-                                    btnText: "Save changes",
-                                  )))
-                          .then((value) => setState(
-                                () {
-                                  wishlistController.wishListProduct.clear();
-                                  wishlistController.addList.clear();
-                                  wishlistController.deleteidList.clear();
-                                  wishlistController.getWishlistDetails(
-                                      widget.boardId, 1);
+                                click2: () {
+                                  wishlistController
+                                      .callDeleteWishlist(widget.boardId);
                                 },
-                              ));
-                    },
-                  ));
-            },
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: GestureDetector(
-                onTap: () {
-                  Get.back();
-                },
+                                btncolor: colorPrimary,
+                                text: "Are you sure you want to delete board?",
+                                btn1Text: "No",
+                                btn2Text: "Yes");
+                          },
+                        );
+                      },
+                      onPressedRename: () {
+                        Get.back();
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    NewBoardScreen(
+                                      title: "Edit Board Name",
+                                      hintName: "",
+                                      boardId: widget.boardId,
+                                      boardName: widget.boardName,
+                                      btnText: "Save changes",
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    wishlistController.wishListProduct.clear();
+                                    wishlistController.addList.clear();
+                                    wishlistController.deleteidList.clear();
+                                    wishlistController.getWishlistDetails(
+                                        widget.boardId, 1);
+                                  },
+                                ));
+                      },
+                    ));
+              },
+            ),
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -262,6 +268,15 @@ class BoardScreenState extends State<BoardScreen> {
                                                           ),
                                                           GestureDetector(
                                                             onTap: () {
+                                                              if (wishlistController
+                                                                  .isDrawer
+                                                                  .value) {
+                                                                Get.back();
+                                                                wishlistController
+                                                                        .isDrawer
+                                                                        .value =
+                                                                    false;
+                                                              }
                                                               showDialog(
                                                                 barrierColor:
                                                                     Colors
@@ -514,6 +529,14 @@ class BoardScreenState extends State<BoardScreen> {
                                                               borderColor:
                                                                   btnTextColor,
                                                               onPressed: () {
+                                                                if (wishlistController
+                                                                    .isDrawer
+                                                                    .value) {
+                                                                  Get.back();
+                                                                  wishlistController
+                                                                      .isDrawer
+                                                                      .value = false;
+                                                                }
                                                                 wishlistController.callMovetoCart(
                                                                     widget
                                                                         .boardId,
@@ -549,8 +572,8 @@ class BoardScreenState extends State<BoardScreen> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -15,6 +15,7 @@ import '../utils/constants.dart';
 class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
   RxBool isDetails = false.obs;
+  RxBool isDrawer = false.obs;
   RxBool isProductWishlist = false.obs;
   dynamic wishListDetails = "".obs;
   dynamic wishlistDetails = "".obs;
