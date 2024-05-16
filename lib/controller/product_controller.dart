@@ -356,13 +356,12 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductByCategoryData(String type, int categoryId) async {
+  getProductByCategoryData(int categoryId) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?type=$type&category_id=$categoryId"),
+          Uri.parse("${ApiConstants.baseUrl}/products?category_id=$categoryId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -390,7 +389,7 @@ class ProductController extends BaseController {
     isCategoryProduct.value = false;
   }
 
-  fetchCategoryProductMoreData(String type, int categoryId) async {
+  fetchCategoryProductMoreData(int categoryId) async {
     if (categoryProductHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         categoryProductLoadMore.value == false) {
@@ -401,7 +400,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=$type&category_id=$categoryId&page=${categoryProductPage.value}"),
+                "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -433,13 +432,6 @@ class ProductController extends BaseController {
       }
       categoryProductLoadMore.value = false;
     }
-  }
-
-  checkIfURLisImage(String url) async {
-    final imageUrl = Uri.parse(url);
-    var imageResponse = await http.head(imageUrl);
-    // var responseData = json.decode(imageResponse.body);
-    print('checkIfURLisImage=========${url}');
   }
 
   getProductDetails(int productId) async {
@@ -672,7 +664,7 @@ class ProductController extends BaseController {
         if (type == "product") {
           getProductData("relevant");
         } else if (type == "category") {
-          getProductByCategoryData("relevant", categoryId);
+          getProductByCategoryData(categoryId);
         } else if (type == "brand") {
           getBrandExpressProductData(brandId);
         } else {

@@ -24,14 +24,14 @@ class DiscountScreen extends StatefulWidget {
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
-  List<String> menu = [
+  /*  List<String> menu = [
     "Discounts",
     "New Arrivals",
     "Clothing",
     "Footwear",
   ];
   int current = 0;
-
+ */
   @override
   void dispose() {
     super.dispose();
@@ -100,10 +100,10 @@ class DiscountScreenState extends State<DiscountScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // const SaleCardWidget(),
-            const SizedBox(
-              height: 16,
-            ),
-            Padding(
+            /*   const SizedBox(
+              height: 10,
+            ), */
+            /*     Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: SizedBox(
                 width: double.infinity,
@@ -156,6 +156,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     }),
               ),
             ),
+           */
             Obx(
               () => homeController.isBanner1.value
                   ? const Padding(

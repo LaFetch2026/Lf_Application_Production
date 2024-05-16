@@ -16,17 +16,23 @@ import 'package:device_info_plus/device_info_plus.dart';
 
 class HomeController extends BaseController {
   RxBool isBanner1 = false.obs;
+  RxBool istags = false.obs;
   RxBool isBanner2 = false.obs;
   RxBool isCategory = false.obs;
   RxString playerId = "".obs;
   RxString fcmToken = "".obs;
   String devicename = "";
   String platform = "";
+  List tagsList = [].obs;
   List banner2List = [].obs;
   List banner1List = [].obs;
   List categoryList = [].obs;
   RxInt currentPage = 0.obs;
   Timer? timer;
+  RxBool loadMore = false.obs;
+  RxBool hasnextpage = true.obs;
+  RxInt page = 1.obs;
+  ScrollController listController = ScrollController();
   final PageController pageController = PageController(
     initialPage: 0,
   );
@@ -41,6 +47,82 @@ class HomeController extends BaseController {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       devicename = iosInfo.utsname.machine;
       platform = "IOS";
+    }
+  }
+
+  getTagsData() async {
+    istags.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/tags"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          tagsList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get tags failed ${response.statusCode}");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    istags.value = false;
+  }
+
+  fetchMoreTagsData() async {
+    if (hasnextpage.value == true &&
+        istags.value == false &&
+        loadMore.value == false) {
+      loadMore.value = true;
+      page.value += 1;
+      print(page.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/tags?page=${page.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              tagsList.addAll(responseData['data']);
+            } else {
+              hasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch tags failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      loadMore.value = false;
     }
   }
 

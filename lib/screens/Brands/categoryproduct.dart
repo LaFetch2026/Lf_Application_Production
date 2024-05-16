@@ -28,13 +28,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getProductByCategoryData("relevant", widget.categoryId));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductByCategoryData(widget.categoryId));
     wishlistController.getWishlistData();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
-        productController.fetchCategoryProductMoreData(
-            "relevant", widget.categoryId);
+        productController.fetchCategoryProductMoreData(widget.categoryId);
         productController.update();
       });
     });
