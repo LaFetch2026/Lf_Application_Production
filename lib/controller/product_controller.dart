@@ -12,6 +12,8 @@ import '../utils/constants.dart';
 
 class ProductController extends BaseController {
   RxBool isProduct = false.obs;
+  RxBool isCategoryProduct = false.obs;
+  RxBool isBrandExpressProduct = false.obs;
   RxBool isExpress = false.obs;
   RxBool isDetails = false.obs;
   RxBool isReview = false.obs;
@@ -28,6 +30,8 @@ class ProductController extends BaseController {
   RxBool isRecommendations = false.obs;
   List productList = [].obs;
   List expressProductList = [].obs;
+  List productCategoryList = [].obs;
+  List productExpressBrandList = [].obs;
   RxInt total = 0.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
@@ -45,7 +49,14 @@ class ProductController extends BaseController {
   RxBool expressHasnextpage = true.obs;
   RxInt expressPage = 1.obs;
   ScrollController expressListController = ScrollController();
-
+  ScrollController categoryProductController = ScrollController();
+  RxBool categoryProductLoadMore = false.obs;
+  RxBool categoryProductHasnextpage = true.obs;
+  RxInt categoryProductPage = 1.obs;
+  ScrollController brandExpressProductController = ScrollController();
+  RxBool brandExpressLoadMore = false.obs;
+  RxBool brandExpressHasnextpage = true.obs;
+  RxInt brandExpressPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
 
   bool checkPinvalidation(String pin) {
@@ -118,6 +129,51 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isProduct.value = false;
+  }
+
+  fetchMoreData(String type) async {
+    if (hasnextpage.value == true &&
+        isProduct.value == false &&
+        loadMore.value == false) {
+      loadMore.value = true;
+      page.value += 1;
+      print(page.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=$type&page=${page.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              productList.addAll(responseData['data']);
+            } else {
+              hasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      loadMore.value = false;
+    }
   }
 
   getExpressProductData() async {
@@ -199,18 +255,52 @@ class ProductController extends BaseController {
     }
   }
 
-  fetchMoreData(String type) async {
-    if (hasnextpage.value == true &&
-        isProduct.value == false &&
-        loadMore.value == false) {
-      loadMore.value = true;
-      page.value += 1;
-      print(page.value);
+  getBrandExpressProductData(int brandId) async {
+    isBrandExpressProduct.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          productExpressBrandList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isBrandExpressProduct.value = false;
+  }
+
+  fetchBrandExpressMoreData(int brandId) async {
+    if (brandExpressHasnextpage.value == true &&
+        isBrandExpressProduct.value == false &&
+        brandExpressLoadMore.value == false) {
+      brandExpressLoadMore.value = true;
+      brandExpressPage.value += 1;
+      print(brandExpressPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=$type&page=${page.value}"),
+                "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -220,9 +310,9 @@ class ProductController extends BaseController {
           if (responseData["data"] != null) {
             if (responseData["data"].isNotEmpty) {
               print(responseData);
-              productList.addAll(responseData['data']);
+              productExpressBrandList.addAll(responseData['data']);
             } else {
-              hasnextpage.value = false;
+              brandExpressHasnextpage.value = false;
             }
           }
         } else if (response.statusCode == 500) {
@@ -235,12 +325,91 @@ class ProductController extends BaseController {
           );
           getSnackBar("Authentication failed");
         } else {
-          getSnackBar("fetch product failed");
+          getSnackBar("fetch category product failed");
         }
       } catch (e) {
         print("error$e");
       }
-      loadMore.value = false;
+      brandExpressLoadMore.value = false;
+    }
+  }
+
+  getProductByCategoryData(String type, int categoryId) async {
+    isCategoryProduct.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?type=$type&category_id=$categoryId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          productCategoryList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCategoryProduct.value = false;
+  }
+
+  fetchCategoryProductMoreData(String type, int categoryId) async {
+    if (categoryProductHasnextpage.value == true &&
+        isCategoryProduct.value == false &&
+        categoryProductLoadMore.value == false) {
+      categoryProductLoadMore.value = true;
+      categoryProductPage.value += 1;
+      print(categoryProductPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=$type&category_id=$categoryId&page=${categoryProductPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              productCategoryList.addAll(responseData['data']);
+            } else {
+              categoryProductHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch category product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      categoryProductLoadMore.value = false;
     }
   }
 
@@ -458,7 +627,8 @@ class ProductController extends BaseController {
     hideLoading();
   }
 
-  callAddProductToWishlist(int wishlistId, String type, int id) async {
+  callAddProductToWishlist(
+      int wishlistId, String type, int id, int categoryId, int brandId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -481,6 +651,10 @@ class ProductController extends BaseController {
           getProductData("relevant");
         } else if (type == "express") {
           getProductData("express");
+        } else if (type == "category") {
+          getProductByCategoryData("relevant", categoryId);
+        } else if (type == "brand") {
+          getBrandExpressProductData(brandId);
         } else {
           getProductRecommendations(id);
         }

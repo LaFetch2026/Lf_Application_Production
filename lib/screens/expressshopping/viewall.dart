@@ -186,17 +186,17 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                     .productList[
                                                                 index]
                                                             ["wishlisted"]) {
-                                                          productController
-                                                              .callAddProductToWishlist(
-                                                            productController
-                                                                        .productList[
-                                                                    index]
-                                                                ["wishlist_id"],
-                                                            "express",
-                                                            productController
-                                                                    .productList[
-                                                                index]["id"],
-                                                          );
+                                                          productController.callAddProductToWishlist(
+                                                              productController
+                                                                          .productList[
+                                                                      index][
+                                                                  "wishlist_id"],
+                                                              "express",
+                                                              productController
+                                                                      .productList[
+                                                                  index]["id"],
+                                                              0,
+                                                              0);
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
@@ -206,14 +206,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           wishlistController,
                                                                       onPressed:
                                                                           (p0) {
-                                                                        productController
-                                                                            .callAddProductToWishlist(
-                                                                          p0,
-                                                                          "express",
-                                                                          productController.productList[index]
-                                                                              [
-                                                                              "id"],
-                                                                        );
+                                                                        productController.callAddProductToWishlist(
+                                                                            p0,
+                                                                            "express",
+                                                                            productController.productList[index]["id"],
+                                                                            0,
+                                                                            0);
                                                                       },
                                                                       wishlistList:
                                                                           wishlistController

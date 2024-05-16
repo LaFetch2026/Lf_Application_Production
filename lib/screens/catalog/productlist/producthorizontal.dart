@@ -50,8 +50,6 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
     productController.loadMore.value = false;
     productController.isProduct.value = false;
     productController.page.value = 1;
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
     super.initState();
   }
 
@@ -164,15 +162,16 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                         ["wishlisted"]) {
                                                       productController
                                                           .callAddProductToWishlist(
-                                                        productController
-                                                                    .productList[
-                                                                index]
-                                                            ["wishlist_id"],
-                                                        "product",
-                                                        productController
-                                                                .productList[
-                                                            index]["id"],
-                                                      );
+                                                              productController
+                                                                          .productList[
+                                                                      index][
+                                                                  "wishlist_id"],
+                                                              "product",
+                                                              productController
+                                                                      .productList[
+                                                                  index]["id"],
+                                                              0,
+                                                              0);
                                                     } else {
                                                       scaffoldKey.currentState
                                                           ?.showBottomSheet((context) =>
@@ -181,15 +180,14 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                       wishlistController,
                                                                   onPressed:
                                                                       (p0) {
-                                                                    productController
-                                                                        .callAddProductToWishlist(
-                                                                      p0,
-                                                                      "product",
-                                                                      productController
-                                                                              .productList[index]
-                                                                          [
-                                                                          "id"],
-                                                                    );
+                                                                    productController.callAddProductToWishlist(
+                                                                        p0,
+                                                                        "product",
+                                                                        productController.productList[index]
+                                                                            [
+                                                                            "id"],
+                                                                        0,
+                                                                        0);
                                                                   },
                                                                   wishlistList:
                                                                       wishlistController

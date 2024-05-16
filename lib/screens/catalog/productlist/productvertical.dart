@@ -337,17 +337,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                   .productList[
                                                               index]
                                                           ["wishlisted"]) {
-                                                        productController
-                                                            .callAddProductToWishlist(
-                                                          productController
-                                                                      .productList[
-                                                                  index]
-                                                              ["wishlist_id"],
-                                                          "product",
-                                                          productController
-                                                                  .productList[
-                                                              index]["id"],
-                                                        );
+                                                        productController.callAddProductToWishlist(
+                                                            productController
+                                                                        .productList[
+                                                                    index]
+                                                                ["wishlist_id"],
+                                                            "product",
+                                                            productController
+                                                                    .productList[
+                                                                index]["id"],
+                                                            0,
+                                                            0);
                                                       } else {
                                                         scaffoldKey.currentState
                                                             ?.showBottomSheet((context) =>
@@ -356,14 +356,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         wishlistController,
                                                                     onPressed:
                                                                         (p0) {
-                                                                      productController
-                                                                          .callAddProductToWishlist(
-                                                                        p0,
-                                                                        "product",
-                                                                        productController.productList[index]
-                                                                            [
-                                                                            "id"],
-                                                                      );
+                                                                      productController.callAddProductToWishlist(
+                                                                          p0,
+                                                                          "product",
+                                                                          productController.productList[index]
+                                                                              [
+                                                                              "id"],
+                                                                          0,
+                                                                          0);
                                                                     },
                                                                     wishlistList:
                                                                         wishlistController

@@ -287,11 +287,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   if (productController.productList[p1]
                                       ["wishlisted"]) {
                                     productController.callAddProductToWishlist(
-                                      productController.productList[p1]
-                                          ["wishlist_id"],
-                                      "product",
-                                      p0,
-                                    );
+                                        productController.productList[p1]
+                                            ["wishlist_id"],
+                                        "product",
+                                        p0,
+                                        0,
+                                        0);
                                   } else {
                                     scaffoldKey.currentState?.showBottomSheet(
                                         (context) => BottomWishlist(
@@ -299,11 +300,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                             onPressed: (p0) {
                                               productController
                                                   .callAddProductToWishlist(
-                                                p0,
-                                                "product",
-                                                productController
-                                                    .productList[p1]["id"],
-                                              );
+                                                      p0,
+                                                      "product",
+                                                      productController
+                                                              .productList[p1]
+                                                          ["id"],
+                                                      0,
+                                                      0);
                                             },
                                             wishlistList: wishlistController
                                                 .wishlistList));
@@ -541,11 +544,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 if (productController.productList[p1]
                                     ["wishlisted"]) {
                                   productController.callAddProductToWishlist(
-                                    productController.productList[p1]
-                                        ["wishlist_id"],
-                                    "product",
-                                    p0,
-                                  );
+                                      productController.productList[p1]
+                                          ["wishlist_id"],
+                                      "product",
+                                      p0,
+                                      0,
+                                      0);
                                 } else {
                                   scaffoldKey.currentState?.showBottomSheet(
                                       (context) => BottomWishlist(
@@ -553,11 +557,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           onPressed: (p0) {
                                             productController
                                                 .callAddProductToWishlist(
-                                              p0,
-                                              "product",
-                                              productController.productList[p1]
-                                                  ["id"],
-                                            );
+                                                    p0,
+                                                    "product",
+                                                    productController
+                                                        .productList[p1]["id"],
+                                                    0,
+                                                    0);
                                           },
                                           wishlistList:
                                               wishlistController.wishlistList));

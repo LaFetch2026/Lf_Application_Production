@@ -9,6 +9,7 @@ import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
+import 'Brands/categoryproduct.dart';
 import 'cartscreen.dart';
 import 'catalogscreen.dart';
 
@@ -391,7 +392,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   value.brandList[index]["categories"].length,
                                                                                   (i) {
                                                                                     return GestureDetector(
-                                                                                      onTap: () {},
+                                                                                      onTap: () {
+                                                                                        Get.to(CategoryProductScreen(
+                                                                                          categoryId: value.brandList[index]["categories"][i]["id"],
+                                                                                        ));
+                                                                                      },
                                                                                       child: Container(
                                                                                         alignment: Alignment.center,
                                                                                         child: Column(

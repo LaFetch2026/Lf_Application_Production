@@ -1756,12 +1756,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ["wishlisted"]) {
                                           productController
                                               .callAddProductToWishlist(
-                                            productController
-                                                    .recommendedList[p1]
-                                                ["wishlist_id"],
-                                            "recommended",
-                                            p0,
-                                          );
+                                                  productController
+                                                          .recommendedList[p1]
+                                                      ["wishlist_id"],
+                                                  "recommended",
+                                                  p0,
+                                                  0,
+                                                  0);
                                         } else {
                                           scaffoldKey.currentState
                                               ?.showBottomSheet((context) =>
@@ -1771,12 +1772,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       onPressed: (p0) {
                                                         productController
                                                             .callAddProductToWishlist(
-                                                          p0,
-                                                          "recommended",
-                                                          productController
-                                                                  .recommendedList[
-                                                              p1]["id"],
-                                                        );
+                                                                p0,
+                                                                "recommended",
+                                                                productController
+                                                                        .recommendedList[
+                                                                    p1]["id"],
+                                                                0,
+                                                                0);
                                                       },
                                                       wishlistList:
                                                           wishlistController
@@ -2008,11 +2010,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ["wishlisted"]) {
                                           productController
                                               .callAddProductToWishlist(
-                                            productController.productList[p1]
-                                                ["wishlist_id"],
-                                            "product",
-                                            p0,
-                                          );
+                                                  productController
+                                                          .productList[p1]
+                                                      ["wishlist_id"],
+                                                  "product",
+                                                  p0,
+                                                  0,
+                                                  0);
                                         } else {
                                           scaffoldKey.currentState
                                               ?.showBottomSheet((context) =>
@@ -2022,12 +2026,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       onPressed: (p0) {
                                                         productController
                                                             .callAddProductToWishlist(
-                                                          p0,
-                                                          "product",
-                                                          productController
-                                                                  .productList[
-                                                              p1]["id"],
-                                                        );
+                                                                p0,
+                                                                "product",
+                                                                productController
+                                                                        .productList[
+                                                                    p1]["id"],
+                                                                0,
+                                                                0);
                                                       },
                                                       wishlistList:
                                                           wishlistController
