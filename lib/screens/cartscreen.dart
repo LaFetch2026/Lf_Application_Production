@@ -304,15 +304,15 @@ class CartScreenState extends State<CartScreen> {
                                                                       Expanded(
                                                                           flex:
                                                                               1,
-                                                                          child: value.orderList[index]["product"]["product"] != null
-                                                                              ? value.orderList[index]["product"]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["product"]["images"] != null
+                                                                          child: value.orderList[index]["product"] != null
+                                                                              ? value.orderList[index]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["images"] != null
                                                                                   ? SizedBox(
                                                                                       height: 78,
                                                                                       width: 64,
                                                                                       child: CachedNetworkImage(
                                                                                         cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                         fit: BoxFit.cover,
-                                                                                        imageUrl: value.orderList[index]["product"]["product"]["images"][0]["name"],
+                                                                                        imageUrl: value.orderList[index]["product"]["images"][0]["name"],
                                                                                         progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                           child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                         ),

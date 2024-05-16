@@ -67,15 +67,16 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      color: whiteColor,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            /* Container(
+                    Obx(
+                      () => Container(
+                        color: whiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              /* Container(
                               height: 40,
                               width: 180,
                               decoration: BoxDecoration(
@@ -106,128 +107,133 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 ),
                               ),
                             ), */
-                            Expanded(
-                              flex: 1,
-                              child: SizedBox(
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  height: 40,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: TextField(
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      style: const TextStyle(
+                                        color: textColor,
+                                        fontFamily: "Franklin Gothic Regular",
+                                      ),
+                                      onChanged: (value) {
+                                        orderController.queryText.value = value;
+                                        orderController.getOrderData();
+                                        orderController.update();
+                                      },
+                                      controller:
+                                          orderController.searchController,
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: whiteColor,
+                                        prefixIcon: const Icon(Icons.search,
+                                            size: 20, color: Colors.grey),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: borderColor)),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                        ),
+                                        counterText: "",
+                                        hintText: "Search",
+                                        hintStyle:
+                                            const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
                                 height: 40,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: TextField(
-                                    textCapitalization:
-                                        TextCapitalization.words,
-                                    style: const TextStyle(
-                                      color: textColor,
-                                      fontFamily: "Franklin Gothic Regular",
-                                    ),
-                                    onChanged: (value) {
-                                      orderController.queryText.value = value;
-                                      orderController.getOrderData();
-                                    },
-                                    controller:
-                                        orderController.searchController,
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: whiteColor,
-                                      prefixIcon: const Icon(Icons.search,
-                                          size: 20, color: Colors.grey),
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: borderColor)),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(1),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(1),
-                                        borderSide: const BorderSide(
-                                            color: borderColor),
-                                      ),
-                                      counterText: "",
-                                      hintText: "Search",
-                                      hintStyle: const TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 40,
-                              width: 130,
-                              child: DropdownButtonFormField2(
-                                value: filter,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: whiteColor,
-                                  focusedBorder: const OutlineInputBorder(
+                                width: 130,
+                                child: DropdownButtonFormField2(
+                                  value: filter,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: whiteColor,
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: borderColor)),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1),
                                       borderSide:
-                                          BorderSide(color: borderColor)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
-                                    borderSide:
-                                        const BorderSide(color: borderColor),
+                                          const BorderSide(color: borderColor),
+                                    ),
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 10, right: 0),
+                                    hintText: 'Filter',
+                                    hintStyle: const TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: "Franklin Gothic Regular"),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1),
+                                    ),
                                   ),
-                                  isDense: true,
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 10, right: 0),
-                                  hintText: 'Filter',
-                                  hintStyle: const TextStyle(
-                                      fontSize: 12,
-                                      fontFamily: "Franklin Gothic Regular"),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
-                                  ),
-                                ),
-                                isExpanded: true,
-                                items: orderController.filterList
-                                    .map((item) => DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: textColor,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
+                                  isExpanded: true,
+                                  items: orderController.filterList
+                                      .map((item) => DropdownMenuItem<String>(
+                                            value: item,
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: textColor,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                              ),
                                             ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Please select Types.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  filter = value;
-                                  print(orderController.filterId[orderController
-                                      .filterList
-                                      .indexOf(filter.toString())]);
-                                  orderController.status.value =
-                                      orderController.filterId[orderController
-                                          .filterList
-                                          .indexOf(filter.toString())];
-                                  orderController.getOrderData();
-                                },
-                                onSaved: (value) {},
-                                buttonStyleData: const ButtonStyleData(
-                                  height: 60,
-                                  padding: EdgeInsets.only(right: 10),
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: ImageIcon(AssetImage(dropdownImage)),
-                                  iconSize: 10,
-                                ),
-                                dropdownStyleData: DropdownStyleData(
-                                  maxHeight: 200,
-                                  decoration: BoxDecoration(
-                                    color: whiteTextColor,
-                                    borderRadius: BorderRadius.circular(4),
+                                          ))
+                                      .toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Please select Types.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    filter = value;
+                                    print(orderController.filterId[
+                                        orderController.filterList
+                                            .indexOf(filter.toString())]);
+                                    orderController.status.value =
+                                        orderController.filterId[orderController
+                                            .filterList
+                                            .indexOf(filter.toString())];
+                                    orderController.getOrderData();
+                                  },
+                                  onSaved: (value) {},
+                                  buttonStyleData: const ButtonStyleData(
+                                    height: 60,
+                                    padding: EdgeInsets.only(right: 10),
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: ImageIcon(AssetImage(dropdownImage)),
+                                    iconSize: 10,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 200,
+                                    decoration: BoxDecoration(
+                                      color: whiteTextColor,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
