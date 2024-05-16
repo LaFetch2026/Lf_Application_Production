@@ -67,7 +67,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   : productController.productCategoryList.isNotEmpty
                       ? Expanded(
                           child: SingleChildScrollView(
-                            controller: productController.listController,
+                            controller:
+                                productController.categoryProductController,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -77,8 +78,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
-                                    controller:
-                                        productController.listController,
+                                    controller: productController
+                                        .categoryProductController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.5,

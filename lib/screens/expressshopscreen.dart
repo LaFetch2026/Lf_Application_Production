@@ -42,6 +42,12 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     super.initState();
   }
 
+  callOnchanged(int index) {
+    setState(() {
+      current = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,8 +199,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                   )
                 : Expanded(
                     child: PageView.builder(
-                      //   itemCount: brandController.brandList.length,
+                      //  itemCount: brandController.brandList.length + 1,
                       controller: pageController,
+                      onPageChanged: callOnchanged,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return ViewAllScreen(

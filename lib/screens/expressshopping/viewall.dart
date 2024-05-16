@@ -31,18 +31,19 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.fetchMoreData("express");
+      productController.brandExpressProductController.addListener(() {
+        productController.fetchBrandExpressMoreData(widget.brandId);
         productController.update();
       });
     });
-    productController.hasnextpage.value = true;
-    productController.loadMore.value = false;
-    productController.isProduct.value = false;
-    productController.page.value = 1;
+    productController.brandExpressHasnextpage.value = true;
+    productController.brandExpressLoadMore.value = false;
+    productController.isBrandExpressProduct.value = false;
+    productController.brandExpressPage.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("express"));
-    wishlistController.getWishlistData();
+        (_) => productController.getBrandExpressProductData(widget.brandId));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
   }
 
@@ -51,17 +52,18 @@ class ViewAllScreenState extends State<ViewAllScreen> {
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: whiteTextColor,
-        body: Obx(() => productController.isProduct.value
+        body: Obx(() => productController.isBrandExpressProduct.value
             ? const Padding(
                 padding: EdgeInsets.all(40.0),
                 child: Center(child: CircularProgressIndicator()),
               )
-            : productController.productList.isNotEmpty
+            : productController.productExpressBrandList.isNotEmpty
                 ? Stack(
                     children: [
                       Positioned.fill(
                         child: SingleChildScrollView(
-                          controller: productController.listController,
+                          controller:
+                              productController.brandExpressProductController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -71,7 +73,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                 child: GridView.count(
                                   shrinkWrap: true,
                                   crossAxisCount: 2,
-                                  controller: productController.listController,
+                                  controller: productController
+                                      .brandExpressProductController,
                                   scrollDirection: Axis.vertical,
                                   padding: EdgeInsets.zero,
                                   childAspectRatio: 0.5,
@@ -79,7 +82,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                   crossAxisSpacing: 5,
                                   mainAxisSpacing: 0,
                                   children: List.generate(
-                                    productController.productList.length,
+                                    productController
+                                        .productExpressBrandList.length,
                                     (index) {
                                       return Column(
                                         children: [
@@ -92,7 +96,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           ProductDetailsScreen(
                                                             productId:
                                                                 productController
-                                                                        .productList[
+                                                                        .productExpressBrandList[
                                                                     index]["id"],
                                                           )))
                                                   .then((value) => setState(
@@ -122,12 +126,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                   children: [
                                                     Center(
                                                       child: productController
-                                                                  .productList[
+                                                                  .productExpressBrandList[
                                                                       index]
                                                                       ["images"]
                                                                   .isNotEmpty &&
                                                               productController
-                                                                              .productList[
+                                                                              .productExpressBrandList[
                                                                           index]
                                                                       [
                                                                       "images"] !=
@@ -148,7 +152,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 fit: BoxFit
                                                                     .cover,
                                                                 imageUrl: productController
-                                                                            .productList[index]
+                                                                            .productExpressBrandList[index]
                                                                         [
                                                                         "images"]
                                                                     [0]["name"],
@@ -183,20 +187,19 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     GestureDetector(
                                                       onTap: () {
                                                         if (productController
-                                                                    .productList[
-                                                                index]
-                                                            ["wishlisted"]) {
+                                                                .productExpressBrandList[
+                                                            index]["wishlisted"]) {
                                                           productController.callAddProductToWishlist(
                                                               productController
-                                                                          .productList[
+                                                                          .productExpressBrandList[
                                                                       index][
                                                                   "wishlist_id"],
-                                                              "express",
+                                                              "brand",
                                                               productController
-                                                                      .productList[
+                                                                      .productExpressBrandList[
                                                                   index]["id"],
                                                               0,
-                                                              0);
+                                                              widget.brandId);
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
@@ -208,10 +211,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           (p0) {
                                                                         productController.callAddProductToWishlist(
                                                                             p0,
-                                                                            "express",
-                                                                            productController.productList[index]["id"],
+                                                                            "brand",
+                                                                            productController.productExpressBrandList[index]["id"],
                                                                             0,
-                                                                            0);
+                                                                            widget.brandId);
                                                                       },
                                                                       wishlistList:
                                                                           wishlistController
@@ -236,7 +239,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 backgroundColor:
                                                                     whiteColor,
                                                                 child: productController
-                                                                            .productList[index]
+                                                                            .productExpressBrandList[index]
                                                                         [
                                                                         "wishlisted"]
                                                                     ? Image
@@ -292,12 +295,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 width: 24,
                                                               ),
                                                               AppText(
-                                                                text: productController.productList[index]
+                                                                text: productController.productExpressBrandList[index]
                                                                             [
                                                                             "aggregated_rating"] !=
                                                                         null
                                                                     ? productController
-                                                                        .productList[
+                                                                        .productExpressBrandList[
                                                                             index]
                                                                             [
                                                                             "aggregated_rating"]
@@ -350,7 +353,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       vertical: 5),
                                                   child: AppText(
                                                     text: productController
-                                                                .productList[
+                                                                .productExpressBrandList[
                                                             index]["name"] ??
                                                         "",
                                                     color: nameText,
@@ -367,7 +370,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       horizontal: 10),
                                                   child: AppText(
                                                     text:
-                                                        "${productController.productList[index]["short_description"]} \n"
+                                                        "${productController.productExpressBrandList[index]["short_description"]} \n"
                                                         "",
                                                     color: nameText,
                                                     maxLines: 2,
@@ -387,7 +390,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     children: [
                                                       AppText(
                                                         text:
-                                                            "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                            "\u{20B9} ${productController.productExpressBrandList[index]["price"] ?? ""}",
                                                         color:
                                                             deepGreytextColor,
                                                         maxLines: 2,
@@ -402,7 +405,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                             const EdgeInsets
                                                                 .only(left: 5),
                                                         child: Text(
-                                                          "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                          "\u{20B9} ${productController.productExpressBrandList[index]["mrp"] ?? ""}",
                                                           style: TextStyle(
                                                             color:
                                                                 textHintColor,
@@ -461,7 +464,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                   ),
                                 ),
                               ),
-                              productController.loadMore.value
+                              productController.brandExpressLoadMore.value
                                   ? const Padding(
                                       padding:
                                           EdgeInsets.only(top: 10, bottom: 10),

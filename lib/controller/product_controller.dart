@@ -259,13 +259,23 @@ class ProductController extends BaseController {
     isBrandExpressProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (brandId != 0) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -298,13 +308,25 @@ class ProductController extends BaseController {
       print(brandExpressPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        dynamic response;
+        if (brandId != 0) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {
@@ -649,8 +671,6 @@ class ProductController extends BaseController {
         }
         if (type == "product") {
           getProductData("relevant");
-        } else if (type == "express") {
-          getProductData("express");
         } else if (type == "category") {
           getProductByCategoryData("relevant", categoryId);
         } else if (type == "brand") {
