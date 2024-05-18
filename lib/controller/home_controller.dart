@@ -32,6 +32,7 @@ class HomeController extends BaseController {
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
+  RxInt tagId = 0.obs;
   ScrollController listController = ScrollController();
   final PageController pageController = PageController(
     initialPage: 0,
@@ -63,6 +64,9 @@ class HomeController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           tagsList = responseData["data"];
+          if (tagsList.isNotEmpty) {
+            tagId.value = tagsList[0]["id"];
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

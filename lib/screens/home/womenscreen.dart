@@ -77,6 +77,8 @@ class _WomenScreenState extends State<WomenScreen> {
                                   onTap: () {
                                     setState(() {
                                       current = index;
+                                      homeController.tagId.value =
+                                          homeController.tagsList[index]["id"];
                                     });
                                     pageController.animateToPage(
                                       current,
@@ -136,7 +138,9 @@ class _WomenScreenState extends State<WomenScreen> {
                       onPageChanged: callOnchanged,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return const DiscountScreen();
+                        return DiscountScreen(
+                          tagId: homeController.tagId.value,
+                        );
                       },
                     ),
                   ),

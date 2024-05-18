@@ -15,7 +15,8 @@ import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class DiscountScreen extends StatefulWidget {
-  const DiscountScreen({super.key});
+  final int tagId;
+  const DiscountScreen({super.key, required this.tagId});
 
   @override
   State<DiscountScreen> createState() => DiscountScreenState();
@@ -24,14 +25,6 @@ class DiscountScreen extends StatefulWidget {
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
-  /*  List<String> menu = [
-    "Discounts",
-    "New Arrivals",
-    "Clothing",
-    "Footwear",
-  ];
-  int current = 0;
- */
   @override
   void dispose() {
     super.dispose();
@@ -48,15 +41,15 @@ class DiscountScreenState extends State<DiscountScreen> {
   void initState() {
     super.initState();
     homeController.currentPage.value = 0;
-    productController.listController.addListener(() {
-      print("pages${productController.page.value}");
-      productController.fetchMoreData("relevant");
+    // homeController.tagsList.clear();
+    productController.tagsProductController.addListener(() {
+      productController.fetchMoreTagsProductData(widget.tagId);
       productController.update();
     });
-    productController.hasnextpage.value = true;
-    productController.loadMore.value = false;
-    productController.isProduct.value = false;
-    productController.page.value = 1;
+    productController.tagsHasnextpage.value = true;
+    productController.tagsLoadMore.value = false;
+    productController.istagsProduct.value = false;
+    productController.tagsPage.value = 1;
     productController.expressListController.addListener(() {
       productController.fetchExpressMoreData();
       productController.update();
@@ -72,7 +65,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getCategoryData());
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+        (_) => productController.getTagsProductData(widget.tagId));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.getExpressProductData());
     /* homeController.timer =
@@ -401,7 +394,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                               ));
                     },
                   )),
-            Obx(() => productController.isProduct.value
+            Obx(() => productController.istagsProduct.value
                 ? const Padding(
                     padding: EdgeInsets.all(40.0),
                     child: Center(child: CircularProgressIndicator()),
@@ -515,7 +508,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                   ) */
                 HorizontalHomeList(
                     text: "We think you might also like",
-                    controller: productController.listController,
+                    controller: productController.tagsProductController,
                     height: 250,
                     visibleExpress: false,
                     onPressed: (p0) {
@@ -527,11 +520,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   )))
                           .then((value) => setState(
                                 () {
-                                  productController.hasnextpage.value = true;
-                                  productController.loadMore.value = false;
-                                  productController.isProduct.value = false;
-                                  productController.page.value = 1;
-                                  //   productController.getProductData("relevant");
+                                  productController.tagsHasnextpage.value =
+                                      true;
+                                  productController.tagsLoadMore.value = false;
+                                  productController.istagsProduct.value = false;
+                                  productController.tagsPage.value = 1;
+                                  //   productController.getTagsProductData(widget.tagId);
                                 },
                               ));
                     },

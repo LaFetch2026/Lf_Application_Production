@@ -11,6 +11,7 @@ import '../../utils/constants.dart';
 import '../commonwidget/homewidget/horizontal_home_list.dart';
 import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
+import '../controller/search_controller.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -21,10 +22,10 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen> {
-  TextEditingController searchController = TextEditingController();
   final productController =
       Get.put(ProductController()); //most viewed item list
   final brandController = Get.put(BrandController());
+  final controller = Get.put(SearchScreenController());
   bool isSearch = false;
   List<String> products = [
     "Salwar Suits",
@@ -65,6 +66,8 @@ class SearchScreenState extends State<SearchScreen> {
     productController.loadMore.value = false;
     productController.isProduct.value = false;
     productController.page.value = 1;
+    /*  WidgetsBinding.instance
+        .addPostFrameCallback((_) => controller.getSearchData()); */
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductData("relevant")); //most viewed item list
     WidgetsBinding.instance
@@ -628,7 +631,10 @@ class SearchScreenState extends State<SearchScreen> {
                                         color: textColor,
                                         fontFamily: "Franklin Gothic Regular",
                                       ),
-                                      controller: searchController,
+                                      controller: controller.searchController,
+                                      onChanged: (value) {
+                                        controller.getSearchData();
+                                      },
                                       keyboardType: TextInputType.text,
                                       decoration: InputDecoration(
                                         filled: true,
@@ -664,69 +670,100 @@ class SearchScreenState extends State<SearchScreen> {
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4, top: 8),
-                            child: SizedBox(
-                              height: 187,
-                              child: ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  itemCount: searchItem.length,
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (ctx, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const Icon(Icons.search,
-                                              size: 20, color: Colors.grey),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12),
-                                              child: AppText(
-                                                text: "T-shirts Men",
-                                                maxLines: 1,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 14.sp,
-                                                color: loginText,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                            child: AppText(
-                                              text: "41",
-                                              maxLines: 1,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.sp,
-                                              color: greyTextColor,
-                                            ),
-                                          ),
-                                          Image.asset(curveArrowImage,
-                                              height: 12,
-                                              width: 12,
-                                              fit: BoxFit.cover),
-                                        ],
+                          Obx(() => controller.isSearchItem.value
+                              ? const Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : controller.searchList.isNotEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 4, top: 8),
+                                      child: SizedBox(
+                                        height: 187,
+                                        child: ListView.builder(
+                                            primary: false,
+                                            shrinkWrap: true,
+                                            physics: const ScrollPhysics(),
+                                            itemCount:
+                                                controller.searchList.length,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (ctx, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    const Icon(Icons.search,
+                                                        size: 20,
+                                                        color: Colors.grey),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 12),
+                                                        child: AppText(
+                                                          text:
+                                                              controller.searchList[
+                                                                          index]
+                                                                      [
+                                                                      "name"] ??
+                                                                  "",
+                                                          maxLines: 1,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 14.sp,
+                                                          color: loginText,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 8),
+                                                      child: AppText(
+                                                        text: "41",
+                                                        maxLines: 1,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 14.sp,
+                                                        color: greyTextColor,
+                                                      ),
+                                                    ),
+                                                    Image.asset(curveArrowImage,
+                                                        height: 12,
+                                                        width: 12,
+                                                        fit: BoxFit.cover),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
                                       ),
-                                    );
-                                  }),
-                            ),
-                          ),
+                                    )
+                                  : Container(
+                                      margin: const EdgeInsets.only(top: 100),
+                                      child: const Center(
+                                        child: Text("No Item Found",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular")),
+                                      ),
+                                    )),
                         ],
                       ),
                     ),
