@@ -76,6 +76,7 @@ class _WomenScreenState extends State<WomenScreen> {
                                     GestureDetector(
                                       onTap: () {
                                         homeController.current.value = index;
+                                        setState(() {});
                                         homeController.tagId.value =
                                             homeController.tagsList[index]
                                                 ["id"];
@@ -134,7 +135,7 @@ class _WomenScreenState extends State<WomenScreen> {
                               }),
                     )),
           ),
-          //  ),
+          // ),
           Obx(
             () => homeController.istags.value
                 ? const Padding(
