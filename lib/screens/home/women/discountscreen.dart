@@ -41,7 +41,7 @@ class DiscountScreenState extends State<DiscountScreen> {
   void initState() {
     super.initState();
     homeController.currentPage.value = 0;
-    // homeController.tagsList.clear();
+    // productController.tagProductList.clear();
     productController.tagsProductController.addListener(() {
       productController.fetchMoreTagsProductData(widget.tagId);
       productController.update();
@@ -529,7 +529,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 },
                               ));
                     },
-                    list: productController.productList,
+                    list: productController.tagProductList,
                   )),
             Obx(
               () => homeController.isCategory.value

@@ -29,7 +29,6 @@ class ProductController extends BaseController {
   dynamic compositionDetails = "".obs;
   dynamic returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
-  List<int> tagListId = [];
   List tagProductList = [].obs;
   List productList = [].obs;
   List expressProductList = [].obs;
@@ -185,12 +184,10 @@ class ProductController extends BaseController {
 
   getTagsProductData(int tagId) async {
     istagsProduct.value = true;
-    tagListId.clear();
-    tagListId.add(tagId);
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-        Uri.parse("${ApiConstants.baseUrl}/products?tag_ids=$tagListId"),
+        Uri.parse("${ApiConstants.baseUrl}/products?tag_ids[]=$tagId"),
         headers: <String, String>{
           'Accept': 'application/json; charset=UTF-8',
           "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -230,7 +227,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?tag_ids=$tagListId&page=${tagsPage.value}"),
+                "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
