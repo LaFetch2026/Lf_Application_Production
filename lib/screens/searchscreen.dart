@@ -27,13 +27,13 @@ class SearchScreenState extends State<SearchScreen> {
   final brandController = Get.put(BrandController());
   final controller = Get.put(SearchScreenController());
   bool isSearch = false;
-  List<String> products = [
+  /*  List<String> products = [
     "Salwar Suits",
     "Printed loose t-shirts",
     "Clothing",
     "Duffle bags",
     "Tuxedos"
-  ];
+  ]; */
   List<String> items = [
     "100",
     "200",
@@ -56,6 +56,7 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState() {
+    controller.searchController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
@@ -66,8 +67,8 @@ class SearchScreenState extends State<SearchScreen> {
     productController.loadMore.value = false;
     productController.isProduct.value = false;
     productController.page.value = 1;
-    /*  WidgetsBinding.instance
-        .addPostFrameCallback((_) => controller.getSearchData()); */
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => controller.getRecentSearchData());
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductData("relevant")); //most viewed item list
     WidgetsBinding.instance
@@ -164,55 +165,79 @@ class SearchScreenState extends State<SearchScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 16),
-                          child: AppText(
-                            text: "Recent Searches",
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: bottomnavBack,
-                            fontSize: 18.sp,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 20),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            controller: ScrollController(),
-                            child: Wrap(
-                              direction: Axis.horizontal,
-                              spacing: 5.0,
-                              runSpacing: 9.0,
-                              runAlignment: WrapAlignment.spaceEvenly,
-                              children: [
-                                for (var product in products)
-                                  Container(
-                                    height: 33,
-                                    margin: const EdgeInsets.only(right: 5),
-                                    decoration: BoxDecoration(
-                                        color: whiteColor,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: btnTextColor, width: 1)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 7),
-                                      child: Text(
-                                        product,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: blackColor,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
+                        Obx(
+                          () => controller.isRecentSearch.value
+                              ? const Padding(
+                                  padding: EdgeInsets.all(40.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 20, left: 16),
+                                      child: AppText(
+                                        text: "Recent Searches",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: bottomnavBack,
+                                        fontSize: 18.sp,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 16, right: 16, top: 20),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.vertical,
+                                        controller: ScrollController(),
+                                        child: Wrap(
+                                          direction: Axis.horizontal,
+                                          spacing: 5.0,
+                                          runSpacing: 9.0,
+                                          runAlignment:
+                                              WrapAlignment.spaceEvenly,
+                                          children: [
+                                            for (var product
+                                                in controller.recentSearchList)
+                                              Container(
+                                                height: 33,
+                                                margin: const EdgeInsets.only(
+                                                    right: 5),
+                                                decoration: BoxDecoration(
+                                                    color: whiteColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    border: Border.all(
+                                                        color: btnTextColor,
+                                                        width: 1)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 7),
+                                                  child: Text(
+                                                    product["search_string"],
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color: blackColor,
+                                                      fontSize: 12.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ),
-                              ],
-                            ),
-                          ),
+                                  ],
+                                ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 30, left: 16),
@@ -694,60 +719,86 @@ class SearchScreenState extends State<SearchScreen> {
                                               return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    const Icon(Icons.search,
-                                                        size: 20,
-                                                        color: Colors.grey),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 12),
-                                                        child: AppText(
-                                                          text:
-                                                              controller.searchList[
+                                                        vertical: 4),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    controller.callRecentSearch(
+                                                        controller.searchList[
+                                                            index]["id"],
+                                                        controller
+                                                            .searchController
+                                                            .text
+                                                            .toString()
+                                                            .trim());
+                                                    setState(() {
+                                                      isSearch = false;
+                                                    });
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(vertical: 6),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Icon(Icons.search,
+                                                            size: 20,
+                                                            color: Colors.grey),
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        12),
+                                                            child: AppText(
+                                                              text: controller.searchList[
                                                                           index]
                                                                       [
                                                                       "name"] ??
                                                                   "",
-                                                          maxLines: 1,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: 14.sp,
-                                                          color: loginText,
+                                                              maxLines: 1,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontSize: 14.sp,
+                                                              color: loginText,
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      8),
+                                                          child: AppText(
+                                                            text: "41",
+                                                            maxLines: 1,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 14.sp,
+                                                            color:
+                                                                greyTextColor,
+                                                          ),
+                                                        ),
+                                                        Image.asset(
+                                                            curveArrowImage,
+                                                            height: 12,
+                                                            width: 12,
+                                                            fit: BoxFit.cover),
+                                                      ],
                                                     ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 8),
-                                                      child: AppText(
-                                                        text: "41",
-                                                        maxLines: 1,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        fontSize: 14.sp,
-                                                        color: greyTextColor,
-                                                      ),
-                                                    ),
-                                                    Image.asset(curveArrowImage,
-                                                        height: 12,
-                                                        width: 12,
-                                                        fit: BoxFit.cover),
-                                                  ],
+                                                  ),
                                                 ),
                                               );
                                             }),

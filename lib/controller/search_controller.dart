@@ -14,6 +14,8 @@ class SearchScreenController extends BaseController {
   TextEditingController searchController = TextEditingController();
   RxBool isSearchItem = false.obs;
   List searchList = [].obs;
+  RxBool isRecentSearch = false.obs;
+  List recentSearchList = [].obs;
 
   getSearchData() async {
     isSearchItem.value = true;
@@ -47,5 +49,71 @@ class SearchScreenController extends BaseController {
       print("error$e");
     }
     isSearchItem.value = false;
+  }
+
+  getRecentSearchData() async {
+    isRecentSearch.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/recent-searches"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          recentSearchList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get recent search failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isRecentSearch.value = false;
+  }
+
+  callRecentSearch(int productId, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "product_id": productId,
+        "search_string": value,
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/recent-searches"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        getRecentSearchData();
+      } else if (response.statusCode == 201) {
+        getRecentSearchData();
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
