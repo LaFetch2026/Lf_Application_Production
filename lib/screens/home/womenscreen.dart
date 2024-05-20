@@ -16,11 +16,11 @@ class WomenScreen extends StatefulWidget {
 
 class _WomenScreenState extends State<WomenScreen> {
   final homeController = Get.put(HomeController());
-  int current = 0;
   PageController pageController = PageController();
 
   @override
   void initState() {
+    homeController.current.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.listController.addListener(() {
         homeController.fetchMoreTagsData();
@@ -38,9 +38,7 @@ class _WomenScreenState extends State<WomenScreen> {
   }
 
   callOnchanged(int index) {
-    setState(() {
-      current = index;
-    });
+    homeController.current.value = index;
   }
 
   @override
@@ -63,30 +61,31 @@ class _WomenScreenState extends State<WomenScreen> {
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: GetBuilder<HomeController>(
-                          builder: (value) => ListView.builder(
+                      width: double.infinity,
+                      height: 50,
+                      child: /*  GetBuilder<HomeController>(
+                          builder: (value) => */
+                          ListView.builder(
                               physics: const BouncingScrollPhysics(),
-                              itemCount: value.tagsList.length,
+                              itemCount: homeController.tagsList.length,
                               scrollDirection: Axis.horizontal,
-                              controller: value.listController,
+                              controller: homeController.listController,
                               itemBuilder: (ctx, index) {
                                 return Column(
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        setState(() {
-                                          current = index;
-                                          value.tagId.value =
-                                              value.tagsList[index]["id"];
-                                        });
+                                        homeController.current.value = index;
+                                        homeController.tagId.value =
+                                            homeController.tagsList[index]
+                                                ["id"];
                                         pageController.animateToPage(
-                                          current,
+                                          homeController.current.value,
                                           duration:
                                               const Duration(milliseconds: 200),
                                           curve: Curves.ease,
                                         );
+                                        homeController.update();
                                       },
                                       child: AnimatedContainer(
                                         duration:
@@ -95,25 +94,34 @@ class _WomenScreenState extends State<WomenScreen> {
                                         width: 100,
                                         height: 30,
                                         decoration: BoxDecoration(
-                                          color: current == index
+                                          color: homeController.current.value ==
+                                                  index
                                               ? btnTextColor
                                               : whiteTextColor,
-                                          borderRadius: current == index
-                                              ? BorderRadius.circular(20)
-                                              : BorderRadius.circular(20),
-                                          border: current == index
-                                              ? Border.all(
-                                                  color: btnTextColor, width: 1)
-                                              : Border.all(
-                                                  color: textHintColor,
-                                                  width: 1),
+                                          borderRadius:
+                                              homeController.current.value ==
+                                                      index
+                                                  ? BorderRadius.circular(20)
+                                                  : BorderRadius.circular(20),
+                                          border:
+                                              homeController.current.value ==
+                                                      index
+                                                  ? Border.all(
+                                                      color: btnTextColor,
+                                                      width: 1)
+                                                  : Border.all(
+                                                      color: textHintColor,
+                                                      width: 1),
                                         ),
                                         child: Center(
                                           child: AppText(
-                                            text: value.tagsList[index]["name"],
-                                            color: current == index
-                                                ? whiteBorderColor
-                                                : textHintColor,
+                                            text: homeController.tagsList[index]
+                                                ["name"],
+                                            color:
+                                                homeController.current.value ==
+                                                        index
+                                                    ? whiteBorderColor
+                                                    : textHintColor,
                                             fontSize: 12.sp,
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
@@ -124,9 +132,9 @@ class _WomenScreenState extends State<WomenScreen> {
                                   ],
                                 );
                               }),
-                        )),
-                  ),
+                    )),
           ),
+          //  ),
           Obx(
             () => homeController.istags.value
                 ? const Padding(

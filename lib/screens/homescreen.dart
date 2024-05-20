@@ -24,7 +24,9 @@ class HomeScreenState extends State<HomeScreen> {
   final homeController = Get.put(HomeController());
   @override
   void initState() {
-    homeController.getDeviceName();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.getDeviceName();
+    });
     initPlatformState();
     super.initState();
   }

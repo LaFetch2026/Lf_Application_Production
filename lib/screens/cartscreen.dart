@@ -53,7 +53,7 @@ class CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteBack,
+      backgroundColor: whiteColor,
       key: scaffoldKey,
       body: Column(
         children: [
@@ -567,194 +567,182 @@ class CartScreenState extends State<CartScreen> {
                                         child: Center(
                                             child: CircularProgressIndicator()),
                                       )
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10, left: 16),
-                                            child: AppText(
-                                              text: "You may also like",
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: colorPrimary,
-                                              fontSize: 12.sp,
+                                    : Container(
+                                        color: whiteBack,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 24, left: 16),
+                                              child: AppText(
+                                                text: "You may also like",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: colorPrimary,
+                                                fontSize: 12.sp,
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 10),
-                                            child: SizedBox(
-                                                width: double.infinity,
-                                                height: 310,
-                                                child: GetBuilder<
-                                                    ProductController>(
-                                                  builder: (value) =>
-                                                      ListView.builder(
-                                                          shrinkWrap: true,
-                                                          primary: false,
-                                                          controller:
-                                                              productController
-                                                                  .listController,
-                                                          physics:
-                                                              const BouncingScrollPhysics(),
-                                                          itemCount: value
-                                                              .productList
-                                                              .length,
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          itemBuilder:
-                                                              (ctx, index) {
-                                                            return Column(
-                                                              children: [
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    Get.to(
-                                                                        ProductDetailsScreen(
-                                                                      productId:
-                                                                          value.productList[index]
-                                                                              [
-                                                                              "id"],
-                                                                    ));
-                                                                  },
-                                                                  child:
-                                                                      AnimatedContainer(
-                                                                    duration: const Duration(
-                                                                        milliseconds:
-                                                                            300),
-                                                                    margin: const EdgeInsets
-                                                                            .only(
-                                                                        right:
-                                                                            8),
-                                                                    color:
-                                                                        whiteColor,
-                                                                    width: 122,
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 10),
+                                              child: SizedBox(
+                                                  width: double.infinity,
+                                                  height: 310,
+                                                  child: GetBuilder<
+                                                      ProductController>(
+                                                    builder: (value) =>
+                                                        ListView.builder(
+                                                            shrinkWrap: true,
+                                                            primary: false,
+                                                            controller:
+                                                                productController
+                                                                    .listController,
+                                                            physics:
+                                                                const BouncingScrollPhysics(),
+                                                            itemCount: value
+                                                                .productList
+                                                                .length,
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemBuilder:
+                                                                (ctx, index) {
+                                                              return Column(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      Get.to(
+                                                                          ProductDetailsScreen(
+                                                                        productId:
+                                                                            value.productList[index]["id"],
+                                                                      ));
+                                                                    },
                                                                     child:
-                                                                        Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        productController.productList[index]["images"].isNotEmpty &&
-                                                                                productController.productList[index]["images"] != null
-                                                                            ? SizedBox(
-                                                                                height: 150,
-                                                                                width: 122,
-                                                                                child: CachedNetworkImage(
-                                                                                  cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                  fit: BoxFit.cover,
-                                                                                  imageUrl: productController.productList[index]["images"][0]["name"],
-                                                                                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                                                    child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                  ),
-                                                                                  errorWidget: (context, url, error) => Image.asset(
-                                                                                    downloadImage,
+                                                                        AnimatedContainer(
+                                                                      duration: const Duration(
+                                                                          milliseconds:
+                                                                              300),
+                                                                      margin: const EdgeInsets
+                                                                              .only(
+                                                                          right:
+                                                                              8),
+                                                                      color:
+                                                                          whiteColor,
+                                                                      width:
+                                                                          122,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          productController.productList[index]["images"].isNotEmpty && productController.productList[index]["images"] != null
+                                                                              ? SizedBox(
+                                                                                  height: 150,
+                                                                                  width: 122,
+                                                                                  child: CachedNetworkImage(
+                                                                                    cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                     fit: BoxFit.cover,
-                                                                                    height: 150,
-                                                                                    width: 122,
+                                                                                    imageUrl: productController.productList[index]["images"][0]["name"],
+                                                                                    progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                      child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                                    ),
+                                                                                    errorWidget: (context, url, error) => Image.asset(
+                                                                                      downloadImage,
+                                                                                      fit: BoxFit.cover,
+                                                                                      height: 150,
+                                                                                      width: 122,
+                                                                                    ),
+                                                                                  ),
+                                                                                )
+                                                                              : Image.asset(dummyWishlistImage, height: 150, width: 122, fit: BoxFit.cover),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: value.productList[index]["name"] ?? "",
+                                                                              color: nameText,
+                                                                              fontSize: 12.sp,
+                                                                              maxLines: 1,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: value.productList[index]["short_description"] ?? "",
+                                                                              color: nameText,
+                                                                              maxLines: 1,
+                                                                              fontSize: 11.sp,
+                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                              fontWeight: FontWeight.w400,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(
+                                                                                top: 10,
+                                                                                left: 10,
+                                                                                right: 1),
+                                                                            child:
+                                                                                Row(
+                                                                              children: [
+                                                                                AppText(
+                                                                                  text: "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
+                                                                                  color: deepGreytextColor,
+                                                                                  maxLines: 2,
+                                                                                  fontSize: 11.sp,
+                                                                                  fontFamily: "Franklin Gothic",
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.only(left: 5),
+                                                                                  child: Text(
+                                                                                    "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
+                                                                                    style: TextStyle(
+                                                                                      color: textHintColor,
+                                                                                      fontSize: 11.sp,
+                                                                                      decoration: TextDecoration.lineThrough,
+                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
                                                                                   ),
                                                                                 ),
-                                                                              )
-                                                                            : Image.asset(dummyWishlistImage, height: 150, width: 122, fit: BoxFit.cover),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.symmetric(
-                                                                              horizontal: 10,
-                                                                              vertical: 5),
-                                                                          child:
-                                                                              AppText(
-                                                                            text:
-                                                                                value.productList[index]["name"] ?? "",
-                                                                            color:
-                                                                                nameText,
-                                                                            fontSize:
-                                                                                12.sp,
-                                                                            maxLines:
-                                                                                1,
-                                                                            fontFamily:
-                                                                                "Franklin Gothic",
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
+                                                                              ],
+                                                                            ),
                                                                           ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.symmetric(
-                                                                              horizontal: 10,
-                                                                              vertical: 3),
-                                                                          child:
-                                                                              AppText(
-                                                                            text:
-                                                                                value.productList[index]["short_description"] ?? "",
-                                                                            color:
-                                                                                nameText,
-                                                                            maxLines:
-                                                                                1,
-                                                                            fontSize:
-                                                                                11.sp,
-                                                                            fontFamily:
-                                                                                "Franklin Gothic Regular",
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              top: 10,
-                                                                              left: 10,
-                                                                              right: 1),
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              AppText(
-                                                                                text: "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
-                                                                                color: deepGreytextColor,
-                                                                                maxLines: 2,
-                                                                                fontSize: 11.sp,
-                                                                                fontFamily: "Franklin Gothic",
-                                                                                fontWeight: FontWeight.w500,
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: const EdgeInsets.only(left: 5),
-                                                                                child: Text(
-                                                                                  "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
-                                                                                  style: TextStyle(
-                                                                                    color: textHintColor,
-                                                                                    fontSize: 11.sp,
-                                                                                    decoration: TextDecoration.lineThrough,
-                                                                                    fontFamily: "Franklin Gothic Regular",
-                                                                                    fontWeight: FontWeight.w400,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(top: 10),
-                                                                          child: getSmallButton(
-                                                                              /*   controller:
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(top: 10),
+                                                                            child: getSmallButton(
+                                                                                /*   controller:
                                                                         value, */
-                                                                              label: "Add to bag",
-                                                                              onPressed: () {
-                                                                                controller.callAddtoCart(value.productList[index]["id"], 1, "addproduct");
-                                                                              },
-                                                                              textColor: btnTextColor,
-                                                                              backgroundColor: whiteColor,
-                                                                              borderColor: btnTextColor,
-                                                                              width: 122),
-                                                                        )
-                                                                      ],
+                                                                                label: "Add to bag",
+                                                                                onPressed: () {
+                                                                                  controller.callAddtoCart(value.productList[index]["id"], 1, "addproduct");
+                                                                                },
+                                                                                textColor: btnTextColor,
+                                                                                backgroundColor: whiteColor,
+                                                                                borderColor: btnTextColor,
+                                                                                width: 122),
+                                                                          )
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            );
-                                                          }),
-                                                )),
-                                          ),
-                                        ],
+                                                                ],
+                                                              );
+                                                            }),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                 const SizedBox(
                                   height: 8,

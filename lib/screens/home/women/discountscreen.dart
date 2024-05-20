@@ -32,9 +32,7 @@ class DiscountScreenState extends State<DiscountScreen> {
   }
 
   callOnchanged(int index) {
-    setState(() {
-      homeController.currentPage.value = index;
-    });
+    homeController.currentPage.value = index;
   }
 
   @override
@@ -42,17 +40,21 @@ class DiscountScreenState extends State<DiscountScreen> {
     super.initState();
     homeController.currentPage.value = 0;
     // productController.tagProductList.clear();
-    productController.tagsProductController.addListener(() {
-      productController.fetchMoreTagsProductData(widget.tagId);
-      productController.update();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.tagsProductController.addListener(() {
+        productController.fetchMoreTagsProductData(widget.tagId);
+        productController.update();
+      });
     });
     productController.tagsHasnextpage.value = true;
     productController.tagsLoadMore.value = false;
     productController.istagsProduct.value = false;
     productController.tagsPage.value = 1;
-    productController.expressListController.addListener(() {
-      productController.fetchExpressMoreData();
-      productController.update();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.expressListController.addListener(() {
+        productController.fetchExpressMoreData();
+        productController.update();
+      });
     });
     productController.expressHasnextpage.value = true;
     productController.expressLoadMore.value = false;
