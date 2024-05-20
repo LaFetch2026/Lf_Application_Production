@@ -115,78 +115,82 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: brandController.brandList.length + 1,
-                              scrollDirection: Axis.horizontal,
-                              controller: brandController.listController,
-                              itemBuilder: (ctx, index) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          current = index;
-                                          brandId = index == 0
-                                              ? 0
-                                              : brandController
-                                                  .brandList[index - 1]["id"];
-                                        });
-                                        pageController.animateToPage(
-                                          current,
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          curve: Curves.ease,
-                                        );
-                                      },
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        margin: const EdgeInsets.only(right: 5),
-                                        width: 100,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: current == index
-                                              ? btnTextColor
-                                              : whiteBorderColor,
-                                          borderRadius: current == index
-                                              ? BorderRadius.circular(20)
-                                              : BorderRadius.circular(20),
-                                          border: current == index
-                                              ? Border.all(
-                                                  color: btnTextColor, width: 1)
-                                              : Border.all(
-                                                  color: textHintColor,
-                                                  width: 1),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          child: Center(
-                                            child: AppText(
-                                              text: index == 0
-                                                  ? "View All"
-                                                  : brandController
-                                                          .brandList[index - 1]
-                                                      ["name"],
+                            width: double.infinity,
+                            height: 50,
+                            child: GetBuilder<BrandController>(
+                              builder: (value) => ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: value.brandList.length + 1,
+                                  scrollDirection: Axis.horizontal,
+                                  controller: value.listController,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              current = index;
+                                              brandId = index == 0
+                                                  ? 0
+                                                  : value.brandList[index - 1]
+                                                      ["id"];
+                                            });
+                                            pageController.animateToPage(
+                                              current,
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              curve: Curves.ease,
+                                            );
+                                          },
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            margin:
+                                                const EdgeInsets.only(right: 5),
+                                            width: 100,
+                                            height: 30,
+                                            decoration: BoxDecoration(
                                               color: current == index
-                                                  ? whiteBorderColor
-                                                  : textHintColor,
-                                              fontSize: 12.sp,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
+                                                  ? btnTextColor
+                                                  : whiteBorderColor,
+                                              borderRadius: current == index
+                                                  ? BorderRadius.circular(20)
+                                                  : BorderRadius.circular(20),
+                                              border: current == index
+                                                  ? Border.all(
+                                                      color: btnTextColor,
+                                                      width: 1)
+                                                  : Border.all(
+                                                      color: textHintColor,
+                                                      width: 1),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                              child: Center(
+                                                child: AppText(
+                                                  text: index == 0
+                                                      ? "View All"
+                                                      : value.brandList[
+                                                          index - 1]["name"],
+                                                  color: current == index
+                                                      ? whiteBorderColor
+                                                      : textHintColor,
+                                                  fontSize: 12.sp,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }),
-                        ),
+                                      ],
+                                    );
+                                  }),
+                            )),
                       ),
                     ],
                   ),

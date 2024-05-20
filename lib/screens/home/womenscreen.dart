@@ -63,66 +63,68 @@ class _WomenScreenState extends State<WomenScreen> {
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: homeController.tagsList.length,
-                          scrollDirection: Axis.horizontal,
-                          controller: homeController.listController,
-                          itemBuilder: (ctx, index) {
-                            return Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      current = index;
-                                      homeController.tagId.value =
-                                          homeController.tagsList[index]["id"];
-                                    });
-                                    pageController.animateToPage(
-                                      current,
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      curve: Curves.ease,
-                                    );
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 300),
-                                    margin: const EdgeInsets.only(right: 5),
-                                    width: 100,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: current == index
-                                          ? btnTextColor
-                                          : whiteTextColor,
-                                      borderRadius: current == index
-                                          ? BorderRadius.circular(20)
-                                          : BorderRadius.circular(20),
-                                      border: current == index
-                                          ? Border.all(
-                                              color: btnTextColor, width: 1)
-                                          : Border.all(
-                                              color: textHintColor, width: 1),
-                                    ),
-                                    child: Center(
-                                      child: AppText(
-                                        text: homeController.tagsList[index]
-                                            ["name"],
-                                        color: current == index
-                                            ? whiteBorderColor
-                                            : textHintColor,
-                                        fontSize: 12.sp,
-                                        fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
+                        width: double.infinity,
+                        height: 50,
+                        child: GetBuilder<HomeController>(
+                          builder: (value) => ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: value.tagsList.length,
+                              scrollDirection: Axis.horizontal,
+                              controller: value.listController,
+                              itemBuilder: (ctx, index) {
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          current = index;
+                                          value.tagId.value =
+                                              value.tagsList[index]["id"];
+                                        });
+                                        pageController.animateToPage(
+                                          current,
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          curve: Curves.ease,
+                                        );
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.only(right: 5),
+                                        width: 100,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: current == index
+                                              ? btnTextColor
+                                              : whiteTextColor,
+                                          borderRadius: current == index
+                                              ? BorderRadius.circular(20)
+                                              : BorderRadius.circular(20),
+                                          border: current == index
+                                              ? Border.all(
+                                                  color: btnTextColor, width: 1)
+                                              : Border.all(
+                                                  color: textHintColor,
+                                                  width: 1),
+                                        ),
+                                        child: Center(
+                                          child: AppText(
+                                            text: value.tagsList[index]["name"],
+                                            color: current == index
+                                                ? whiteBorderColor
+                                                : textHintColor,
+                                            fontSize: 12.sp,
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          }),
-                    ),
+                                  ],
+                                );
+                              }),
+                        )),
                   ),
           ),
           Obx(
