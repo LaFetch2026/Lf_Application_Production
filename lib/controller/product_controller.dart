@@ -441,12 +441,13 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductByCategoryData(int categoryId) async {
+  getProductByCategoryData(int categoryId, int brandId) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?category_id=$categoryId"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -474,7 +475,7 @@ class ProductController extends BaseController {
     isCategoryProduct.value = false;
   }
 
-  fetchCategoryProductMoreData(int categoryId) async {
+  fetchCategoryProductMoreData(int categoryId, int brandId) async {
     if (categoryProductHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         categoryProductLoadMore.value == false) {
@@ -485,7 +486,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}"),
+                "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&page=${categoryProductPage.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -749,7 +750,7 @@ class ProductController extends BaseController {
         if (type == "product") {
           getProductData("relevant");
         } else if (type == "category") {
-          getProductByCategoryData(categoryId);
+          getProductByCategoryData(categoryId, brandId);
         } else if (type == "brand") {
           getBrandExpressProductData(brandId);
         } else {

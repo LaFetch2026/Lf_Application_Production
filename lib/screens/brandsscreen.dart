@@ -395,6 +395,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                       onTap: () {
                                                                                         Get.to(CategoryProductScreen(
                                                                                           categoryId: value.brandList[index]["categories"][i]["id"],
+                                                                                          brandId: value.brandList[index]["id"],
                                                                                         ));
                                                                                       },
                                                                                       child: Container(

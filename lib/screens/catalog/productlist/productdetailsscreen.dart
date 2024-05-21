@@ -403,6 +403,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
+    productController.brandDetails = "";
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
     productController.colorInventoryId.value = 0;
@@ -658,7 +659,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             fontSize: 16.sp,
                                           ),
                                         ),
-                                        productController.brandDetails != null
+                                        productController.brandDetails !=
+                                                    null &&
+                                                productController
+                                                        .brandDetails !=
+                                                    ""
                                             ? GestureDetector(
                                                 onTap: () {
                                                   Get.to(BrandsScreen(
@@ -675,14 +680,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         .brandDetails["id"],
                                                   ));
                                                 },
-                                                child: AppText(
-                                                  text: 'Explore Brand \n',
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w600,
-                                                  color: colorPrimary,
-                                                  maxLines: 2,
-                                                  fontSize: 12.sp,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10),
+                                                  child: AppText(
+                                                    text: 'Explore Brand \n',
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w600,
+                                                    color: colorPrimary,
+                                                    maxLines: 2,
+                                                    fontSize: 12.sp,
+                                                  ),
                                                 ),
                                               )
                                             : const SizedBox(
@@ -1217,7 +1227,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     : const SizedBox(
                                         height: 0,
                                       ),
-                                productController.brandDetails != null
+                                productController.brandDetails != null &&
+                                        productController.brandDetails != ""
                                     ? Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1323,90 +1334,117 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             color: colorPrimary,
                             fontSize: 16.sp,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20.0, horizontal: 16.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AppText(
-                                      text: '${4.5} \u{2605}',
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w500,
-                                      color: blackColor,
-                                      fontSize: 24.sp,
+                          Obx(
+                            () => productController.isDetails.value
+                                ? const Padding(
+                                    padding: EdgeInsets.all(40.0),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20.0, horizontal: 16.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.max,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            AppText(
+                                              text:
+                                                  '${productController.productDetails["aggregated_rating"] ?? ""} \u{2605}',
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w500,
+                                              color: blackColor,
+                                              fontSize: 24.sp,
+                                            ),
+                                            AppText(
+                                              text:
+                                                  '${productController.productDetails["reviews_count"] ?? ""} verified buyers',
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w500,
+                                              color: textHintColor,
+                                              fontSize: 12.sp,
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            ...reviewsCount.map((e) => Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 2.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      AppText(
+                                                        text:
+                                                            '${e['title']} \u{2605}  ',
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: blackColor,
+                                                        fontSize: 10.sp,
+                                                      ),
+                                                      SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.33,
+                                                        child:
+                                                            LinearProgressIndicator(
+                                                          value: (int.parse(e[
+                                                                      'count']
+                                                                  .toString()) /
+                                                              int.parse(e[
+                                                                      'total']
+                                                                  .toString())),
+                                                          backgroundColor:
+                                                              colorSecondary,
+                                                          color:
+                                                              getColorForReview(
+                                                                  e['title']),
+                                                        ),
+                                                      ),
+                                                      AppText(
+                                                        text: '  ${e['count']}',
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: blackColor,
+                                                        fontSize: 10.sp,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ))
+                                          ],
+                                        )
+                                      ],
                                     ),
-                                    AppText(
-                                      text: '2015 verified buyers',
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w500,
-                                      color: textHintColor,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    ...reviewsCount.map((e) => Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 2.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              AppText(
-                                                text:
-                                                    '${e['title']} \u{2605}  ',
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w500,
-                                                color: blackColor,
-                                                fontSize: 10.sp,
-                                              ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.33,
-                                                child: LinearProgressIndicator(
-                                                  value: (int.parse(e['count']
-                                                          .toString()) /
-                                                      int.parse(e['total']
-                                                          .toString())),
-                                                  backgroundColor:
-                                                      colorSecondary,
-                                                  color: getColorForReview(
-                                                      e['title']),
-                                                ),
-                                              ),
-                                              AppText(
-                                                text: '  ${e['count']}',
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w500,
-                                                color: blackColor,
-                                                fontSize: 10.sp,
-                                              ),
-                                            ],
-                                          ),
-                                        ))
-                                  ],
-                                )
-                              ],
-                            ),
+                                  ),
                           ),
                           Obx(
                             () => productController.isReview.value

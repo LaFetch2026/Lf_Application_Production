@@ -15,7 +15,9 @@ import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 
 class CategoryProductScreen extends StatefulWidget {
   final int categoryId;
-  const CategoryProductScreen({super.key, required this.categoryId});
+  final int brandId;
+  const CategoryProductScreen(
+      {super.key, required this.categoryId, required this.brandId});
 
   @override
   State<CategoryProductScreen> createState() => CategoryProductScreenState();
@@ -28,12 +30,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductByCategoryData(widget.categoryId));
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getProductByCategoryData(widget.categoryId, widget.brandId));
     wishlistController.getWishlistData();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
-        productController.fetchCategoryProductMoreData(widget.categoryId);
+        productController.fetchCategoryProductMoreData(
+            widget.categoryId, widget.brandId);
         productController.update();
       });
     });
@@ -174,7 +177,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                     .productCategoryList[
                                                                 index]["id"],
                                                             widget.categoryId,
-                                                            0);
+                                                            widget.brandId);
                                                       } else {
                                                         scaffoldKey.currentState
                                                             ?.showBottomSheet((context) =>
