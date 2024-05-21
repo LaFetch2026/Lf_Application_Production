@@ -194,7 +194,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               selectedProductSize['id'] ==
                                                   i['id']
                                           ? colorPrimary
-                                          : whiteTextColor),
+                                          : whiteColor),
                                   child: SizedBox(
                                     width: 40,
                                     height: 40,
@@ -208,7 +208,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         color: selectedProductSize.isNotEmpty &&
                                                 selectedProductSize['id'] ==
                                                     i['id']
-                                            ? whiteTextColor
+                                            ? whiteColor
                                             : btnTextColor,
                                         fontSize: 14.sp,
                                       ),
@@ -277,7 +277,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             selectedProductColor['id'] ==
                                                 i['id']
                                         ? colorPrimary
-                                        : whiteTextColor),
+                                        : whiteColor),
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: AppText(
@@ -288,7 +288,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: selectedProductColor.isNotEmpty &&
                                             selectedProductColor['id'] ==
                                                 i['id']
-                                        ? whiteTextColor
+                                        ? whiteColor
                                         : btnTextColor,
                                     fontSize: 14.sp,
                                   ),
@@ -358,7 +358,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             selectedProductFabric['id'] ==
                                                 i['id']
                                         ? colorPrimary
-                                        : whiteTextColor),
+                                        : whiteColor),
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: AppText(
@@ -369,7 +369,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: selectedProductFabric.isNotEmpty &&
                                             selectedProductFabric['id'] ==
                                                 i['id']
-                                        ? whiteTextColor
+                                        ? whiteColor
                                         : btnTextColor,
                                     fontSize: 14.sp,
                                   ),
@@ -445,7 +445,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: whiteTextColor,
+      backgroundColor: whiteColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -927,7 +927,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             maxLength: 6,
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: whiteTextColor,
+                              fillColor: whiteColor,
                               suffixIcon: TextButton(
                                 onPressed: () {
                                   if (productController.checkPinvalidation(
