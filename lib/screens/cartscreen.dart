@@ -1391,7 +1391,13 @@ class CartScreenState extends State<CartScreen> {
                                   controller.total.value = controller
                                       .cartDetails["total"]
                                       .toString();
-                                  controller.callInitiatePayment();
+                                  if (controller.cartDetails["address"] !=
+                                      null) {
+                                    controller.callInitiatePayment(controller
+                                        .cartDetails["address"]["id"]);
+                                  } else {
+                                    controller.callInitiatePayment(0);
+                                  }
                                 },
                                 borderColor: colorPrimary),
                           ),

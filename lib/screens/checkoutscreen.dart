@@ -23,6 +23,7 @@ class CheckoutScreen extends StatefulWidget {
   final String coupanDiscount;
   final String convenienceFee;
   final String tax;
+  final int addressId;
   final String total;
 
   const CheckoutScreen({
@@ -36,6 +37,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.coupanDiscount,
     required this.convenienceFee,
     required this.tax,
+    required this.addressId,
     required this.total,
   });
 
@@ -65,9 +67,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
-    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      orderController.getOrderDetails(widget.cartId);
-    }); */
     super.initState();
   }
 
@@ -132,7 +131,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     child: GestureDetector(
                       onTap: () {
                         Get.to(ShippingAddressScreen(
-                          addressId: orderController.addressId.value,
+                          addressId: widget.addressId,
                           cartId: widget.cartId,
                         ));
                       },

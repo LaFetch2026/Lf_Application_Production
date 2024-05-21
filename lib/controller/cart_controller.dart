@@ -154,7 +154,7 @@ class CartController extends BaseController {
     }
   }
 
-  callInitiatePayment() async {
+  callInitiatePayment(int addressId) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -179,6 +179,7 @@ class CartController extends BaseController {
           discount: discount.value,
           tax: tax.value,
           total: total.value,
+          addressId: addressId,
         ));
       } else if (response.statusCode == 400) {
         print(response.body);
