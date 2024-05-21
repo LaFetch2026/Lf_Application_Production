@@ -664,10 +664,15 @@ class SearchScreenState extends State<SearchScreen> {
                                       decoration: InputDecoration(
                                         filled: true,
                                         fillColor: whiteColor,
-                                        suffixIcon: Image.asset(
-                                          greyCrossImage,
-                                          height: 18,
-                                          width: 18,
+                                        suffixIcon: InkWell(
+                                          onTap: () {
+                                            controller.searchController.clear();
+                                          },
+                                          child: Image.asset(
+                                            greyCrossImage,
+                                            height: 18,
+                                            width: 18,
+                                          ),
                                         ),
                                         prefixIcon: const Icon(Icons.search,
                                             size: 20, color: Colors.grey),
