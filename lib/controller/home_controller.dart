@@ -39,6 +39,23 @@ class HomeController extends BaseController {
     initialPage: 0,
   );
 
+  @override
+  void onInit() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      listController.addListener(() {
+        fetchMoreTagsData();
+        update();
+      });
+    });
+    hasnextpage.value = true;
+    loadMore.value = false;
+    istags.value = false;
+    page.value = 1;
+    update();
+    WidgetsBinding.instance.addPostFrameCallback((_) => getTagsData());
+    super.onInit();
+  }
+
   void getDeviceName() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {

@@ -38,8 +38,8 @@ class DiscountScreenState extends State<DiscountScreen> {
   @override
   void initState() {
     super.initState();
+    productController.tagProductList.clear();
     homeController.currentPage.value = 0;
-    // productController.tagProductList.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
         productController.fetchMoreTagsProductData(widget.tagId);

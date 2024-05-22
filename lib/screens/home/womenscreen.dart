@@ -7,42 +7,31 @@ import 'package:lafetch/screens/home/women/discountscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 
-class WomenScreen extends StatefulWidget {
+class WomenScreen extends StatelessWidget {
   const WomenScreen({super.key});
 
   @override
-  State<WomenScreen> createState() => _WomenScreenState();
-}
-
-class _WomenScreenState extends State<WomenScreen> {
-  final homeController = Get.put(HomeController());
-  PageController pageController = PageController();
-
-  @override
-  void initState() {
-    homeController.current.value = 0;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.listController.addListener(() {
-        homeController.fetchMoreTagsData();
-        homeController.update();
-      });
-    });
-    homeController.hasnextpage.value = true;
-    homeController.loadMore.value = false;
-    homeController.istags.value = false;
-    homeController.page.value = 1;
-    homeController.update();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getTagsData());
-    super.initState();
-  }
-
-  callOnchanged(int index) {
-    homeController.current.value = index;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final homeController = Get.put(HomeController());
+    PageController pageController = PageController();
+
+    /*  @override
+    void initState() {
+    
+      super.initState();
+    } */
+
+    callOnchanged(int index) {
+      homeController.current.value = index;
+      homeController.update();
+    }
+
+    /*  @override
+  void dispose() {
+    homeController.listController
+        .removeListener(homeController.fetchMoreTagsData());
+    super.dispose();
+  } */
     return Container(
       width: MediaQuery.of(context).size.width,
       color: whiteTextColor,
@@ -61,11 +50,10 @@ class _WomenScreenState extends State<WomenScreen> {
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: /*  GetBuilder<HomeController>(
-                          builder: (value) => */
-                          ListView.builder(
+                        width: double.infinity,
+                        height: 50,
+                        child: GetBuilder<HomeController>(
+                          builder: (value) => ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               itemCount: homeController.tagsList.length,
                               scrollDirection: Axis.horizontal,
@@ -76,7 +64,8 @@ class _WomenScreenState extends State<WomenScreen> {
                                     GestureDetector(
                                       onTap: () {
                                         homeController.current.value = index;
-                                        setState(() {});
+                                        print(homeController.current.value);
+                                        // setState(() {});
                                         homeController.tagId.value =
                                             homeController.tagsList[index]
                                                 ["id"];
@@ -133,9 +122,9 @@ class _WomenScreenState extends State<WomenScreen> {
                                   ],
                                 );
                               }),
-                    )),
+                        )),
+                  ),
           ),
-          // ),
           Obx(
             () => homeController.istags.value
                 ? const Padding(
