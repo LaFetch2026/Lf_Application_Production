@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/product_controller.dart';
@@ -1099,10 +1100,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         vertical: 4.0),
                                                 children: [
                                                   AppText(
-                                                    text: productController
-                                                                .productDetails[
-                                                            'description'] ??
-                                                        "",
+                                                    text: Bidi.stripHtmlIfNeeded(
+                                                        productController
+                                                                    .productDetails[
+                                                                'description'] ??
+                                                            ""),
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     maxLines: 20,

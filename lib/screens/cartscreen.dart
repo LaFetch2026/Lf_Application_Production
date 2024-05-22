@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
@@ -365,7 +366,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 ),
                                                                               ),
                                                                               AppText(
-                                                                                text: value.orderList[index]["product"]["description"] ?? "",
+                                                                                text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["description"] ?? ""),
                                                                                 color: textHintColor,
                                                                                 fontSize: 10.sp,
                                                                                 fontFamily: "Franklin Gothic Regular",
