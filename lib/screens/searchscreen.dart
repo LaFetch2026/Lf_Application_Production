@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -649,50 +650,61 @@ class SearchScreenState extends State<SearchScreen> {
                                   height: 40,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 10),
-                                    child: TextField(
-                                      textCapitalization:
-                                          TextCapitalization.words,
-                                      style: const TextStyle(
-                                        color: textColor,
-                                        fontFamily: "Franklin Gothic Regular",
-                                      ),
-                                      controller: controller.searchController,
-                                      onChanged: (value) {
-                                        controller.getSearchData();
+                                    child: RawKeyboardListener(
+                                      focusNode: FocusNode(),
+                                      onKey: (value) {
+                                        print(value);
+                                        if (value is RawKeyDownEvent) {
+                                          controller.getSearchData();
+                                        }
                                       },
-                                      keyboardType: TextInputType.text,
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: whiteColor,
-                                        suffixIcon: InkWell(
-                                          onTap: () {
-                                            controller.searchController.clear();
-                                          },
-                                          child: Image.asset(
-                                            greyCrossImage,
-                                            height: 18,
-                                            width: 18,
+                                      child: TextField(
+                                        textCapitalization:
+                                            TextCapitalization.words,
+                                        style: const TextStyle(
+                                          color: textColor,
+                                          fontFamily: "Franklin Gothic Regular",
+                                        ),
+                                        controller: controller.searchController,
+                                        onChanged: (value) {
+                                          controller.getSearchData();
+                                        },
+                                        keyboardType: TextInputType.text,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: whiteColor,
+                                          suffixIcon: InkWell(
+                                            onTap: () {
+                                              controller.searchController
+                                                  .clear();
+                                            },
+                                            child: Image.asset(
+                                              greyCrossImage,
+                                              height: 18,
+                                              width: 18,
+                                            ),
                                           ),
+                                          prefixIcon: const Icon(Icons.search,
+                                              size: 20, color: Colors.grey),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: borderColor)),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(1),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(1),
+                                            borderSide: const BorderSide(
+                                                color: borderColor),
+                                          ),
+                                          counterText: "",
+                                          hintText: "Search",
+                                          hintStyle:
+                                              const TextStyle(fontSize: 14),
                                         ),
-                                        prefixIcon: const Icon(Icons.search,
-                                            size: 20, color: Colors.grey),
-                                        focusedBorder: const OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: borderColor)),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(1),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(1),
-                                          borderSide: const BorderSide(
-                                              color: borderColor),
-                                        ),
-                                        counterText: "",
-                                        hintText: "Search",
-                                        hintStyle:
-                                            const TextStyle(fontSize: 14),
                                       ),
                                     ),
                                   ),

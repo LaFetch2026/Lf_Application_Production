@@ -136,8 +136,14 @@ class CartScreenState extends State<CartScreen> {
                                                       child: Row(
                                                         children: [
                                                           AppText(
-                                                            text:
-                                                                "${controller.orderList.length} items",
+                                                            text: controller.orderList
+                                                                            .length ==
+                                                                        1 ||
+                                                                    controller
+                                                                        .orderList
+                                                                        .isEmpty
+                                                                ? "${controller.orderList.length} item"
+                                                                : "${controller.orderList.length} items",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
@@ -1353,8 +1359,10 @@ class CartScreenState extends State<CartScreen> {
                             padding: const EdgeInsets.only(
                                 top: 16, left: 20, right: 20),
                             child: AppText(
-                              text:
-                                  "${controller.orderList.length} items in shopping bag",
+                              text: controller.orderList.length == 1 ||
+                                      controller.orderList.isEmpty
+                                  ? "${controller.orderList.length} item in shopping bag"
+                                  : "${controller.orderList.length} items in shopping bag",
                               textAlign: TextAlign.center,
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,

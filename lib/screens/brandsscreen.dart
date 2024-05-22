@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/brand_controller.dart';
@@ -98,36 +99,47 @@ class BrandsScreenState extends State<BrandsScreen> {
                     child: Container(
                       color: loginText,
                       height: 50,
-                      child: TextField(
-                        textCapitalization: TextCapitalization.words,
-                        style: const TextStyle(
-                          color: colorSecondary,
-                          fontFamily: "Franklin Gothic Regular",
-                        ),
-                        controller: brandController.searchController,
-                        onChanged: (value) {
-                          brandController.queryText.value = value;
-                          brandController.getBrandData();
+                      child: RawKeyboardListener(
+                        focusNode: FocusNode(),
+                        onKey: (value) {
+                          print(value);
+                          if (value is RawKeyDownEvent) {
+                            brandController.text.value = "Expand All";
+                            brandController.getBrandData();
+                          }
                         },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: loginText,
-                          prefixIcon: const Icon(Icons.search,
-                              size: 20, color: colorSecondary),
-                          focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: borderColor)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(1),
+                        child: TextField(
+                          textCapitalization: TextCapitalization.words,
+                          style: const TextStyle(
+                            color: colorSecondary,
+                            fontFamily: "Franklin Gothic Regular",
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(1),
-                            borderSide: const BorderSide(color: colorSecondary),
+                          controller: brandController.searchController,
+                          onChanged: (value) {
+                            brandController.queryText.value = value;
+                            brandController.getBrandData();
+                          },
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: loginText,
+                            prefixIcon: const Icon(Icons.search,
+                                size: 20, color: colorSecondary),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: borderColor)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(1),
+                              borderSide:
+                                  const BorderSide(color: colorSecondary),
+                            ),
+                            counterText: "",
+                            hintText: "Search for brands & products",
+                            hintStyle: const TextStyle(
+                                fontSize: 14, color: colorSecondary),
                           ),
-                          counterText: "",
-                          hintText: "Search for brands & products",
-                          hintStyle: const TextStyle(
-                              fontSize: 14, color: colorSecondary),
                         ),
                       ),
                     ),

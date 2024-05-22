@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -113,43 +114,54 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                   height: 40,
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 10),
-                                    child: TextField(
-                                      textCapitalization:
-                                          TextCapitalization.words,
-                                      style: const TextStyle(
-                                        color: textColor,
-                                        fontFamily: "Franklin Gothic Regular",
-                                      ),
-                                      onChanged: (value) {
-                                        orderController.queryText.value = value;
-                                        orderController.getOrderData();
-                                        orderController.update();
+                                    child: RawKeyboardListener(
+                                      focusNode: FocusNode(),
+                                      onKey: (value) {
+                                        print(value);
+                                        if (value is RawKeyDownEvent) {
+                                          orderController.getOrderData();
+                                        }
                                       },
-                                      controller:
-                                          orderController.searchController,
-                                      keyboardType: TextInputType.text,
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: whiteColor,
-                                        prefixIcon: const Icon(Icons.search,
-                                            size: 20, color: Colors.grey),
-                                        focusedBorder: const OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: borderColor)),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(1),
+                                      child: TextField(
+                                        textCapitalization:
+                                            TextCapitalization.words,
+                                        style: const TextStyle(
+                                          color: textColor,
+                                          fontFamily: "Franklin Gothic Regular",
                                         ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(1),
-                                          borderSide: const BorderSide(
-                                              color: borderColor),
+                                        onChanged: (value) {
+                                          orderController.queryText.value =
+                                              value;
+                                          orderController.getOrderData();
+                                          orderController.update();
+                                        },
+                                        controller:
+                                            orderController.searchController,
+                                        keyboardType: TextInputType.text,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: whiteColor,
+                                          prefixIcon: const Icon(Icons.search,
+                                              size: 20, color: Colors.grey),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: borderColor)),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(1),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(1),
+                                            borderSide: const BorderSide(
+                                                color: borderColor),
+                                          ),
+                                          counterText: "",
+                                          hintText: "Search",
+                                          hintStyle:
+                                              const TextStyle(fontSize: 14),
                                         ),
-                                        counterText: "",
-                                        hintText: "Search",
-                                        hintStyle:
-                                            const TextStyle(fontSize: 14),
                                       ),
                                     ),
                                   ),
