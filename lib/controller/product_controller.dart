@@ -707,11 +707,11 @@ class ProductController extends BaseController {
               },
               body: json.encode(sendData));
       if (response.statusCode == 200) {
-        getSnackBar("Product added to bag");
-        Get.close(1);
+        //  getSnackBar("Product added to bag");
+        // Get.close(1);
       } else if (response.statusCode == 201) {
-        getSnackBar("Product added to bag");
-        Get.close(1);
+        // getSnackBar("Product added to bag");
+        //Get.close(1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

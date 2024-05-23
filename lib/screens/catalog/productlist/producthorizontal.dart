@@ -452,7 +452,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
                       child: const Center(
-                        child: Text("No Producy Found",
+                        child: Text("No Product Found",
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
