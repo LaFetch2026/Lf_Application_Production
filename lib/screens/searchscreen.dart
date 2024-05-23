@@ -71,7 +71,7 @@ class SearchScreenState extends State<SearchScreen> {
     controller.searchController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
+        productController.fetchMoreData("recently-viewed");
         productController.update();
       });
     });
@@ -81,8 +81,8 @@ class SearchScreenState extends State<SearchScreen> {
     productController.page.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getRecentSearchData());
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductData("relevant")); //most viewed item list
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("recently-viewed"));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();
@@ -257,73 +257,102 @@ class SearchScreenState extends State<SearchScreen> {
                                   ],
                                 ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 16),
-                          child: AppText(
-                            text: "Most Searched",
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: bottomnavBack,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, top: 20, right: 16, bottom: 10),
-                          child: Center(
-                            child: GridView.count(
-                              shrinkWrap: true,
-                              crossAxisCount: 4,
-                              scrollDirection: Axis.vertical,
-                              padding: EdgeInsets.zero,
-                              childAspectRatio: 0.7,
-                              physics: const ScrollPhysics(),
-                              crossAxisSpacing: 5,
-                              mainAxisSpacing: 1,
-                              children: List.generate(
-                                items.length,
-                                (index) {
-                                  return Column(
+                        Obx(() => productController.isProduct.value
+                            ? const Padding(
+                                padding: EdgeInsets.all(40.0),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            : productController.productList.isNotEmpty
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      GestureDetector(
-                                        onTap: () {},
-                                        child: SizedBox(
-                                          height: 100,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Center(
-                                                child: Image.asset(backImage,
-                                                    width: 80,
-                                                    height: 72,
-                                                    fit: BoxFit.cover),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5),
-                                                child: AppText(
-                                                  text: "Sneakers${index + 1}",
-                                                  color: greyTextColor,
-                                                  fontSize: 10.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ],
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 30, left: 16),
+                                        child: AppText(
+                                          text: "Most Searched",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: bottomnavBack,
+                                          fontSize: 16.sp,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16,
+                                            top: 20,
+                                            right: 16,
+                                            bottom: 10),
+                                        child: Center(
+                                          child: GridView.count(
+                                            shrinkWrap: true,
+                                            crossAxisCount: 4,
+                                            scrollDirection: Axis.vertical,
+                                            padding: EdgeInsets.zero,
+                                            childAspectRatio: 0.7,
+                                            physics: const ScrollPhysics(),
+                                            crossAxisSpacing: 5,
+                                            mainAxisSpacing: 1,
+                                            children: List.generate(
+                                              productController
+                                                  .productList.length,
+                                              (index) {
+                                                return Column(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {},
+                                                      child: SizedBox(
+                                                        height: 100,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Center(
+                                                              child: Image.asset(
+                                                                  backImage,
+                                                                  width: 80,
+                                                                  height: 72,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5),
+                                                              child: AppText(
+                                                                text:
+                                                                    "Sneakers${index + 1}",
+                                                                color:
+                                                                    greyTextColor,
+                                                                fontSize: 10.sp,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
+                                  )
+                                : const SizedBox(
+                                    height: 10,
+                                  )),
                         Padding(
                           padding: const EdgeInsets.only(left: 16),
                           child: AppText(
@@ -604,36 +633,43 @@ class SearchScreenState extends State<SearchScreen> {
                                 child:
                                     Center(child: CircularProgressIndicator()),
                               )
-                            : HorizontalHomeList(
-                                text: "Items you have viewed",
-                                height: 250,
-                                controller: productController.listController,
-                                visibleExpress: false,
-                                textColor: bottomnavBack,
-                                fontFamily: "Franklin Gothic Regular",
-                                onPressed: (p0) {
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              ProductDetailsScreen(
-                                                productId: p0,
-                                              )))
-                                      .then((value) => setState(
-                                            () {
-                                              productController
-                                                  .hasnextpage.value = true;
-                                              productController.loadMore.value =
-                                                  false;
-                                              productController
-                                                  .isProduct.value = false;
-                                              productController.page.value = 1;
-                                              productController
-                                                  .getProductData("relevant");
-                                            },
-                                          ));
-                                },
-                                list: productController.productList,
-                              )),
+                            : productController.productList.isNotEmpty
+                                ? HorizontalHomeList(
+                                    text: "Items you have viewed",
+                                    height: 250,
+                                    controller:
+                                        productController.listController,
+                                    visibleExpress: false,
+                                    textColor: bottomnavBack,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    onPressed: (p0) {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  ProductDetailsScreen(
+                                                    productId: p0,
+                                                  )))
+                                          .then((value) => setState(
+                                                () {
+                                                  productController
+                                                      .hasnextpage.value = true;
+                                                  productController
+                                                      .loadMore.value = false;
+                                                  productController
+                                                      .isProduct.value = false;
+                                                  productController.page.value =
+                                                      1;
+                                                  productController
+                                                      .getProductData(
+                                                          "relevant");
+                                                },
+                                              ));
+                                    },
+                                    list: productController.productList,
+                                  )
+                                : const SizedBox(
+                                    height: 0,
+                                  )),
                       ],
                     ),
                   ),
