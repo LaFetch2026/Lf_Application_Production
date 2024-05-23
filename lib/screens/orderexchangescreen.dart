@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class OrderExchangeScreen extends StatefulWidget {
 class OrderExchangeScreenState extends State<OrderExchangeScreen> {
   final orderController = Get.put(OrderController());
   String? filter;
+  Timer? debounce;
 
   @override
   void initState() {
@@ -44,6 +47,21 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => orderController.getOrderData());
     super.initState();
+  }
+
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      orderController.queryText.value = query;
+      orderController.getOrderData();
+      orderController.update();
+    });
+  }
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -129,12 +147,13 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                           color: textColor,
                                           fontFamily: "Franklin Gothic Regular",
                                         ),
-                                        onChanged: (value) {
+                                        onChanged: onSearchChanged,
+                                        /*  onChanged: (value) {
                                           orderController.queryText.value =
                                               value;
                                           orderController.getOrderData();
                                           orderController.update();
-                                        },
+                                        }, */
                                         controller:
                                             orderController.searchController,
                                         keyboardType: TextInputType.text,

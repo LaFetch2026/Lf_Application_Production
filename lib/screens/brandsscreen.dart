@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,6 +36,15 @@ class BrandsScreen extends StatefulWidget {
 
 class BrandsScreenState extends State<BrandsScreen> {
   final brandController = Get.put(BrandController());
+  Timer? debounce;
+
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      brandController.queryText.value = query;
+      brandController.getBrandData();
+    });
+  }
 
   @override
   void initState() {
@@ -63,6 +74,12 @@ class BrandsScreenState extends State<BrandsScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -115,10 +132,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                             fontFamily: "Franklin Gothic Regular",
                           ),
                           controller: brandController.searchController,
-                          onChanged: (value) {
+                          onChanged: onSearchChanged,
+                          /*  onChanged: (value) {
                             brandController.queryText.value = value;
                             brandController.getBrandData();
-                          },
+                          }, */
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,

@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,6 +30,8 @@ class SearchScreenState extends State<SearchScreen> {
   final brandController = Get.put(BrandController());
   final controller = Get.put(SearchScreenController());
   bool isSearch = false;
+  Timer? debounce;
+
   /*  List<String> products = [
     "Salwar Suits",
     "Printed loose t-shirts",
@@ -55,6 +59,13 @@ class SearchScreenState extends State<SearchScreen> {
     "500",
   ];
 
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      controller.getSearchData();
+    });
+  }
+
   @override
   void initState() {
     controller.searchController.clear();
@@ -75,6 +86,12 @@ class SearchScreenState extends State<SearchScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -666,9 +683,10 @@ class SearchScreenState extends State<SearchScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                         ),
                                         controller: controller.searchController,
-                                        onChanged: (value) {
+                                        /*  onChanged: (value) {
                                           controller.getSearchData();
-                                        },
+                                        }, */
+                                        onChanged: onSearchChanged,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                           filled: true,
