@@ -21,11 +21,11 @@ class OrderController extends BaseController {
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
-  RxInt status = 1.obs;
+  RxInt status = 0.obs;
   ScrollController listController = ScrollController();
   final searchController = TextEditingController();
   final List filterList = [
-    'Cart',
+    'All',
     'Pending',
     'Confirmed',
     'Processing',
@@ -39,7 +39,7 @@ class OrderController extends BaseController {
   ].obs;
 
   final List filterId = [
-    1,
+    0,
     2,
     3,
     4,
@@ -56,13 +56,24 @@ class OrderController extends BaseController {
     isOrder.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/orders?status=${status.value}&q=${queryText.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (status.value == 0) {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/orders?q=${queryText.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/orders?status=${status.value}&q=${queryText.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -95,13 +106,25 @@ class OrderController extends BaseController {
       print(page.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/orders?page=${page.value}&status=${status.value}&q=${queryText.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        dynamic response;
+        if (status.value == 0) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/orders?page=${page.value}&q=${queryText.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/orders?page=${page.value}&status=${status.value}&q=${queryText.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {

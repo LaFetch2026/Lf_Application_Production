@@ -313,7 +313,12 @@ class SearchScreenState extends State<SearchScreen> {
                                                 return Column(
                                                   children: [
                                                     GestureDetector(
-                                                      onTap: () {},
+                                                      onTap: () {
+                                                        Get.to(ProductDetailsScreen(
+                                                            productId: productController
+                                                                    .mostSeachList[
+                                                                index]["id"]));
+                                                      },
                                                       child: SizedBox(
                                                         height: 100,
                                                         child: Column(

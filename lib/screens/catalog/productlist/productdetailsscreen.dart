@@ -410,6 +410,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
+    productController.productList.clear();
     productController.brandDetails = "";
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
@@ -417,7 +418,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.fabricInventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
+        productController.fetchMoreData("frequently-bought");
         productController.update();
       });
     });
@@ -427,7 +428,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.page.value = 1;
     productController.inventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+        (_) => productController.getProductData("frequently-bought"));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductDetails(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(

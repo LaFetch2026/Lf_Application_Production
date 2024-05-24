@@ -34,6 +34,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
 
   @override
   void initState() {
+    setState(() {
+      filter = "All";
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       orderController.listController.addListener(() {
         orderController.fetchMoreData();
