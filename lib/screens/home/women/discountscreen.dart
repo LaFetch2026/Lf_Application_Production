@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,10 +31,15 @@ class DiscountScreenState extends State<DiscountScreen> {
   void dispose() {
     super.dispose();
     homeController.timer?.cancel();
+    homeController.timer1?.cancel();
   }
 
   callOnchanged(int index) {
     homeController.currentPage.value = index;
+  }
+
+  callOnchangedBanner(int index) {
+    homeController.bannerPage1.value = index;
   }
 
   @override
@@ -40,6 +47,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     super.initState();
     productController.tagProductList.clear();
     homeController.currentPage.value = 0;
+    homeController.bannerPage1.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
         productController.fetchMoreTagsProductData(widget.tagId);
@@ -70,9 +78,10 @@ class DiscountScreenState extends State<DiscountScreen> {
         (_) => productController.getTagsProductData(widget.tagId));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.getExpressProductData());
-    /* homeController.timer =
+    homeController.timer =
         Timer.periodic(const Duration(seconds: 10), (Timer timer) {
-      if (homeController.currentPage.value < 2) {
+      if (homeController.currentPage.value <
+          homeController.banner2List.length - 1) {
         homeController.currentPage.value++;
       } else {
         homeController.currentPage.value = 0;
@@ -83,7 +92,22 @@ class DiscountScreenState extends State<DiscountScreen> {
         curve: Curves.easeIn,
       );
       homeController.update();
-    }); */
+    });
+    homeController.timer1 =
+        Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+      if (homeController.bannerPage1.value <
+          homeController.banner1List.length - 1) {
+        homeController.bannerPage1.value++;
+      } else {
+        homeController.bannerPage1.value = 0;
+      }
+      homeController.pageController1.animateToPage(
+        homeController.bannerPage1.value,
+        duration: const Duration(milliseconds: 2000),
+        curve: Curves.easeIn,
+      );
+      homeController.update();
+    });
   }
 
   @override
@@ -165,8 +189,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                         height: 210,
                         child: PageView.builder(
                           scrollDirection: Axis.horizontal,
-                          //  controller: homeController..pageController,
                           itemCount: homeController.banner1List.length,
+                          onPageChanged: callOnchangedBanner,
+                          controller: homeController.pageController1,
                           itemBuilder: (context, int index) {
                             return CachedNetworkImage(
                               key: UniqueKey(),
@@ -624,7 +649,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             controller: homeController.pageController,
                             itemCount: homeController.banner2List.length,
                             itemBuilder: (context, int index) {
-                              return /* CachedNetworkImage(
+                              return CachedNetworkImage(
                                 cacheManager: CacheManager(Config(
                                     "customCacheKey",
                                     stalePeriod: const Duration(days: 15),
@@ -632,24 +657,19 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 fit: BoxFit.cover,
                                 imageUrl: homeController.banner2List[index]
                                     ["image"],
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) => Center(
-                                  child: CircularProgressIndicator(
-                                      value: downloadProgress.progress),
-                                ),
-                                errorWidget: (context, url, error) => Image.asset(
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
                                   downloadImage,
                                   height: 210,
                                 ),
-                              ) */
-                                  FadeInImage(
-                                      fit: BoxFit.cover,
-                                      height: 210,
-                                      width: double.infinity,
-                                      image: NetworkImage(homeController
-                                          .banner2List[index]["image"]),
-                                      placeholder:
-                                          const AssetImage(downloadImage));
+                              );
+                              /* FadeInImage(
+                                  fit: BoxFit.cover,
+                                  height: 210,
+                                  width: double.infinity,
+                                  image: NetworkImage(homeController
+                                      .banner2List[index]["image"]),
+                                  placeholder: const AssetImage(downloadImage)); */
                             },
                           ),
                         ),

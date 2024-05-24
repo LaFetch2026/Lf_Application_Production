@@ -29,13 +29,18 @@ class HomeController extends BaseController {
   List categoryList = [].obs;
   RxInt currentPage = 0.obs;
   Timer? timer;
+  Timer? timer1;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
   RxInt tagId = 0.obs;
   RxInt current = 0.obs;
+  RxInt bannerPage1 = 0.obs;
   ScrollController listController = ScrollController();
   final PageController pageController = PageController(
+    initialPage: 0,
+  );
+  final PageController pageController1 = PageController(
     initialPage: 0,
   );
 

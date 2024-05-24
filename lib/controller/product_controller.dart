@@ -12,6 +12,7 @@ import '../utils/constants.dart';
 
 class ProductController extends BaseController {
   RxBool isProduct = false.obs;
+  RxBool isMostSearch = false.obs;
   RxBool isCategoryProduct = false.obs;
   RxBool istagsProduct = false.obs;
   RxBool isBrandExpressProduct = false.obs;
@@ -31,6 +32,7 @@ class ProductController extends BaseController {
   RxBool isRecommendations = false.obs;
   List tagProductList = [].obs;
   List productList = [].obs;
+  List mostSeachList = [].obs;
   List expressProductList = [].obs;
   List productCategoryList = [].obs;
   List productExpressBrandList = [].obs;
@@ -63,6 +65,10 @@ class ProductController extends BaseController {
   RxBool tagsLoadMore = false.obs;
   RxBool tagsHasnextpage = true.obs;
   RxInt tagsPage = 1.obs;
+  ScrollController mostViewController = ScrollController();
+  RxBool mostViewLoadMore = false.obs;
+  RxBool mostViewHasnextpage = true.obs;
+  RxInt mostViewPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
 
   bool checkPinvalidation(String pin) {
@@ -517,6 +523,84 @@ class ProductController extends BaseController {
         print("error$e");
       }
       categoryProductLoadMore.value = false;
+    }
+  }
+
+  getMostViewProductData() async {
+    isMostSearch.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/products?type=most-searched"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          mostSeachList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get most search product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isMostSearch.value = false;
+  }
+
+  fetchMostSearchMoreData() async {
+    if (mostViewHasnextpage.value == true &&
+        isMostSearch.value == false &&
+        mostViewLoadMore.value == false) {
+      mostViewLoadMore.value = true;
+      mostViewPage.value += 1;
+      print(mostViewPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=most-searched&page=${mostViewPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              mostSeachList.addAll(responseData['data']);
+            } else {
+              mostViewHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch most search product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      mostViewLoadMore.value = false;
     }
   }
 

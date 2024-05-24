@@ -25,8 +25,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen> {
-  final productController =
-      Get.put(ProductController()); //most viewed item list
+  final productController = Get.put(ProductController());
   final brandController = Get.put(BrandController());
   final controller = Get.put(SearchScreenController());
   bool isSearch = false;
@@ -81,6 +80,18 @@ class SearchScreenState extends State<SearchScreen> {
     productController.page.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getRecentSearchData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.mostViewController.addListener(() {
+        productController.fetchMostSearchMoreData();
+        productController.update();
+      });
+    });
+    productController.mostViewHasnextpage.value = true;
+    productController.mostViewLoadMore.value = false;
+    productController.isMostSearch.value = false;
+    productController.mostViewPage.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getMostViewProductData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("recently-viewed"));
     WidgetsBinding.instance
@@ -257,13 +268,13 @@ class SearchScreenState extends State<SearchScreen> {
                                   ],
                                 ),
                         ),
-                        Obx(() => productController.isProduct.value
+                        Obx(() => productController.isMostSearch.value
                             ? const Padding(
                                 padding: EdgeInsets.all(40.0),
                                 child:
                                     Center(child: CircularProgressIndicator()),
                               )
-                            : productController.productList.isNotEmpty
+                            : productController.mostSeachList.isNotEmpty
                                 ? Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -297,7 +308,7 @@ class SearchScreenState extends State<SearchScreen> {
                                             mainAxisSpacing: 1,
                                             children: List.generate(
                                               productController
-                                                  .productList.length,
+                                                  .mostSeachList.length,
                                               (index) {
                                                 return Column(
                                                   children: [
