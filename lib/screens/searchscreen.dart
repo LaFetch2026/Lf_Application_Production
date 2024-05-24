@@ -321,14 +321,60 @@ class SearchScreenState extends State<SearchScreen> {
                                                               CrossAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            Center(
-                                                              child: Image.asset(
-                                                                  backImage,
-                                                                  width: 80,
-                                                                  height: 72,
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                            ),
+                                                            productController
+                                                                        .mostSeachList[
+                                                                            index]
+                                                                            [
+                                                                            "images"]
+                                                                        .isNotEmpty &&
+                                                                    productController.mostSeachList[index]
+                                                                            [
+                                                                            "images"] !=
+                                                                        null
+                                                                ? SizedBox(
+                                                                    width: 80,
+                                                                    height: 72,
+                                                                    child:
+                                                                        CachedNetworkImage(
+                                                                      cacheManager: CacheManager(Config(
+                                                                          "customCacheKey",
+                                                                          stalePeriod: const Duration(
+                                                                              days:
+                                                                                  15),
+                                                                          maxNrOfCacheObjects:
+                                                                              100)),
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      imageUrl: productController.mostSeachList[index]["images"]
+                                                                              [
+                                                                              0]
+                                                                          [
+                                                                          "name"],
+                                                                      errorWidget: (context,
+                                                                              url,
+                                                                              error) =>
+                                                                          Image
+                                                                              .asset(
+                                                                        downloadImage,
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        width:
+                                                                            80,
+                                                                        height:
+                                                                            72,
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Center(
+                                                                    child: Image.asset(
+                                                                        dummyWishlistImage,
+                                                                        width:
+                                                                            80,
+                                                                        height:
+                                                                            72,
+                                                                        fit: BoxFit
+                                                                            .cover),
+                                                                  ),
                                                             Padding(
                                                               padding: const EdgeInsets
                                                                       .symmetric(
@@ -336,11 +382,13 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       10,
                                                                   vertical: 5),
                                                               child: AppText(
-                                                                text:
-                                                                    "Sneakers${index + 1}",
+                                                                text: productController
+                                                                        .mostSeachList[
+                                                                    index]["name"],
                                                                 color:
                                                                     greyTextColor,
                                                                 fontSize: 10.sp,
+                                                                maxLines: 1,
                                                                 fontFamily:
                                                                     "Franklin Gothic Regular",
                                                                 fontWeight:
