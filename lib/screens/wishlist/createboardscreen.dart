@@ -317,14 +317,13 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     index]["id"]; */
                                                                 value.update();
                                                               },
-                                                              child:
-                                                                  const Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            10),
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        10),
                                                                 child: Align(
                                                                   alignment:
                                                                       Alignment
@@ -337,9 +336,18 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                           24,
                                                                       width: 24,
                                                                       child:
-                                                                          CircleAvatar(
-                                                                        backgroundColor:
-                                                                            whiteColor,
+                                                                          Container(
+                                                                        decoration: BoxDecoration(
+                                                                            border: Border.all(
+                                                                              color: greyBorder,
+                                                                              width: 1.0,
+                                                                            ),
+                                                                            shape: BoxShape.circle),
+                                                                        child:
+                                                                            const CircleAvatar(
+                                                                          backgroundColor:
+                                                                              whiteColor,
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),

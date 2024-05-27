@@ -184,8 +184,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                 height: 20,
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 16, right: 16),
+                                padding: const EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 60),
                                 child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,

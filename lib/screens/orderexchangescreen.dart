@@ -506,11 +506,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       16),
                                                           child: Row(
                                                             children: [
-                                                              if (orderController
-                                                                              .orderList[
-                                                                          index]
-                                                                      [
-                                                                      "status"] ==
+                                                              if (orderController.orderList[index]["status"] ==
                                                                   6) ...[
                                                                 AnimatedContainer(
                                                                   duration: const Duration(
@@ -566,11 +562,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ]),
                                                                   ),
                                                                 ),
-                                                              ] else if (orderController
-                                                                              .orderList[
-                                                                          index]
-                                                                      [
-                                                                      "status"] ==
+                                                              ] else if (orderController.orderList[index]["status"] ==
                                                                   5) ...[
                                                                 AnimatedContainer(
                                                                   duration: const Duration(
@@ -583,7 +575,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color:
-                                                                        deeptYellow,
+                                                                        lightYellow,
                                                                     borderRadius:
                                                                         BorderRadius.circular(
                                                                             20),
@@ -626,11 +618,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ]),
                                                                   ),
                                                                 ),
-                                                              ] else if (orderController
-                                                                              .orderList[
-                                                                          index]
-                                                                      [
-                                                                      "status"] ==
+                                                              ] else if (orderController.orderList[index]["status"] ==
                                                                   3) ...[
                                                                 AnimatedContainer(
                                                                   duration: const Duration(
@@ -686,10 +674,121 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ]),
                                                                   ),
                                                                 ),
+                                                              ] else if (orderController.orderList[index]["status"] ==
+                                                                  2) ...[
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      right: 5),
+                                                                  height: 30,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color:
+                                                                        lightPurple,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            textHintColor,
+                                                                        width:
+                                                                            1),
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                    child: Row(
+                                                                        children: [
+                                                                          const Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 2),
+                                                                            child:
+                                                                                ImageIcon(
+                                                                              AssetImage(confirmOrderImage),
+                                                                              color: deepPurple,
+                                                                              size: 14,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 5, right: 2),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: "Pending",
+                                                                              color: deepPurple,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ]),
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController.orderList[index][
+                                                                      "status"] ==
+                                                                  4) ...[
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      right: 5),
+                                                                  height: 30,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color:
+                                                                        lightPurple,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            textHintColor,
+                                                                        width:
+                                                                            1),
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                    child: Row(
+                                                                        children: [
+                                                                          const Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 2),
+                                                                            child:
+                                                                                ImageIcon(
+                                                                              AssetImage(confirmOrderImage),
+                                                                              color: deepPurple,
+                                                                              size: 14,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 5, right: 2),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: "Processing",
+                                                                              color: deepPurple,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ]),
+                                                                  ),
+                                                                ),
                                                               ] else if (orderController
-                                                                              .orderList[
-                                                                          index]
-                                                                      [
+                                                                          .orderList[index][
                                                                       "status"] ==
                                                                   7) ...[
                                                                 AnimatedContainer(
@@ -746,7 +845,185 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ]),
                                                                   ),
                                                                 ),
-                                                              ] else ...[
+                                                              ] else if (orderController
+                                                                          .orderList[index][
+                                                                      "status"] ==
+                                                                  8) ...[
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      right: 5),
+                                                                  height: 30,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color:
+                                                                        lightPurple,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            textHintColor,
+                                                                        width:
+                                                                            1),
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                    child: Row(
+                                                                        children: [
+                                                                          const Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 2),
+                                                                            child:
+                                                                                ImageIcon(
+                                                                              AssetImage(confirmOrderImage),
+                                                                              color: deepPurple,
+                                                                              size: 14,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 5, right: 2),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: "Completed",
+                                                                              color: deepPurple,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ]),
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController
+                                                                          .orderList[index][
+                                                                      "status"] ==
+                                                                  9) ...[
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      right: 5),
+                                                                  height: 30,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color:
+                                                                        lightPurple,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            textHintColor,
+                                                                        width:
+                                                                            1),
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                    child: Row(
+                                                                        children: [
+                                                                          const Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 2),
+                                                                            child:
+                                                                                ImageIcon(
+                                                                              AssetImage(confirmOrderImage),
+                                                                              color: deepPurple,
+                                                                              size: 14,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 5, right: 2),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: "Exchange",
+                                                                              color: deepPurple,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ]),
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController
+                                                                          .orderList[index]
+                                                                      [
+                                                                      "status"] ==
+                                                                  11) ...[
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                                  margin: const EdgeInsets
+                                                                          .only(
+                                                                      right: 5),
+                                                                  height: 30,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color:
+                                                                        lightback,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    border: Border.all(
+                                                                        color:
+                                                                            textHintColor,
+                                                                        width:
+                                                                            1),
+                                                                  ),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            5),
+                                                                    child: Row(
+                                                                        children: [
+                                                                          const Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 2),
+                                                                            child:
+                                                                                ImageIcon(
+                                                                              AssetImage(cancelImage),
+                                                                              color: deepRed,
+                                                                              size: 14,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 5, right: 2),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: "Rejected",
+                                                                              color: deepRed,
+                                                                              fontSize: 12.sp,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                        ]),
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController
+                                                                          .orderList[index]
+                                                                      ["status"] ==
+                                                                  10) ...[
                                                                 AnimatedContainer(
                                                                   duration: const Duration(
                                                                       milliseconds:
@@ -791,7 +1068,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 const EdgeInsets.only(left: 5, right: 2),
                                                                             child:
                                                                                 AppText(
-                                                                              text: "Cart",
+                                                                              text: "Approved",
                                                                               color: deepGreen,
                                                                               fontSize: 12.sp,
                                                                               fontFamily: "Franklin Gothic",

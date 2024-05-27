@@ -778,6 +778,7 @@ class SearchScreenState extends State<SearchScreen> {
                                       child: TextField(
                                         textCapitalization:
                                             TextCapitalization.words,
+                                        maxLines: 1,
                                         style: const TextStyle(
                                           color: textColor,
                                           fontFamily: "Franklin Gothic Regular",
@@ -819,6 +820,9 @@ class SearchScreenState extends State<SearchScreen> {
                                                 color: borderColor),
                                           ),
                                           counterText: "",
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 10),
                                           hintText: "Search",
                                           hintStyle:
                                               const TextStyle(fontSize: 14),
