@@ -15,6 +15,7 @@ class ProductController extends BaseController {
   RxBool isMostSearch = false.obs;
   RxBool isCategoryProduct = false.obs;
   RxBool istagsProduct = false.obs;
+  RxBool isBannerTag = false.obs;
   RxBool isBrandExpressProduct = false.obs;
   RxBool isExpress = false.obs;
   RxBool isDetails = false.obs;
@@ -69,6 +70,10 @@ class ProductController extends BaseController {
   RxBool mostViewLoadMore = false.obs;
   RxBool mostViewHasnextpage = true.obs;
   RxInt mostViewPage = 1.obs;
+  ScrollController bannerTagController = ScrollController();
+  RxBool bannerTagLoadMore = false.obs;
+  RxBool bannerTagHasnextpage = true.obs;
+  RxInt bannerTagPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
 
   bool checkPinvalidation(String pin) {
@@ -264,6 +269,92 @@ class ProductController extends BaseController {
         print("error$e");
       }
       tagsLoadMore.value = false;
+    }
+  }
+
+  getTagsBannerData(List list) async {
+    isCategoryProduct.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      Map<String, List> qParams = {
+        'tag_ids': list,
+      };
+      var response = await http.get(
+        Uri.parse("${ApiConstants.baseUrl}/products")
+            .replace(queryParameters: qParams),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          productCategoryList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get banner tag product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCategoryProduct.value = false;
+  }
+
+  fetchMoreBannerTagProductData(List list) async {
+    if (bannerTagHasnextpage.value == true &&
+        isCategoryProduct.value == false &&
+        bannerTagLoadMore.value == false) {
+      bannerTagLoadMore.value = true;
+      bannerTagPage.value += 1;
+      print(bannerTagPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                    "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}")
+                .replace(queryParameters: {
+              'tag_ids': list,
+            }),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              productCategoryList.addAll(responseData['data']);
+            } else {
+              bannerTagHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch banner tag product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      bannerTagLoadMore.value = false;
     }
   }
 

@@ -16,8 +16,12 @@ import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 class CategoryProductScreen extends StatefulWidget {
   final int categoryId;
   final int brandId;
+  final List tagIds;
   const CategoryProductScreen(
-      {super.key, required this.categoryId, required this.brandId});
+      {super.key,
+      required this.categoryId,
+      required this.brandId,
+      required this.tagIds});
 
   @override
   State<CategoryProductScreen> createState() => CategoryProductScreenState();
@@ -30,20 +34,36 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getProductByCategoryData(widget.categoryId, widget.brandId));
+    productController.productCategoryList.clear();
     wishlistController.getWishlistData();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.categoryProductController.addListener(() {
-        productController.fetchCategoryProductMoreData(
-            widget.categoryId, widget.brandId);
-        productController.update();
+    if (widget.brandId != 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => productController
+          .getProductByCategoryData(widget.categoryId, widget.brandId));
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        productController.categoryProductController.addListener(() {
+          productController.fetchCategoryProductMoreData(
+              widget.categoryId, widget.brandId);
+          productController.update();
+        });
       });
-    });
-    productController.categoryProductHasnextpage.value = true;
-    productController.categoryProductLoadMore.value = false;
-    productController.isCategoryProduct.value = false;
-    productController.categoryProductPage.value = 1;
+      productController.categoryProductHasnextpage.value = true;
+      productController.categoryProductLoadMore.value = false;
+      productController.isCategoryProduct.value = false;
+      productController.categoryProductPage.value = 1;
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => productController.getTagsBannerData(widget.tagIds));
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        productController.bannerTagController.addListener(() {
+          productController.fetchMoreBannerTagProductData(widget.tagIds);
+          productController.update();
+        });
+      });
+      productController.bannerTagHasnextpage.value = true;
+      productController.bannerTagLoadMore.value = false;
+      productController.isCategoryProduct.value = false;
+      productController.bannerTagPage.value = 1;
+    }
     super.initState();
   }
 

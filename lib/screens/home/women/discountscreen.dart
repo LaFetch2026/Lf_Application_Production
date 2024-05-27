@@ -10,6 +10,7 @@ import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
 import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/lafetch_card.dart';
@@ -182,61 +183,71 @@ class DiscountScreenState extends State<DiscountScreen> {
                       padding: EdgeInsets.all(40.0),
                       child: Center(child: CircularProgressIndicator()),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, bottom: 10, right: 16),
-                      child: SizedBox(
-                        height: 210,
-                        child: PageView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: homeController.banner1List.length,
-                          onPageChanged: callOnchangedBanner,
-                          controller: homeController.pageController1,
-                          itemBuilder: (context, int index) {
-                            return CachedNetworkImage(
-                              key: UniqueKey(),
-                              cacheManager: CacheManager(Config(
-                                  "customCacheKey",
-                                  stalePeriod: const Duration(days: 15),
-                                  maxNrOfCacheObjects: 100)),
-                              fit: BoxFit.cover,
-                              imageUrl: homeController.banner1List[index]
-                                  ["image"],
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) => Center(
-                                child: CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                downloadImage,
-                                height: 210,
-                              ),
-                            );
-                            /* FadeInImage(
-                                    fit: BoxFit.cover,
-                                    height: 210,
-                                    width: double.infinity,
-                                    image: NetworkImage(homeController
-                                        .banner1List[index]["image"]),
-                                    placeholder:
-                                        const AssetImage(placeHolderImage)); */
-                          },
-                        ),
-                        /* ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: homeController.banner1List.length,
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.zero,
-                                itemBuilder: (ctx, index) {
-                                  return FadeInImage(
+                  : GestureDetector(
+                      onTap: () {
+                        Get.to(const CategoryProductScreen(
+                          categoryId: 0,
+                          brandId: 0,
+                          tagIds: [46, 47],
+                        ));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, bottom: 10, right: 16),
+                        child: SizedBox(
+                          height: 210,
+                          child: PageView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: homeController.banner1List.length,
+                            onPageChanged: callOnchangedBanner,
+                            controller: homeController.pageController1,
+                            itemBuilder: (context, int index) {
+                              return CachedNetworkImage(
+                                key: UniqueKey(),
+                                cacheManager: CacheManager(Config(
+                                    "customCacheKey",
+                                    stalePeriod: const Duration(days: 15),
+                                    maxNrOfCacheObjects: 100)),
+                                fit: BoxFit.cover,
+                                imageUrl: homeController.banner1List[index]
+                                    ["image"],
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Center(
+                                  child: CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  downloadImage,
+                                  height: 210,
+                                ),
+                              );
+                              /* FadeInImage(
                                       fit: BoxFit.cover,
                                       height: 210,
-                                      width: MediaQuery.of(context).size.width,
+                                      width: double.infinity,
                                       image: NetworkImage(homeController
                                           .banner1List[index]["image"]),
                                       placeholder:
-                                          const AssetImage(downloadImage));
-                                }), */
+                                          const AssetImage(placeHolderImage)); */
+                            },
+                          ),
+                          /* ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: homeController.banner1List.length,
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.zero,
+                                  itemBuilder: (ctx, index) {
+                                    return FadeInImage(
+                                        fit: BoxFit.cover,
+                                        height: 210,
+                                        width: MediaQuery.of(context).size.width,
+                                        image: NetworkImage(homeController
+                                            .banner1List[index]["image"]),
+                                        placeholder:
+                                            const AssetImage(downloadImage));
+                                  }), */
+                        ),
                       ),
                     ),
             ),
