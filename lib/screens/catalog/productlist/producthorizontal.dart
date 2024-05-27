@@ -171,7 +171,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                       .productList[
                                                                   index]["id"],
                                                               0,
-                                                              0);
+                                                              0,
+                                                              []);
                                                     } else {
                                                       scaffoldKey.currentState
                                                           ?.showBottomSheet((context) =>
@@ -187,7 +188,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                             [
                                                                             "id"],
                                                                         0,
-                                                                        0);
+                                                                        0,
+                                                                        []);
                                                                   },
                                                                   wishlistList:
                                                                       wishlistController

@@ -1898,7 +1898,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     "recommended",
                                                     p0,
                                                     0,
-                                                    0);
+                                                    0,
+                                                    []);
                                           } else {
                                             scaffoldKey.currentState
                                                 ?.showBottomSheet((context) =>
@@ -1914,7 +1915,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                           .recommendedList[
                                                                       p1]["id"],
                                                                   0,
-                                                                  0);
+                                                                  0,
+                                                                  []);
                                                         },
                                                         wishlistList:
                                                             wishlistController
@@ -2153,7 +2155,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     "product",
                                                     p0,
                                                     0,
-                                                    0);
+                                                    0,
+                                                    []);
                                           } else {
                                             scaffoldKey.currentState
                                                 ?.showBottomSheet((context) =>
@@ -2169,7 +2172,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                           .productList[
                                                                       p1]["id"],
                                                                   0,
-                                                                  0);
+                                                                  0,
+                                                                  []);
                                                         },
                                                         wishlistList:
                                                             wishlistController

@@ -276,12 +276,9 @@ class ProductController extends BaseController {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      Map<String, List> qParams = {
-        'tag_ids': list,
-      };
       var response = await http.get(
-        Uri.parse("${ApiConstants.baseUrl}/products")
-            .replace(queryParameters: qParams),
+        Uri.parse(
+            "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}"),
         headers: <String, String>{
           'Accept': 'application/json; charset=UTF-8',
           "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -321,10 +318,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                    "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}")
-                .replace(queryParameters: {
-              'tag_ids': list,
-            }),
+                "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -902,8 +896,8 @@ class ProductController extends BaseController {
     hideLoading();
   }
 
-  callAddProductToWishlist(
-      int wishlistId, String type, int id, int categoryId, int brandId) async {
+  callAddProductToWishlist(int wishlistId, String type, int id, int categoryId,
+      int brandId, List list) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -928,6 +922,8 @@ class ProductController extends BaseController {
           getProductByCategoryData(categoryId, brandId);
         } else if (type == "brand") {
           getBrandExpressProductData(brandId);
+        } else if (type == "bannerTag") {
+          getTagsBannerData(list);
         } else {
           getProductRecommendations(id);
         }

@@ -347,7 +347,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                     .productList[
                                                                 index]["id"],
                                                             0,
-                                                            0);
+                                                            0,
+                                                            []);
                                                       } else {
                                                         scaffoldKey.currentState
                                                             ?.showBottomSheet((context) =>
@@ -363,7 +364,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                               [
                                                                               "id"],
                                                                           0,
-                                                                          0);
+                                                                          0,
+                                                                          []);
                                                                     },
                                                                     wishlistList:
                                                                         wishlistController

@@ -13,7 +13,6 @@ import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/homewidget/lafetch_card.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -183,26 +182,41 @@ class DiscountScreenState extends State<DiscountScreen> {
                       padding: EdgeInsets.all(40.0),
                       child: Center(child: CircularProgressIndicator()),
                     )
-                  : GestureDetector(
-                      onTap: () {
-                        Get.to(const CategoryProductScreen(
-                          categoryId: 0,
-                          brandId: 0,
-                          tagIds: [46, 47],
-                        ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, bottom: 10, right: 16),
-                        child: SizedBox(
-                          height: 210,
-                          child: PageView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: homeController.banner1List.length,
-                            onPageChanged: callOnchangedBanner,
-                            controller: homeController.pageController1,
-                            itemBuilder: (context, int index) {
-                              return CachedNetworkImage(
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, bottom: 10, right: 16),
+                      child: SizedBox(
+                        height: 210,
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: homeController.banner1List.length,
+                          onPageChanged: callOnchangedBanner,
+                          controller: homeController.pageController1,
+                          itemBuilder: (context, int index) {
+                            return GestureDetector(
+                              onTap: () {
+                                homeController.bannerTag1Id.clear();
+                                if (homeController
+                                    .banner1List[index]["tags"].isNotEmpty) {
+                                  for (var i = 0;
+                                      i <
+                                          homeController
+                                              .banner1List[index]["tags"]
+                                              .length;
+                                      i++) {
+                                    homeController.bannerTag1Id.add(
+                                        homeController.banner1List[index]
+                                            ["tags"][i]["id"]);
+                                  }
+                                  print(homeController.bannerTag1Id);
+                                  Get.to(CategoryProductScreen(
+                                    categoryId: 0,
+                                    brandId: 0,
+                                    tagIds: homeController.bannerTag1Id,
+                                  ));
+                                }
+                              },
+                              child: CachedNetworkImage(
                                 key: UniqueKey(),
                                 cacheManager: CacheManager(Config(
                                     "customCacheKey",
@@ -221,32 +235,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   downloadImage,
                                   height: 210,
                                 ),
-                              );
-                              /* FadeInImage(
-                                      fit: BoxFit.cover,
-                                      height: 210,
-                                      width: double.infinity,
-                                      image: NetworkImage(homeController
-                                          .banner1List[index]["image"]),
-                                      placeholder:
-                                          const AssetImage(placeHolderImage)); */
-                            },
-                          ),
-                          /* ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: homeController.banner1List.length,
-                                  scrollDirection: Axis.horizontal,
-                                  padding: EdgeInsets.zero,
-                                  itemBuilder: (ctx, index) {
-                                    return FadeInImage(
-                                        fit: BoxFit.cover,
-                                        height: 210,
-                                        width: MediaQuery.of(context).size.width,
-                                        image: NetworkImage(homeController
-                                            .banner1List[index]["image"]),
-                                        placeholder:
-                                            const AssetImage(downloadImage));
-                                  }), */
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -474,15 +465,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         imageUrl: homeController
                                                                 .categoryList[1]
                                                             ["thumbnail"],
-                                                        /*  progressIndicatorBuilder:
-                                                            (context, url,
-                                                                    downloadProgress) =>
-                                                                Center(
-                                                          child: CircularProgressIndicator(
-                                                              value:
-                                                                  downloadProgress
-                                                                      .progress),
-                                                        ), */
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -660,27 +642,44 @@ class DiscountScreenState extends State<DiscountScreen> {
                             controller: homeController.pageController,
                             itemCount: homeController.banner2List.length,
                             itemBuilder: (context, int index) {
-                              return CachedNetworkImage(
-                                cacheManager: CacheManager(Config(
-                                    "customCacheKey",
-                                    stalePeriod: const Duration(days: 15),
-                                    maxNrOfCacheObjects: 100)),
-                                fit: BoxFit.cover,
-                                imageUrl: homeController.banner2List[index]
-                                    ["image"],
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
-                                  downloadImage,
-                                  height: 210,
+                              return GestureDetector(
+                                onTap: () {
+                                  homeController.bannerTag2Id.clear();
+                                  if (homeController
+                                      .banner2List[index]["tags"].isNotEmpty) {
+                                    for (var i = 0;
+                                        i <
+                                            homeController
+                                                .banner2List[index]["tags"]
+                                                .length;
+                                        i++) {
+                                      homeController.bannerTag2Id.add(
+                                          homeController.banner2List[index]
+                                              ["tags"][i]["id"]);
+                                    }
+                                    print(homeController.bannerTag2Id);
+                                    Get.to(CategoryProductScreen(
+                                      categoryId: 0,
+                                      brandId: 0,
+                                      tagIds: homeController.bannerTag2Id,
+                                    ));
+                                  }
+                                },
+                                child: CachedNetworkImage(
+                                  cacheManager: CacheManager(Config(
+                                      "customCacheKey",
+                                      stalePeriod: const Duration(days: 15),
+                                      maxNrOfCacheObjects: 100)),
+                                  fit: BoxFit.cover,
+                                  imageUrl: homeController.banner2List[index]
+                                      ["image"],
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    downloadImage,
+                                    height: 210,
+                                  ),
                                 ),
                               );
-                              /* FadeInImage(
-                                  fit: BoxFit.cover,
-                                  height: 210,
-                                  width: double.infinity,
-                                  image: NetworkImage(homeController
-                                      .banner2List[index]["image"]),
-                                  placeholder: const AssetImage(downloadImage)); */
                             },
                           ),
                         ),
@@ -721,11 +720,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                       ],
                     ),
             ),
-
             const SizedBox(
               height: 20,
             ),
-            const LafetchCardWidget(),
+            //  const LafetchCardWidget(),
             QuestionCardWidget(
                 text1: "FAQs",
                 text2: "Your questions answered",

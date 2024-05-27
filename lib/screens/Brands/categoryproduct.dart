@@ -184,41 +184,80 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      if (productController
-                                                              .productCategoryList[
-                                                          index]["wishlisted"]) {
-                                                        productController.callAddProductToWishlist(
-                                                            productController
-                                                                        .productCategoryList[
-                                                                    index]
-                                                                ["wishlist_id"],
-                                                            "category",
-                                                            productController
-                                                                    .productCategoryList[
-                                                                index]["id"],
-                                                            widget.categoryId,
-                                                            widget.brandId);
+                                                      if (widget.brandId != 0) {
+                                                        if (productController
+                                                                .productCategoryList[
+                                                            index]["wishlisted"]) {
+                                                          productController.callAddProductToWishlist(
+                                                              productController
+                                                                          .productCategoryList[
+                                                                      index][
+                                                                  "wishlist_id"],
+                                                              "category",
+                                                              productController
+                                                                      .productCategoryList[
+                                                                  index]["id"],
+                                                              widget.categoryId,
+                                                              widget.brandId,
+                                                              []);
+                                                        } else {
+                                                          scaffoldKey
+                                                              .currentState
+                                                              ?.showBottomSheet((context) =>
+                                                                  BottomWishlist(
+                                                                      controller:
+                                                                          wishlistController,
+                                                                      onPressed:
+                                                                          (p0) {
+                                                                        productController.callAddProductToWishlist(
+                                                                            p0,
+                                                                            "product",
+                                                                            productController.productCategoryList[index]["id"],
+                                                                            widget.categoryId,
+                                                                            0,
+                                                                            []);
+                                                                      },
+                                                                      wishlistList:
+                                                                          wishlistController
+                                                                              .wishlistList));
+                                                        }
                                                       } else {
-                                                        scaffoldKey.currentState
-                                                            ?.showBottomSheet((context) =>
-                                                                BottomWishlist(
-                                                                    controller:
-                                                                        wishlistController,
-                                                                    onPressed:
-                                                                        (p0) {
-                                                                      productController.callAddProductToWishlist(
-                                                                          p0,
-                                                                          "product",
-                                                                          productController.productCategoryList[index]
-                                                                              [
-                                                                              "id"],
-                                                                          widget
-                                                                              .categoryId,
-                                                                          0);
-                                                                    },
-                                                                    wishlistList:
-                                                                        wishlistController
-                                                                            .wishlistList));
+                                                        if (productController
+                                                                .productCategoryList[
+                                                            index]["wishlisted"]) {
+                                                          productController.callAddProductToWishlist(
+                                                              productController
+                                                                          .productCategoryList[
+                                                                      index][
+                                                                  "wishlist_id"],
+                                                              "bannerTag",
+                                                              productController
+                                                                      .productCategoryList[
+                                                                  index]["id"],
+                                                              widget.categoryId,
+                                                              widget.brandId,
+                                                              widget.tagIds);
+                                                        } else {
+                                                          scaffoldKey
+                                                              .currentState
+                                                              ?.showBottomSheet((context) =>
+                                                                  BottomWishlist(
+                                                                      controller:
+                                                                          wishlistController,
+                                                                      onPressed:
+                                                                          (p0) {
+                                                                        productController.callAddProductToWishlist(
+                                                                            p0,
+                                                                            "bannerTag",
+                                                                            productController.productCategoryList[index]["id"],
+                                                                            widget.categoryId,
+                                                                            0,
+                                                                            widget.tagIds);
+                                                                      },
+                                                                      wishlistList:
+                                                                          wishlistController
+                                                                              .wishlistList));
+                                                        }
                                                       }
                                                     },
                                                     child: Padding(
