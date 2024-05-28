@@ -340,7 +340,13 @@ class DiscountScreenState extends State<DiscountScreen> {
                               // ignore: prefer_is_empty
                               homeController.categoryList.length >= 1
                                   ? GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.to(CategoryProductScreen(
+                                            categoryId: homeController
+                                                .categoryList[0]["id"],
+                                            brandId: 0,
+                                            tagIds: const []));
+                                      },
                                       child: Expanded(
                                         flex: 1,
                                         child: AnimatedContainer(
@@ -431,7 +437,13 @@ class DiscountScreenState extends State<DiscountScreen> {
                               ),
                               homeController.categoryList.length >= 2
                                   ? GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.to(CategoryProductScreen(
+                                            categoryId: homeController
+                                                .categoryList[1]["id"],
+                                            brandId: 0,
+                                            tagIds: const []));
+                                      },
                                       child: Expanded(
                                         flex: 1,
                                         child: AnimatedContainer(
@@ -528,7 +540,14 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         return Column(
                                           children: [
                                             GestureDetector(
-                                              onTap: () {},
+                                              onTap: () {
+                                                Get.to(CategoryProductScreen(
+                                                    categoryId: homeController
+                                                            .categoryList[
+                                                        index + 2]["id"],
+                                                    brandId: 0,
+                                                    tagIds: const []));
+                                              },
                                               child: SizedBox(
                                                 height: 100,
                                                 child: Column(

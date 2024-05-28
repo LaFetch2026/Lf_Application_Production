@@ -36,7 +36,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   void initState() {
     productController.productCategoryList.clear();
     wishlistController.getWishlistData();
-    if (widget.brandId != 0) {
+    if (widget.categoryId != 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) => productController
           .getProductByCategoryData(widget.categoryId, widget.brandId));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -184,7 +184,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      if (widget.brandId != 0) {
+                                                      if (widget.categoryId !=
+                                                          0) {
                                                         if (productController
                                                                 .productCategoryList[
                                                             index]["wishlisted"]) {
@@ -211,7 +212,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                           (p0) {
                                                                         productController.callAddProductToWishlist(
                                                                             p0,
-                                                                            "product",
+                                                                            "category",
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             0,

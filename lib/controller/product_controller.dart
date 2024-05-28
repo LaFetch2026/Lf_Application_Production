@@ -536,13 +536,24 @@ class ProductController extends BaseController {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (brandId != 0) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?category_id=$categoryId"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -575,13 +586,24 @@ class ProductController extends BaseController {
       print(categoryProductPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&page=${categoryProductPage.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        dynamic response;
+        if (brandId != 0) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&page=${categoryProductPage.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {
