@@ -53,8 +53,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     productController.loadMore.value = false;
     productController.isProduct.value = false;
     productController.page.value = 1;
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
     super.initState();
   }
 

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/screens/home/women/discountscreen.dart';
-
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 
@@ -15,23 +14,11 @@ class WomenScreen extends StatelessWidget {
     final homeController = Get.put(HomeController());
     PageController pageController = PageController();
 
-    /*  @override
-    void initState() {
-    
-      super.initState();
-    } */
-
     callOnchanged(int index) {
       homeController.current.value = index;
       homeController.update();
     }
 
-    /*  @override
-  void dispose() {
-    homeController.listController
-        .removeListener(homeController.fetchMoreTagsData());
-    super.dispose();
-  } */
     return Container(
       width: MediaQuery.of(context).size.width,
       color: whiteTextColor,
@@ -64,8 +51,6 @@ class WomenScreen extends StatelessWidget {
                                     GestureDetector(
                                       onTap: () {
                                         homeController.current.value = index;
-                                        print(homeController.current.value);
-                                        // setState(() {});
                                         homeController.tagId.value =
                                             homeController.tagsList[index]
                                                 ["id"];

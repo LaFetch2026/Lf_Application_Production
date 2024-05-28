@@ -8,6 +8,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_list.dart';
+import 'package:lafetch/screens/Brands/categoryproduct.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../controller/brand_controller.dart';
@@ -37,16 +39,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   final brandController = Get.put(BrandController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  List<String> gridList = [
-    "New In",
-    "Clothing",
-    "Accessories",
-    "Footwear",
-    "Sales Discount",
-  ];
+  int tagId = 0;
 
   @override
   void initState() {
+    getprefrenceData();
+    wishlistController.getWishlistData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => brandController.getCategoryData(brandController.brandId.value));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     wishlistController.getWishlistData();
@@ -60,10 +60,24 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     productController.loadMore.value = false;
     productController.isProduct.value = false;
     productController.page.value = 1;
-    print(brandController.brandId.value);
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => brandController.getCategoryData(brandController.brandId.value));
     super.initState();
+  }
+
+  getprefrenceData() async {
+    final prefs = await SharedPreferences.getInstance();
+    tagId = prefs.getInt('tagId')!;
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getTagsProductData(tagId));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.tagsProductController.addListener(() {
+        productController.fetchMoreTagsProductData(tagId);
+        productController.update();
+      });
+    });
+    productController.tagsHasnextpage.value = true;
+    productController.tagsLoadMore.value = false;
+    productController.istagsProduct.value = false;
+    productController.tagsPage.value = 1;
   }
 
   @override
@@ -167,7 +181,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   double ht = index % 2 == 0 ? 100 : 180;
                                   return GestureDetector(
                                     onTap: () {
-                                      //  Get.to(const BoardScreen());
+                                      Get.to(CategoryProductScreen(
+                                        categoryId: brandController
+                                            .categoryList[index]["id"],
+                                        tagIds: const [],
+                                        brandId: 0,
+                                      ));
                                     },
                                     child: Column(
                                       crossAxisAlignment:
@@ -252,7 +271,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             ),
                     ),
                     Obx(
-                      () => productController.isProduct.value
+                      () => productController.istagsProduct.value
                           ? const Padding(
                               padding: EdgeInsets.all(40.0),
                               child: Center(child: CircularProgressIndicator()),
@@ -261,7 +280,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               padding: const EdgeInsets.only(top: 40),
                               child: HorizontalBrandList(
                                 text: "New Arrivals",
-                                controller: productController.listController,
+                                controller:
+                                    productController.tagsProductController,
                                 onPressed: (p0) {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
@@ -272,24 +292,25 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       .then((value) => setState(
                                             () {
                                               productController
-                                                  .hasnextpage.value = true;
-                                              productController.loadMore.value =
-                                                  false;
+                                                  .tagsHasnextpage.value = true;
                                               productController
-                                                  .isProduct.value = false;
-                                              productController.page.value = 1;
+                                                  .tagsLoadMore.value = false;
                                               productController
-                                                  .getProductData("relevant");
+                                                  .istagsProduct.value = false;
+                                              productController.tagsPage.value =
+                                                  1;
+                                              productController
+                                                  .getTagsProductData(tagId);
                                             },
                                           ));
                                 },
                                 onPressedHeart: (p0, p1) {
-                                  if (productController.productList[p1]
+                                  if (productController.tagProductList[p1]
                                       ["wishlisted"]) {
                                     productController.callAddProductToWishlist(
-                                        productController.productList[p1]
+                                        productController.tagProductList[p1]
                                             ["wishlist_id"],
-                                        "product",
+                                        "tags",
                                         p0,
                                         0,
                                         0,
@@ -302,10 +323,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                               productController
                                                   .callAddProductToWishlist(
                                                       p0,
-                                                      "product",
+                                                      "tags",
                                                       productController
-                                                              .productList[p1]
-                                                          ["id"],
+                                                              .tagProductList[
+                                                          p1]["id"],
                                                       0,
                                                       0,
                                                       []);
@@ -314,7 +335,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 .wishlistList));
                                   }
                                 },
-                                list: productController.productList,
+                                list: productController.tagProductList,
                               ),
                             ),
                     ),

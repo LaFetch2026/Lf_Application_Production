@@ -942,6 +942,8 @@ class ProductController extends BaseController {
           getProductData("relevant");
         } else if (type == "category") {
           getProductByCategoryData(categoryId, brandId);
+        } else if (type == "tags") {
+          getTagsProductData(prefs.getInt('tagId')!);
         } else if (type == "brand") {
           getBrandExpressProductData(brandId);
         } else if (type == "bannerTag") {
