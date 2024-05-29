@@ -89,11 +89,15 @@ class DiscountScreenState extends State<DiscountScreen> {
       } else {
         homeController.currentPage.value = 0;
       }
-      homeController.pageController.animateToPage(
-        homeController.currentPage.value,
-        duration: const Duration(milliseconds: 2000),
-        curve: Curves.easeIn,
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (homeController.pageController.hasClients) {
+          homeController.pageController.animateToPage(
+            homeController.currentPage.value,
+            duration: const Duration(milliseconds: 2000),
+            curve: Curves.easeIn,
+          );
+        }
+      });
       homeController.update();
     });
     homeController.timer1 =
@@ -104,11 +108,15 @@ class DiscountScreenState extends State<DiscountScreen> {
       } else {
         homeController.bannerPage1.value = 0;
       }
-      homeController.pageController1.animateToPage(
-        homeController.bannerPage1.value,
-        duration: const Duration(milliseconds: 2000),
-        curve: Curves.easeIn,
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (homeController.pageController1.hasClients) {
+          homeController.pageController1.animateToPage(
+            homeController.bannerPage1.value,
+            duration: const Duration(milliseconds: 2000),
+            curve: Curves.easeIn,
+          );
+        }
+      });
       homeController.update();
     });
   }
@@ -721,19 +729,25 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     children: List<Widget>.generate(
                                         homeController.banner2List.length,
                                         (int index) {
-                                      return AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 400),
-                                          height: 6,
-                                          width: 40,
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          decoration: BoxDecoration(
-                                              color: (index ==
-                                                      homeController
-                                                          .currentPage.value)
-                                                  ? colorPrimary
-                                                  : colorSecondary));
+                                      return homeController
+                                              .pageController.hasClients
+                                          ? AnimatedContainer(
+                                              duration: const Duration(
+                                                  milliseconds: 400),
+                                              height: 6,
+                                              width: 40,
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                              decoration: BoxDecoration(
+                                                  color: index ==
+                                                          homeController
+                                                              .currentPage.value
+                                                      ? colorPrimary
+                                                      : colorSecondary))
+                                          : const SizedBox(
+                                              height: 0,
+                                            );
                                     })),
                               ),
                             ),
