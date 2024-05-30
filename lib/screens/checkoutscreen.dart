@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
-import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/singlebtn.dart';
@@ -23,7 +23,7 @@ class CheckoutScreen extends StatefulWidget {
   final String coupanDiscount;
   final String convenienceFee;
   final String tax;
-  final int addressId;
+  final dynamic address;
   final String total;
 
   const CheckoutScreen({
@@ -37,7 +37,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.coupanDiscount,
     required this.convenienceFee,
     required this.tax,
-    required this.addressId,
+    required this.address,
     required this.total,
   });
 
@@ -64,6 +64,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   void initState() {
+    print(widget.address);
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
@@ -124,9 +125,129 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
-                  Padding(
+                  widget.address != null
+                      ? Container(
+                          color: whiteColor,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 5),
+                                        child: AppText(
+                                          text: widget.address["name"] ?? "",
+                                          color: loginText,
+                                          fontSize: 16.sp,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                      ),
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        margin: const EdgeInsets.only(right: 5),
+                                        width: 80,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: whiteBorderColor,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                              color: btnTextColor, width: 1),
+                                        ),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.to(const ChangeAddressScreen());
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5),
+                                            child: Center(
+                                              child: AppText(
+                                                text: "Change",
+                                                color: btnTextColor,
+                                                fontSize: 12.sp,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 2),
+                                  child: AppText(
+                                    text: widget.address["address"] ?? "",
+                                    color: greyTextColor,
+                                    fontSize: 12.sp,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 2),
+                                  child: AppText(
+                                    text:
+                                        "${widget.address["locality"] ?? ""} ,${widget.address["city"] != null ? widget.address["city"]["name"] : ""}",
+                                    color: greyTextColor,
+                                    fontSize: 12.sp,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 2),
+                                  child: AppText(
+                                    text: widget.address["type"] ?? "",
+                                    color: loginText,
+                                    fontSize: 12.sp,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 2),
+                                  child: AppText(
+                                    text: widget.address["zip"].toString(),
+                                    color: loginText,
+                                    fontSize: 12.sp,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : const SizedBox(
+                          height: 0,
+                        ),
+                  /*    Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
                       onTap: () {
@@ -180,7 +301,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  Padding(
+                 */ /*  Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 16),
                     child: Container(
@@ -188,8 +309,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       color: colorSecondary,
                       height: 1,
                     ),
-                  ),
-                  Padding(
+                  ), */
+                  /*   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
                       onTap: () {
@@ -240,7 +361,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  Padding(
+                  */
+                  /*  Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 16),
                     child: Container(
@@ -248,7 +370,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       color: colorSecondary,
                       height: 1,
                     ),
-                  ),
+                  ), */
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 20),
                     child: AppText(

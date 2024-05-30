@@ -729,25 +729,19 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     children: List<Widget>.generate(
                                         homeController.banner2List.length,
                                         (int index) {
-                                      return homeController
-                                              .pageController.hasClients
-                                          ? AnimatedContainer(
-                                              duration: const Duration(
-                                                  milliseconds: 400),
-                                              height: 6,
-                                              width: 40,
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5),
-                                              decoration: BoxDecoration(
-                                                  color: index ==
-                                                          homeController
-                                                              .currentPage.value
-                                                      ? colorPrimary
-                                                      : colorSecondary))
-                                          : const SizedBox(
-                                              height: 0,
-                                            );
+                                      return AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          height: 6,
+                                          width: 40,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          decoration: BoxDecoration(
+                                              color: index ==
+                                                      homeController
+                                                          .currentPage.value
+                                                  ? colorPrimary
+                                                  : colorSecondary));
                                     })),
                               ),
                             ),
