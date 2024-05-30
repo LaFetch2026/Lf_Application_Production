@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,7 +10,7 @@ import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/home/womenscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import '../commonwidget/app_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../controller/home_controller.dart';
 import '../utils/constants.dart';
@@ -22,13 +25,30 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   final homeController = Get.put(HomeController());
+  String? city;
+
   @override
   void initState() {
+    getPrefrenceValue();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getCitiesData());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getDeviceName();
     });
     initPlatformState();
     super.initState();
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('city') != null) {
+      city = prefs.getString('city')!;
+    }
+  }
+
+  Future savePrefrenceValue(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('city', value);
   }
 
   Future<void> initPlatformState() async {
@@ -85,84 +105,180 @@ class HomeScreenState extends State<HomeScreen> {
               },
             ),
             Container(
-              height: 55,
-              width: MediaQuery.of(context).size.width,
-              color: colorPrimary,
-              child: Column(children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 16, bottom: 10),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: ImageIcon(
-                          AssetImage(locationIcon),
-                          color: colorSecondary,
-                          size: 20,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: AppText(
-                          text: "Select Your Location",
-                          fontFamily: "Franklin Gothic Regular",
-                          maxLines: 2,
-                          fontWeight: FontWeight.w500,
-                          color: colorSecondary,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                      const ImageIcon(
-                        AssetImage(whiteDropDown),
+                height: 55,
+                width: MediaQuery.of(context).size.width,
+                color: colorPrimary,
+                child: Obx(
+                  () => homeController.isCity.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, top: 5, bottom: 10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              /*  const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: ImageIcon(
+                        AssetImage(locationIcon),
                         color: colorSecondary,
-                        size: 24,
+                        size: 20,
                       ),
-                    ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: AppText(
+                        text: "Select Your Location",
+                        fontFamily: "Franklin Gothic Regular",
+                        maxLines: 2,
+                        fontWeight: FontWeight.w500,
+                        color: colorSecondary,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                    const ImageIcon(
+                      AssetImage(whiteDropDown),
+                      color: colorSecondary,
+                      size: 24,
+                    ), */
+                              SizedBox(
+                                height: 40,
+                                width: 180,
+                                child: DropdownButtonFormField2(
+                                  value: city,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: colorPrimary)),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1),
+                                      borderSide:
+                                          const BorderSide(color: colorPrimary),
+                                    ),
+                                    isDense: true,
+                                    prefixIconConstraints: const BoxConstraints(
+                                        minWidth: 20, maxHeight: 20),
+                                    prefixIcon: const Padding(
+                                      padding: EdgeInsets.only(right: 6),
+                                      child: ImageIcon(
+                                        AssetImage(locationIcon),
+                                        color: colorSecondary,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.zero,
+                                    hintText: 'Select Your Location',
+                                    hintStyle: const TextStyle(
+                                        fontSize: 12,
+                                        color: colorSecondary,
+                                        fontFamily: "Franklin Gothic Regular"),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1),
+                                    ),
+                                  ),
+                                  isExpanded: true,
+                                  items: homeController.cityList
+                                      .map((item) => DropdownMenuItem<String>(
+                                            value: item["name"],
+                                            child: Text(
+                                              item["name"],
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: colorSecondary,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Please select Types.';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    city = value;
+                                    savePrefrenceValue(city!);
+                                  },
+                                  onSaved: (value) {},
+                                  buttonStyleData: const ButtonStyleData(
+                                    height: 60,
+                                    padding: EdgeInsets.only(right: 10),
+                                  ),
+                                  iconStyleData: const IconStyleData(
+                                    icon: ImageIcon(
+                                      AssetImage(whiteDropDown),
+                                      color: colorSecondary,
+                                    ),
+                                    iconSize: 16,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: 200,
+                                    decoration: BoxDecoration(
+                                      color: colorPrimary,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                )),
+            Stack(
+              children: [
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(40),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: TabBar(
+                        isScrollable: false,
+                        indicatorColor: btnTextColor,
+                        unselectedLabelColor: textHintColor,
+                        labelColor: btnTextColor,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicatorWeight: 3,
+                        tabs: [
+                          Tab(
+                              child: Text(
+                            "Women",
+                            style: TextStyle(
+                                fontSize: 14.sp,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w400),
+                          )),
+                          Tab(
+                              child: Text(
+                            "Men",
+                            style: TextStyle(
+                                fontSize: 14.sp,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w400),
+                          )),
+                          Tab(
+                              child: Text(
+                            "Kids",
+                            style: TextStyle(
+                                fontSize: 14.sp,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w400),
+                          ))
+                        ]),
                   ),
-                )
-              ]),
-            ),
-            PreferredSize(
-              preferredSize: const Size.fromHeight(40),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: TabBar(
-                    isScrollable: false,
-                    indicatorColor: btnTextColor,
-                    unselectedLabelColor: textHintColor,
-                    labelColor: btnTextColor,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicatorWeight: 3,
-                    tabs: [
-                      Tab(
-                          child: Text(
-                        "Women",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "Men",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "Kids",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      ))
-                    ]),
-              ),
+                ),
+/*                 Container(
+                  height: 150,
+                  width: 200,
+                  margin: const EdgeInsets.only(left: 16),
+                  color: Colors.amber,
+                ), */
+              ],
             ),
             Container(
               width: double.infinity,

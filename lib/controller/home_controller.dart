@@ -16,6 +16,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 
 class HomeController extends BaseController {
   RxBool isBanner1 = false.obs;
+  RxBool isCity = false.obs;
   RxBool istags = false.obs;
   RxBool isBanner2 = false.obs;
   RxBool isCategory = false.obs;
@@ -25,6 +26,7 @@ class HomeController extends BaseController {
   String platform = "";
   List tagsList = [].obs;
   List banner2List = [].obs;
+  List cityList = [].obs;
   List banner1List = [].obs;
   List bannerTag1Id = [].obs;
   List bannerTag2Id = [].obs;
@@ -184,6 +186,38 @@ class HomeController extends BaseController {
       }
       loadMore.value = false;
     }
+  }
+
+  getCitiesData() async {
+    isCity.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/cities"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          cityList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get wishlist failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCity.value = false;
   }
 
   getCategoryData() async {
