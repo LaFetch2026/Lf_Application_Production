@@ -40,10 +40,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
         productController.update();
       });
     });
-    productController.hasnextpage.value = true;
-    productController.loadMore.value = false;
-    productController.isProduct.value = false;
-    productController.page.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.listController.addListener(() {
+        productController.hasnextpage.value = true;
+        productController.loadMore.value = false;
+        productController.isProduct.value = false;
+        productController.page.value = 1;
+      });
+    });
     super.initState();
   }
 
