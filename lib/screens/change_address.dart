@@ -282,7 +282,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                               padding: const EdgeInsets.only(
                                                   top: 10, bottom: 30),
                                               child: SingleButton(
-                                                  label: "Change Address",
+                                                  label: "Select Address",
                                                   height: 40,
                                                   textColor: btnTextColor,
                                                   backgroundColor: whiteColor,

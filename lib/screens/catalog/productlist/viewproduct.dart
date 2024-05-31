@@ -55,12 +55,14 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                     onTap: () {},
                     child: Row(
                       children: [
-                        AppText(
-                          text: "${productController.total.value} items",
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: textHintColor,
-                          fontSize: 12.sp,
+                        Obx(
+                          () => AppText(
+                            text: "${productController.total.value} items",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: textHintColor,
+                            fontSize: 12.sp,
+                          ),
                         ),
                         const Expanded(
                           child: SizedBox(

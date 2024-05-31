@@ -38,6 +38,7 @@ class ProductController extends BaseController {
   List productCategoryList = [].obs;
   List productExpressBrandList = [].obs;
   RxInt total = 0.obs;
+  RxInt curr = 0.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
   List sizeInventoryList = [].obs;

@@ -27,19 +27,13 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  List<String> items = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "500",
-  ];
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
-    wishlistController.getWishlistData();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
