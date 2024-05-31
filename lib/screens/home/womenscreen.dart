@@ -21,7 +21,7 @@ class WomenScreen extends StatelessWidget {
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      color: whiteTextColor,
+      color: whiteColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,7 +72,7 @@ class WomenScreen extends StatelessWidget {
                                           color: homeController.current.value ==
                                                   index
                                               ? btnTextColor
-                                              : whiteTextColor,
+                                              : whiteColor,
                                           borderRadius:
                                               homeController.current.value ==
                                                       index
@@ -95,7 +95,7 @@ class WomenScreen extends StatelessWidget {
                                             color:
                                                 homeController.current.value ==
                                                         index
-                                                    ? whiteBorderColor
+                                                    ? whiteColor
                                                     : textHintColor,
                                             fontSize: 12.sp,
                                             fontFamily: "Franklin Gothic",

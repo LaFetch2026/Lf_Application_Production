@@ -1225,10 +1225,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           vertical: 4.0),
                                                   children: [
                                                     AppText(
-                                                      text: productController
-                                                                  .compositionDetails[
-                                                              "description"] ??
-                                                          "",
+                                                      text: Bidi.stripHtmlIfNeeded(
+                                                          productController
+                                                                      .compositionDetails[
+                                                                  "description"] ??
+                                                              ""),
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       maxLines: 20,
@@ -1288,10 +1289,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           vertical: 4.0),
                                                   children: [
                                                     AppText(
-                                                      text: productController
-                                                                  .returnPolicyDetails[
-                                                              "description"] ??
-                                                          "",
+                                                      text: Bidi.stripHtmlIfNeeded(
+                                                          productController
+                                                                      .returnPolicyDetails[
+                                                                  "description"] ??
+                                                              ""),
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       maxLines: 20,
@@ -1348,10 +1350,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           vertical: 4.0),
                                                   children: [
                                                     AppText(
-                                                      text: productController
-                                                                  .brandDetails[
-                                                              "description"] ??
-                                                          "",
+                                                      text: Bidi.stripHtmlIfNeeded(
+                                                          productController
+                                                                      .brandDetails[
+                                                                  "description"] ??
+                                                              ""),
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       maxLines: 20,
