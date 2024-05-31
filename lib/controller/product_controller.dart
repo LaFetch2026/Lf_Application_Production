@@ -888,7 +888,9 @@ class ProductController extends BaseController {
       final Map<String, dynamic> sendData = {
         "product_id": productId,
         "quantity": quantity,
-        "inventory_id": sizeInventoryId.value
+        "inventory_id": sizeInventoryId.value == 0
+            ? colorInventoryId.value
+            : sizeInventoryId.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
