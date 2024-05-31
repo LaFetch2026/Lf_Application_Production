@@ -148,14 +148,14 @@ class ShipAddressController extends BaseController {
         print(responseData);
         addressId.value = responseData["id"];
         if (cartId.value != 0) {
-          callCartAddressUpdate();
+          callCartAddressUpdate("create");
         }
         Get.close(1);
       } else if (response.statusCode == 201) {
         print(responseData);
         addressId.value = responseData["id"];
         if (cartId.value != 0) {
-          callCartAddressUpdate();
+          callCartAddressUpdate("create");
         }
         Get.close(1);
       } else if (response.statusCode == 400) {
@@ -202,7 +202,7 @@ class ShipAddressController extends BaseController {
         addressId.value = responseData["id"];
         getSnackBar("Address updated");
         if (cartId.value != 0) {
-          callCartAddressUpdate();
+          callCartAddressUpdate("create");
         }
         Get.close(1);
       } else if (response.statusCode == 201) {
@@ -210,7 +210,7 @@ class ShipAddressController extends BaseController {
         addressId.value = responseData["id"];
         getSnackBar("Address updated");
         if (cartId.value != 0) {
-          callCartAddressUpdate();
+          callCartAddressUpdate("create");
         }
         Get.close(1);
       } else if (response.statusCode == 400) {
@@ -228,7 +228,7 @@ class ShipAddressController extends BaseController {
     hideLoading();
   }
 
-  callCartAddressUpdate() async {
+  callCartAddressUpdate(String type) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -243,6 +243,10 @@ class ShipAddressController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        if (type == "update") {
+          Get.back();
+        }
+        getAddressDetails(responseData["address"]["id"]);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -271,6 +275,7 @@ class ShipAddressController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         if (responseData != null) {
+          addressDetails = responseData;
           nameController.text = responseData["name"] ?? "";
           phoneController.text = responseData["phone"] ?? "";
           pincodeController.text = responseData["zip"].toString();

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/checkoutscreen.dart';
@@ -154,7 +155,7 @@ class CartController extends BaseController {
     }
   }
 
-  callInitiatePayment(dynamic address) async {
+  callInitiatePayment(int addressId, dynamic context) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -168,7 +169,7 @@ class CartController extends BaseController {
       );
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        Get.to(CheckoutScreen(
+        /*  Get.to(CheckoutScreen(
           orderId: responseData["payment"]["transaction_id"],
           amount: responseData["payment"]["amount"],
           cartId: responseData["id"],
@@ -179,8 +180,26 @@ class CartController extends BaseController {
           discount: discount.value,
           tax: tax.value,
           total: total.value,
-          address: address,
-        ));
+          addressId: addressId,
+        )); */
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (BuildContext context) => CheckoutScreen(
+                      orderId: responseData["payment"]["transaction_id"],
+                      amount: responseData["payment"]["amount"],
+                      cartId: responseData["id"],
+                      mrp: mrp.value,
+                      expressDelivery: expressDelivery.value,
+                      convenienceFee: convenienceFee.value,
+                      coupanDiscount: coupanDiscount.value,
+                      discount: discount.value,
+                      tax: tax.value,
+                      total: total.value,
+                      addressId: addressId,
+                    )))
+            .then((value) => (value) {
+                  getCartData();
+                });
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

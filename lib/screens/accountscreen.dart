@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/accountwidgets/profilebottom.dart';
-import 'package:lafetch/commonwidget/accountwidgets/profilepicwidget.dart';
 import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
 import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';

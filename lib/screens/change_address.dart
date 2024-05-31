@@ -3,15 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../utils/constants.dart';
-import '../commonwidget/singlebtn.dart';
 
 class ChangeAddressScreen extends StatefulWidget {
-  const ChangeAddressScreen({super.key});
+  final int cartId;
+  const ChangeAddressScreen({super.key, required this.cartId});
 
   @override
   State<ChangeAddressScreen> createState() => ChangeAddressScreenState();
@@ -19,7 +21,7 @@ class ChangeAddressScreen extends StatefulWidget {
 
 class ChangeAddressScreenState extends State<ChangeAddressScreen> {
   final controller = Get.put(ProfileController());
-
+  final shipController = Get.put(ShipAddressController());
   @override
   void initState() {
     WidgetsBinding.instance
@@ -53,11 +55,11 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context)
-                            .push(MaterialPageRoute(
+                            .pushReplacement(MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    const ShippingAddressScreen(
+                                    ShippingAddressScreen(
                                       addressId: 0,
-                                      cartId: 0,
+                                      cartId: widget.cartId,
                                     )))
                             .then((value) => setState(
                                   () {
@@ -281,12 +283,22 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 10, bottom: 30),
-                                              child: SingleButton(
+                                              child: getSingleButton(
                                                   label: "Select Address",
-                                                  height: 40,
                                                   textColor: btnTextColor,
                                                   backgroundColor: whiteColor,
-                                                  onPressed: () {},
+                                                  controller: shipController,
+                                                  onPressed: () {
+                                                    shipController.addressId
+                                                        .value = controller
+                                                            .addressList[index]
+                                                        ["id"];
+                                                    shipController.cartId
+                                                        .value = widget.cartId;
+                                                    shipController
+                                                        .callCartAddressUpdate(
+                                                            "update");
+                                                  },
                                                   borderColor: btnTextColor),
                                             )
                                           ],
