@@ -34,7 +34,6 @@ class HomeController extends BaseController {
   RxInt page = 1.obs;
   RxInt tagId = 0.obs;
   RxInt current = 0.obs;
-  RxInt bannerPage1 = 0.obs;
   ScrollController listController = ScrollController();
   final PageController pageController = PageController(
     initialPage: 0,
