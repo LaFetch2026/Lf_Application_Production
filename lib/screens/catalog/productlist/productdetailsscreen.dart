@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'package:add_to_cart_animation/add_to_cart_animation.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -76,10 +78,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               "show video=========${isImage(productController.productDetails["images"][i]["name"])}");
 
           list.add(Container(
-              color: colorSecondary,
-              child: Image.network(
+            color: colorSecondary,
+            child: /* Image.network(
                   productController.productDetails["images"][i]["name"],
-                  fit: BoxFit.fitHeight)));
+                  fit: BoxFit.fitHeight) */
+                CachedNetworkImage(
+              cacheManager: CacheManager(Config("customCacheKey",
+                  stalePeriod: const Duration(days: 15),
+                  maxNrOfCacheObjects: 100)),
+              fit: BoxFit.cover,
+              imageUrl: productController.productDetails["images"][i]["name"],
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  Center(
+                child:
+                    CircularProgressIndicator(value: downloadProgress.progress),
+              ),
+              errorWidget: (context, url, error) =>
+                  Image.asset(downloadImage, fit: BoxFit.fitHeight),
+            ),
+          ));
         } else {
           productController.isVideoPlaying.value = true;
           videoController = VideoPlayerController.networkUrl(

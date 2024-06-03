@@ -36,10 +36,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
         productController.update();
       });
     });
-    productController.brandExpressHasnextpage.value = true;
-    productController.brandExpressLoadMore.value = false;
-    productController.isBrandExpressProduct.value = false;
-    productController.brandExpressPage.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
+          productController.brandExpressHasnextpage.value = true;
+          productController.brandExpressLoadMore.value = false;
+          productController.isBrandExpressProduct.value = false;
+          productController.brandExpressPage.value = 1;
+        });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getBrandExpressProductData(widget.brandId));
     WidgetsBinding.instance
