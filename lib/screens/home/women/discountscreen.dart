@@ -158,22 +158,44 @@ class DiscountScreenState extends State<DiscountScreen> {
                       ),
                       itemBuilder: (BuildContext context, int itemIndex,
                               int pageViewIndex) =>
-                          CachedNetworkImage(
-                        key: UniqueKey(),
-                        cacheManager: CacheManager(Config("customCacheKey",
-                            stalePeriod: const Duration(days: 15),
-                            maxNrOfCacheObjects: 100)),
-                        fit: BoxFit.cover,
-                        imageUrl: homeController.banner1List[itemIndex]
-                            ["image"],
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) => Center(
-                          child: CircularProgressIndicator(
-                              value: downloadProgress.progress),
-                        ),
-                        errorWidget: (context, url, error) => Image.asset(
-                          downloadImage,
-                          height: 210,
+                          GestureDetector(
+                        onTap: () {
+                          homeController.bannerTag1Id.clear();
+                          if (homeController
+                              .banner1List[itemIndex]["tags"].isNotEmpty) {
+                            for (var i = 0;
+                                i <
+                                    homeController
+                                        .banner1List[itemIndex]["tags"].length;
+                                i++) {
+                              homeController.bannerTag1Id.add(homeController
+                                  .banner1List[itemIndex]["tags"][i]["id"]);
+                            }
+                            print(homeController.bannerTag1Id);
+                            Get.to(CategoryProductScreen(
+                              categoryId: 0,
+                              brandId: 0,
+                              tagIds: homeController.bannerTag1Id,
+                            ));
+                          }
+                        },
+                        child: CachedNetworkImage(
+                          key: UniqueKey(),
+                          cacheManager: CacheManager(Config("customCacheKey",
+                              stalePeriod: const Duration(days: 15),
+                              maxNrOfCacheObjects: 100)),
+                          fit: BoxFit.cover,
+                          imageUrl: homeController.banner1List[itemIndex]
+                              ["image"],
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Center(
+                            child: CircularProgressIndicator(
+                                value: downloadProgress.progress),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            downloadImage,
+                            height: 210,
+                          ),
                         ),
                       ),
                     ),
@@ -644,21 +666,45 @@ class DiscountScreenState extends State<DiscountScreen> {
                           ),
                           itemBuilder: (BuildContext context, int itemIndex,
                                   int pageViewIndex) =>
-                              CachedNetworkImage(
-                            cacheManager: CacheManager(Config("customCacheKey",
-                                stalePeriod: const Duration(days: 15),
-                                maxNrOfCacheObjects: 100)),
-                            fit: BoxFit.cover,
-                            imageUrl: homeController.banner2List[itemIndex]
-                                ["image"],
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) => Center(
-                              child: CircularProgressIndicator(
-                                  value: downloadProgress.progress),
-                            ),
-                            errorWidget: (context, url, error) => Image.asset(
-                              downloadImage,
-                              height: 210,
+                              GestureDetector(
+                            onTap: () {
+                              homeController.bannerTag2Id.clear();
+                              if (homeController
+                                  .banner2List[itemIndex]["tags"].isNotEmpty) {
+                                for (var i = 0;
+                                    i <
+                                        homeController
+                                            .banner2List[itemIndex]["tags"]
+                                            .length;
+                                    i++) {
+                                  homeController.bannerTag2Id.add(homeController
+                                      .banner2List[itemIndex]["tags"][i]["id"]);
+                                }
+                                print(homeController.bannerTag2Id);
+                                Get.to(CategoryProductScreen(
+                                  categoryId: 0,
+                                  brandId: 0,
+                                  tagIds: homeController.bannerTag2Id,
+                                ));
+                              }
+                            },
+                            child: CachedNetworkImage(
+                              cacheManager: CacheManager(Config(
+                                  "customCacheKey",
+                                  stalePeriod: const Duration(days: 15),
+                                  maxNrOfCacheObjects: 100)),
+                              fit: BoxFit.cover,
+                              imageUrl: homeController.banner2List[itemIndex]
+                                  ["image"],
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Center(
+                                child: CircularProgressIndicator(
+                                    value: downloadProgress.progress),
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                downloadImage,
+                                height: 210,
+                              ),
                             ),
                           ),
                         ),
