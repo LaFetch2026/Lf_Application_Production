@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'dart:async';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,20 +26,6 @@ class DiscountScreen extends StatefulWidget {
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
-  @override
-  void dispose() {
-    super.dispose();
-    homeController.timer?.cancel();
-    homeController.timer1?.cancel();
-  }
-
-  callOnchanged(int index) {
-    homeController.currentPage.value = index;
-  }
-
-  callOnchangedBanner(int index) {
-    homeController.bannerPage1.value = index;
-  }
 
   @override
   void initState() {
@@ -57,20 +42,24 @@ class DiscountScreenState extends State<DiscountScreen> {
         productController.update();
       });
     });
-    productController.tagsHasnextpage.value = true;
-    productController.tagsLoadMore.value = false;
-    productController.istagsProduct.value = false;
-    productController.tagsPage.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.tagsHasnextpage.value = true;
+      productController.tagsLoadMore.value = false;
+      productController.istagsProduct.value = false;
+      productController.tagsPage.value = 1;
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressListController.addListener(() {
         productController.fetchExpressMoreData();
         productController.update();
       });
     });
-    productController.expressHasnextpage.value = true;
-    productController.expressLoadMore.value = false;
-    productController.isExpress.value = false;
-    productController.expressPage.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.expressHasnextpage.value = true;
+      productController.expressLoadMore.value = false;
+      productController.isExpress.value = false;
+      productController.expressPage.value = 1;
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getBannar1Data());
     WidgetsBinding.instance
@@ -81,44 +70,6 @@ class DiscountScreenState extends State<DiscountScreen> {
         (_) => productController.getTagsProductData(widget.tagId));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.getExpressProductData());
-    homeController.timer =
-        Timer.periodic(const Duration(seconds: 10), (Timer timer) {
-      if (homeController.currentPage.value <
-          homeController.banner2List.length - 1) {
-        homeController.currentPage.value++;
-      } else {
-        homeController.currentPage.value = 0;
-      }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (homeController.pageController.hasClients) {
-          homeController.pageController.animateToPage(
-            homeController.currentPage.value,
-            duration: const Duration(milliseconds: 2000),
-            curve: Curves.easeIn,
-          );
-        }
-      });
-      homeController.update();
-    });
-    homeController.timer1 =
-        Timer.periodic(const Duration(seconds: 10), (Timer timer) {
-      if (homeController.bannerPage1.value <
-          homeController.banner1List.length - 1) {
-        homeController.bannerPage1.value++;
-      } else {
-        homeController.bannerPage1.value = 0;
-      }
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (homeController.pageController1.hasClients) {
-          homeController.pageController1.animateToPage(
-            homeController.bannerPage1.value,
-            duration: const Duration(milliseconds: 2000),
-            curve: Curves.easeIn,
-          );
-        }
-      });
-      homeController.update();
-    });
   }
 
   @override
@@ -187,72 +138,46 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
            */
-            Obx(
-              () => homeController.isBanner1.value
-                  ? const Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, bottom: 10, right: 16),
-                      child: SizedBox(
+            Obx(() => homeController.isBanner1.value
+                ? const Padding(
+                    padding: EdgeInsets.all(40.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    child: CarouselSlider.builder(
+                      itemCount: homeController.banner1List.length,
+                      options: CarouselOptions(
                         height: 210,
-                        child: PageView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: homeController.banner1List.length,
-                          onPageChanged: callOnchangedBanner,
-                          controller: homeController.pageController1,
-                          itemBuilder: (context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                homeController.bannerTag1Id.clear();
-                                if (homeController
-                                    .banner1List[index]["tags"].isNotEmpty) {
-                                  for (var i = 0;
-                                      i <
-                                          homeController
-                                              .banner1List[index]["tags"]
-                                              .length;
-                                      i++) {
-                                    homeController.bannerTag1Id.add(
-                                        homeController.banner1List[index]
-                                            ["tags"][i]["id"]);
-                                  }
-                                  print(homeController.bannerTag1Id);
-                                  Get.to(CategoryProductScreen(
-                                    categoryId: 0,
-                                    brandId: 0,
-                                    tagIds: homeController.bannerTag1Id,
-                                  ));
-                                }
-                              },
-                              child: CachedNetworkImage(
-                                key: UniqueKey(),
-                                cacheManager: CacheManager(Config(
-                                    "customCacheKey",
-                                    stalePeriod: const Duration(days: 15),
-                                    maxNrOfCacheObjects: 100)),
-                                fit: BoxFit.cover,
-                                imageUrl: homeController.banner1List[index]
-                                    ["image"],
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) => Center(
-                                  child: CircularProgressIndicator(
-                                      value: downloadProgress.progress),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
-                                  downloadImage,
-                                  height: 210,
-                                ),
-                              ),
-                            );
-                          },
+                        viewportFraction: 1.0,
+                        aspectRatio: 2.0,
+                        autoPlay: true,
+                        //   autoPlayInterval: const Duration(seconds: 3),
+                        enlargeCenterPage: true,
+                      ),
+                      itemBuilder: (BuildContext context, int itemIndex,
+                              int pageViewIndex) =>
+                          CachedNetworkImage(
+                        key: UniqueKey(),
+                        cacheManager: CacheManager(Config("customCacheKey",
+                            stalePeriod: const Duration(days: 15),
+                            maxNrOfCacheObjects: 100)),
+                        fit: BoxFit.cover,
+                        imageUrl: homeController.banner1List[itemIndex]
+                            ["image"],
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) => Center(
+                          child: CircularProgressIndicator(
+                              value: downloadProgress.progress),
+                        ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          downloadImage,
+                          height: 210,
                         ),
                       ),
                     ),
-            ),
+                  )),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Container(
@@ -391,15 +316,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         imageUrl: homeController
                                                                 .categoryList[0]
                                                             ["thumbnail"],
-                                                        /*  progressIndicatorBuilder:
-                                                            (context, url,
-                                                                    downloadProgress) =>
-                                                                Center(
-                                                          child: CircularProgressIndicator(
-                                                              value:
-                                                                  downloadProgress
-                                                                      .progress),
-                                                        ), */
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -664,7 +580,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     )
                   : Column(
                       children: [
-                        SizedBox(
+                        /*  SizedBox(
                           height: 210,
                           child: PageView.builder(
                             scrollDirection: Axis.horizontal,
@@ -711,6 +627,39 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 ),
                               );
                             },
+                          ),
+                        ),
+                        */
+                        CarouselSlider.builder(
+                          itemCount: homeController.banner2List.length,
+                          options: CarouselOptions(
+                            height: 210,
+                            onPageChanged: (index, reason) {
+                              homeController.currentPage.value = index;
+                            },
+                            viewportFraction: 1.0,
+                            aspectRatio: 2.0,
+                            autoPlay: true,
+                            enlargeCenterPage: true,
+                          ),
+                          itemBuilder: (BuildContext context, int itemIndex,
+                                  int pageViewIndex) =>
+                              CachedNetworkImage(
+                            cacheManager: CacheManager(Config("customCacheKey",
+                                stalePeriod: const Duration(days: 15),
+                                maxNrOfCacheObjects: 100)),
+                            fit: BoxFit.cover,
+                            imageUrl: homeController.banner2List[itemIndex]
+                                ["image"],
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Center(
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                            ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              downloadImage,
+                              height: 210,
+                            ),
                           ),
                         ),
                         const SizedBox(

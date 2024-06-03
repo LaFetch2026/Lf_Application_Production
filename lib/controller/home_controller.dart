@@ -1,9 +1,6 @@
 // ignore_for_file: avoid_print
-
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
@@ -32,8 +29,6 @@ class HomeController extends BaseController {
   List bannerTag2Id = [].obs;
   List categoryList = [].obs;
   RxInt currentPage = 0.obs;
-  Timer? timer;
-  Timer? timer1;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
