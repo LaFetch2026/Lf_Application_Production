@@ -2,8 +2,10 @@
 
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/brand_controller.dart';
@@ -330,7 +332,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                     children: [
                                                                       value.brandList[index]["logo"] !=
                                                                               null
-                                                                          ? FadeInImage(
+                                                                          ? /*  FadeInImage(
                                                                               fit: BoxFit
                                                                                   .cover,
                                                                               height:
@@ -340,7 +342,21 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                               image: NetworkImage(value.brandList[index][
                                                                                   "logo"]),
                                                                               placeholder: const AssetImage(
-                                                                                  dummyWishlistImage))
+                                                                                  dummyWishlistImage)) */
+                                                                          SizedBox(
+                                                                              height: 32,
+                                                                              width: 32,
+                                                                              child: CachedNetworkImage(
+                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                fit: BoxFit.cover,
+                                                                                imageUrl: value.brandList[index]["logo"],
+                                                                                errorWidget: (context, url, error) => Image.asset(
+                                                                                  downloadImage,
+                                                                                  height: 32,
+                                                                                  width: 32,
+                                                                                ),
+                                                                              ),
+                                                                            )
                                                                           : Image.asset(
                                                                               dummyWishlistImage,
                                                                               height: 32,
@@ -434,7 +450,22 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         child: Column(
                                                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                                                           children: [
-                                                                                            value.brandList[index]["categories"][i]["thumbnail"] != null ? FadeInImage(fit: BoxFit.cover, height: 70, width: 90, image: NetworkImage(value.brandList[index]["categories"][i]["thumbnail"]), placeholder: const AssetImage(dummyWishlistImage)) : Image.asset(dummyWishlistImage, height: 70, width: 90, fit: BoxFit.cover),
+                                                                                            value.brandList[index]["categories"][i]["thumbnail"] != null
+                                                                                                ? SizedBox(
+                                                                                                    height: 70,
+                                                                                                    width: 90,
+                                                                                                    child: CachedNetworkImage(
+                                                                                                      cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                      fit: BoxFit.cover,
+                                                                                                      imageUrl: value.brandList[index]["categories"][i]["thumbnail"],
+                                                                                                      errorWidget: (context, url, error) => Image.asset(
+                                                                                                        downloadImage,
+                                                                                                        height: 70,
+                                                                                                        width: 90,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  )
+                                                                                                : Image.asset(dummyWishlistImage, height: 70, width: 90, fit: BoxFit.cover),
                                                                                             Padding(
                                                                                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                                                                               child: Center(
