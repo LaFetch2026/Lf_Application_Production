@@ -426,7 +426,7 @@ class AccountScreenState extends State<AccountScreen> {
                                             Get.back();
                                           },
                                           click2: () {
-                                            //  controller.callLogout();
+                                            controller.callLogout();
                                           },
                                           btncolor: colorPrimary,
                                           text:

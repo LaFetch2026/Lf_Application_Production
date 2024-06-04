@@ -66,7 +66,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                   ? Stack(
                       children: [
                         SingleChildScrollView(
-                          controller: productController.listController,
+                          //   controller: productController.listController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

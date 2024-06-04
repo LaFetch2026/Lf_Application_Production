@@ -35,12 +35,6 @@ class HomeController extends BaseController {
   RxInt tagId = 0.obs;
   RxInt current = 0.obs;
   ScrollController listController = ScrollController();
-  final PageController pageController = PageController(
-    initialPage: 0,
-  );
-  final PageController pageController1 = PageController(
-    initialPage: 0,
-  );
 
   @override
   void onInit() {
