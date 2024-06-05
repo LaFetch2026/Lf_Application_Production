@@ -20,6 +20,8 @@ import '../controller/order_controller.dart';
 import '../utils/constants.dart';
 import 'package:intl/intl.dart';
 
+import 'orders/trackorderscreen.dart';
+
 class OrderExchangeScreen extends StatefulWidget {
   const OrderExchangeScreen({super.key});
 
@@ -1324,18 +1326,15 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       bottom:
                                                                           30),
                                                                   child: SingleIconButton(
-                                                                      label:
-                                                                          "Track Order",
-                                                                      textColor:
-                                                                          btnTextColor,
-                                                                      backgroundColor:
-                                                                          whiteColor,
-                                                                      onPressed:
-                                                                          () {},
-                                                                      borderColor:
-                                                                          btnTextColor,
-                                                                      icon:
-                                                                          locationIcon),
+                                                                      label: "Track Order",
+                                                                      textColor: btnTextColor,
+                                                                      backgroundColor: whiteColor,
+                                                                      onPressed: () {
+                                                                        Get.to(
+                                                                            const TrackOrderScreen());
+                                                                      },
+                                                                      borderColor: btnTextColor,
+                                                                      icon: locationIcon),
                                                                 )
                                                               ] else if (value.orderList[
                                                                           index]
