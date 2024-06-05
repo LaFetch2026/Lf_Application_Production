@@ -213,7 +213,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                       imageUrl: brandController
                                                               .categoryList[
                                                           index]["thumbnail"],
-                                                      progressIndicatorBuilder:
+                                                      /*  progressIndicatorBuilder:
                                                           (context, url,
                                                                   downloadProgress) =>
                                                               Center(
@@ -221,7 +221,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                             value:
                                                                 downloadProgress
                                                                     .progress),
-                                                      ),
+                                                      ), */
                                                       errorWidget: (context,
                                                               url, error) =>
                                                           Image.asset(

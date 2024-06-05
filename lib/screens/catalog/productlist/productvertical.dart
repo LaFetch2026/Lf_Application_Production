@@ -87,11 +87,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                   maxNrOfCacheObjects: 100)),
               fit: BoxFit.cover,
               imageUrl: productController.productDetails["images"][i]["name"],
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
+              /*  progressIndicatorBuilder: (context, url, downloadProgress) =>
                   Center(
                 child:
                     CircularProgressIndicator(value: downloadProgress.progress),
-              ),
+              ), */
               errorWidget: (context, url, error) =>
                   Image.asset(downloadImage, fit: BoxFit.cover),
             ),

@@ -236,14 +236,14 @@ class BoardScreenState extends State<BoardScreen> {
                                                                               0]
                                                                           [
                                                                           "name"],
-                                                                      progressIndicatorBuilder: (context,
+                                                                      /*  progressIndicatorBuilder: (context,
                                                                               url,
                                                                               downloadProgress) =>
                                                                           Center(
                                                                         child: CircularProgressIndicator(
                                                                             value:
                                                                                 downloadProgress.progress),
-                                                                      ),
+                                                                      ), */
                                                                       errorWidget: (context,
                                                                               url,
                                                                               error) =>

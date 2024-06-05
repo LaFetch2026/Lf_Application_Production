@@ -358,14 +358,6 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                                             .wishlistList[
                                                                         index][
                                                                     "images"][0],
-                                                            progressIndicatorBuilder:
-                                                                (context, url,
-                                                                        downloadProgress) =>
-                                                                    Center(
-                                                              child: CircularProgressIndicator(
-                                                                  value: downloadProgress
-                                                                      .progress),
-                                                            ),
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>

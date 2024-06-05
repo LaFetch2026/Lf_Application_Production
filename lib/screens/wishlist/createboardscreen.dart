@@ -180,7 +180,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                           "images"]
                                                                       [
                                                                       0]["name"],
-                                                                  progressIndicatorBuilder:
+                                                                  /*  progressIndicatorBuilder:
                                                                       (context,
                                                                               url,
                                                                               downloadProgress) =>
@@ -188,7 +188,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     child: CircularProgressIndicator(
                                                                         value: downloadProgress
                                                                             .progress),
-                                                                  ),
+                                                                  ), */
                                                                   errorWidget: (context,
                                                                           url,
                                                                           error) =>

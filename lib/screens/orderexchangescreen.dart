@@ -339,9 +339,6 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                   cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                   fit: BoxFit.cover,
                                                                                   imageUrl: value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"],
-                                                                                  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                                                    child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                  ),
                                                                                   errorWidget: (context, url, error) => Image.asset(
                                                                                     downloadImage,
                                                                                     fit: BoxFit.cover,
@@ -1299,7 +1296,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       onPressedFirst: () {},
                                                                       onPressedSecond: () {
                                                                         Get.to(
-                                                                            const TrackOrderScreen());
+                                                                            TrackOrderScreen(
+                                                                          orderId:
+                                                                              value.orderList[index]["id"],
+                                                                        ));
                                                                       },
                                                                       secondIcon: locationIcon),
                                                                 )
@@ -1322,7 +1322,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       backgroundColor: whiteColor,
                                                                       onPressed: () {
                                                                         Get.to(
-                                                                            const TrackOrderScreen());
+                                                                            TrackOrderScreen(
+                                                                          orderId:
+                                                                              value.orderList[index]["id"],
+                                                                        ));
                                                                       },
                                                                       borderColor: btnTextColor,
                                                                       icon: locationIcon),

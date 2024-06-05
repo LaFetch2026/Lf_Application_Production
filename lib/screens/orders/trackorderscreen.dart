@@ -1,25 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../controller/order_controller.dart';
 import '../../utils/constants.dart';
 
 class TrackOrderScreen extends StatefulWidget {
-  const TrackOrderScreen({super.key});
+  final int orderId;
+  const TrackOrderScreen({super.key, required this.orderId});
 
   @override
   State<TrackOrderScreen> createState() => TrackOrderScreenState();
 }
 
 class TrackOrderScreenState extends State<TrackOrderScreen> {
-  late GoogleMapController googleMapController;
+  final orderController = Get.put(OrderController());
+  List<String> orderItem = ["CONFIRMED", "PACKED", "SHIPPED", "DELIVERED"];
+  List<String> trackOrderItem2 = [
+    "Order Confirmed",
+    "Packed",
+    "Shipped",
+    "Delivered"
+  ];
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => orderController.getOrderDetails(widget.orderId));
+    super.initState();
+  }
+  /*  late GoogleMapController googleMapController;
   static const CameraPosition initialCameraPosition = CameraPosition(
       target: LatLng(37.42796133580664, -122.085749655962), zoom: 10);
   Set<Marker> markers = {};
   double lat = 0.0;
-  double lng = 0.0;
+  double lng = 0.0; */
 
-  Future<Position> determinePosition() async {
+  /* Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -57,7 +75,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
     markers.clear();
     markers.add(Marker(
         markerId: const MarkerId('newLocation'), position: LatLng(lat, lng)));
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +94,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
+                  /*     Stack(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -156,6 +174,140 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                       ),
                     ],
                   ),
+                */
+                  Obx(() => orderController.isDetails.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : orderController.deliveriesList.isNotEmpty
+                          ? Container(
+                              color: whiteColor,
+                              width: double.infinity,
+                              child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 20, top: 16),
+                                        child: ListView.builder(
+                                            primary: false,
+                                            shrinkWrap: true,
+                                            physics: const ScrollPhysics(),
+                                            itemCount: orderItem.length,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (ctx, index) {
+                                              return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      orderController
+                                                              .deliveriesList
+                                                              .any((map) =>
+                                                                  map['status_details'] ==
+                                                                  orderItem[
+                                                                      index])
+                                                          ? Image.asset(
+                                                              greenCheckImage,
+                                                              height: 24,
+                                                              fit: BoxFit.cover)
+                                                          : Image.asset(
+                                                              whiteCircleImage,
+                                                              height: 24,
+                                                              fit:
+                                                                  BoxFit.cover),
+                                                      index == 3
+                                                          ? const SizedBox(
+                                                              height: 0,
+                                                            )
+                                                          : Container(
+                                                              width: 2,
+                                                              height: 60,
+                                                              color: greyBack,
+                                                            )
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 12),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        AppText(
+                                                          text: orderController
+                                                                  .deliveriesList
+                                                                  .any((map) =>
+                                                                      map['status_details'] ==
+                                                                      orderItem[
+                                                                          index])
+                                                              ? trackOrderItem2[
+                                                                  index]
+                                                              : trackOrderItem2[
+                                                                  index],
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: loginText,
+                                                          fontSize: 14.sp,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(top: 8),
+                                                          child: AppText(
+                                                            text: orderController
+                                                                    .deliveriesList
+                                                                    .any((map) =>
+                                                                        map['status_details'] ==
+                                                                        orderItem[
+                                                                            index])
+                                                                ? orderController
+                                                                            .deliveriesList[
+                                                                        index]
+                                                                    ["created"]
+                                                                : "",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 14.sp,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  )),
+                            )
+                          : const SizedBox(
+                              height: 0,
+                            )),
                 ],
               ),
             ),
