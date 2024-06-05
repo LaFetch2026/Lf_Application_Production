@@ -738,8 +738,10 @@ class ProductController extends BaseController {
             returnPolicyDetails = responseData["return_policy"];
           }
           print('Product Details====>${productDetails["images"]}');
-          inventoryList = responseData["inventories"];
-          sizeInventoryList = inventoryList
+          //  inventoryList = responseData["inventories"];
+          sizeInventoryList = responseData["inventories"]["size"];
+          colorInventoryList = responseData["inventories"]["color"];
+          /*  sizeInventoryList = inventoryList
               .where((i) =>
                   i['product_matrix']['product_matrix_group']['name'] == 'Size')
               .toList();
@@ -754,7 +756,7 @@ class ProductController extends BaseController {
               .where((i) =>
                   i['product_matrix']['product_matrix_group']['name'] ==
                   'Fabric')
-              .toList();
+              .toList(); */
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

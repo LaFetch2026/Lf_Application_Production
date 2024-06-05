@@ -225,8 +225,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: AppText(
-                                        text: i['product_matrix']['name']
-                                            .toString(),
+                                        text:
+                                            i['product_matrix_name'].toString(),
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: selectedProductSize.isNotEmpty &&
@@ -305,8 +305,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: AppText(
-                                    text:
-                                        i['product_matrix']['name'].toString(),
+                                    text: i['product_matrix_name'].toString(),
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: selectedProductColor.isNotEmpty &&
@@ -838,7 +837,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ],
                                     ),
                                   ),
-                                  productController.inventoryList.isNotEmpty
+                                  productController.sizeInventoryList.isNotEmpty
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -891,7 +890,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       color: colorSecondary,
                                     ),
                                   ),
-                                  productController.inventoryList.isNotEmpty
+                                  productController
+                                          .colorInventoryList.isNotEmpty
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
