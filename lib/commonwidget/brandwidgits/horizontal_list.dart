@@ -86,7 +86,7 @@ class HorizontalBrandList extends StatelessWidget {
                                                 fit: BoxFit.cover,
                                                 imageUrl: list[index]["images"]
                                                     [0]["name"],
-                                                progressIndicatorBuilder:
+                                                /*  progressIndicatorBuilder:
                                                     (context, url,
                                                             downloadProgress) =>
                                                         Center(
@@ -95,7 +95,7 @@ class HorizontalBrandList extends StatelessWidget {
                                                           value:
                                                               downloadProgress
                                                                   .progress),
-                                                ),
+                                                ), */
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(

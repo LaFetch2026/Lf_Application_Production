@@ -433,7 +433,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         child:
                                                                             Row(
                                                                           children: [
-                                                                            value.orderList[index]["order_lines"][0]["product"]["inventories"].isNotEmpty
+                                                                          /*   value.orderList[index]["order_lines"][0]["product"]["inventories"].isNotEmpty
                                                                                 ? value.orderList[index]["order_lines"][0]["product"]["inventories"].any((map) => map['product_matrix']['product_matrix_group']["name"] == "Size")
                                                                                     ? Padding(
                                                                                         padding: const EdgeInsets.only(right: 10),
@@ -451,7 +451,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                       )
                                                                                 : const SizedBox(
                                                                                     height: 0,
-                                                                                  ),
+                                                                                  ), */
                                                                             Expanded(
                                                                               flex: 1,
                                                                               child: Padding(

@@ -320,9 +320,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                         cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                         fit: BoxFit.cover,
                                                                                         imageUrl: value.orderList[index]["product"]["images"][0]["name"],
-                                                                                        progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                        /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                           child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                        ),
+                                                                                        ), */
                                                                                         errorWidget: (context, url, error) => Image.asset(
                                                                                           downloadImage,
                                                                                           fit: BoxFit.cover,
@@ -376,7 +376,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 padding: const EdgeInsets.symmetric(vertical: 5),
                                                                                 child: Row(
                                                                                   children: [
-                                                                                    value.orderList[index]["inventory"] != null
+                                                                                    /*   value.orderList[index]["inventory"] != null
                                                                                         ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
                                                                                             ? Container(
                                                                                                 color: whiteTextColor,
@@ -419,7 +419,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                               )
                                                                                         : const SizedBox(
                                                                                             height: 0,
-                                                                                          ),
+                                                                                          ), */
                                                                                     GestureDetector(
                                                                                       onTap: () {
                                                                                         scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
@@ -654,9 +654,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                     cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                     fit: BoxFit.cover,
                                                                                     imageUrl: productController.productList[index]["images"][0]["name"],
-                                                                                    progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                    /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                       child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                    ),
+                                                                                    ), */
                                                                                     errorWidget: (context, url, error) => Image.asset(
                                                                                       downloadImage,
                                                                                       fit: BoxFit.cover,

@@ -281,7 +281,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               "order_lines"][0]
                                                           ["product"]["images"]
                                                       [0]["name"],
-                                                  progressIndicatorBuilder:
+                                                  /*  progressIndicatorBuilder:
                                                       (context, url,
                                                               downloadProgress) =>
                                                           Center(
@@ -290,7 +290,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             value:
                                                                 downloadProgress
                                                                     .progress),
-                                                  ),
+                                                  ), */
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -370,7 +370,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       vertical: 5),
                                               child: Row(
                                                 children: [
-                                                  orderController
+                                                  /*   orderController
                                                           .orderDetails["order_lines"]
                                                               [0]["product"]
                                                               ["inventories"]
@@ -411,7 +411,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             )
                                                       : const SizedBox(
                                                           height: 0,
-                                                        ),
+                                                        ), */
                                                   Expanded(
                                                     flex: 1,
                                                     child: Padding(
@@ -1154,9 +1154,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                 cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                 fit: BoxFit.cover,
                                                                                 imageUrl: orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"],
-                                                                                progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                /* progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                   child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                ),
+                                                                                ), */
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   downloadImage,
                                                                                   fit: BoxFit.cover,
@@ -1214,7 +1214,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                             child:
                                                                                 Row(
                                                                               children: [
-                                                                                orderController.orderDetails["order_lines"][0]["product"]["inventories"].isNotEmpty
+                                                                                /*  orderController.orderDetails["order_lines"][0]["product"]["inventories"].isNotEmpty
                                                                                     ? orderController.orderDetails["order_lines"][0]["product"]["inventories"].any((map) => map['product_matrix']['product_matrix_group']["name"] == "Size")
                                                                                         ? Padding(
                                                                                             padding: const EdgeInsets.only(right: 10),
@@ -1232,7 +1232,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                           )
                                                                                     : const SizedBox(
                                                                                         height: 0,
-                                                                                      ),
+                                                                                      ), */
                                                                                 Padding(
                                                                                   padding: const EdgeInsets.only(right: 10),
                                                                                   child: AppText(
