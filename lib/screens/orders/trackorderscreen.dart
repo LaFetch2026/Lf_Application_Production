@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../utils/constants.dart';
@@ -18,7 +19,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
   double lat = 0.0;
   double lng = 0.0;
 
-  /* Future<Position> _determinePosition() async {
+  Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -48,7 +49,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
     Position position = await Geolocator.getCurrentPosition();
 
     return position;
-  } */
+  }
 
   void apiPosition() {
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
@@ -80,7 +81,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: SizedBox(
-                          height: 280,
+                          height: 500,
                           width: double.infinity,
                           child: GoogleMap(
                             initialCameraPosition: initialCameraPosition,
@@ -98,7 +99,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                       ),
                       Center(
                         child: Container(
-                          margin: const EdgeInsets.only(top: 220),
+                          margin: const EdgeInsets.only(top: 430),
                           height: 40,
                           width: 180,
                           decoration: BoxDecoration(
@@ -112,7 +113,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                           ),
                           child: GestureDetector(
                             onTap: () async {
-                              /*  Position position = await _determinePosition();
+                              Position position = await determinePosition();
 
                               googleMapController.animateCamera(
                                   CameraUpdate.newCameraPosition(CameraPosition(
@@ -129,7 +130,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                               lat = position.latitude;
                               lng = position.longitude;
 
-                              setState(() {}); */
+                              setState(() {});
                             },
                             child: Center(
                               child: Row(children: [

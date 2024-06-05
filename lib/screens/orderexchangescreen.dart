@@ -1287,30 +1287,21 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       bottom:
                                                                           20),
                                                                   child: DoubleIconButton(
-                                                                      firstText:
-                                                                          "Cancel Item",
-                                                                      secondText:
-                                                                          "Track Order",
-                                                                      firstTextColor:
-                                                                          btnTextColor,
-                                                                      secondTextColor:
-                                                                          btnTextColor,
-                                                                      firstBackgroundColor:
-                                                                          whiteColor,
-                                                                      secondBackgroundColor:
-                                                                          whiteColor,
-                                                                      firstBorderColor:
-                                                                          btnTextColor,
-                                                                      secondBorderColor:
-                                                                          btnTextColor,
-                                                                      firstIcon:
-                                                                          blackCrossImage,
-                                                                      onPressedFirst:
-                                                                          () {},
-                                                                      onPressedSecond:
-                                                                          () {},
-                                                                      secondIcon:
-                                                                          locationIcon),
+                                                                      firstText: "Cancel Item",
+                                                                      secondText: "Track Order",
+                                                                      firstTextColor: btnTextColor,
+                                                                      secondTextColor: btnTextColor,
+                                                                      firstBackgroundColor: whiteColor,
+                                                                      secondBackgroundColor: whiteColor,
+                                                                      firstBorderColor: btnTextColor,
+                                                                      secondBorderColor: btnTextColor,
+                                                                      firstIcon: blackCrossImage,
+                                                                      onPressedFirst: () {},
+                                                                      onPressedSecond: () {
+                                                                        Get.to(
+                                                                            const TrackOrderScreen());
+                                                                      },
+                                                                      secondIcon: locationIcon),
                                                                 )
                                                               ] else if (value.orderList[
                                                                           index]
