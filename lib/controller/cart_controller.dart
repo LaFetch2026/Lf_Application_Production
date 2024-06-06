@@ -91,14 +91,13 @@ class CartController extends BaseController {
     }
   }
 
-  callAddtoCart(int productId, int quantity, String page) async {
+  callAddtoCart(int quantity, String page) async {
     if (page == "quantity") {
       showLoading();
     }
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
-        "product_id": productId,
         "quantity": quantity,
       };
       var response =

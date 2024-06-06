@@ -2307,8 +2307,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 onPressed: () {
                                   if (productController
                                       .checkDetailsValidation()) {
-                                    productController.callAddtoCart(
-                                        widget.productId, 1);
+                                    productController.callAddtoCart(1);
                                     listClick(widgetKey);
                                   }
                                 },

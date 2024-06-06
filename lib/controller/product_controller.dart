@@ -883,12 +883,11 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(int productId, int quantity) async {
+  callAddtoCart(int quantity) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
-        "product_id": productId,
         "quantity": quantity,
         "inventory_id": sizeInventoryId.value == 0
             ? colorInventoryId.value

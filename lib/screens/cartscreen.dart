@@ -420,6 +420,42 @@ class CartScreenState extends State<CartScreen> {
                                                                                         : const SizedBox(
                                                                                             height: 0,
                                                                                           ), */
+                                                                                    value.orderList[index]["inventory"] != null
+                                                                                        ? Container(
+                                                                                            color: whiteTextColor,
+                                                                                            height: 40,
+                                                                                            width: 75,
+                                                                                            child: Row(
+                                                                                              children: [
+                                                                                                GestureDetector(
+                                                                                                  onTap: () {
+                                                                                                    scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                                          sizeList: sizeList,
+                                                                                                          selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : "",
+                                                                                                        ));
+                                                                                                  },
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
+                                                                                                    child: AppText(
+                                                                                                      text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
+                                                                                                      color: blackColor,
+                                                                                                      fontSize: 10.sp,
+                                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                                      fontWeight: FontWeight.w400,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                const ImageIcon(
+                                                                                                  AssetImage(dropdownImage),
+                                                                                                  color: nameText,
+                                                                                                  size: 16,
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          )
+                                                                                        : const SizedBox(
+                                                                                            height: 0,
+                                                                                          ),
                                                                                     GestureDetector(
                                                                                       onTap: () {
                                                                                         scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
@@ -427,7 +463,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                               selectedQty: value.orderList[index]["quantity"].toString(),
                                                                                               controller: controller,
                                                                                               onPressed: (p0) {
-                                                                                                controller.callAddtoCart(value.orderList[index]["product"]["id"], p0, "quantity");
+                                                                                                controller.callAddtoCart(p0, "quantity");
                                                                                               },
                                                                                             ));
                                                                                       },
@@ -520,7 +556,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     Get.back();
                                                                                   },
                                                                                   click2: () {
-                                                                                    value.callAddtoCart(value.orderList[index]["product"]["id"], 0, "remove");
+                                                                                    value.callAddtoCart(0, "remove");
                                                                                   },
                                                                                   btncolor: colorPrimary,
                                                                                   text: "Are you sure you want to remove this item?",
@@ -732,7 +768,7 @@ class CartScreenState extends State<CartScreen> {
                                                                         value, */
                                                                                 label: "Add to bag",
                                                                                 onPressed: () {
-                                                                                  controller.callAddtoCart(value.productList[index]["id"], 1, "addproduct");
+                                                                                  controller.callAddtoCart(1, "addproduct");
                                                                                 },
                                                                                 textColor: btnTextColor,
                                                                                 backgroundColor: whiteColor,
