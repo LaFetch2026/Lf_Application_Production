@@ -52,7 +52,7 @@ class WishlistScreenState extends State<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteTextColor,
+      backgroundColor: whiteColor,
       body: Column(
         children: [
           HomeAppbar(
@@ -192,7 +192,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   child: SingleButton(
                                       label: "Continue Shopping",
                                       textColor: btnTextColor,
-                                      backgroundColor: whiteTextColor,
+                                      backgroundColor: whiteColor,
                                       onPressed: () {
                                         widget.onPressed?.call();
                                       },

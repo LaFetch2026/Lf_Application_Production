@@ -230,33 +230,42 @@ class SearchScreenState extends State<SearchScreen> {
                                           children: [
                                             for (var product
                                                 in controller.recentSearchList)
-                                              Container(
-                                                height: 33,
-                                                margin: const EdgeInsets.only(
-                                                    right: 5),
-                                                decoration: BoxDecoration(
-                                                    color: whiteColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    border: Border.all(
-                                                        color: btnTextColor,
-                                                        width: 1)),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 7),
-                                                  child: Text(
-                                                    product["search_string"],
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      color: blackColor,
-                                                      fontSize: 12.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Get.to(ProductDetailsScreen(
+                                                      productId:
+                                                          product["product"]
+                                                              ["id"]));
+                                                },
+                                                child: Container(
+                                                  height: 33,
+                                                  margin: const EdgeInsets.only(
+                                                      right: 5),
+                                                  decoration: BoxDecoration(
+                                                      color: whiteColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      border: Border.all(
+                                                          color: btnTextColor,
+                                                          width: 1)),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 7),
+                                                    child: Text(
+                                                      product["search_string"],
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: blackColor,
+                                                        fontSize: 12.sp,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -772,7 +781,9 @@ class SearchScreenState extends State<SearchScreen> {
                                       onKey: (value) {
                                         print(value);
                                         if (value is RawKeyDownEvent) {
-                                          controller.getSearchData();
+                                          setState(() {
+                                            isSearch = false;
+                                          });
                                         }
                                       },
                                       child: TextField(

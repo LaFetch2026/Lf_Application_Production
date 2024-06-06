@@ -129,7 +129,9 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productList = responseData["data"];
-          total.value = responseData["meta"]["total"];
+          if (type == "relevant") {
+            total.value = responseData["meta"]["total"];
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

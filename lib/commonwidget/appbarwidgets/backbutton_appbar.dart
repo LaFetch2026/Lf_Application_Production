@@ -26,7 +26,7 @@ class BackButtonAppbar extends StatelessWidget {
     return Container(
       height: 80,
       width: MediaQuery.of(context).size.width,
-      color: backgroundColor,
+      decoration: BoxDecoration(color: backgroundColor),
       child: Column(children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
