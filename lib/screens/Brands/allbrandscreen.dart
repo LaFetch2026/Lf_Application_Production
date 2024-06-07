@@ -287,8 +287,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       .push(MaterialPageRoute(
                                           builder: (BuildContext context) =>
                                               ProductDetailsScreen(
-                                                productId: p0,
-                                              )))
+                                                  productId: p0, type: "add")))
                                       .then((value) => setState(
                                             () {
                                               productController
@@ -547,8 +546,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     .push(MaterialPageRoute(
                                         builder: (BuildContext context) =>
                                             ProductDetailsScreen(
-                                              productId: p0,
-                                            )))
+                                                productId: p0, type: "add")))
                                     .then((value) => setState(
                                           () {
                                             productController

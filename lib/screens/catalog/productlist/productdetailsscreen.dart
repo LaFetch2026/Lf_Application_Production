@@ -20,7 +20,9 @@ import '../../cartscreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
-  const ProductDetailsScreen({super.key, required this.productId});
+  final String type;
+  const ProductDetailsScreen(
+      {super.key, required this.productId, required this.type});
 
   @override
   State<ProductDetailsScreen> createState() => ProductDetailsScreenState();
@@ -1951,8 +1953,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   builder:
                                                       (BuildContext context) =>
                                                           ProductDetailsScreen(
-                                                            productId: p0,
-                                                          )));
+                                                              productId: p0,
+                                                              type: "add")));
                                         },
                                       ),
                                       const Divider(
@@ -2208,8 +2210,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   builder:
                                                       (BuildContext context) =>
                                                           ProductDetailsScreen(
-                                                            productId: p0,
-                                                          )));
+                                                              productId: p0,
+                                                              type: "add")));
                                         },
                                       ),
                                       const Divider(
@@ -2302,7 +2304,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ["name"],
                                         fit: BoxFit.fitHeight)),
                             getSingleButton(
-                                label: "Add to bag",
+                                label: widget.type == "add"
+                                    ? "Add to bag"
+                                    : "Move to bag",
                                 textColor: whiteBorderColor,
                                 backgroundColor: colorPrimary,
                                 controller: productController,

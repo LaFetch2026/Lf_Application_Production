@@ -91,7 +91,8 @@ class CartController extends BaseController {
     }
   }
 
-  callAddtoCart(int quantity, String page) async {
+  callAddtoCart(
+      int quantity, String page, int inventoryId, int productId) async {
     if (page == "quantity") {
       showLoading();
     }
@@ -99,6 +100,8 @@ class CartController extends BaseController {
     try {
       final Map<String, dynamic> sendData = {
         "quantity": quantity,
+        "inventory_id": inventoryId,
+        "product_id": productId
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),

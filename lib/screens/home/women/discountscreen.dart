@@ -228,8 +228,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           .push(MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   ProductDetailsScreen(
-                                    productId: p0,
-                                  )))
+                                      productId: p0, type: "add")))
                           .then((value) => setState(
                                 () {
                                   productController.expressHasnextpage.value =
@@ -258,8 +257,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           .push(MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   ProductDetailsScreen(
-                                    productId: p0,
-                                  )))
+                                      productId: p0, type: "add")))
                           .then((value) => setState(
                                 () {
                                   productController.tagsHasnextpage.value =

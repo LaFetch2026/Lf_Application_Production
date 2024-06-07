@@ -24,7 +24,7 @@ class ProductHorizontalScreen extends StatefulWidget {
 }
 
 class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
-  final productController = Get.find<ProductController>();
+  final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -87,9 +87,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                       return GestureDetector(
                                         onTap: () {
                                           Get.to(ProductDetailsScreen(
-                                            productId: productController
-                                                .productList[index]["id"],
-                                          ));
+                                              productId: productController
+                                                  .productList[index]["id"],
+                                              type: "add"));
                                         },
                                         child: Column(
                                           crossAxisAlignment:

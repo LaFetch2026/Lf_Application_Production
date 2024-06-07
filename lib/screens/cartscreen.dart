@@ -463,7 +463,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                               selectedQty: value.orderList[index]["quantity"].toString(),
                                                                                               controller: controller,
                                                                                               onPressed: (p0) {
-                                                                                                controller.callAddtoCart(p0, "quantity");
+                                                                                                controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["id"]);
                                                                                               },
                                                                                             ));
                                                                                       },
@@ -556,7 +556,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     Get.back();
                                                                                   },
                                                                                   click2: () {
-                                                                                    value.callAddtoCart(0, "remove");
+                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["id"]);
                                                                                   },
                                                                                   btncolor: colorPrimary,
                                                                                   text: "Are you sure you want to remove this item?",
@@ -658,11 +658,12 @@ class CartScreenState extends State<CartScreen> {
                                                                 children: [
                                                                   GestureDetector(
                                                                     onTap: () {
-                                                                      Get.to(
-                                                                          ProductDetailsScreen(
-                                                                        productId:
-                                                                            value.productList[index]["id"],
-                                                                      ));
+                                                                      Get.to(ProductDetailsScreen(
+                                                                          productId: value.productList[index]
+                                                                              [
+                                                                              "id"],
+                                                                          type:
+                                                                              "add"));
                                                                     },
                                                                     child:
                                                                         AnimatedContainer(
@@ -764,11 +765,10 @@ class CartScreenState extends State<CartScreen> {
                                                                             padding:
                                                                                 const EdgeInsets.only(top: 10),
                                                                             child: getSmallButton(
-                                                                                /*   controller:
-                                                                        value, */
                                                                                 label: "Add to bag",
                                                                                 onPressed: () {
-                                                                                  controller.callAddtoCart(1, "addproduct");
+                                                                                  Get.to(ProductDetailsScreen(productId: value.productList[index]["id"], type: "add"));
+                                                                                  // controller.callAddtoCart(1, "addproduct");
                                                                                 },
                                                                                 textColor: btnTextColor,
                                                                                 backgroundColor: whiteColor,

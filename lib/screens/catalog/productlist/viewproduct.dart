@@ -57,7 +57,9 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                       children: [
                         Obx(
                           () => AppText(
-                            text: "${productController.total.value} items",
+                            text: productController.total.value == 1
+                                ? "${productController.total.value} item"
+                                : "${productController.total.value} items",
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                             color: textHintColor,

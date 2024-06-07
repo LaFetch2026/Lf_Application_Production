@@ -115,10 +115,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         return GestureDetector(
                                           onTap: () {
                                             Get.to(ProductDetailsScreen(
-                                              productId: productController
-                                                      .productCategoryList[
-                                                  index]["id"],
-                                            ));
+                                                productId: productController
+                                                        .productCategoryList[
+                                                    index]["id"],
+                                                type: "add"));
                                           },
                                           child: Column(
                                             crossAxisAlignment:

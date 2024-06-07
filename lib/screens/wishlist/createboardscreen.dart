@@ -138,10 +138,10 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                             GestureDetector(
                                               onTap: () {
                                                 Get.to(ProductDetailsScreen(
-                                                  productId:
-                                                      value.wishListProduct[
-                                                          index]["id"],
-                                                ));
+                                                    productId:
+                                                        value.wishListProduct[
+                                                            index]["id"],
+                                                    type: "add"));
                                               },
                                               child: Column(
                                                 crossAxisAlignment:

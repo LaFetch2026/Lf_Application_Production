@@ -235,7 +235,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                   Get.to(ProductDetailsScreen(
                                                       productId:
                                                           product["product"]
-                                                              ["id"]));
+                                                              ["id"],
+                                                      type: "add"));
                                                 },
                                                 child: Container(
                                                   height: 33,
@@ -324,9 +325,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                     GestureDetector(
                                                       onTap: () {
                                                         Get.to(ProductDetailsScreen(
-                                                            productId: productController
-                                                                    .mostSeachList[
-                                                                index]["id"]));
+                                                            productId:
+                                                                productController
+                                                                        .mostSeachList[
+                                                                    index]["id"],
+                                                            type: "add"));
                                                       },
                                                       child: SizedBox(
                                                         height: 100,
@@ -720,8 +723,8 @@ class SearchScreenState extends State<SearchScreen> {
                                           .push(MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   ProductDetailsScreen(
-                                                    productId: p0,
-                                                  )))
+                                                      productId: p0,
+                                                      type: "add")))
                                           .then((value) => setState(
                                                 () {
                                                   productController

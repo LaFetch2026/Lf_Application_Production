@@ -96,11 +96,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       builder: (BuildContext
                                                               context) =>
                                                           ProductDetailsScreen(
-                                                            productId:
-                                                                productController
-                                                                        .productExpressBrandList[
-                                                                    index]["id"],
-                                                          )))
+                                                              productId: productController
+                                                                      .productExpressBrandList[
+                                                                  index]["id"],
+                                                              type: "add")))
                                                   .then((value) => setState(
                                                         () {
                                                           productController

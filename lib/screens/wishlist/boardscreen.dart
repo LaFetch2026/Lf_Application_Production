@@ -217,10 +217,10 @@ class BoardScreenState extends State<BoardScreen> {
                                                   onTap: () {
                                                     Get.to(() =>
                                                         ProductDetailsScreen(
-                                                          productId: value
-                                                                  .wishListProduct[
-                                                              index]["id"],
-                                                        ));
+                                                            productId: value
+                                                                    .wishListProduct[
+                                                                index]["id"],
+                                                            type: "add"));
                                                   },
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -556,12 +556,19 @@ class BoardScreenState extends State<BoardScreen> {
                                                                   setState(
                                                                       () {});
                                                                 }
-                                                                wishlistController.callMovetoCart(
+                                                                /*   wishlistController.callMovetoCart(
                                                                     widget
                                                                         .boardId,
                                                                     value.wishListProduct[
                                                                             index]
-                                                                        ["id"]);
+                                                                        ["id"]); */
+                                                                Get.to(ProductDetailsScreen(
+                                                                    productId:
+                                                                        value.wishListProduct[index]
+                                                                            [
+                                                                            "id"],
+                                                                    type:
+                                                                        "move"));
                                                               },
                                                               width: 152),
                                                         ),
