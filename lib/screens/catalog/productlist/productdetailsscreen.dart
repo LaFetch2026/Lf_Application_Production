@@ -589,7 +589,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 cartIconWhite)),
                                                         badgeOptions:
                                                             const BadgeOptions(
-                                                          active: true,
+                                                          active: false,
                                                           backgroundColor:
                                                               Colors.red,
                                                         ),
