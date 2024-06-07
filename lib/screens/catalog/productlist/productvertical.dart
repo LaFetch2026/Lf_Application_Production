@@ -73,25 +73,15 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
           i++) {
         if (isImage(
             productController.productList[index]["images"][i]["name"])) {
-          print(
-              "show video=========${isImage(productController.productList[index]["images"][i]["name"])}");
-
           list.add(Container(
             color: colorSecondary,
-            child: /*  Image.network(
-                  productController.productList[index]["images"][i]["name"],
-                  fit: BoxFit.cover) */
-                CachedNetworkImage(
+            child: CachedNetworkImage(
               cacheManager: CacheManager(Config("customCacheKey",
                   stalePeriod: const Duration(days: 15),
                   maxNrOfCacheObjects: 100)),
               fit: BoxFit.cover,
-              imageUrl: productController.productDetails["images"][i]["name"],
-              /*  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(
-                child:
-                    CircularProgressIndicator(value: downloadProgress.progress),
-              ), */
+              imageUrl: productController.productList[index]["images"][i]
+                  ["name"],
               errorWidget: (context, url, error) =>
                   Image.asset(downloadImage, fit: BoxFit.cover),
             ),
@@ -112,14 +102,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
               future: _initializeVideoPlayerFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  // If the VideoPlayerController has finished initialization, use
-                  // the data it provides to limit the aspect ratio of the video.
                   return Obx(() => Stack(
                         fit: StackFit.expand,
                         children: [
                           AspectRatio(
                             aspectRatio: videoController.value.aspectRatio,
-                            // Use the VideoPlayer widget to display the video.
                             child: VideoPlayer(videoController),
                           ),
                           IconButton(
@@ -136,7 +123,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                 videoController.pause();
                                 productController.isVideoPlaying.value = true;
                               } else {
-                                // If the video is paused, play it.
                                 productController.isVideoPlaying.value = false;
                                 videoController.play();
                               }
@@ -145,8 +131,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                         ],
                       ));
                 } else {
-                  // If the VideoPlayerController is still initializing, show a
-                  // loading spinner.
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
