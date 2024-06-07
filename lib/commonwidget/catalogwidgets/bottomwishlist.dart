@@ -107,9 +107,9 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                               ),
                                         Container(
                                           width: double.infinity,
-                                          color: text ==
+                                          color: id ==
                                                   widget.wishlistList[index]
-                                                      ["name"]
+                                                      ["id"]
                                               ? blackColor
                                               : whiteColor,
                                           child: Padding(
@@ -120,9 +120,9 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                                   ["name"],
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color: text ==
+                                                color: id ==
                                                         widget.wishlistList[
-                                                            index]["name"]
+                                                            index]["id"]
                                                     ? whiteColor
                                                     : nameText,
                                                 fontFamily:
