@@ -463,7 +463,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                               selectedQty: value.orderList[index]["quantity"].toString(),
                                                                                               controller: controller,
                                                                                               onPressed: (p0) {
-                                                                                                controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["id"]);
+                                                                                                controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
                                                                                               },
                                                                                             ));
                                                                                       },
@@ -556,7 +556,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     Get.back();
                                                                                   },
                                                                                   click2: () {
-                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["id"]);
+                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
                                                                                   },
                                                                                   btncolor: colorPrimary,
                                                                                   text: "Are you sure you want to remove this item?",
@@ -658,12 +658,19 @@ class CartScreenState extends State<CartScreen> {
                                                                 children: [
                                                                   GestureDetector(
                                                                     onTap: () {
-                                                                      Get.to(ProductDetailsScreen(
-                                                                          productId: value.productList[index]
-                                                                              [
-                                                                              "id"],
-                                                                          type:
-                                                                              "add"));
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .push(
+                                                                              MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], type: "add")))
+                                                                          .then((value) => setState(
+                                                                                () {
+                                                                                  productController.hasnextpage.value = true;
+                                                                                  productController.loadMore.value = false;
+                                                                                  productController.isProduct.value = false;
+                                                                                  productController.page.value = 1;
+                                                                                  productController.getProductData("relevant");
+                                                                                },
+                                                                              ));
                                                                     },
                                                                     child:
                                                                         AnimatedContainer(
@@ -767,7 +774,15 @@ class CartScreenState extends State<CartScreen> {
                                                                             child: getSmallButton(
                                                                                 label: "Add to bag",
                                                                                 onPressed: () {
-                                                                                  Get.to(ProductDetailsScreen(productId: value.productList[index]["id"], type: "add"));
+                                                                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], type: "add"))).then((value) => setState(
+                                                                                        () {
+                                                                                          productController.hasnextpage.value = true;
+                                                                                          productController.loadMore.value = false;
+                                                                                          productController.isProduct.value = false;
+                                                                                          productController.page.value = 1;
+                                                                                          productController.getProductData("relevant");
+                                                                                        },
+                                                                                      ));
                                                                                   // controller.callAddtoCart(1, "addproduct");
                                                                                 },
                                                                                 textColor: btnTextColor,

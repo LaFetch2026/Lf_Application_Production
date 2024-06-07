@@ -18,12 +18,12 @@ class ViewProductScreen extends StatefulWidget {
 
 class ViewProductScreenState extends State<ViewProductScreen> {
   final productController = Get.put(ProductController());
-  @override
+  /* @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     super.initState();
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {

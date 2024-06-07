@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/catalog_appbar.dart';
 import 'package:lafetch/screens/catalog/women_catalog.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 import 'cartscreen.dart';
 
@@ -17,6 +18,14 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class CatalogScreenState extends State<CatalogScreen> {
+  final productController = Get.put(ProductController());
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

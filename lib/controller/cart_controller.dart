@@ -101,7 +101,8 @@ class CartController extends BaseController {
       final Map<String, dynamic> sendData = {
         "quantity": quantity,
         "inventory_id": inventoryId,
-        "product_id": productId
+        "product_id": productId,
+        "order_id": cartId.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
@@ -119,6 +120,7 @@ class CartController extends BaseController {
         } else if (page == "remove") {
           print("remove");
           Get.close(1);
+          orderList.clear();
           getCartData();
         } else if (page == "quantity") {
           getSnackBar("Quantity updated");
