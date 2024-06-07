@@ -15,7 +15,7 @@ class BrandController extends BaseController {
   RxInt page = 1.obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
-  ScrollController listController = ScrollController();
+  ScrollController brandListController = ScrollController();
   RxString queryText = "".obs;
   RxBool isBrand = false.obs;
   List brandList = [].obs;

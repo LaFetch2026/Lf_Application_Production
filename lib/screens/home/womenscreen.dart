@@ -44,7 +44,7 @@ class WomenScreen extends StatelessWidget {
                               physics: const BouncingScrollPhysics(),
                               itemCount: homeController.tagsList.length,
                               scrollDirection: Axis.horizontal,
-                              controller: homeController.listController,
+                              controller: homeController.tagsController,
                               itemBuilder: (ctx, index) {
                                 return Column(
                                   children: [

@@ -34,12 +34,12 @@ class HomeController extends BaseController {
   RxInt page = 1.obs;
   RxInt tagId = 0.obs;
   RxInt current = 0.obs;
-  ScrollController listController = ScrollController();
+  ScrollController tagsController = ScrollController();
 
   @override
   void onInit() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      listController.addListener(() {
+      tagsController.addListener(() {
         fetchMoreTagsData();
         update();
       });

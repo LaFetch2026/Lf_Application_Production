@@ -433,16 +433,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.colorInventoryId.value = 0;
     productController.fabricInventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
+      productController.frequentlyListController.addListener(() {
         productController.fetchMoreData("frequently-bought");
         productController.update();
       });
     });
-    productController.hasnextpage.value = true;
-    productController.loadMore.value = false;
-    productController.isProduct.value = false;
-    productController.page.value = 1;
-    productController.inventoryId.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.hasnextpage.value = true;
+      productController.loadMore.value = false;
+      productController.isProduct.value = false;
+      productController.page.value = 1;
+      productController.inventoryId.value = 0;
+    });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("frequently-bought"));
     WidgetsBinding.instance.addPostFrameCallback(
@@ -1900,8 +1902,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       HorizontalHomeList(
                                         text: "Recommended for you",
                                         height: 250,
-                                        controller:
-                                            productController.listController,
+                                        controller: productController
+                                            .frequentlyListController,
                                         leftPadding: 0,
                                         list: productController.recommendedList,
                                         visibleExpress: true,

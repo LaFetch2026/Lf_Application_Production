@@ -43,12 +43,10 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.hasnextpage.value = true;
-        productController.loadMore.value = false;
-        productController.isProduct.value = false;
-        productController.page.value = 1;
-      });
+      productController.hasnextpage.value = true;
+      productController.loadMore.value = false;
+      productController.isProduct.value = false;
+      productController.page.value = 1;
     });
     super.initState();
   }

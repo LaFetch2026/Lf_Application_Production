@@ -40,7 +40,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
       filter = "All";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      orderController.listController.addListener(() {
+      orderController.orderListController.addListener(() {
         orderController.fetchMoreData();
         orderController.update();
       });
@@ -87,7 +87,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                controller: orderController.listController,
+                controller: orderController.orderListController,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -285,7 +285,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                   builder: (value) => ListView.builder(
                                       primary: false,
                                       shrinkWrap: true,
-                                      controller: value.listController,
+                                      controller: value.orderListController,
                                       physics: const ScrollPhysics(),
                                       itemCount: value.orderList.length,
                                       padding: EdgeInsets.zero,

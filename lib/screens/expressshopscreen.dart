@@ -28,7 +28,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      brandController.listController.addListener(() {
+      brandController.brandListController.addListener(() {
         brandController.fetchMoreData();
         brandController.update();
       });
@@ -122,7 +122,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                   physics: const BouncingScrollPhysics(),
                                   itemCount: value.brandList.length + 1,
                                   scrollDirection: Axis.horizontal,
-                                  controller: value.listController,
+                                  controller: value.brandListController,
                                   itemBuilder: (ctx, index) {
                                     return Column(
                                       mainAxisAlignment:

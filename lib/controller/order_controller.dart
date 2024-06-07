@@ -22,7 +22,7 @@ class OrderController extends BaseController {
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
   RxInt status = 0.obs;
-  ScrollController listController = ScrollController();
+  ScrollController orderListController = ScrollController();
   final searchController = TextEditingController();
   final List filterList = [
     'All',

@@ -31,7 +31,7 @@ class WishlistController extends BaseController {
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
-  ScrollController listController = ScrollController();
+  ScrollController wishlistListController = ScrollController();
   RxBool pLoadMore = false.obs;
   RxBool pHasnextpage = true.obs;
   RxInt productPage = 1.obs;

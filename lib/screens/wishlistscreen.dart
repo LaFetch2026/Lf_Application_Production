@@ -30,7 +30,7 @@ class WishlistScreenState extends State<WishlistScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      wishlistController.listController.addListener(() {
+      wishlistController.wishlistListController.addListener(() {
         wishlistController.fetchMoreData();
         wishlistController.update();
       });
@@ -68,7 +68,7 @@ class WishlistScreenState extends State<WishlistScreen> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              controller: wishlistController.listController,
+              controller: wishlistController.wishlistListController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -278,8 +278,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
-                                    controller:
-                                        wishlistController.listController,
+                                    controller: wishlistController
+                                        .wishlistListController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.7,

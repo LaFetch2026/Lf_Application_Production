@@ -69,7 +69,7 @@ class SearchScreenState extends State<SearchScreen> {
   void initState() {
     controller.searchController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
+      productController.recentListController.addListener(() {
         productController.fetchMoreData("recently-viewed");
         productController.update();
       });
@@ -711,7 +711,7 @@ class SearchScreenState extends State<SearchScreen> {
                                     text: "Items you have viewed",
                                     height: 250,
                                     controller:
-                                        productController.listController,
+                                        productController.recentListController,
                                     visibleExpress: false,
                                     textColor: bottomnavBack,
                                     fontFamily: "Franklin Gothic Regular",

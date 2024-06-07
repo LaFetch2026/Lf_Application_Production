@@ -62,7 +62,7 @@ class BrandsScreenState extends State<BrandsScreen> {
     }
     brandController.text.value = "Expand All";
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      brandController.listController.addListener(() {
+      brandController.brandListController.addListener(() {
         brandController.fetchMoreData();
         brandController.update();
       });
@@ -167,7 +167,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    controller: brandController.listController,
+                    controller: brandController.brandListController,
                     child: GestureDetector(
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode());
@@ -250,7 +250,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                         builder: (value) => ListView.builder(
                                             primary: false,
                                             shrinkWrap: true,
-                                            controller: value.listController,
+                                            controller:
+                                                value.brandListController,
                                             physics: const ScrollPhysics(),
                                             itemCount: value.brandList.length,
                                             padding: EdgeInsets.zero,
