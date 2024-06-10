@@ -7,8 +7,10 @@ import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
+import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
+import '../commonwidget/common_widgets.dart';
 import '../commonwidget/singlebtn.dart';
 import '../controller/cart_controller.dart';
 import '../controller/order_controller.dart';
@@ -132,224 +134,226 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Obx(
-                    () => shipController.isDetails.value
-                        ? const Padding(
-                            padding: EdgeInsets.all(40.0),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
-                        : shipController.addressDetails != null &&
-                                shipController.addressDetails != ""
-                            ? Container(
-                                color: whiteColor,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 10,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 5),
-                                              child: AppText(
-                                                text: shipController
-                                                            .addressDetails[
-                                                        "name"] ??
-                                                    "",
-                                                color: loginText,
-                                                fontSize: 16.sp,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                  Obx(() => shipController.isDetails.value
+                      ? const Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      : shipController.addressDetails != null &&
+                              shipController.addressDetails != ""
+                          ? Container(
+                              color: whiteColor,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 14, vertical: 5),
+                                            child: AppText(
+                                              text: shipController
+                                                      .addressDetails["name"] ??
+                                                  "",
+                                              color: loginText,
+                                              fontSize: 16.sp,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                          ),
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            margin:
+                                                const EdgeInsets.only(right: 5),
+                                            width: 80,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              color: whiteBorderColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                  color: btnTextColor,
+                                                  width: 1),
                                             ),
-                                            child: AnimatedContainer(
-                                              duration: const Duration(
-                                                  milliseconds: 300),
-                                              margin: const EdgeInsets.only(
-                                                  right: 5),
-                                              width: 80,
-                                              height: 20,
-                                              decoration: BoxDecoration(
-                                                color: whiteBorderColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                border: Border.all(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            ChangeAddressScreen(
+                                                              cartId:
+                                                                  widget.cartId,
+                                                            )))
+                                                    .then((value) => setState(
+                                                          () {},
+                                                        ));
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                child: Center(
+                                                  child: AppText(
+                                                    text: "Change",
                                                     color: btnTextColor,
-                                                    width: 1),
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.of(context)
-                                                      .push(MaterialPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              ChangeAddressScreen(
-                                                                cartId: widget
-                                                                    .cartId,
-                                                              )))
-                                                      .then((value) => setState(
-                                                            () {},
-                                                          ));
-                                                },
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 5),
-                                                  child: Center(
-                                                    child: AppText(
-                                                      text: "Change",
-                                                      color: btnTextColor,
-                                                      fontSize: 12.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                                    fontSize: 12.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          )
-                                        ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 2),
+                                      child: AppText(
+                                        text: shipController
+                                                .addressDetails["address"] ??
+                                            "",
+                                        color: greyTextColor,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 2),
-                                        child: AppText(
-                                          text: shipController
-                                                  .addressDetails["address"] ??
-                                              "",
-                                          color: greyTextColor,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 2),
+                                      child: AppText(
+                                        text:
+                                            "${shipController.addressDetails["locality"] ?? ""} ,${shipController.addressDetails["city"] != null ? shipController.addressDetails["city"]["name"] : ""}",
+                                        color: greyTextColor,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 2),
-                                        child: AppText(
-                                          text:
-                                              "${shipController.addressDetails["locality"] ?? ""} ,${shipController.addressDetails["city"] != null ? shipController.addressDetails["city"]["name"] : ""}",
-                                          color: greyTextColor,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 2),
+                                      child: AppText(
+                                        text: shipController
+                                                .addressDetails["type"] ??
+                                            "",
+                                        color: loginText,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 2),
-                                        child: AppText(
-                                          text: shipController
-                                                  .addressDetails["type"] ??
-                                              "",
-                                          color: loginText,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 2),
+                                      child: AppText(
+                                        text: shipController
+                                            .addressDetails["zip"]
+                                            .toString(),
+                                        color: loginText,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 2),
-                                        child: AppText(
-                                          text: shipController
-                                              .addressDetails["zip"]
-                                              .toString(),
-                                          color: loginText,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
                                 ),
-                              )
-                            : const SizedBox(
-                                height: 0,
                               ),
-                  ),
-                  /*    Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(ShippingAddressScreen(
-                          addressId: widget.addressId,
-                          cartId: widget.cartId,
-                        ));
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            )
+                          : Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: AppText(
-                                    text: "Shipping Address",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: loginText,
-                                    fontSize: 16.sp,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(ShippingAddressScreen(
+                                        addressId: widget.addressId,
+                                        cartId: widget.cartId,
+                                      ));
+                                    },
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          flex: 1,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16),
+                                                child: AppText(
+                                                  text: "Shipping Address",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: loginText,
+                                                  fontSize: 16.sp,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 16, top: 2),
+                                                child: AppText(
+                                                  text:
+                                                      "Add a shipping address",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: greyTextColor,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 22),
+                                          child: Image.asset(rightArrowImage,
+                                              color: loginText,
+                                              height: 18,
+                                              width: 18,
+                                              fit: BoxFit.cover),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 16, top: 2),
-                                  child: AppText(
-                                    text: "Add a shipping address",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: greyTextColor,
-                                    fontSize: 14.sp,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 16),
+                                  child: Container(
+                                    width: double.infinity,
+                                    color: colorSecondary,
+                                    height: 1,
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 22),
-                            child: Image.asset(rightArrowImage,
-                                color: loginText,
-                                height: 18,
-                                width: 18,
-                                fit: BoxFit.cover),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                 */ /*  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 16),
-                    child: Container(
-                      width: double.infinity,
-                      color: colorSecondary,
-                      height: 1,
-                    ),
-                  ), */
+                            )),
                   /*   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
@@ -843,19 +847,23 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         textColor: whiteBorderColor,
                         backgroundColor: colorPrimary,
                         onPressed: () {
-                          var options = {
-                            'key': razorPayKey,
-                            'amount': double.parse(widget.amount) * 100,
-                            'name': 'Lafetch',
-                            'order_id': widget.orderId,
-                            'description': 'Lafetch Customer',
-                            'timeout': 60,
-                            'prefill': {
-                              'contact': '9002973232',
-                              'email': 'sonamagrahari11@gmail.com'
-                            }
-                          };
-                          razorpay.open(options);
+                          if (shipController.addressId.value != 0) {
+                            var options = {
+                              'key': razorPayKey,
+                              'amount': double.parse(widget.amount) * 100,
+                              'name': 'Lafetch',
+                              'order_id': widget.orderId,
+                              'description': 'Lafetch Customer',
+                              'timeout': 60,
+                              'prefill': {
+                                'contact': '9002973232',
+                                'email': 'sonamagrahari11@gmail.com'
+                              }
+                            };
+                            razorpay.open(options);
+                          } else {
+                            getSnackBar("Add Address");
+                          }
                         },
                         borderColor: colorPrimary),
                   ),

@@ -144,6 +144,49 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     return list;
   }
 
+  /*   List<Widget> getListSwiper(int index) {
+    List<Widget> list = [];
+    if (productController.productList[index]["images"].isNotEmpty) {
+      for (var i = 0;
+          i < productController.productList[index]["images"].length;
+          i++) {
+        productController.curr.value = 0;
+        if (isImage(
+            productController.productList[index]["images"][i]['name'])) {
+          list.add(Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              height: 6,
+              width: 6,
+              margin: const EdgeInsets.symmetric(
+                horizontal: 5,
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: (i == productController.curr.value)
+                      ? colorPrimary
+                      : colorSecondary),
+            ),
+          ));
+        } else {
+          list.add(Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: AppText(
+              text: '\u{25B6}',
+              fontSize: 14,
+              color: (i == productController.curr.value)
+                  ? colorPrimary
+                  : colorSecondary,
+            ),
+          ));
+        }
+      }
+    }
+    return list;
+  }
+ */
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
