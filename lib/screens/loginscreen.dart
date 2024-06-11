@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,7 +12,6 @@ import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
 import 'package:lafetch/utils/constants.dart';
-
 import '../commonwidget/app_text.dart';
 import '../controller/login_controller.dart';
 
@@ -26,6 +26,8 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final loginController = Get.put(LoginController());
   Color appbarColor = colorPrimary;
+  Map<String, dynamic>? fbData;
+  AccessToken? accessToken;
 
   @override
   void initState() {
@@ -36,6 +38,21 @@ class LoginScreenState extends State<LoginScreen> {
     }
     setState(() {});
     super.initState();
+  }
+
+  facebooklogin() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+
+    if (result.status == LoginStatus.success) {
+      accessToken = result.accessToken;
+
+      final userData = await FacebookAuth.instance.getUserData();
+      fbData = userData;
+      print(fbData);
+    } else {
+      print(result.status);
+      print(result.message);
+    }
   }
 
   void googleSignInProcess(BuildContext context) async {
@@ -150,6 +167,9 @@ class LoginScreenState extends State<LoginScreen> {
                               image: facebookImage,
                               textColor: whiteColor,
                               borderColor: blue,
+                              onPressed: () {
+                                facebooklogin();
+                              },
                               fontSize: 14.sp,
                               backgroundColor: blue),
                         ),
@@ -247,6 +267,9 @@ class LoginScreenState extends State<LoginScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               textColor: whiteColor,
                               borderColor: blue,
+                              onPressed: () {
+                                facebooklogin();
+                              },
                               fontSize: 14.sp,
                               backgroundColor: blue),
                         ),
