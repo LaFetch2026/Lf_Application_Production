@@ -232,11 +232,14 @@ class SearchScreenState extends State<SearchScreen> {
                                                 in controller.recentSearchList)
                                               GestureDetector(
                                                 onTap: () {
-                                                  Get.to(ProductDetailsScreen(
-                                                      productId:
-                                                          product["product"]
-                                                              ["id"],
-                                                      type: "add"));
+                                                  if (isSearch) {
+                                                  } else {
+                                                    Get.to(ProductDetailsScreen(
+                                                        productId:
+                                                            product["product"]
+                                                                ["id"],
+                                                        type: "add"));
+                                                  }
                                                 },
                                                 child: Container(
                                                   height: 33,
@@ -324,12 +327,14 @@ class SearchScreenState extends State<SearchScreen> {
                                                   children: [
                                                     GestureDetector(
                                                       onTap: () {
-                                                        Get.to(ProductDetailsScreen(
-                                                            productId:
-                                                                productController
-                                                                        .mostSeachList[
-                                                                    index]["id"],
-                                                            type: "add"));
+                                                        if (isSearch) {
+                                                        } else {
+                                                          Get.to(ProductDetailsScreen(
+                                                              productId: productController
+                                                                      .mostSeachList[
+                                                                  index]["id"],
+                                                              type: "add"));
+                                                        }
                                                       },
                                                       child: SizedBox(
                                                         height: 100,
@@ -464,22 +469,26 @@ class SearchScreenState extends State<SearchScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  Get.to(BrandsScreen(
-                                                    screen: "search",
-                                                    logo: brandController
-                                                            .brandList[index]
-                                                        ["logo"],
-                                                    backImage: brandController
-                                                                    .brandList[
-                                                                index][
-                                                            "background_image"] ??
-                                                        "",
-                                                    name: brandController
-                                                            .brandList[index]
-                                                        ["name"],
-                                                    brandId: brandController
-                                                        .brandList[index]["id"],
-                                                  ));
+                                                  if (isSearch) {
+                                                  } else {
+                                                    Get.to(BrandsScreen(
+                                                      screen: "search",
+                                                      logo: brandController
+                                                              .brandList[index]
+                                                          ["logo"],
+                                                      backImage: brandController
+                                                                      .brandList[
+                                                                  index][
+                                                              "background_image"] ??
+                                                          "",
+                                                      name: brandController
+                                                              .brandList[index]
+                                                          ["name"],
+                                                      brandId: brandController
+                                                              .brandList[index]
+                                                          ["id"],
+                                                    ));
+                                                  }
                                                 },
                                                 child: AnimatedContainer(
                                                   duration: const Duration(
@@ -719,27 +728,32 @@ class SearchScreenState extends State<SearchScreen> {
                                     textColor: bottomnavBack,
                                     fontFamily: "Franklin Gothic Regular",
                                     onPressed: (p0) {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  ProductDetailsScreen(
-                                                      productId: p0,
-                                                      type: "add")))
-                                          .then((value) => setState(
-                                                () {
-                                                  productController
-                                                      .hasnextpage.value = true;
-                                                  productController
-                                                      .loadMore.value = false;
-                                                  productController
-                                                      .isProduct.value = false;
-                                                  productController.page.value =
-                                                      1;
-                                                  productController
-                                                      .getProductData(
-                                                          "relevant");
-                                                },
-                                              ));
+                                      if (isSearch) {
+                                      } else {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        ProductDetailsScreen(
+                                                            productId: p0,
+                                                            type: "add")))
+                                            .then((value) => setState(
+                                                  () {
+                                                    productController
+                                                        .hasnextpage
+                                                        .value = true;
+                                                    productController
+                                                        .loadMore.value = false;
+                                                    productController.isProduct
+                                                        .value = false;
+                                                    productController
+                                                        .page.value = 1;
+                                                    productController
+                                                        .getProductData(
+                                                            "relevant");
+                                                  },
+                                                ));
+                                      }
                                     },
                                     list: productController.productList,
                                   )

@@ -188,11 +188,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                               fit: BoxFit.cover,
                               imageUrl: homeController.banner1List[itemIndex]
                                   ["image"],
-                              progressIndicatorBuilder:
+                              /*  progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
                                 child: CircularProgressIndicator(
                                     value: downloadProgress.progress),
-                              ),
+                              ), */
                               errorWidget: (context, url, error) => Image.asset(
                                 downloadImage,
                                 height: 210,
@@ -704,12 +704,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     fit: BoxFit.cover,
                                     imageUrl: homeController
                                         .banner2List[itemIndex]["image"],
-                                    progressIndicatorBuilder:
+                                    /*  progressIndicatorBuilder:
                                         (context, url, downloadProgress) =>
                                             Center(
                                       child: CircularProgressIndicator(
                                           value: downloadProgress.progress),
-                                    ),
+                                    ), */
                                     errorWidget: (context, url, error) =>
                                         Image.asset(
                                       downloadImage,

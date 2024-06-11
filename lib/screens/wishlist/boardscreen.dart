@@ -215,12 +215,15 @@ class BoardScreenState extends State<BoardScreen> {
                                               (index) {
                                                 return GestureDetector(
                                                   onTap: () {
-                                                    Get.to(() =>
-                                                        ProductDetailsScreen(
-                                                            productId: value
-                                                                    .wishListProduct[
-                                                                index]["id"],
-                                                            type: "add"));
+                                                    if (isDrawer) {
+                                                    } else {
+                                                      Get.to(() =>
+                                                          ProductDetailsScreen(
+                                                              productId: value
+                                                                      .wishListProduct[
+                                                                  index]["id"],
+                                                              type: "add"));
+                                                    }
                                                   },
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -550,11 +553,14 @@ class BoardScreenState extends State<BoardScreen> {
                                                                   btnTextColor,
                                                               onPressed: () {
                                                                 if (isDrawer) {
-                                                                  Get.back();
-                                                                  isDrawer =
-                                                                      false;
-                                                                  setState(
-                                                                      () {});
+                                                                } else {
+                                                                  Get.to(ProductDetailsScreen(
+                                                                      productId:
+                                                                          value.wishListProduct[index]
+                                                                              [
+                                                                              "id"],
+                                                                      type:
+                                                                          "move"));
                                                                 }
                                                                 /*   wishlistController.callMovetoCart(
                                                                     widget
@@ -562,13 +568,6 @@ class BoardScreenState extends State<BoardScreen> {
                                                                     value.wishListProduct[
                                                                             index]
                                                                         ["id"]); */
-                                                                Get.to(ProductDetailsScreen(
-                                                                    productId:
-                                                                        value.wishListProduct[index]
-                                                                            [
-                                                                            "id"],
-                                                                    type:
-                                                                        "move"));
                                                               },
                                                               width: 152),
                                                         ),
