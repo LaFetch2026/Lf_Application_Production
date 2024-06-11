@@ -49,6 +49,8 @@ class LoginScreenState extends State<LoginScreen> {
       final userData = await FacebookAuth.instance.getUserData();
       fbData = userData;
       print(fbData);
+      print("${fbData!["name"]}");
+      print("${fbData!["email"]}");
     } else {
       print(result.status);
       print(result.message);
