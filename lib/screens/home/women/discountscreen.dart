@@ -11,6 +11,7 @@ import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -138,9 +139,17 @@ class DiscountScreenState extends State<DiscountScreen> {
             ),
            */
             Obx(() => homeController.isBanner1.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
+                ? Shimmer.fromColors(
+                    baseColor: greyBack,
+                    highlightColor: greyBorder,
+                    enabled: homeController.isBanner1.value,
+                    child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, bottom: 10, right: 16),
+                        child: Container(
+                          height: 210,
+                          color: greyBack,
+                        )),
                   )
                 : homeController.banner1List.isNotEmpty
                     ? Padding(
