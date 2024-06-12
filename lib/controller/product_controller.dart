@@ -21,6 +21,7 @@ class ProductController extends BaseController {
   RxBool isDetails = false.obs;
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
+  RxBool isColor = false.obs;
   RxInt currentpage = 0.obs;
   RxInt inventoryId = 0.obs;
   RxInt sizeInventoryId = 0.obs;
@@ -108,12 +109,12 @@ class ProductController extends BaseController {
       );
       return false;
     }
-    if (fabricInventoryId.value == 0 && fabricInventoryList.isNotEmpty) {
+    /*  if (fabricInventoryId.value == 0 && fabricInventoryList.isNotEmpty) {
       getSnackBar(
         "Select fabric",
       );
       return false;
-    }
+    } */
     return true;
   }
 
@@ -742,9 +743,10 @@ class ProductController extends BaseController {
             returnPolicyDetails = responseData["return_policy"];
           }
           print('Product Details====>${productDetails["images"]}');
+          sizeInventoryList = responseData["new_inventories"];
+          colorInventoryList.clear();
           //  inventoryList = responseData["inventories"];
-          sizeInventoryList = responseData["inventories"]["size"];
-          colorInventoryList = responseData["inventories"]["color"];
+          // colorInventoryList = responseData["inventories"]["color"];
           /*  sizeInventoryList = inventoryList
               .where((i) =>
                   i['product_matrix']['product_matrix_group']['name'] == 'Size')
@@ -893,9 +895,7 @@ class ProductController extends BaseController {
     try {
       final Map<String, dynamic> sendData = {
         "quantity": quantity,
-        "inventory_id": sizeInventoryId.value == 0
-            ? colorInventoryId.value
-            : sizeInventoryId.value
+        "inventory_id": sizeInventoryId.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),

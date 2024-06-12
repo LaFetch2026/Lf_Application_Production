@@ -210,6 +210,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 productController.sizeInventoryId.value =
                                     selectedProductSize["id"];
                                 print(productController.sizeInventoryId.value);
+                                productController.colorInventoryList =
+                                    i["product_matrix_available_colors"];
                                 setState(() {});
                               },
                               child: Container(
@@ -227,8 +229,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: AppText(
-                                        text:
-                                            i['product_matrix_name'].toString(),
+                                        text: i['product_matrix_size_name']
+                                            .toString(),
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: selectedProductSize.isNotEmpty &&
@@ -292,6 +294,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 selectedProductColor = i;
                                 productController.colorInventoryId.value =
                                     selectedProductColor["id"];
+                                productController.sizeInventoryId.value =
+                                    selectedProductColor["id"];
                                 print(productController.colorInventoryId.value);
                                 setState(() {});
                               },
@@ -307,7 +311,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: AppText(
-                                    text: i['product_matrix_name'].toString(),
+                                    text: i['name'].toString(),
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: selectedProductColor.isNotEmpty &&
@@ -887,19 +891,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       : const SizedBox(
                                           height: 0,
                                         ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 14.0, horizontal: 12),
-                                    child: Divider(
-                                      color: colorSecondary,
-                                    ),
-                                  ),
                                   productController
                                           .colorInventoryList.isNotEmpty
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 14.0,
+                                                  horizontal: 12),
+                                              child: Divider(
+                                                color: colorSecondary,
+                                              ),
+                                            ),
                                             Padding(
                                                 padding: const EdgeInsets.only(
                                                     bottom: 0.0,
@@ -931,18 +936,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       : const SizedBox(
                                           height: 0,
                                         ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 14.0, horizontal: 12),
-                                    child: Divider(
-                                      color: colorSecondary,
-                                    ),
-                                  ),
                                   productController.inventoryList.isNotEmpty
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 14.0,
+                                                  horizontal: 12),
+                                              child: Divider(
+                                                color: colorSecondary,
+                                              ),
+                                            ),
                                             Padding(
                                                 padding: const EdgeInsets.only(
                                                     bottom: 0.0,
