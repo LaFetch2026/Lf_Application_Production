@@ -76,7 +76,12 @@ class LoginController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar(responseData['message']);
-        Get.to(OTPVerficationScreen(phoneMunber: number.value));
+        Get.to(OTPVerficationScreen(
+          phoneMunber: number.value,
+          name: "",
+          email: "",
+          provider: "",
+        ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
@@ -94,19 +99,45 @@ class LoginController extends BaseController {
     hideLoading();
   }
 
-  callResendOtp(String num) async {
+  callResendOtp(String num, String name, String email, String provider) async {
     secondsRemaining.value = 30;
     enableResend.value = false;
     try {
-      var response =
-          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
-        "phone": num,
-      });
+      dynamic response;
+      if (name.isNotEmpty) {
+        response =
+            await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+          "phone": num,
+          "email": email,
+          "name": name,
+          "provider": provider,
+        });
+      } else {
+        response =
+            await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+          "phone": num,
+        });
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar(responseData['message']);
-        Get.to(OTPVerficationScreen(phoneMunber: number.value));
+        if (name.isNotEmpty) {
+          Get.to(OTPVerficationScreen(
+            phoneMunber: number.value,
+            name: name,
+            email: email,
+            provider: provider,
+          ));
+        } else {
+          Get.to(OTPVerficationScreen(
+            phoneMunber: number.value,
+            name: "",
+            email: "",
+            provider: "",
+          ));
+        }
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
@@ -123,6 +154,45 @@ class LoginController extends BaseController {
     }
   }
 
+  callSocailMediaRegister(String name, String email, String provider) async {
+    showLoading();
+    secondsRemaining.value = 30;
+    enableResend.value = false;
+    try {
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+        "phone": number.value,
+        "email": email,
+        "name": name,
+        "provider": provider,
+      });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        Get.to(OTPVerficationScreen(
+          phoneMunber: number.value,
+          name: name,
+          email: email,
+          provider: provider,
+        ));
+      } else if (response.statusCode == 400) {
+        if (responseData['errors']['phone'] != null) {
+          getSnackBar(responseData['errors']['phone'][0]);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("login failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
   callVerifyOtp(String phone) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
@@ -131,6 +201,66 @@ class LoginController extends BaseController {
           await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
         "phone": phone,
         "otp": otp.value,
+      });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        prefs.setString('token', responseData['meta']['access_token']);
+        prefs.setInt('userId', responseData['data']['id']);
+        if (responseData['data']['phone'] != null) {
+          prefs.setString('phonenumber', responseData['data']['phone']);
+        }
+        if (responseData['data']['email'] != null) {
+          prefs.setString('email', responseData['data']['email']);
+        }
+        if (responseData['data']['gender'] != null) {
+          prefs.setInt('gender', responseData['data']['gender']);
+        }
+        if (responseData['data']['name'] != null) {
+          prefs.setString('name', responseData['data']['name']);
+          Get.offAll(
+            () => const BottomNavScreen(),
+          );
+        } else {
+          Get.off(
+            () => const UserDetailsScreen(),
+          );
+        }
+      } else if (response.statusCode == 400) {
+        if (responseData['errors']['otp'] != null) {
+          for (var i = 0; i < responseData['errors']['otp'].length; i++) {
+            getSnackBar(responseData['errors']['otp'][i]);
+          }
+        }
+        if (responseData['errors']['phone'] != null) {
+          getSnackBar(responseData['errors']['phone'][0]);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("otp failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
+  callSocailMediaVerifyOtp(
+      String phone, String name, String email, String provider) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+        "phone": phone,
+        "otp": otp.value,
+        "email": email,
+        "name": name,
+        "provider": provider,
       });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
