@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_vertical_list.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
@@ -216,7 +216,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
           ),
           Obx(
             () => brandController.isBrand.value
-                ? const Expanded(child: DummyVerticalList())
+                ? const Expanded(child: DummyGridList())
                 : Expanded(
                     child: PageView.builder(
                       //  itemCount: brandController.brandList.length + 1,

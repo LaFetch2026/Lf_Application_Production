@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_vertical_list.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomfiltters.dart';
 import '../../commonwidget/catalogwidgets/bottomsortby.dart';
@@ -56,7 +56,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
         key: scaffoldKey,
         backgroundColor: whiteTextColor,
         body: Obx(() => productController.isBrandExpressProduct.value
-            ? const DummyVerticalList()
+            ? const DummyGridList()
             : productController.productExpressBrandList.isNotEmpty
                 ? Stack(
                     children: [
@@ -466,7 +466,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                 ),
                               ),
                               productController.brandExpressLoadMore.value
-                                  ? const DummyVerticalList()
+                                  ? const DummyGridList()
                                   : const SizedBox(
                                       height: 0,
                                     ),

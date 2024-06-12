@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomfiltters.dart';
@@ -56,10 +57,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
         backgroundColor: whiteColor,
         body: Obx(
           () => productController.isProduct.value
-              ? const Padding(
-                  padding: EdgeInsets.all(40.0),
-                  child: Center(child: CircularProgressIndicator()),
-                )
+              ? const DummyGridList()
               : productController.productList.isNotEmpty
                   ? Stack(
                       children: [
@@ -407,12 +405,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                 ),
                               ),
                               productController.loadMore.value
-                                  ? const Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 10, bottom: 10),
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    )
+                                  ? const DummyGridList()
                                   : const SizedBox(
                                       height: 0,
                                     ),
