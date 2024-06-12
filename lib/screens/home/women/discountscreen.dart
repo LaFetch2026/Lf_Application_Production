@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
 import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -138,19 +138,28 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
            */
+
             Obx(() => homeController.isBanner1.value
-                ? Shimmer.fromColors(
-                    baseColor: greyBack,
-                    highlightColor: greyBorder,
-                    enabled: homeController.isBanner1.value,
-                    child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, bottom: 10, right: 16),
-                        child: Container(
-                          height: 210,
-                          color: greyBack,
-                        )),
-                  )
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    child: SizedBox(
+                      height: 210,
+                      width: double.infinity,
+                      child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: 5,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (ctx, index) {
+                            return Container(
+                              height: 210,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                              ),
+                            );
+                          }),
+                    ))
                 : homeController.banner1List.isNotEmpty
                     ? Padding(
                         padding: const EdgeInsets.only(
@@ -162,7 +171,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             viewportFraction: 1.0,
                             aspectRatio: 2.0,
                             autoPlay: true,
-                            //   autoPlayInterval: const Duration(seconds: 3),
+                            autoPlayInterval: const Duration(seconds: 10),
                             enlargeCenterPage: true,
                           ),
                           itemBuilder: (BuildContext context, int itemIndex,
@@ -197,11 +206,16 @@ class DiscountScreenState extends State<DiscountScreen> {
                               fit: BoxFit.cover,
                               imageUrl: homeController.banner1List[itemIndex]
                                   ["image"],
-                              /*  progressIndicatorBuilder:
+                              progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
-                                child: CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                              ), */
+                                child: Container(
+                                  height: 210,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.04),
+                                  ),
+                                ),
+                              ),
                               errorWidget: (context, url, error) => Image.asset(
                                 downloadImage,
                                 height: 210,
@@ -222,10 +236,7 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
             Obx(() => productController.isExpress.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? const DummyProductList(text: "6 hour Express Delivery")
                 : HorizontalHomeList(
                     text: "6 hour Express Delivery",
                     height: 250,
@@ -283,10 +294,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                   )),
             Obx(
               () => homeController.isCategory.value
-                  ? const Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
+                  ? const DummyProductList(text: "Popular Categories")
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -607,67 +615,34 @@ class DiscountScreenState extends State<DiscountScreen> {
             ),
             Obx(
               () => homeController.isBanner2.value
-                  ? const Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  : Column(
-                      children: [
-                        /*  SizedBox(
-                          height: 210,
-                          child: PageView.builder(
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, bottom: 10, right: 16),
+                      child: SizedBox(
+                        height: 210,
+                        width: double.infinity,
+                        child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: 5,
                             scrollDirection: Axis.horizontal,
-                            onPageChanged: callOnchanged,
-                            controller: homeController.pageController,
-                            itemCount: homeController.banner2List.length,
-                            itemBuilder: (context, int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  homeController.bannerTag2Id.clear();
-                                  if (homeController
-                                      .banner2List[index]["tags"].isNotEmpty) {
-                                    for (var i = 0;
-                                        i <
-                                            homeController
-                                                .banner2List[index]["tags"]
-                                                .length;
-                                        i++) {
-                                      homeController.bannerTag2Id.add(
-                                          homeController.banner2List[index]
-                                              ["tags"][i]["id"]);
-                                    }
-                                    print(homeController.bannerTag2Id);
-                                    Get.to(CategoryProductScreen(
-                                      categoryId: 0,
-                                      brandId: 0,
-                                      tagIds: homeController.bannerTag2Id,
-                                    ));
-                                  }
-                                },
-                                child: CachedNetworkImage(
-                                  cacheManager: CacheManager(Config(
-                                      "customCacheKey",
-                                      stalePeriod: const Duration(days: 15),
-                                      maxNrOfCacheObjects: 100)),
-                                  fit: BoxFit.cover,
-                                  imageUrl: homeController.banner2List[index]
-                                      ["image"],
-                                  errorWidget: (context, url, error) =>
-                                      Image.asset(
-                                    downloadImage,
-                                    height: 210,
-                                  ),
+                            itemBuilder: (ctx, index) {
+                              return Container(
+                                height: 210,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.04),
                                 ),
                               );
-                            },
-                          ),
-                        ),
-                        */
+                            }),
+                      ))
+                  : Column(
+                      children: [
                         homeController.banner2List.isNotEmpty
                             ? CarouselSlider.builder(
                                 itemCount: homeController.banner2List.length,
                                 options: CarouselOptions(
                                   height: 210,
+                                  autoPlayInterval: const Duration(seconds: 10),
                                   onPageChanged: (index, reason) {
                                     homeController.currentPage.value = index;
                                     homeController.update();
@@ -713,12 +688,18 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     fit: BoxFit.cover,
                                     imageUrl: homeController
                                         .banner2List[itemIndex]["image"],
-                                    /*  progressIndicatorBuilder:
+                                    progressIndicatorBuilder:
                                         (context, url, downloadProgress) =>
                                             Center(
-                                      child: CircularProgressIndicator(
-                                          value: downloadProgress.progress),
-                                    ), */
+                                      child: Container(
+                                        height: 210,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.04),
+                                        ),
+                                      ),
+                                    ),
                                     errorWidget: (context, url, error) =>
                                         Image.asset(
                                       downloadImage,

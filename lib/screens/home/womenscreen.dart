@@ -30,10 +30,28 @@ class WomenScreen extends StatelessWidget {
           ),
           Obx(
             () => homeController.istags.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    child: SizedBox(
+                      height: 30,
+                      width: double.infinity,
+                      child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: 5,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (ctx, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(right: 5),
+                              width: 100,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            );
+                          }),
+                    ))
                 : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(

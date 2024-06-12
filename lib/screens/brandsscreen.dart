@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/brandwidgits/dummy_brand_list.dart';
 import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -234,11 +235,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                             ),
                           ),
                           brandController.isBrand.value
-                              ? const Padding(
-                                  padding: EdgeInsets.all(40.0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
+                              ? const DummybrandList()
                               : brandController.brandList.isNotEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.only(
@@ -528,11 +525,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                       ),
                                     ),
                           brandController.loadMore.value
-                              ? const Padding(
-                                  padding: EdgeInsets.only(top: 10, bottom: 10),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
+                              ? const DummybrandList()
                               : const SizedBox(
                                   height: 0,
                                 ),

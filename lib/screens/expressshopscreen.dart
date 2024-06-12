@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_vertical_list.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
@@ -106,10 +107,28 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
           ),
           Obx(
             () => brandController.isBrand.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    child: SizedBox(
+                      height: 30,
+                      width: double.infinity,
+                      child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: 5,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (ctx, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(right: 5),
+                              width: 100,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            );
+                          }),
+                    ))
                 : Column(
                     children: [
                       Padding(
@@ -197,10 +216,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
           ),
           Obx(
             () => brandController.isBrand.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? const Expanded(child: DummyVerticalList())
                 : Expanded(
                     child: PageView.builder(
                       //  itemCount: brandController.brandList.length + 1,
