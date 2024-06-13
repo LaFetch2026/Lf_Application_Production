@@ -10,6 +10,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/doubleiconbtn.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/singleiconbtn.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/reviewproducts.dart';
@@ -274,10 +275,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                       ),
                     ),
                     Obx(() => orderController.isOrder.value
-                        ? const Padding(
-                            padding: EdgeInsets.all(40.0),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
+                        ? const DummyOrderList()
                         : orderController.orderList.isNotEmpty
                             ? Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
@@ -1398,10 +1396,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 ),
                               )),
                     orderController.loadMore.value
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 10, bottom: 10),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
+                        ? const DummyOrderList()
                         : const SizedBox(
                             height: 0,
                           ),
