@@ -6,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/common_widgets.dart';
@@ -88,10 +89,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                   icon: threeDotImage,
                 ),
           Obx(() => wishlistController.isDetails.value
-              ? const Padding(
-                  padding: EdgeInsets.all(40.0),
-                  child: Center(child: CircularProgressIndicator()),
-                )
+              ? const Expanded(child: DummyGridList())
               : wishlistController.wishListProduct.isNotEmpty
                   ? Expanded(
                       child: SingleChildScrollView(

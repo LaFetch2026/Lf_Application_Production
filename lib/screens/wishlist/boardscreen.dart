@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/commonwidget/wishlistwidgets/bottomsheetboard.dart';
 import 'package:lafetch/screens/wishlist/createboardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
@@ -191,11 +192,7 @@ class BoardScreenState extends State<BoardScreen> {
                               ),
                             ),
                             wishlistController.isDetails.value
-                                ? const Padding(
-                                    padding: EdgeInsets.all(40.0),
-                                    child: Center(
-                                        child: CircularProgressIndicator()),
-                                  )
+                                ? const DummyGridList()
                                 : wishlistController.wishListProduct.isNotEmpty
                                     ? Padding(
                                         padding: const EdgeInsets.symmetric(

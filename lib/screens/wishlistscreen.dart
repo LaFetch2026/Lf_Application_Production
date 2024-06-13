@@ -6,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_wishlist_list.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlist/boardscreen.dart';
@@ -84,10 +85,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                     ),
                   ),
                   Obx(() => wishlistController.isWishlist.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
+                      ? const DummyWishlistList()
                       : wishlistController.wishlistList.isEmpty
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -423,12 +421,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   ),
                                 ),
                                 wishlistController.loadMore.value
-                                    ? const Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 10, bottom: 10),
-                                        child: Center(
-                                            child: CircularProgressIndicator()),
-                                      )
+                                    ? const DummyWishlistList()
                                     : const SizedBox(
                                         height: 0,
                                       ),
