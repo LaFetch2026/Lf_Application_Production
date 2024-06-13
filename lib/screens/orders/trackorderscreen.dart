@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../controller/order_controller.dart';
@@ -176,10 +177,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                   ),
                 */
                   Obx(() => orderController.isDetails.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
+                      ? const DummyOrderTrack()
                       : orderController.deliveriesList.isNotEmpty
                           ? Container(
                               color: whiteColor,

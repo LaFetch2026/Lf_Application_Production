@@ -6,6 +6,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
@@ -75,11 +78,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Obx(() => orderController.isDetails.value
-                            ? const Padding(
-                                padding: EdgeInsets.all(40.0),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              )
+                            ? DummyContainer(
+                                height: 250,
+                                width: MediaQuery.of(context).size.width)
                             : orderController.deliveriesList.isNotEmpty
                                 ? Column(
                                     crossAxisAlignment:
@@ -247,11 +248,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ),
                         Obx(
                           () => orderController.isDetails.value
-                              ? const Padding(
-                                  padding: EdgeInsets.all(40.0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
+                              ? const DummyOrderDetails()
                               : Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 5),
@@ -436,10 +433,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 ),
                         ),
                         Obx(() => orderController.isDetails.value
-                            ? const Padding(
-                                padding: EdgeInsets.all(40.0),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
+                            ? const SizedBox(
+                                height: 0,
                               )
                             : orderController.deliveriesList.isNotEmpty
                                 ? Padding(
@@ -604,10 +599,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ),
                   ),
                   Obx(() => orderController.isDetails.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
+                      ? const DummyOrderTrack()
                       : orderController.deliveriesList.isNotEmpty
                           ? Container(
                               color: whiteColor,
