@@ -1196,9 +1196,21 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   6
                                                               ? GestureDetector(
                                                                   onTap: () {
-                                                                    Get.to(const ReviewProductScreen(
-                                                                        productName:
-                                                                            "Topman super skinny suit jacket and trousers in light blue"));
+                                                                    Get.to(
+                                                                        ReviewProductScreen(
+                                                                      productName: value.orderList[index]["order_lines"][0]["product"] !=
+                                                                              null
+                                                                          ? value.orderList[index]["order_lines"][0]["product"]
+                                                                              [
+                                                                              "name"]
+                                                                          : "",
+                                                                      productimage: value.orderList[index]["order_lines"][0]["product"] !=
+                                                                              null
+                                                                          ? value.orderList[index]["order_lines"][0]["product"]["images"][0]
+                                                                              [
+                                                                              "name"]
+                                                                          : "",
+                                                                    ));
                                                                   },
                                                                   child:
                                                                       Padding(

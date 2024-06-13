@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/screens/home/women/discountscreen.dart';
 import '../../commonwidget/app_text.dart';
+import '../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../utils/constants.dart';
 
 class WomenScreen extends StatelessWidget {
@@ -130,9 +131,37 @@ class WomenScreen extends StatelessWidget {
           ),
           Obx(
             () => homeController.istags.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
+                ? Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 16, bottom: 10, right: 16),
+                              child: SizedBox(
+                                height: 210,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Container(
+                                        height: 210,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.04),
+                                        ),
+                                      );
+                                    }),
+                              )),
+                          const DummyProductList(
+                              text: "6 hour Express Delivery")
+                        ],
+                      ),
+                    ),
                   )
                 : Expanded(
                     child: PageView.builder(

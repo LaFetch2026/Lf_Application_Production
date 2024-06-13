@@ -263,10 +263,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     },
                   )),
             Obx(() => productController.istagsProduct.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? const DummyProductList(text: "We think you might also like")
                 : HorizontalHomeList(
                     text: "We think you might also like",
                     controller: productController.tagsProductController,

@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
@@ -12,7 +14,9 @@ import '../utils/constants.dart';
 
 class ReviewProductScreen extends StatefulWidget {
   final String productName;
-  const ReviewProductScreen({super.key, required this.productName});
+  final String productimage;
+  const ReviewProductScreen(
+      {super.key, required this.productName, required this.productimage});
 
   @override
   State<ReviewProductScreen> createState() => ReviewProductScreenState();
@@ -55,8 +59,25 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                           children: [
                             Expanded(
                               flex: 1,
-                              child: Image.asset(backImage,
-                                  height: 85, width: 70, fit: BoxFit.cover),
+                              child: SizedBox(
+                                height: 85,
+                                width: 70,
+                                child: CachedNetworkImage(
+                                  cacheManager: CacheManager(Config(
+                                      "customCacheKey",
+                                      stalePeriod: const Duration(days: 15),
+                                      maxNrOfCacheObjects: 100)),
+                                  fit: BoxFit.cover,
+                                  imageUrl: widget.productimage,
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    downloadImage,
+                                    fit: BoxFit.cover,
+                                    height: 85,
+                                    width: 70,
+                                  ),
+                                ),
+                              ),
                             ),
                             Expanded(
                               flex: 3,
@@ -69,8 +90,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                                       horizontal: 10,
                                     ),
                                     child: AppText(
-                                      text:
-                                          "Topman super skinny suit jacket and trousers in light blue",
+                                      text: widget.productName,
                                       maxLines: 2,
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
