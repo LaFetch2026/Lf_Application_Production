@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/dummy_catalog_list.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
 import 'package:lafetch/screens/catalog/catalogdetails.dart';
 import '../../commonwidget/app_text.dart';
@@ -59,10 +60,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
               ),
             ),
             Obx(() => controller.isCatalog.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? const DummyCatalogList()
                 : controller.catalogList.isNotEmpty
                     ? Padding(
                         padding:
@@ -119,7 +117,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                         imageUrl: controller
                                                                 .catalogList[
                                                             index]["thumbnail"],
-                                                        progressIndicatorBuilder:
+                                                        /*  progressIndicatorBuilder:
                                                             (context, url,
                                                                     downloadProgress) =>
                                                                 Center(
@@ -127,7 +125,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                               value:
                                                                   downloadProgress
                                                                       .progress),
-                                                        ),
+                                                        ), */
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(

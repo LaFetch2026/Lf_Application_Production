@@ -10,9 +10,11 @@ import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
+import '../commonwidget/homewidget/dummy_product_list.dart';
 import '../controller/cart_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -76,10 +78,7 @@ class CartScreenState extends State<CartScreen> {
                 },
                 child: Obx(
                   () => controller.isOrder.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        )
+                      ? const DummyOrderList()
                       : controller.orderList.isEmpty
                           ? Padding(
                               padding: const EdgeInsets.only(top: 60),
@@ -100,11 +99,7 @@ class CartScreenState extends State<CartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 controller.isOrder.value
-                                    ? const Padding(
-                                        padding: EdgeInsets.all(40.0),
-                                        child: Center(
-                                            child: CircularProgressIndicator()),
-                                      )
+                                    ? const DummyOrderList()
                                     : Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -605,11 +600,8 @@ class CartScreenState extends State<CartScreen> {
                                         ],
                                       ),
                                 productController.isProduct.value
-                                    ? const Padding(
-                                        padding: EdgeInsets.all(40.0),
-                                        child: Center(
-                                            child: CircularProgressIndicator()),
-                                      )
+                                    ? const DummyProductList(
+                                        text: "You may also like")
                                     : Container(
                                         color: whiteBack,
                                         child: Column(
@@ -1397,9 +1389,13 @@ class CartScreenState extends State<CartScreen> {
             ),
           ),
           Obx(() => controller.isOrder.value
-              ? const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Center(child: CircularProgressIndicator()),
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
                 )
               : controller.orderList.isNotEmpty
                   ? Container(

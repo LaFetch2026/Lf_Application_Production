@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
+import 'package:lafetch/commonwidget/brandwidgits/dummy_brandall.dart';
+import 'package:lafetch/commonwidget/brandwidgits/dummy_product_brand.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_list.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -163,10 +165,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ),
                     Obx(
                       () => brandController.isCategory.value
-                          ? const Padding(
-                              padding: EdgeInsets.all(40.0),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
+                          ? const DummybrandAll()
                           : Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
@@ -272,10 +271,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ),
                     Obx(
                       () => productController.istagsProduct.value
-                          ? const Padding(
-                              padding: EdgeInsets.all(40.0),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
+                          ? const DummyProductBrand(text: "New Arrivals")
                           : Padding(
                               padding: const EdgeInsets.only(top: 40),
                               child: HorizontalBrandList(
@@ -339,10 +335,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             ),
                     ),
                     Obx(() => productController.isProduct.value
-                        ? const Padding(
-                            padding: EdgeInsets.all(40.0),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
+                        ? const DummyProductBrand(text: "Bestsellers")
                         : /* Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
