@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
@@ -81,20 +83,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
           list.add(Container(
             color: colorSecondary,
-            child: /* Image.network(
-                  productController.productDetails["images"][i]["name"],
-                  fit: BoxFit.fitHeight) */
-                CachedNetworkImage(
+            child: CachedNetworkImage(
               cacheManager: CacheManager(Config("customCacheKey",
                   stalePeriod: const Duration(days: 15),
                   maxNrOfCacheObjects: 100)),
               fit: BoxFit.cover,
               imageUrl: productController.productDetails["images"][i]["name"],
               progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  Center(
-                child:
-                    CircularProgressIndicator(value: downloadProgress.progress),
-              ),
+                  DummyContainer(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      width: MediaQuery.of(context).size.width),
               errorWidget: (context, url, error) =>
                   Image.asset(downloadImage, fit: BoxFit.fitHeight),
             ),
@@ -505,11 +503,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     children: [
                       Obx(
                         () => productController.isDetails.value
-                            ? const Padding(
-                                padding: EdgeInsets.all(40.0),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              )
+                            ? const DummyProductDetails()
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
