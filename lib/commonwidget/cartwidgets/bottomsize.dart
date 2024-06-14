@@ -3,21 +3,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../../utils/constants.dart';
 import '../app_text.dart';
 import '../common_widgets.dart';
 
 class BottomSize extends StatefulWidget {
-  final Function? onPressed;
+  final Function(int)? onPressed;
   final List sizeList;
   final String selectedSize;
+  final GetxController controller;
 
   const BottomSize({
     Key? key,
     this.onPressed,
     required this.sizeList,
     required this.selectedSize,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -25,30 +26,28 @@ class BottomSize extends StatefulWidget {
 }
 
 class _BottomQuantityState extends State<BottomSize> {
-  String size = "0";
+  Map<String, dynamic> selectedProductSize = {};
+  int inventoryId = 0;
   @override
   void initState() {
-    size = widget.selectedSize;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: whiteTextColor,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        height: 200,
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          color: whiteTextColor,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Row(
                 children: [
                   Expanded(
@@ -77,60 +76,85 @@ class _BottomQuantityState extends State<BottomSize> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: widget.sizeList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              size = widget.sizeList[index];
-                              print(size);
-                              setState(() {});
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: size == widget.sizeList[index]
-                                      ? btnTextColor
-                                      : whiteColor,
-                                  border: Border.all(
-                                    width: 1,
-                                    color: size == widget.sizeList[index]
-                                        ? whiteColor
-                                        : btnTextColor,
-                                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: widget.sizeList
+                      .where((element) =>
+                          int.parse(element['stocks'].toString()) > 0)
+                      .toList()
+                      .isNotEmpty
+                  ? Wrap(
+                      direction: Axis.horizontal,
+                      spacing: 12.0,
+                      runSpacing: 8.0,
+                      runAlignment: WrapAlignment.spaceEvenly,
+                      children: [
+                          for (var i in widget.sizeList.where((element) =>
+                              int.parse(element['stocks'].toString()) > 0))
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    selectedProductSize = i;
+                                    inventoryId = selectedProductSize["id"];
+                                    print(inventoryId);
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: btnTextColor, width: 1),
+                                          color: selectedProductSize
+                                                      .isNotEmpty &&
+                                                  selectedProductSize['id'] ==
+                                                      i['id']
+                                              ? colorPrimary
+                                              : whiteColor),
+                                      child: SizedBox(
+                                        width: 40,
+                                        height: 40,
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: AppText(
+                                            text: i['product_matrix_size_name']
+                                                .toString(),
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: selectedProductSize
+                                                        .isNotEmpty &&
+                                                    selectedProductSize['id'] ==
+                                                        i['id']
+                                                ? whiteColor
+                                                : btnTextColor,
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      )),
                                 ),
-                                width: 48,
-                                height: 48,
-                                child: Center(
-                                  child: AppText(
-                                    textAlign: TextAlign.center,
-                                    text: widget.sizeList[index],
-                                    color: size == widget.sizeList[index]
-                                        ? whiteColor
-                                        : btnTextColor,
-                                    fontSize: 14.sp,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
+                                int.parse(i['stocks'].toString()) > 10
+                                    ? const SizedBox()
+                                    : Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: AppText(
+                                          text:
+                                              '${i['stocks'].toString()} left',
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: redColor,
+                                          fontSize: 11.sp,
+                                        ),
+                                      )
+                              ],
                             ),
-                          ),
-                        ],
-                      );
-                    }),
-              ),
+                        ])
+                  : AppText(
+                      text: 'N/A',
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      color: redColor,
+                      fontSize: 11.sp,
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -138,13 +162,13 @@ class _BottomQuantityState extends State<BottomSize> {
                   label: "Done",
                   textColor: whiteBorderColor,
                   backgroundColor: colorPrimary,
-                  //   controller: profileController,
-                  onPressed: () {},
+                  controller: widget.controller,
+                  onPressed: () {
+                    widget.onPressed?.call(inventoryId);
+                  },
                   borderColor: colorPrimary),
             ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

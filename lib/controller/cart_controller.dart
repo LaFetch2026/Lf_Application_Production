@@ -126,6 +126,10 @@ class CartController extends BaseController {
           getSnackBar("Quantity updated");
           Get.close(1);
           getCartData();
+        } else if (page == "size") {
+          getSnackBar("Size updated");
+          Get.close(1);
+          getCartData();
         } else {
           Get.close(1);
         }

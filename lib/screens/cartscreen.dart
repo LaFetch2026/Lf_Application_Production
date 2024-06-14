@@ -32,7 +32,11 @@ class CartScreenState extends State<CartScreen> {
   final productController = Get.put(ProductController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-  List sizeList = ["XS", "S", "M", "L", "XL"];
+//  List sizeList = ["XS", "S", "M", "L", "XL"];
+  /*  final List<Map<String, dynamic>> sizeList = [
+    {'id': '22', "product_matrix_size_name": 'M', 'stocks': '90'},
+    {'id': '73', "product_matrix_size_name": 'L', 'stocks': '90'}
+  ].obs; */
 
   @override
   void initState() {
@@ -416,20 +420,24 @@ class CartScreenState extends State<CartScreen> {
                                                                                             height: 0,
                                                                                           ), */
                                                                                     value.orderList[index]["inventory"] != null
-                                                                                        ? Container(
-                                                                                            color: whiteTextColor,
-                                                                                            height: 40,
-                                                                                            width: 75,
-                                                                                            child: Row(
-                                                                                              children: [
-                                                                                                GestureDetector(
-                                                                                                  onTap: () {
-                                                                                                    scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
-                                                                                                          sizeList: sizeList,
-                                                                                                          selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : "",
-                                                                                                        ));
-                                                                                                  },
-                                                                                                  child: Padding(
+                                                                                        ? GestureDetector(
+                                                                                            onTap: () {
+                                                                                              scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                                    sizeList: productController.sizeInventoryList,
+                                                                                                    controller: controller,
+                                                                                                    onPressed: (p0) {
+                                                                                                      controller.callAddtoCart(1, "size", p0, value.orderList[index]["product"]["id"]);
+                                                                                                    },
+                                                                                                    selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : "",
+                                                                                                  ));
+                                                                                            },
+                                                                                            child: Container(
+                                                                                              color: whiteTextColor,
+                                                                                              height: 40,
+                                                                                              width: 75,
+                                                                                              child: Row(
+                                                                                                children: [
+                                                                                                  Padding(
                                                                                                     padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
                                                                                                     child: AppText(
                                                                                                       text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
@@ -439,13 +447,13 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       fontWeight: FontWeight.w400,
                                                                                                     ),
                                                                                                   ),
-                                                                                                ),
-                                                                                                const ImageIcon(
-                                                                                                  AssetImage(dropdownImage),
-                                                                                                  color: nameText,
-                                                                                                  size: 16,
-                                                                                                ),
-                                                                                              ],
+                                                                                                  const ImageIcon(
+                                                                                                    AssetImage(dropdownImage),
+                                                                                                    color: nameText,
+                                                                                                    size: 16,
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
                                                                                             ),
                                                                                           )
                                                                                         : const SizedBox(
