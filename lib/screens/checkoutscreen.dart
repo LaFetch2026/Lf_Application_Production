@@ -117,13 +117,14 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteTextColor,
+      backgroundColor: whiteColor,
       body: Column(
         children: [
           BackButtonAppbar(
             text: "Checkout",
             threeDot: false,
             icon: threeDotImage,
+            backgroundColor: whiteColor,
             onPressedThreeDot: () {},
           ),
           Expanded(
@@ -181,7 +182,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                             width: 80,
                                             height: 20,
                                             decoration: BoxDecoration(
-                                              color: whiteBorderColor,
+                                              color: whiteColor,
                                               borderRadius:
                                                   BorderRadius.circular(20),
                                               border: Border.all(
@@ -470,7 +471,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         }),
                   ),
                   Container(
-                    color: whiteBorderColor,
+                    color: whiteColor,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 20),
@@ -806,7 +807,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
           Container(
-            color: whiteBorderColor,
+            color: whiteColor,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -844,7 +845,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     padding: const EdgeInsets.only(top: 30, bottom: 16),
                     child: SingleButton(
                         label: "Pay Now",
-                        textColor: whiteBorderColor,
+                        textColor: whiteColor,
                         backgroundColor: colorPrimary,
                         onPressed: () {
                           if (shipController.addressId.value != 0) {

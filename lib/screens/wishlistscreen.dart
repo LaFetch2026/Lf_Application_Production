@@ -50,6 +50,11 @@ class WishlistScreenState extends State<WishlistScreen> {
     super.dispose();
   }
 
+  bool isImage(String path) {
+    print(path);
+    return path.contains('product_photo');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -363,6 +368,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                               downloadImage,
                                                               height: 156,
                                                               width: 156,
+                                                              fit: BoxFit.cover,
                                                             ),
                                                           ),
                                                         )

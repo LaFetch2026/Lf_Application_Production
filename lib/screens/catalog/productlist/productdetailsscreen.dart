@@ -2289,12 +2289,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: Stack(
                           children: [
                             productController.isDetails.value
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 0,
-                                    key: widgetKey,
                                   )
-                                : isImage(productController
-                                        .productDetails["images"][0]["name"])
+                                : isImage(productController.productDetails["images"]
+                                        [0]["name"])
                                     ? Container(
                                         height: 40,
                                         width: 40,
@@ -2307,9 +2306,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     .productDetails["images"][0]
                                                 ["name"],
                                             fit: BoxFit.fitHeight))
-                                    : const SizedBox(
-                                        height: 0,
-                                      ),
+                                    : Container(
+                                        height: 40,
+                                        width: 40,
+                                        margin:
+                                            const EdgeInsets.only(left: 150),
+                                        key: widgetKey,
+                                        color: colorSecondary,
+                                        child: Image.network(
+                                            productController
+                                                    .productDetails["images"][1]
+                                                ["name"],
+                                            fit: BoxFit.fitHeight)),
                             getSingleButton(
                                 label: widget.type == "add"
                                     ? "Add to bag"
