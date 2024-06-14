@@ -264,31 +264,37 @@ class DiscountScreenState extends State<DiscountScreen> {
                   )),
             Obx(() => productController.istagsProduct.value
                 ? const DummyProductList(text: "We think you might also like")
-                : HorizontalHomeList(
-                    text: "We think you might also like",
-                    controller: productController.tagsProductController,
-                    height: 250,
-                    visibleExpress: false,
-                    onPressed: (p0) {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProductDetailsScreen(
-                                      productId: p0, type: "add")))
-                          .then((value) => setState(
-                                () {
-                                  productController.tagsHasnextpage.value =
-                                      true;
-                                  productController.tagsLoadMore.value = false;
-                                  productController.istagsProduct.value = false;
-                                  productController.tagsPage.value = 1;
-                                  /*  productController
+                : productController.tagProductList.isNotEmpty
+                    ? HorizontalHomeList(
+                        text: "We think you might also like",
+                        controller: productController.tagsProductController,
+                        height: 250,
+                        visibleExpress: false,
+                        onPressed: (p0) {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ProductDetailsScreen(
+                                          productId: p0, type: "add")))
+                              .then((value) => setState(
+                                    () {
+                                      productController.tagsHasnextpage.value =
+                                          true;
+                                      productController.tagsLoadMore.value =
+                                          false;
+                                      productController.istagsProduct.value =
+                                          false;
+                                      productController.tagsPage.value = 1;
+                                      /*  productController
                                       .getTagsProductData(widget.tagId); */
-                                },
-                              ));
-                    },
-                    list: productController.tagProductList,
-                  )),
+                                    },
+                                  ));
+                        },
+                        list: productController.tagProductList,
+                      )
+                    : const SizedBox(
+                        height: 0,
+                      )),
             Obx(
               () => homeController.isCategory.value
                   ? const DummyProductList(text: "Popular Categories")
