@@ -2289,20 +2289,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         child: Stack(
                           children: [
                             productController.isDetails.value
-                                ? const SizedBox(
+                                ? SizedBox(
                                     height: 0,
-                                  )
-                                : Container(
-                                    height: 40,
-                                    width: 40,
-                                    margin: const EdgeInsets.only(left: 150),
                                     key: widgetKey,
-                                    color: colorSecondary,
-                                    child: Image.network(
-                                        productController
-                                                .productDetails["images"][0]
-                                            ["name"],
-                                        fit: BoxFit.fitHeight)),
+                                  )
+                                : isImage(productController
+                                        .productDetails["images"][0]["name"])
+                                    ? Container(
+                                        height: 40,
+                                        width: 40,
+                                        margin:
+                                            const EdgeInsets.only(left: 150),
+                                        key: widgetKey,
+                                        color: colorSecondary,
+                                        child: Image.network(
+                                            productController
+                                                    .productDetails["images"][0]
+                                                ["name"],
+                                            fit: BoxFit.fitHeight))
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
                             getSingleButton(
                                 label: widget.type == "add"
                                     ? "Add to bag"
