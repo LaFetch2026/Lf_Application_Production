@@ -87,6 +87,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
           ));
         } else {
           productController.isVideoPlaying.value = true;
+          print(
+              "link video $index ${productController.productList[index]["images"][i]["name"]}");
           videoController = VideoPlayerController.networkUrl(
             Uri.parse(
               productController.productList[index]["images"][i]["name"],
@@ -224,10 +226,33 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                     itemBuilder: (ctx, index) {
                                       return GestureDetector(
                                         onTap: () {
-                                          Get.to(ProductDetailsScreen(
-                                              productId: productController
-                                                  .productList[index]["id"],
-                                              type: "add"));
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      ProductDetailsScreen(
+                                                          productId:
+                                                              productController
+                                                                      .productList[
+                                                                  index]["id"],
+                                                          type: "add")))
+                                              .then((value) => setState(
+                                                    () {
+                                                      productController
+                                                          .hasnextpage
+                                                          .value = true;
+                                                      productController.loadMore
+                                                          .value = false;
+                                                      productController
+                                                          .isProduct
+                                                          .value = false;
+                                                      productController
+                                                          .page.value = 1;
+                                                      productController
+                                                          .getProductData(
+                                                              "relevant");
+                                                    },
+                                                  ));
                                         },
                                         child: Column(
                                           crossAxisAlignment:

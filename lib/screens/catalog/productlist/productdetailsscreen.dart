@@ -527,6 +527,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   scrollDirection:
                                                       Axis.horizontal,
                                                   onPageChanged: (number) {
+                                                    if (videoController
+                                                        .value.isPlaying) {
+                                                      videoController.pause();
+                                                      productController
+                                                          .isVideoPlaying
+                                                          .value = true;
+                                                    }
                                                     setState(() {
                                                       _curr = number;
                                                     });
