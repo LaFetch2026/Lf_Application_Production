@@ -551,20 +551,21 @@ class BoardScreenState extends State<BoardScreen> {
                                                               onPressed: () {
                                                                 if (isDrawer) {
                                                                 } else {
-                                                                  Get.to(ProductDetailsScreen(
-                                                                      productId:
-                                                                          value.wishListProduct[index]
-                                                                              [
-                                                                              "id"],
-                                                                      type:
-                                                                          "move"));
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .push(MaterialPageRoute(
+                                                                          builder: (BuildContext context) => ProductDetailsScreen(
+                                                                                productId: value.wishListProduct[index]["id"],
+                                                                                type: "move",
+                                                                                boardId: widget.boardId,
+                                                                                wishlistProductId: value.wishListProduct[index]["id"],
+                                                                              )))
+                                                                      .then((value) => setState(
+                                                                            () {
+                                                                              wishlistController.getWishlistDetails(widget.boardId, 1);
+                                                                            },
+                                                                          ));
                                                                 }
-                                                                /*   wishlistController.callMovetoCart(
-                                                                    widget
-                                                                        .boardId,
-                                                                    value.wishListProduct[
-                                                                            index]
-                                                                        ["id"]); */
                                                               },
                                                               width: 152),
                                                         ),

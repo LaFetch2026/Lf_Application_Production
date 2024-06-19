@@ -23,8 +23,14 @@ import '../../cartscreen.dart';
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
   final String type;
+  final int wishlistProductId;
+  final int boardId;
   const ProductDetailsScreen(
-      {super.key, required this.productId, required this.type});
+      {super.key,
+      required this.productId,
+      required this.type,
+      this.boardId = 0,
+      this.wishlistProductId = 0});
 
   @override
   State<ProductDetailsScreen> createState() => ProductDetailsScreenState();
@@ -2333,10 +2339,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 backgroundColor: colorPrimary,
                                 controller: productController,
                                 onPressed: () {
-                                  if (productController
-                                      .checkDetailsValidation()) {
-                                    productController.callAddtoCart(1);
-                                    listClick(widgetKey);
+                                  if (widget.type == "add") {
+                                    if (productController
+                                        .checkDetailsValidation()) {
+                                      productController.callAddtoCart(1);
+                                      listClick(widgetKey);
+                                    }
+                                  } else {
+                                    if (productController
+                                        .checkDetailsValidation()) {
+                                      wishlistController.callMovetoCart(
+                                          widget.boardId,
+                                          widget.wishlistProductId);
+                                      listClick(widgetKey);
+                                    }
                                   }
                                 },
                                 borderColor: colorPrimary),
