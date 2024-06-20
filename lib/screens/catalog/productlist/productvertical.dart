@@ -5,6 +5,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_vertical_list.dart';
+import 'package:lafetch/commonwidget/productvedio.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
@@ -28,7 +29,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
-  late Future<void> _initializeVideoPlayerFuture;
+  //late Future<void> _initializeVideoPlayerFuture;
 
   @override
   void initState() {
@@ -86,19 +87,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
             ),
           ));
         } else {
-          productController.isVideoPlaying.value = true;
-          print(
-              "link video $index ${productController.productList[index]["images"][i]["name"]}");
+          //  productController.isVideoPlaying.value = true;
           videoController = VideoPlayerController.networkUrl(
             Uri.parse(
               productController.productList[index]["images"][i]["name"],
             ),
           );
 
-          _initializeVideoPlayerFuture = videoController.initialize();
-          videoController.setLooping(true);
+          //  _initializeVideoPlayerFuture = videoController.initialize();
+          //  videoController.setLooping(true);
 
-          list.add(
+          /*   list.add(
             FutureBuilder(
               future: _initializeVideoPlayerFuture,
               builder: (context, snapshot) {
@@ -139,6 +138,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
               },
             ),
           );
+          */
+
+          list.add(ProductVideo(
+            videoController: videoController,
+          ));
         }
       }
     } else {
@@ -288,6 +292,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         .index
                                                                         .value =
                                                                     index;
+                                                                productController
+                                                                    .isVideoPlaying
+                                                                    .value = true;
                                                                 productController
                                                                     .update();
                                                               },
