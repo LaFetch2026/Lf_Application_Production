@@ -21,8 +21,8 @@ class CatalogScreenState extends State<CatalogScreen> {
   final productController = Get.put(ProductController());
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+    /*  WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant")); */
     super.initState();
   }
 

@@ -18,7 +18,8 @@ import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 
 class ProductVerticalScreen extends StatefulWidget {
-  const ProductVerticalScreen({super.key});
+  final int categoryId;
+  const ProductVerticalScreen({super.key, required this.categoryId});
 
   @override
   State<ProductVerticalScreen> createState() => ProductVerticalScreenState();
@@ -34,7 +35,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   @override
   void initState() {
     productController.curr.value = 0;
-    WidgetsBinding.instance.addPostFrameCallback(
+    /*  WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant"));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
@@ -49,6 +50,22 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       productController.loadMore.value = false;
       productController.isProduct.value = false;
       productController.page.value = 1;
+    }); */
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getProductByCategoryData(widget.categoryId, 0));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.categoryProductController.addListener(() {
+        productController.fetchCategoryProductMoreData(widget.categoryId, 0);
+        productController.update();
+      });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.categoryProductHasnextpage.value = true;
+      productController.categoryProductLoadMore.value = false;
+      productController.isCategoryProduct.value = false;
+      productController.categoryProductPage.value = 1;
     });
     super.initState();
   }
@@ -67,12 +84,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
 
   List<Widget> getListForPageView(int index) {
     List<Widget> list = [];
-    if (productController.productList[index]["images"].isNotEmpty) {
+    if (productController.productCategoryList[index]["images"].isNotEmpty) {
       for (var i = 0;
-          i < productController.productList[index]["images"].length;
+          i < productController.productCategoryList[index]["images"].length;
           i++) {
-        if (isImage(
-            productController.productList[index]["images"][i]["name"])) {
+        if (isImage(productController.productCategoryList[index]["images"][i]
+            ["name"])) {
           list.add(Container(
             color: colorSecondary,
             child: CachedNetworkImage(
@@ -80,8 +97,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                   stalePeriod: const Duration(days: 15),
                   maxNrOfCacheObjects: 100)),
               fit: BoxFit.cover,
-              imageUrl: productController.productList[index]["images"][i]
-                  ["name"],
+              imageUrl: productController.productCategoryList[index]["images"]
+                  [i]["name"],
               errorWidget: (context, url, error) =>
                   Image.asset(downloadImage, fit: BoxFit.cover),
             ),
@@ -90,7 +107,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
           //  productController.isVideoPlaying.value = true;
           videoController = VideoPlayerController.networkUrl(
             Uri.parse(
-              productController.productList[index]["images"][i]["name"],
+              productController.productCategoryList[index]["images"][i]["name"],
             ),
           );
 
@@ -200,9 +217,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
         key: scaffoldKey,
         backgroundColor: whiteColor,
         body: Obx(
-          () => productController.isProduct.value
+          () => productController.isCategoryProduct.value
               ? const DummyVerticalList()
-              : productController.productList.isNotEmpty
+              : productController.productCategoryList.isNotEmpty
                   ? Stack(
                       children: [
                         SingleChildScrollView(
@@ -224,8 +241,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                         productController.listController,
                                     padding: EdgeInsets.zero,
                                     physics: const ScrollPhysics(),
-                                    itemCount:
-                                        productController.productList.length,
+                                    itemCount: productController
+                                        .productCategoryList.length,
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: (ctx, index) {
                                       return GestureDetector(
@@ -237,24 +254,27 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       ProductDetailsScreen(
                                                           productId:
                                                               productController
-                                                                      .productList[
+                                                                      .productCategoryList[
                                                                   index]["id"],
                                                           type: "add")))
                                               .then((value) => setState(
                                                     () {
                                                       productController
-                                                          .hasnextpage
+                                                          .categoryProductHasnextpage
                                                           .value = true;
-                                                      productController.loadMore
+                                                      productController
+                                                          .categoryProductLoadMore
                                                           .value = false;
                                                       productController
-                                                          .isProduct
+                                                          .isCategoryProduct
                                                           .value = false;
                                                       productController
-                                                          .page.value = 1;
+                                                          .categoryProductPage
+                                                          .value = 1;
                                                       productController
-                                                          .getProductData(
-                                                              "relevant");
+                                                          .getProductByCategoryData(
+                                                              widget.categoryId,
+                                                              0);
                                                     },
                                                   ));
                                         },
@@ -264,7 +284,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                           children: [
                                             Stack(
                                               children: [
-                                                productController.productList[
+                                                productController
+                                                                .productCategoryList[
                                                             index]["images"] !=
                                                         null
                                                     ? Padding(
@@ -394,17 +415,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                 GestureDetector(
                                                   onTap: () {
                                                     if (productController
-                                                            .productList[index]
-                                                        ["wishlisted"]) {
+                                                            .productCategoryList[
+                                                        index]["wishlisted"]) {
                                                       productController
                                                           .callAddProductToWishlist(
                                                               productController
-                                                                          .productList[
+                                                                          .productCategoryList[
                                                                       index][
                                                                   "wishlist_id"],
-                                                              "product",
+                                                              "category",
                                                               productController
-                                                                      .productList[
+                                                                      .productCategoryList[
                                                                   index]["id"],
                                                               0,
                                                               0,
@@ -419,8 +440,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       (p0) {
                                                                     productController.callAddProductToWishlist(
                                                                         p0,
-                                                                        "product",
-                                                                        productController.productList[index]
+                                                                        "category",
+                                                                        productController.productCategoryList[index]
                                                                             [
                                                                             "id"],
                                                                         0,
@@ -448,7 +469,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                             backgroundColor:
                                                                 whiteColor,
                                                             child: productController
-                                                                            .productList[
+                                                                            .productCategoryList[
                                                                         index][
                                                                     "wishlisted"]
                                                                 ? Image.asset(
@@ -494,12 +515,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           ),
                                                           AppText(
                                                             text: productController
-                                                                            .productList[index]
+                                                                            .productCategoryList[index]
                                                                         [
                                                                         "aggregated_rating"] !=
                                                                     null
                                                                 ? productController
-                                                                    .productList[
+                                                                    .productCategoryList[
                                                                         index][
                                                                         "aggregated_rating"]
                                                                     .toString()
@@ -541,8 +562,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                               ],
                                             ),
                                             productController
-                                                        .productList[index]
-                                                            ["images"]
+                                                        .productCategoryList[
+                                                            index]["images"]
                                                         .length ==
                                                     1
                                                 ? const SizedBox(
@@ -570,14 +591,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                               children: List<
                                                                       Widget>.generate(
                                                                   productController
-                                                                      .productList[
+                                                                      .productCategoryList[
                                                                           index]
                                                                           [
                                                                           "images"]
                                                                       .length,
                                                                   (int l) {
                                                                 if (isImage(productController
-                                                                            .productList[index]
+                                                                            .productCategoryList[index]
                                                                         [
                                                                         "images"]
                                                                     [
@@ -640,8 +661,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       vertical: 5),
                                               child: AppText(
                                                 text: productController
-                                                            .productList[index]
-                                                        ["name"] ??
+                                                            .productCategoryList[
+                                                        index]["name"] ??
                                                     "",
                                                 color: nameText,
                                                 maxLines: 2,
@@ -656,7 +677,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       horizontal: 10),
                                               child: AppText(
                                                 text: productController
-                                                            .productList[index]
+                                                                .productCategoryList[
+                                                            index]
                                                         ["short_description"] ??
                                                     "",
                                                 color: nameText,
@@ -674,7 +696,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                 children: [
                                                   AppText(
                                                     text:
-                                                        "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                        "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
                                                     color: deepGreytextColor,
                                                     maxLines: 2,
                                                     fontSize: 14.sp,
@@ -687,7 +709,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         const EdgeInsets.only(
                                                             left: 5),
                                                     child: Text(
-                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
                                                       style: TextStyle(
                                                         color: textHintColor,
                                                         fontSize: 11.sp,

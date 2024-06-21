@@ -19,13 +19,13 @@ class CatalogDetailsScreen extends StatefulWidget {
   final String catalogImage;
   final int genderType;
 
-  const CatalogDetailsScreen(
-      {Key? key,
-      required this.title,
-      required this.catalogText,
-      required this.catalogImage,
-      required this.genderType})
-      : super(key: key);
+  const CatalogDetailsScreen({
+    Key? key,
+    required this.title,
+    required this.catalogText,
+    required this.catalogImage,
+    required this.genderType,
+  }) : super(key: key);
 
   @override
   State<CatalogDetailsScreen> createState() => CatalogDetailsScreenState();
@@ -145,7 +145,10 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                       children: [
                                         GestureDetector(
                                             onTap: () {
-                                              Get.to(const ProductListScreen());
+                                              Get.to(ProductListScreen(
+                                                categoryId: controller
+                                                    .categoryList[index]["id"],
+                                              ));
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(

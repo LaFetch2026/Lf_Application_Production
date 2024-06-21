@@ -10,7 +10,8 @@ import '../../utils/constants.dart';
 import '../cartscreen.dart';
 
 class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({super.key});
+  final int categoryId;
+  const ProductListScreen({super.key, required this.categoryId});
 
   @override
   State<ProductListScreen> createState() => ProductListScreenState();
@@ -87,12 +88,14 @@ class ProductListScreenState extends State<ProductListScreen> {
               color: whiteColor,
               height: 1,
             ),
-            const Expanded(
+            Expanded(
               child: TabBarView(children: [
-                ViewProductScreen(),
-                ViewProductScreen(),
-                ViewProductScreen(),
-                ViewProductScreen(),
+                ViewProductScreen(
+                  categoryId: widget.categoryId,
+                ),
+                ViewProductScreen(categoryId: widget.categoryId),
+                ViewProductScreen(categoryId: widget.categoryId),
+                ViewProductScreen(categoryId: widget.categoryId),
               ]),
             ),
           ],
