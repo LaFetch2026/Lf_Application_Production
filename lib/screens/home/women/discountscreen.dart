@@ -18,7 +18,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class DiscountScreen extends StatefulWidget {
   final int tagId;
-  const DiscountScreen({super.key, required this.tagId});
+  final int genderType;
+  const DiscountScreen(
+      {super.key, required this.tagId, required this.genderType});
 
   @override
   State<DiscountScreen> createState() => DiscountScreenState();
@@ -64,8 +66,8 @@ class DiscountScreenState extends State<DiscountScreen> {
         .addPostFrameCallback((_) => homeController.getBannar1Data());
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getBannar2Data());
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getCategoryData());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => homeController.getCategoryData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getTagsProductData(widget.tagId));
     WidgetsBinding.instance

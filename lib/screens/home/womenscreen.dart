@@ -8,7 +8,8 @@ import '../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../utils/constants.dart';
 
 class WomenScreen extends StatelessWidget {
-  const WomenScreen({super.key});
+  final int genderType;
+  const WomenScreen({super.key, required this.genderType});
 
   @override
   Widget build(BuildContext context) {
@@ -172,6 +173,7 @@ class WomenScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return DiscountScreen(
                           tagId: homeController.tagId.value,
+                          genderType: genderType,
                         );
                       },
                     ),

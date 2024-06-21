@@ -290,9 +290,15 @@ class HomeScreenState extends State<HomeScreen> {
               child: TabBarView(
                   physics: NeverScrollableScrollPhysics(),
                   children: [
-                    WomenScreen(),
-                    WomenScreen(),
-                    WomenScreen(),
+                    WomenScreen(
+                      genderType: 3,
+                    ),
+                    WomenScreen(
+                      genderType: 2,
+                    ),
+                    WomenScreen(
+                      genderType: 1,
+                    ),
                   ]),
             ),
           ],
