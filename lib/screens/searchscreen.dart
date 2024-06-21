@@ -234,11 +234,38 @@ class SearchScreenState extends State<SearchScreen> {
                                                 onTap: () {
                                                   if (isSearch) {
                                                   } else {
-                                                    Get.to(ProductDetailsScreen(
-                                                        productId:
-                                                            product["product"]
-                                                                ["id"],
-                                                        type: "add"));
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                ProductDetailsScreen(
+                                                                    productId:
+                                                                        product["product"]
+                                                                            [
+                                                                            "id"],
+                                                                    type:
+                                                                        "add")))
+                                                        .then(
+                                                            (value) => setState(
+                                                                  () {
+                                                                    productController
+                                                                        .hasnextpage
+                                                                        .value = true;
+                                                                    productController
+                                                                        .loadMore
+                                                                        .value = false;
+                                                                    productController
+                                                                        .isProduct
+                                                                        .value = false;
+                                                                    productController
+                                                                        .page
+                                                                        .value = 1;
+                                                                    productController;
+                                                                    productController
+                                                                        .getProductData(
+                                                                            "recently-viewed");
+                                                                  },
+                                                                ));
                                                   }
                                                 },
                                                 child: Container(
@@ -329,11 +356,37 @@ class SearchScreenState extends State<SearchScreen> {
                                                       onTap: () {
                                                         if (isSearch) {
                                                         } else {
-                                                          Get.to(ProductDetailsScreen(
-                                                              productId: productController
-                                                                      .mostSeachList[
-                                                                  index]["id"],
-                                                              type: "add"));
+                                                          Navigator.of(context)
+                                                              .push(MaterialPageRoute(
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      ProductDetailsScreen(
+                                                                          productId: productController.mostSeachList[index]
+                                                                              [
+                                                                              "id"],
+                                                                          type:
+                                                                              "add")))
+                                                              .then(
+                                                                  (value) =>
+                                                                      setState(
+                                                                        () {
+                                                                          productController
+                                                                              .hasnextpage
+                                                                              .value = true;
+                                                                          productController
+                                                                              .loadMore
+                                                                              .value = false;
+                                                                          productController
+                                                                              .isProduct
+                                                                              .value = false;
+                                                                          productController
+                                                                              .page
+                                                                              .value = 1;
+                                                                          productController;
+                                                                          productController
+                                                                              .getProductData("recently-viewed");
+                                                                        },
+                                                                      ));
                                                         }
                                                       },
                                                       child: SizedBox(

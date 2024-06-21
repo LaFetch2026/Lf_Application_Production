@@ -292,6 +292,9 @@ class LoginScreenState extends State<LoginScreen> {
                               textColor: greyTextColor,
                               borderColor: colorSecondary,
                               fontSize: 14.sp,
+                              onPressed: () {
+                                googleSignInProcess(context);
+                              },
                               backgroundColor: whiteTextColor),
                         ),
                         const ORWidget(),
