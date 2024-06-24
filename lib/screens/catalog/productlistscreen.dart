@@ -22,12 +22,6 @@ class ProductListScreenState extends State<ProductListScreen> {
   final productController = Get.put(ProductController());
 
   @override
-  void initState() {
-    productController.getProductByCategoryData(widget.categoryId, 0);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,

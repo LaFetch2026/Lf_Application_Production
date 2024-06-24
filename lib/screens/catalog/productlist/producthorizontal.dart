@@ -190,11 +190,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                           .productCategoryList[
                                                                       index][
                                                                   "wishlist_id"],
-                                                              "product",
+                                                              "category",
                                                               productController
                                                                       .productCategoryList[
                                                                   index]["id"],
-                                                              0,
+                                                              widget.categoryId,
                                                               0,
                                                               [],
                                                               0);
@@ -208,11 +208,12 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                       (p0) {
                                                                     productController.callAddProductToWishlist(
                                                                         p0,
-                                                                        "product",
+                                                                        "category",
                                                                         productController.productCategoryList[index]
                                                                             [
                                                                             "id"],
-                                                                        0,
+                                                                        widget
+                                                                            .categoryId,
                                                                         0,
                                                                         [],
                                                                         0);
