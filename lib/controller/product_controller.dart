@@ -142,9 +142,6 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productList = responseData["data"];
-          if (type == "relevant") {
-            total.value = responseData["meta"]["total"];
-          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -653,6 +650,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productCategoryList = responseData["data"];
+          total.value = responseData["meta"]["total"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

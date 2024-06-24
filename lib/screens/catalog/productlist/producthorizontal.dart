@@ -17,7 +17,8 @@ import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 
 class ProductHorizontalScreen extends StatefulWidget {
-  const ProductHorizontalScreen({super.key});
+  final int categoryId;
+  const ProductHorizontalScreen({super.key, required this.categoryId});
 
   @override
   State<ProductHorizontalScreen> createState() =>
@@ -31,21 +32,21 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getProductByCategoryData(widget.categoryId, 0));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
+      productController.categoryProductController.addListener(() {
+        productController.fetchCategoryProductMoreData(widget.categoryId, 0);
         productController.update();
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.hasnextpage.value = true;
-      productController.loadMore.value = false;
-      productController.isProduct.value = false;
-      productController.page.value = 1;
+      productController.categoryProductHasnextpage.value = true;
+      productController.categoryProductLoadMore.value = false;
+      productController.isCategoryProduct.value = false;
+      productController.categoryProductPage.value = 1;
     });
     super.initState();
   }
@@ -56,13 +57,14 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
         key: scaffoldKey,
         backgroundColor: whiteColor,
         body: Obx(
-          () => productController.isProduct.value
+          () => productController.isCategoryProduct.value
               ? const DummyGridList()
-              : productController.productList.isNotEmpty
+              : productController.productCategoryList.isNotEmpty
                   ? Stack(
                       children: [
                         SingleChildScrollView(
-                          controller: productController.listController,
+                          controller:
+                              productController.categoryProductController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -72,7 +74,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                 child: GridView.count(
                                   shrinkWrap: true,
                                   crossAxisCount: 2,
-                                  controller: productController.listController,
+                                  controller: productController
+                                      .categoryProductController,
                                   scrollDirection: Axis.vertical,
                                   padding: EdgeInsets.zero,
                                   childAspectRatio: 0.5,
@@ -80,7 +83,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                   crossAxisSpacing: 5,
                                   mainAxisSpacing: 0,
                                   children: List.generate(
-                                    productController.productList.length,
+                                    productController
+                                        .productCategoryList.length,
                                     (index) {
                                       return GestureDetector(
                                         onTap: () {
@@ -91,24 +95,27 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                       ProductDetailsScreen(
                                                           productId:
                                                               productController
-                                                                      .productList[
+                                                                      .productCategoryList[
                                                                   index]["id"],
                                                           type: "add")))
                                               .then((value) => setState(
                                                     () {
                                                       productController
-                                                          .hasnextpage
+                                                          .categoryProductHasnextpage
                                                           .value = true;
-                                                      productController.loadMore
+                                                      productController
+                                                          .categoryProductLoadMore
                                                           .value = false;
                                                       productController
-                                                          .isProduct
+                                                          .isCategoryProduct
                                                           .value = false;
                                                       productController
-                                                          .page.value = 1;
+                                                          .categoryProductPage
+                                                          .value = 1;
                                                       productController
-                                                          .getProductData(
-                                                              "relevant");
+                                                          .getProductByCategoryData(
+                                                              widget.categoryId,
+                                                              0);
                                                     },
                                                   ));
                                         },
@@ -120,12 +127,12 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                               children: [
                                                 Center(
                                                   child: productController
-                                                              .productList[
+                                                              .productCategoryList[
                                                                   index]
                                                                   ["images"]
                                                               .isNotEmpty &&
                                                           productController
-                                                                          .productList[
+                                                                          .productCategoryList[
                                                                       index]
                                                                   ["images"] !=
                                                               null
@@ -144,7 +151,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                     100)),
                                                             fit: BoxFit.cover,
                                                             imageUrl: productController
-                                                                        .productList[
+                                                                        .productCategoryList[
                                                                     index]["images"]
                                                                 [0]["name"],
                                                             /*  progressIndicatorBuilder:
@@ -175,17 +182,17 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                 GestureDetector(
                                                   onTap: () {
                                                     if (productController
-                                                            .productList[index]
-                                                        ["wishlisted"]) {
+                                                            .productCategoryList[
+                                                        index]["wishlisted"]) {
                                                       productController
                                                           .callAddProductToWishlist(
                                                               productController
-                                                                          .productList[
+                                                                          .productCategoryList[
                                                                       index][
                                                                   "wishlist_id"],
                                                               "product",
                                                               productController
-                                                                      .productList[
+                                                                      .productCategoryList[
                                                                   index]["id"],
                                                               0,
                                                               0,
@@ -202,7 +209,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                     productController.callAddProductToWishlist(
                                                                         p0,
                                                                         "product",
-                                                                        productController.productList[index]
+                                                                        productController.productCategoryList[index]
                                                                             [
                                                                             "id"],
                                                                         0,
@@ -231,7 +238,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                             backgroundColor:
                                                                 whiteColor,
                                                             child: productController
-                                                                            .productList[
+                                                                            .productCategoryList[
                                                                         index][
                                                                     "wishlisted"]
                                                                 ? Image.asset(
@@ -277,12 +284,12 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                           ),
                                                           AppText(
                                                             text: productController
-                                                                            .productList[index]
+                                                                            .productCategoryList[index]
                                                                         [
                                                                         "aggregated_rating"] !=
                                                                     null
                                                                 ? productController
-                                                                    .productList[
+                                                                    .productCategoryList[
                                                                         index][
                                                                         "aggregated_rating"]
                                                                     .toString()
@@ -330,8 +337,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                       vertical: 5),
                                               child: AppText(
                                                 text: productController
-                                                            .productList[index]
-                                                        ["name"] ??
+                                                            .productCategoryList[
+                                                        index]["name"] ??
                                                     "",
                                                 color: nameText,
                                                 maxLines: 2,
@@ -346,7 +353,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                       horizontal: 10),
                                               child: AppText(
                                                 text: productController
-                                                            .productList[index]
+                                                                .productCategoryList[
+                                                            index]
                                                         ["short_description"] ??
                                                     "",
                                                 color: nameText,
@@ -364,7 +372,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                 children: [
                                                   AppText(
                                                     text:
-                                                        "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                        "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
                                                     color: deepGreytextColor,
                                                     maxLines: 2,
                                                     fontSize: 11.sp,
@@ -377,7 +385,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                         const EdgeInsets.only(
                                                             left: 5),
                                                     child: Text(
-                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
                                                       style: TextStyle(
                                                         color: textHintColor,
                                                         fontSize: 11.sp,

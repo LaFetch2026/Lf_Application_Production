@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/catalog_product_appbar.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 
@@ -18,6 +19,14 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class ProductListScreenState extends State<ProductListScreen> {
+  final productController = Get.put(ProductController());
+
+  @override
+  void initState() {
+    productController.getProductByCategoryData(widget.categoryId, 0);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

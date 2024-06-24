@@ -19,12 +19,6 @@ class ViewProductScreen extends StatefulWidget {
 
 class ViewProductScreenState extends State<ViewProductScreen> {
   final productController = Get.put(ProductController());
-  /* @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
-    super.initState();
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +112,9 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                     ProductVerticalScreen(
                       categoryId: widget.categoryId,
                     ),
-                    const ProductHorizontalScreen(),
+                    ProductHorizontalScreen(
+                      categoryId: widget.categoryId,
+                    ),
                   ]),
                 ),
               ],

@@ -12,6 +12,7 @@ import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../commonwidget/homewidget/dummy_grid_list.dart';
 
 class CategoryProductScreen extends StatefulWidget {
   final int categoryId;
@@ -82,9 +83,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             ),
             Obx(
               () => productController.isCategoryProduct.value
-                  ? const Padding(
-                      padding: EdgeInsets.all(40.0),
-                      child: Center(child: CircularProgressIndicator()),
+                  ? const DummyGridList(
+                      size: 2,
                     )
                   : productController.productCategoryList.isNotEmpty
                       ? Expanded(
