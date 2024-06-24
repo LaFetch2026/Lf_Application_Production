@@ -200,7 +200,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                   index]["id"],
                                                               widget.categoryId,
                                                               widget.brandId,
-                                                              []);
+                                                              [],
+                                                              0);
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
@@ -216,7 +217,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             0,
-                                                                            []);
+                                                                            [],
+                                                                            0);
                                                                       },
                                                                       wishlistList:
                                                                           wishlistController
@@ -237,7 +239,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                   index]["id"],
                                                               widget.categoryId,
                                                               widget.brandId,
-                                                              widget.tagIds);
+                                                              widget.tagIds,
+                                                              0);
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
@@ -253,7 +256,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             0,
-                                                                            widget.tagIds);
+                                                                            widget.tagIds,
+                                                                            0);
                                                                       },
                                                                       wishlistList:
                                                                           wishlistController

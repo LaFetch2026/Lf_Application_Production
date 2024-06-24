@@ -199,7 +199,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                   index]["id"],
                                                               0,
                                                               widget.brandId,
-                                                              []);
+                                                              [],
+                                                              0);
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
@@ -215,7 +216,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                             productController.productExpressBrandList[index]["id"],
                                                                             0,
                                                                             widget.brandId,
-                                                                            []);
+                                                                            [],
+                                                                            0);
                                                                       },
                                                                       wishlistList:
                                                                           wishlistController

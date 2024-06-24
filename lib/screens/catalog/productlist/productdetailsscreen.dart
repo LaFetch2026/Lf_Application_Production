@@ -443,20 +443,33 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.colorInventoryId.value = 0;
     productController.fabricInventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.frequentlyListController.addListener(() {
-        productController.fetchMoreData("frequently-bought");
+      productController.frequentlyBoughtController.addListener(() {
+        productController.fetchFrequentlyMoreData(
+            "frequently-bought", widget.productId);
         productController.update();
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.hasnextpage.value = true;
-      productController.loadMore.value = false;
-      productController.isProduct.value = false;
-      productController.page.value = 1;
+      productController.frequentlyBoughtHasnextpage.value = true;
+      productController.frequentlyBoughtLoadMore.value = false;
+      productController.isFrequentlyBought.value = false;
+      productController.frequentlyBoughtPage.value = 1;
       productController.inventoryId.value = 0;
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("frequently-bought"));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.recommendedController.addListener(() {
+        productController.fetchMoreRecommendedProductData(widget.productId);
+        productController.update();
+      });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.recommendedHasnextpage.value = true;
+      productController.recommendedLoadMore.value = false;
+      productController.isRecommendations.value = false;
+      productController.recommendedPage.value = 1;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getFrequentlyProductData("frequently-bought", widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductDetails(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
@@ -1918,7 +1931,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         text: "Recommended for you",
                                         height: 250,
                                         controller: productController
-                                            .frequentlyListController,
+                                            .recommendedController,
                                         leftPadding: 0,
                                         list: productController.recommendedList,
                                         visibleExpress: true,
@@ -1936,7 +1949,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     p0,
                                                     0,
                                                     0,
-                                                    []);
+                                                    [],
+                                                    widget.productId);
                                           } else {
                                             scaffoldKey.currentState
                                                 ?.showBottomSheet((context) =>
@@ -1953,7 +1967,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       p1]["id"],
                                                                   0,
                                                                   0,
-                                                                  []);
+                                                                  [],
+                                                                  widget
+                                                                      .productId);
                                                         },
                                                         wishlistList:
                                                             wishlistController
@@ -1975,7 +1991,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     ],
                                   )),
-                            Obx(() => productController.isProduct.value
+                            Obx(() => productController.isFrequentlyBought.value
                                 ? const Padding(
                                     padding: EdgeInsets.all(40.0),
                                     child: Center(
@@ -2176,24 +2192,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         text: "Frequently bought with",
                                         height: 250,
                                         leftPadding: 0,
-                                        controller:
-                                            productController.listController,
-                                        list: productController.productList,
+                                        controller: productController
+                                            .frequentlyBoughtController,
+                                        list: productController
+                                            .frequentlyProductList,
                                         visibleExpress: true,
                                         visibleheart: true,
                                         onPressedHeart: (p0, p1) {
-                                          if (productController.productList[p1]
+                                          if (productController
+                                                  .frequentlyProductList[p1]
                                               ["wishlisted"]) {
                                             productController
                                                 .callAddProductToWishlist(
                                                     productController
-                                                            .productList[p1]
-                                                        ["wishlist_id"],
-                                                    "product",
+                                                            .frequentlyProductList[
+                                                        p1]["wishlist_id"],
+                                                    "frequently",
                                                     p0,
                                                     0,
                                                     0,
-                                                    []);
+                                                    [],
+                                                    widget.productId);
                                           } else {
                                             scaffoldKey.currentState
                                                 ?.showBottomSheet((context) =>
@@ -2204,13 +2223,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           productController
                                                               .callAddProductToWishlist(
                                                                   p0,
-                                                                  "product",
+                                                                  "frequently",
                                                                   productController
-                                                                          .productList[
+                                                                          .frequentlyProductList[
                                                                       p1]["id"],
                                                                   0,
                                                                   0,
-                                                                  []);
+                                                                  [],
+                                                                  widget
+                                                                      .productId);
                                                         },
                                                         wishlistList:
                                                             wishlistController

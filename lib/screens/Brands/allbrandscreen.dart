@@ -309,7 +309,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         p0,
                                         0,
                                         0,
-                                        []);
+                                        [],
+                                        0);
                                   } else {
                                     scaffoldKey.currentState?.showBottomSheet(
                                         (context) => BottomWishlist(
@@ -324,7 +325,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                           p1]["id"],
                                                       0,
                                                       0,
-                                                      []);
+                                                      [],
+                                                      0);
                                             },
                                             wishlistList: wishlistController
                                                 .wishlistList));
@@ -564,7 +566,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       p0,
                                       0,
                                       0,
-                                      []);
+                                      [],
+                                      0);
                                 } else {
                                   scaffoldKey.currentState?.showBottomSheet(
                                       (context) => BottomWishlist(
@@ -578,7 +581,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                         .productList[p1]["id"],
                                                     0,
                                                     0,
-                                                    []);
+                                                    [],
+                                                    0);
                                           },
                                           wishlistList:
                                               wishlistController.wishlistList));

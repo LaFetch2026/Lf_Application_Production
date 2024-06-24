@@ -22,6 +22,7 @@ class ProductController extends BaseController {
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
   RxBool isColor = false.obs;
+  RxBool isFrequentlyBought = false.obs;
   RxInt currentpage = 0.obs;
   RxInt inventoryId = 0.obs;
   RxInt sizeInventoryId = 0.obs;
@@ -32,6 +33,7 @@ class ProductController extends BaseController {
   dynamic compositionDetails = "".obs;
   dynamic returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
+  List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
   List productList = [].obs;
   List mostSeachList = [].obs;
@@ -54,7 +56,6 @@ class ProductController extends BaseController {
   RxInt page = 1.obs;
   ScrollController listController = ScrollController();
   ScrollController recentListController = ScrollController();
-  ScrollController frequentlyListController = ScrollController();
   RxBool expressLoadMore = false.obs;
   RxBool expressHasnextpage = true.obs;
   RxInt expressPage = 1.obs;
@@ -79,6 +80,14 @@ class ProductController extends BaseController {
   RxBool bannerTagLoadMore = false.obs;
   RxBool bannerTagHasnextpage = true.obs;
   RxInt bannerTagPage = 1.obs;
+  ScrollController frequentlyBoughtController = ScrollController();
+  RxBool frequentlyBoughtLoadMore = false.obs;
+  RxBool frequentlyBoughtHasnextpage = true.obs;
+  RxInt frequentlyBoughtPage = 1.obs;
+  ScrollController recommendedController = ScrollController();
+  RxBool recommendedLoadMore = false.obs;
+  RxBool recommendedHasnextpage = true.obs;
+  RxInt recommendedPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
 
   bool checkPinvalidation(String pin) {
@@ -197,6 +206,85 @@ class ProductController extends BaseController {
         print("error$e");
       }
       loadMore.value = false;
+    }
+  }
+
+  getFrequentlyProductData(String type, int productId) async {
+    isFrequentlyBought.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?type=$type&except_product_id=$productId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          frequentlyProductList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get frequently product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isFrequentlyBought.value = false;
+  }
+
+  fetchFrequentlyMoreData(String type, int productId) async {
+    if (frequentlyBoughtHasnextpage.value == true &&
+        isFrequentlyBought.value == false &&
+        frequentlyBoughtLoadMore.value == false) {
+      frequentlyBoughtLoadMore.value = true;
+      frequentlyBoughtPage.value += 1;
+      print(frequentlyBoughtPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=$type&page=${frequentlyBoughtPage.value}&except_product_id=$productId"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              frequentlyProductList.addAll(responseData['data']);
+            } else {
+              frequentlyBoughtHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch frequently product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      frequentlyBoughtLoadMore.value = false;
     }
   }
 
@@ -822,7 +910,7 @@ class ProductController extends BaseController {
     try {
       var response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products/$productId/recommendations"),
+              "${ApiConstants.baseUrl}/products/$productId/recommendations?except_product_id=$productId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -848,6 +936,51 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isRecommendations.value = false;
+  }
+
+  fetchMoreRecommendedProductData(int productId) async {
+    if (recommendedHasnextpage.value == true &&
+        isRecommendations.value == false &&
+        recommendedLoadMore.value == false) {
+      recommendedLoadMore.value = true;
+      recommendedPage.value += 1;
+      print(recommendedPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products/$productId/recommendations?except_product_id=$productId&page=${recommendedPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              recommendedList.addAll(responseData['data']);
+            } else {
+              recommendedHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch recommended product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      recommendedLoadMore.value = false;
+    }
   }
 
   getCheckPincode(String pin) async {
@@ -928,7 +1061,7 @@ class ProductController extends BaseController {
   }
 
   callAddProductToWishlist(int wishlistId, String type, int id, int categoryId,
-      int brandId, List list) async {
+      int brandId, List list, int existId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -957,8 +1090,10 @@ class ProductController extends BaseController {
           getBrandExpressProductData(brandId);
         } else if (type == "bannerTag") {
           getTagsBannerData(list);
+        } else if (type == "frequently") {
+          getFrequentlyProductData("frequently-bought", existId);
         } else {
-          getProductRecommendations(id);
+          getProductRecommendations(existId);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
