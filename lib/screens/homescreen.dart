@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/home/womenscreen.dart';
+import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,7 +70,7 @@ class HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    /*  OneSignal.Notifications.addPermissionObserver((state) {
+    OneSignal.Notifications.addPermissionObserver((state) {
       print("Has permission $state");
     });
 
@@ -78,10 +79,14 @@ class HomeScreenState extends State<HomeScreen> {
       setState(() {
         print("data ${event.notification.additionalData}");
         if (event.notification.additionalData != null) {
-          print(event.notification.additionalData?["page"]);
+          if (event.notification.additionalData?["page"] == "order") {
+            Get.to(OrderDetailsScreen(
+              orderId: event.notification.additionalData?["id"],
+            ));
+          }
         }
       });
-    }); */
+    });
   }
 
   @override
