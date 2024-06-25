@@ -113,6 +113,17 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
     cityname = place1.subLocality.toString();
     markers.add(Marker(
         draggable: true,
+        onDragEnd: (newPosition) async {
+          print(newPosition.latitude);
+          print(newPosition.longitude);
+          shipController.lat.value = newPosition.latitude;
+          shipController.lng.value = newPosition.longitude;
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+              newPosition.latitude, newPosition.longitude);
+          Placemark place1 = placemarks[0];
+          cityname = place1.subLocality.toString();
+          setState(() {});
+        },
         markerId: const MarkerId('1'),
         infoWindow: InfoWindow(title: cityname),
         position: LatLng(shipController.lat.value, shipController.lng.value)));
