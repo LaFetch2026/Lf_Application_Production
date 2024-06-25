@@ -112,6 +112,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
     Placemark place1 = placemarks[0];
     cityname = place1.subLocality.toString();
     markers.add(Marker(
+        draggable: true,
         markerId: const MarkerId('1'),
         infoWindow: InfoWindow(title: cityname),
         position: LatLng(shipController.lat.value, shipController.lng.value)));
