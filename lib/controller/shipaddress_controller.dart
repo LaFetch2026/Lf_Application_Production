@@ -25,6 +25,8 @@ class ShipAddressController extends BaseController {
   RxInt cityId = 0.obs;
   RxInt cartId = 0.obs;
   RxInt addressId = 0.obs;
+  RxDouble lat = 0.0.obs;
+  RxDouble lng = 0.0.obs;
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();
   final stateController = TextEditingController();
@@ -87,6 +89,10 @@ class ShipAddressController extends BaseController {
       getSnackBar("Select Address Type");
       return false;
     }
+    if (lat.value == 0.0 && lng.value == 0.0) {
+      getSnackBar("Select Location");
+      return false;
+    }
     return true;
   }
 
@@ -134,6 +140,8 @@ class ShipAddressController extends BaseController {
         "locality": localityController.text.toString().trim(),
         "default_billing": defaultBilling.value,
         "default_shipping": defaultShipping.value,
+        "latitude": lat.value,
+        "longitude": lng.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses"),
@@ -187,6 +195,8 @@ class ShipAddressController extends BaseController {
         "locality": localityController.text.toString().trim(),
         "default_billing": defaultBilling.value,
         "default_shipping": defaultShipping.value,
+        "latitude": lat.value,
+        "longitude": lng.value
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses/$id"),
@@ -284,6 +294,12 @@ class ShipAddressController extends BaseController {
           if (responseData["city"] != null) {
             stateController.text = responseData["city"]["name"];
             cityId.value = responseData["city"]["id"];
+          }
+          if (responseData["latitude"] != null) {
+            lat.value = double.parse(responseData["latitude"]);
+          }
+          if (responseData["longitude"] != null) {
+            lng.value = double.parse(responseData["longitude"]);
           }
           isCheck.value = responseData["default_shipping"];
           if (isCheck.value) {
