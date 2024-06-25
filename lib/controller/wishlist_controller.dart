@@ -636,12 +636,14 @@ class WishlistController extends BaseController {
     hideLoading();
   }
 
-  callMovetoCart(int wishlistId, int productId) async {
+  callMovetoCart(
+      int wishlistId, int productId, int inventoryId, int qty) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
         "wishlist_id": wishlistId,
+        "inventory_id": inventoryId,
       };
       var response = await http.put(
           Uri.parse("${ApiConstants.baseUrl}/products/$productId/move-to-cart"),

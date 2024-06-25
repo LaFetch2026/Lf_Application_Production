@@ -2371,7 +2371,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         .checkDetailsValidation()) {
                                       wishlistController.callMovetoCart(
                                           widget.boardId,
-                                          widget.wishlistProductId);
+                                          widget.wishlistProductId,
+                                          productController
+                                              .sizeInventoryId.value,
+                                          1);
                                       listClick(widgetKey);
                                     }
                                   }
