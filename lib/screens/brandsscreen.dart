@@ -157,7 +157,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                   const BorderSide(color: colorSecondary),
                             ),
                             counterText: "",
-                            hintText: "Search for brands & products",
+                            hintText: "Search for brands",
                             hintStyle: const TextStyle(
                                 fontSize: 14, color: colorSecondary),
                           ),
