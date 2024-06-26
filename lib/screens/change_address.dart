@@ -7,7 +7,7 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_saveaddress.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
-import 'package:lafetch/screens/shippingaddressscreen.dart';
+import 'package:lafetch/screens/mapscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../utils/constants.dart';
@@ -57,8 +57,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                       onTap: () {
                         Navigator.of(context)
                             .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    ShippingAddressScreen(
+                                builder: (BuildContext context) => MapScreen(
                                       addressId: 0,
                                       cartId: widget.cartId,
                                     )))

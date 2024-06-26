@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +28,10 @@ class ShipAddressController extends BaseController {
   RxInt addressId = 0.obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
+  Rx<LatLng> defaultLatLng = const LatLng(0.0, 0.0).obs;
+  Rx<LatLng> draggedLatLng = const LatLng(0.0, 0.0).obs;
+  Rx<CameraPosition> cameraPosition =
+      const CameraPosition(target: LatLng(0.0, 0.0), zoom: 15).obs;
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();
   final stateController = TextEditingController();
@@ -37,10 +42,6 @@ class ShipAddressController extends BaseController {
   bool checkvalidation() {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
-    if (lat.value == 0.0 && lng.value == 0.0) {
-      getSnackBar("Select Location");
-      return false;
-    }
     if (nameController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Name");
       return false;
@@ -96,6 +97,14 @@ class ShipAddressController extends BaseController {
     return true;
   }
 
+  bool checkLocationValidation() {
+    if (lat.value == 0.0 && lng.value == 0.0) {
+      getSnackBar("Select Location");
+      return false;
+    }
+    return true;
+  }
+
   getCitiesData() async {
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -126,7 +135,7 @@ class ShipAddressController extends BaseController {
     }
   }
 
-  callSaveAddress() async {
+  callSaveAddress(double lat, double lng) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -140,8 +149,8 @@ class ShipAddressController extends BaseController {
         "locality": localityController.text.toString().trim(),
         "default_billing": defaultBilling.value,
         "default_shipping": defaultShipping.value,
-        "latitude": lat.value,
-        "longitude": lng.value
+        "latitude": lat,
+        "longitude": lng
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses"),
@@ -158,14 +167,14 @@ class ShipAddressController extends BaseController {
         if (cartId.value != 0) {
           callCartAddressUpdate("create");
         }
-        Get.close(1);
+        Get.close(2);
       } else if (response.statusCode == 201) {
         print(responseData);
         addressId.value = responseData["id"];
         if (cartId.value != 0) {
           callCartAddressUpdate("create");
         }
-        Get.close(1);
+        Get.close(2);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -181,7 +190,7 @@ class ShipAddressController extends BaseController {
     hideLoading();
   }
 
-  callUpdateAddress(int id) async {
+  callUpdateAddress(int id, double lat, double lng) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -195,8 +204,8 @@ class ShipAddressController extends BaseController {
         "locality": localityController.text.toString().trim(),
         "default_billing": defaultBilling.value,
         "default_shipping": defaultShipping.value,
-        "latitude": lat.value,
-        "longitude": lng.value
+        "latitude": lat,
+        "longitude": lng
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses/$id"),
@@ -214,7 +223,7 @@ class ShipAddressController extends BaseController {
         if (cartId.value != 0) {
           callCartAddressUpdate("create");
         }
-        Get.close(1);
+        Get.close(2);
       } else if (response.statusCode == 201) {
         print(responseData);
         addressId.value = responseData["id"];
@@ -256,7 +265,7 @@ class ShipAddressController extends BaseController {
         if (type == "update") {
           Get.back();
         }
-        getAddressDetails(responseData["address"]["id"]);
+        getAddressDetails(responseData["address"]["id"], 1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -271,7 +280,7 @@ class ShipAddressController extends BaseController {
     }
   }
 
-  getAddressDetails(int id) async {
+  getAddressDetails(int id, int value) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -286,42 +295,49 @@ class ShipAddressController extends BaseController {
         print(responseData);
         if (responseData != null) {
           addressDetails = responseData;
-          nameController.text = responseData["name"] ?? "";
-          phoneController.text = responseData["phone"] ?? "";
-          pincodeController.text = responseData["zip"].toString();
-          addressController.text = responseData["address"];
-          localityController.text = responseData["locality"];
-          if (responseData["city"] != null) {
-            stateController.text = responseData["city"]["name"];
-            cityId.value = responseData["city"]["id"];
-          }
-          if (responseData["latitude"] != null) {
-            lat.value = double.parse(responseData["latitude"]);
-          }
-          if (responseData["longitude"] != null) {
-            lng.value = double.parse(responseData["longitude"]);
-          }
-          isCheck.value = responseData["default_shipping"];
-          if (isCheck.value) {
-            defaultShipping.value = 1;
-            isCheck.value = true;
+          if (value == 1) {
+            nameController.text = responseData["name"] ?? "";
+            phoneController.text = responseData["phone"] ?? "";
+            pincodeController.text = responseData["zip"].toString();
+            addressController.text = responseData["address"];
+            localityController.text = responseData["locality"];
+            if (responseData["city"] != null) {
+              stateController.text = responseData["city"]["name"];
+              cityId.value = responseData["city"]["id"];
+            }
+            isCheck.value = responseData["default_shipping"];
+            if (isCheck.value) {
+              defaultShipping.value = 1;
+              isCheck.value = true;
+            } else {
+              defaultShipping.value = 0;
+              isCheck.value = false;
+            }
+            if (responseData["type"] == "Work") {
+              type.value = "Work";
+              current.value = 1;
+            } else {
+              type.value = "Home";
+              current.value = 0;
+            }
+            if (responseData["default_billing"]) {
+              onButton.value = true;
+              defaultBilling.value = 1;
+            } else {
+              onButton.value = false;
+              defaultBilling.value = 0;
+            }
           } else {
-            defaultShipping.value = 0;
-            isCheck.value = false;
-          }
-          if (responseData["type"] == "Work") {
-            type.value = "Work";
-            current.value = 1;
-          } else {
-            type.value = "Home";
-            current.value = 0;
-          }
-          if (responseData["default_billing"]) {
-            onButton.value = true;
-            defaultBilling.value = 1;
-          } else {
-            onButton.value = false;
-            defaultBilling.value = 0;
+            if (responseData["latitude"] != null) {
+              lat.value = double.parse(responseData["latitude"]);
+            }
+            if (responseData["longitude"] != null) {
+              lng.value = double.parse(responseData["longitude"]);
+            }
+            defaultLatLng.value = LatLng(lat.value, lng.value);
+            draggedLatLng.value = defaultLatLng.value;
+            cameraPosition.value =
+                CameraPosition(target: defaultLatLng.value, zoom: 15);
           }
         }
       } else if (response.statusCode == 500) {

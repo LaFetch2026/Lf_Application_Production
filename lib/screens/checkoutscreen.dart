@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/change_address.dart';
+import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
-import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
@@ -70,7 +70,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   void initState() {
     if (widget.addressId != 0) {
       WidgetsBinding.instance.addPostFrameCallback(
-          (_) => shipController.getAddressDetails(widget.addressId));
+          (_) => shipController.getAddressDetails(widget.addressId, 1));
     }
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
@@ -288,7 +288,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       const EdgeInsets.symmetric(vertical: 4),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Get.to(ShippingAddressScreen(
+                                      Get.to(MapScreen(
                                         addressId: widget.addressId,
                                         cartId: widget.cartId,
                                       ));

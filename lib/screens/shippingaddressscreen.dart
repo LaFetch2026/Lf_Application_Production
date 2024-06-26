@@ -1,10 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
@@ -16,10 +13,14 @@ import '../utils/constants.dart';
 class ShippingAddressScreen extends StatefulWidget {
   final int addressId;
   final int cartId;
+  final double latitude;
+  final double longitude;
   const ShippingAddressScreen({
     super.key,
     required this.addressId,
     required this.cartId,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -28,11 +29,11 @@ class ShippingAddressScreen extends StatefulWidget {
 
 class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   final shipController = Get.put(ShipAddressController());
-  late GoogleMapController googleMapController;
+  /*  late GoogleMapController googleMapController;
   static const CameraPosition initialCameraPosition = CameraPosition(
       target: LatLng(37.42796133580664, -122.085749655962), zoom: 14);
   Set<Marker> markers = {};
-  String cityname = "";
+  String cityname = ""; */
 
   List<String> items = [
     "Home",
@@ -43,10 +44,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   void initState() {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => shipController.getCitiesData());
-    shipController.lat.value = 0.0;
-    shipController.lng.value = 0.0;
     if (widget.addressId != 0) {
-      shipController.getAddressDetails(widget.addressId);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        shipController.getAddressDetails(widget.addressId, 1);
+      });
     } else {
       shipController.nameController.clear();
       shipController.phoneController.clear();
@@ -68,7 +69,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
     super.initState();
   }
 
-  Future<Position> determinePosition() async {
+  /*  Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -132,7 +133,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
         position: LatLng(shipController.lat.value, shipController.lng.value)));
     setState(() {});
   }
-
+ */
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -163,10 +164,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Stack(
+                          /*   Stack(
                             children: [
                               Padding(
                                 padding:
@@ -253,7 +251,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                           position.longitude;
                                       print(shipController.lat.value);
                                       print(shipController.lng.value);
-                                      setState(() {});
+                                      setState(() {});                                     
                                     },
                                     child: Center(
                                       child: Row(children: [
@@ -282,8 +280,9 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               ),
                             ],
                           ),
+                         */
                           Padding(
-                            padding: const EdgeInsets.only(top: 20),
+                            padding: const EdgeInsets.only(top: 30),
                             child: TextFieldWidget(
                               hint: "Name",
                               controller: shipController.nameController,
@@ -721,12 +720,15 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             onPressed: () {
                               if (widget.addressId != 0) {
                                 if (shipController.checkvalidation()) {
-                                  shipController
-                                      .callUpdateAddress(widget.addressId);
+                                  shipController.callUpdateAddress(
+                                      widget.addressId,
+                                      widget.latitude,
+                                      widget.longitude);
                                 }
                               } else {
                                 if (shipController.checkvalidation()) {
-                                  shipController.callSaveAddress();
+                                  shipController.callSaveAddress(
+                                      widget.latitude, widget.longitude);
                                 }
                               }
                             },

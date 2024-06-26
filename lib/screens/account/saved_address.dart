@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_saveaddress.dart';
 import 'package:lafetch/controller/profile_controller.dart';
-import 'package:lafetch/screens/shippingaddressscreen.dart';
+import 'package:lafetch/screens/mapscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/doubleiconbtn.dart';
@@ -56,7 +56,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                         Navigator.of(context)
                             .push(MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    const ShippingAddressScreen(
+                                    const MapScreen(
                                       addressId: 0,
                                       cartId: 0,
                                     )))
@@ -305,7 +305,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                         .push(MaterialPageRoute(
                                                             builder: (BuildContext
                                                                     context) =>
-                                                                ShippingAddressScreen(
+                                                                MapScreen(
                                                                   addressId: controller
                                                                           .addressList[
                                                                       index]["id"],

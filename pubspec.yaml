@@ -72,6 +72,7 @@ dependencies:
   flutter_facebook_auth: ^4.1.1
   shimmer: ^3.0.0
   geocoding: ^3.0.0
+  lottie: ^2.5.0
 
 dev_dependencies:
   flutter_test:
