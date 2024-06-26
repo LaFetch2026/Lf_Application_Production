@@ -126,6 +126,9 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
         },
         markerId: const MarkerId('1'),
         infoWindow: InfoWindow(title: cityname),
+        onDrag: (value) {
+          print(value.latitude);
+        },
         position: LatLng(shipController.lat.value, shipController.lng.value)));
     setState(() {});
   }
@@ -160,8 +163,127 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Stack(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: SizedBox(
+                                  height: 300,
+                                  width: double.infinity,
+                                  child: GoogleMap(
+                                    initialCameraPosition:
+                                        initialCameraPosition,
+                                    markers: markers,
+                                    zoomControlsEnabled: true,
+                                    mapType: MapType.normal,
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      googleMapController = controller;
+                                      if (shipController.lat.value != 0.0) {
+                                        apiPosition();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Center(
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 250),
+                                  height: 40,
+                                  width: 180,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: colorPrimary,
+                                      width: 1,
+                                    ),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(7)),
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      Position position =
+                                          await determinePosition();
+                                      googleMapController.animateCamera(
+                                          CameraUpdate.newCameraPosition(
+                                              CameraPosition(
+                                                  target: LatLng(
+                                                      position.latitude,
+                                                      position.longitude),
+                                                  zoom: 16)));
+                                      markers.clear();
+                                      List<Placemark> placemarks =
+                                          await placemarkFromCoordinates(
+                                              position.latitude,
+                                              position.longitude);
+                                      Placemark place1 = placemarks[0];
+                                      cityname = place1.subLocality.toString();
+                                      print("cityname $cityname");
+                                      markers.add(Marker(
+                                          draggable: true,
+                                          markerId: const MarkerId('1'),
+                                          infoWindow: InfoWindow(
+                                            title: cityname,
+                                          ),
+                                          onDragEnd: (newPosition) async {
+                                            print(newPosition.latitude);
+                                            print(newPosition.longitude);
+                                            shipController.lat.value =
+                                                newPosition.latitude;
+                                            shipController.lng.value =
+                                                newPosition.longitude;
+                                            List<Placemark> placemarks =
+                                                await placemarkFromCoordinates(
+                                                    newPosition.latitude,
+                                                    newPosition.longitude);
+                                            Placemark place1 = placemarks[0];
+                                            cityname =
+                                                place1.subLocality.toString();
+                                            setState(() {});
+                                          },
+                                          position: LatLng(position.latitude,
+                                              position.longitude)));
+                                      shipController.lat.value =
+                                          position.latitude;
+                                      shipController.lng.value =
+                                          position.longitude;
+                                      print(shipController.lat.value);
+                                      print(shipController.lng.value);
+                                      setState(() {});
+                                    },
+                                    child: Center(
+                                      child: Row(children: [
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 10),
+                                          child: const Icon(
+                                            Icons.location_disabled_sharp,
+                                            size: 20,
+                                            color: colorPrimary,
+                                          ),
+                                        ),
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 8),
+                                          child: const Text(
+                                            "Use current location",
+                                            style:
+                                                TextStyle(color: colorPrimary),
+                                          ),
+                                        )
+                                      ]),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 30),
+                            padding: const EdgeInsets.only(top: 20),
                             child: TextFieldWidget(
                               hint: "Name",
                               controller: shipController.nameController,
@@ -173,13 +295,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 readonly: false,
                                 controller: shipController.phoneController),
                           ),
-                          /*  Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: TextFieldWidget(
-                        hint: "Pin Code",
-                        controller: shipController.pincodeController,
-                      ),
-                    ), */
                           Padding(
                             padding: const EdgeInsets.only(
                                 left: 16, right: 16, top: 10),
@@ -239,13 +354,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: shipController.localityController,
                             ),
                           ),
-                          /*  Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: TextFieldWidget(
-                        hint: "City / District",
-                        controller: shipController.cityController,
-                      ),
-                    ), */
                           Padding(
                             padding: const EdgeInsets.only(
                                 left: 16, top: 10, right: 16),
@@ -591,129 +699,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               )),
                           const SizedBox(
                             height: 20,
-                          ),
-                          Stack(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: SizedBox(
-                                  height: 500,
-                                  width: double.infinity,
-                                  child: GoogleMap(
-                                    initialCameraPosition:
-                                        initialCameraPosition,
-                                    markers: markers,
-                                    zoomControlsEnabled: true,
-                                    mapType: MapType.normal,
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      googleMapController = controller;
-                                      if (shipController.lat.value != 0.0) {
-                                        apiPosition();
-                                      } else {
-                                        print("api posi false");
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Center(
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 430),
-                                  height: 40,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: colorPrimary,
-                                      width: 1,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(7)),
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      Position position =
-                                          await determinePosition();
-
-                                      googleMapController.animateCamera(
-                                          CameraUpdate.newCameraPosition(
-                                              CameraPosition(
-                                                  target: LatLng(
-                                                      position.latitude,
-                                                      position.longitude),
-                                                  zoom: 16)));
-
-                                      markers.clear();
-                                      List<Placemark> placemarks =
-                                          await placemarkFromCoordinates(
-                                              position.latitude,
-                                              position.longitude);
-                                      Placemark place1 = placemarks[0];
-                                      cityname = place1.subLocality.toString();
-                                      print("cityname $cityname");
-                                      markers.add(Marker(
-                                          draggable: true,
-                                          markerId: const MarkerId('1'),
-                                          infoWindow: InfoWindow(
-                                            title: cityname,
-                                          ),
-                                          onDragEnd: (newPosition) async {
-                                            print(newPosition.latitude);
-                                            print(newPosition.longitude);
-                                            shipController.lat.value =
-                                                newPosition.latitude;
-                                            shipController.lng.value =
-                                                newPosition.longitude;
-                                            List<Placemark> placemarks =
-                                                await placemarkFromCoordinates(
-                                                    newPosition.latitude,
-                                                    newPosition.longitude);
-                                            Placemark place1 = placemarks[0];
-                                            cityname =
-                                                place1.subLocality.toString();
-                                            setState(() {});
-                                          },
-                                          position: LatLng(position.latitude,
-                                              position.longitude)));
-                                      shipController.lat.value =
-                                          position.latitude;
-                                      shipController.lng.value =
-                                          position.longitude;
-                                      print(shipController.lat.value);
-                                      print(shipController.lng.value);
-                                      setState(() {});
-                                    },
-                                    child: Center(
-                                      child: Row(children: [
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 10),
-                                          child: const Icon(
-                                            Icons.location_disabled_sharp,
-                                            size: 20,
-                                            color: colorPrimary,
-                                          ),
-                                        ),
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 8),
-                                          child: const Text(
-                                            "Use current location",
-                                            style:
-                                                TextStyle(color: colorPrimary),
-                                          ),
-                                        )
-                                      ]),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 30,
                           ),
                         ],
                       ),

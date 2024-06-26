@@ -37,6 +37,10 @@ class ShipAddressController extends BaseController {
   bool checkvalidation() {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
+    if (lat.value == 0.0 && lng.value == 0.0) {
+      getSnackBar("Select Location");
+      return false;
+    }
     if (nameController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Name");
       return false;
@@ -87,10 +91,6 @@ class ShipAddressController extends BaseController {
     }
     if (type.value.isEmpty) {
       getSnackBar("Select Address Type");
-      return false;
-    }
-    if (lat.value == 0.0 && lng.value == 0.0) {
-      getSnackBar("Select Location");
       return false;
     }
     return true;
