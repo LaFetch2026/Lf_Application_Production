@@ -337,7 +337,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                     ),
                                   ),
                                 ),
-                                Padding(
+                                /*  Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 16, horizontal: 16),
                                   child: Container(
@@ -345,7 +345,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                     color: colorSecondary,
                                     height: 1,
                                   ),
-                                ),
+                                ), */
                               ],
                             )),
                   /*   Padding(
@@ -411,112 +411,120 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   ), */
                   Obx(() => shipController.isDelivery.value
                       ? const DummyEstimateDelivery()
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 16, top: 20),
-                              child: AppText(
-                                text: "Delivery Estimates",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: blackColor,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8, top: 5),
-                              child: ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  itemCount: shipController
-                                      .estimateDeliveryList.length,
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (ctx, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 8, left: 16, right: 16),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            shipController
-                                                        .estimateDeliveryList[
-                                                            index]["image"]
-                                                        .isNotEmpty &&
-                                                    shipController
-                                                                .estimateDeliveryList[
-                                                            index]["image"] !=
-                                                        null
-                                                ? SizedBox(
-                                                    height: 60,
-                                                    width: 50,
-                                                    child: CachedNetworkImage(
-                                                      cacheManager:
-                                                          CacheManager(Config(
+                      : shipController.estimateDeliveryList.isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 16, top: 20),
+                                  child: AppText(
+                                    text: "Delivery Estimates",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: blackColor,
+                                    fontSize: 16.sp,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(bottom: 8, top: 5),
+                                  child: ListView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      physics: const ScrollPhysics(),
+                                      itemCount: shipController
+                                          .estimateDeliveryList.length,
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (ctx, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 8, left: 16, right: 16),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                shipController
+                                                            .estimateDeliveryList[
+                                                                index]["image"]
+                                                            .isNotEmpty &&
+                                                        shipController.estimateDeliveryList[
+                                                                    index]
+                                                                ["image"] !=
+                                                            null
+                                                    ? SizedBox(
+                                                        height: 60,
+                                                        width: 50,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          cacheManager: CacheManager(Config(
                                                               "customCacheKey",
                                                               stalePeriod:
                                                                   const Duration(
                                                                       days: 15),
                                                               maxNrOfCacheObjects:
                                                                   100)),
-                                                      fit: BoxFit.cover,
-                                                      imageUrl: shipController
-                                                                  .estimateDeliveryList[
-                                                              index]["image"][0]
-                                                          ["name"],
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Image.asset(
-                                                        downloadImage,
-                                                        fit: BoxFit.cover,
+                                                          fit: BoxFit.cover,
+                                                          imageUrl: shipController
+                                                                      .estimateDeliveryList[
+                                                                  index]["image"]
+                                                              [0]["name"],
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Image.asset(
+                                                            downloadImage,
+                                                            fit: BoxFit.cover,
+                                                            height: 60,
+                                                            width: 50,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Image.asset(
+                                                        dummyWishlistImage,
                                                         height: 60,
                                                         width: 50,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Image.asset(
-                                                    dummyWishlistImage,
-                                                    height: 60,
-                                                    width: 50,
-                                                    fit: BoxFit.cover),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 16),
-                                              child: AppText(
-                                                text: " Estimated delivery :",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: blackColor,
-                                                fontSize: 12.sp,
-                                              ),
+                                                        fit: BoxFit.cover),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 16),
+                                                  child: AppText(
+                                                    text:
+                                                        " Estimated delivery :",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: blackColor,
+                                                    fontSize: 12.sp,
+                                                  ),
+                                                ),
+                                                AppText(
+                                                  text: shipController
+                                                          .estimateDeliveryList[
+                                                      index]["estimated_delivery"],
+                                                  fontFamily:
+                                                      "Franklin Gothic Bold",
+                                                  fontWeight: FontWeight.w700,
+                                                  color: blackColor,
+                                                  fontSize: 12.sp,
+                                                ),
+                                              ],
                                             ),
-                                            AppText(
-                                              text: shipController
-                                                      .estimateDeliveryList[
-                                                  index]["estimated_delivery"],
-                                              fontFamily:
-                                                  "Franklin Gothic Bold",
-                                              fontWeight: FontWeight.w700,
-                                              color: blackColor,
-                                              fontSize: 12.sp,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ],
-                        )),
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              ],
+                            )
+                          : const SizedBox(
+                              height: 0,
+                            )),
                   Container(
                     color: whiteColor,
                     child: Padding(
