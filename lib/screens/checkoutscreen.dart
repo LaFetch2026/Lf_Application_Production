@@ -1,10 +1,13 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_estimatedelivery.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_saveaddress.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/mapscreen.dart';
@@ -127,9 +130,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     height: 10,
                   ),
                   Obx(() => shipController.isDetails.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(child: CircularProgressIndicator()),
+                      ? const DummySaveAddress(
+                          size: 1,
                         )
                       : shipController.addressDetails != null &&
                               shipController.addressDetails != ""
@@ -445,10 +447,46 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
-                                            Image.asset(backImage,
-                                                height: 60,
-                                                width: 50,
-                                                fit: BoxFit.cover),
+                                            shipController
+                                                        .estimateDeliveryList[
+                                                            index]["image"]
+                                                        .isNotEmpty &&
+                                                    shipController
+                                                                .estimateDeliveryList[
+                                                            index]["image"] !=
+                                                        null
+                                                ? SizedBox(
+                                                    height: 60,
+                                                    width: 50,
+                                                    child: CachedNetworkImage(
+                                                      cacheManager:
+                                                          CacheManager(Config(
+                                                              "customCacheKey",
+                                                              stalePeriod:
+                                                                  const Duration(
+                                                                      days: 15),
+                                                              maxNrOfCacheObjects:
+                                                                  100)),
+                                                      fit: BoxFit.cover,
+                                                      imageUrl: shipController
+                                                                  .estimateDeliveryList[
+                                                              index]["image"][0]
+                                                          ["name"],
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                        downloadImage,
+                                                        fit: BoxFit.cover,
+                                                        height: 60,
+                                                        width: 50,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Image.asset(
+                                                    dummyWishlistImage,
+                                                    height: 60,
+                                                    width: 50,
+                                                    fit: BoxFit.cover),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   left: 16),

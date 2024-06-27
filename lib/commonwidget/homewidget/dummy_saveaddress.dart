@@ -3,9 +3,8 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/utils/constants.dart';
 
 class DummySaveAddress extends StatelessWidget {
-  const DummySaveAddress({
-    Key? key,
-  }) : super(key: key);
+  final int size;
+  const DummySaveAddress({Key? key, this.size = 5}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class DummySaveAddress extends StatelessWidget {
           primary: false,
           shrinkWrap: true,
           physics: const ScrollPhysics(),
-          itemCount: 5,
+          itemCount: size,
           padding: EdgeInsets.zero,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
