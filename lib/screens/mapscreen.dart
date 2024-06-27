@@ -38,7 +38,7 @@ class MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     if (widget.addressId != 0) {
-      shipController.getAddressDetails(widget.addressId, 2);
+      shipController.getAddressDetails(widget.addressId, 2, widget.cartId);
     } else {
       _init();
     }

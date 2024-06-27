@@ -46,7 +46,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
         .addPostFrameCallback((_) => shipController.getCitiesData());
     if (widget.addressId != 0) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        shipController.getAddressDetails(widget.addressId, 1);
+        shipController.getAddressDetails(widget.addressId, 1, widget.cartId);
       });
     } else {
       shipController.nameController.clear();

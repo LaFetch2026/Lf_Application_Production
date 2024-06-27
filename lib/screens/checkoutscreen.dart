@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_estimatedelivery.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/mapscreen.dart';
@@ -55,22 +56,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   final Razorpay razorpay = Razorpay();
   final razorPayKey = "rzp_test_qByVM96GsY8Ydt";
   final razorPaySecret = "Mo5w1Av5SV84qO0c4k1Uc0Ob";
-  List<String> items = [
-    " In next 6 hours",
-    " In next 6 hours",
-    " 10 May 2023",
-  ];
-  List<String> itemText = [
-    "Estimated delivery :",
-    "Estimated delivery :",
-    "Estimated delivery by",
-  ];
 
   @override
   void initState() {
     if (widget.addressId != 0) {
-      WidgetsBinding.instance.addPostFrameCallback(
-          (_) => shipController.getAddressDetails(widget.addressId, 1));
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          shipController.getAddressDetails(widget.addressId, 1, widget.cartId));
     }
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
@@ -416,60 +407,78 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       height: 1,
                     ),
                   ), */
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16, top: 20),
-                    child: AppText(
-                      text: "Delivery Estimates",
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: blackColor,
-                      fontSize: 16.sp,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8, top: 5),
-                    child: ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: items.length,
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (ctx, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 8, left: 16, right: 16),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image.asset(backImage,
-                                      height: 60, width: 50, fit: BoxFit.cover),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 16),
-                                    child: AppText(
-                                      text: itemText[index],
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: blackColor,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  AppText(
-                                    text: items[index],
-                                    fontFamily: "Franklin Gothic Bold",
-                                    fontWeight: FontWeight.w700,
-                                    color: blackColor,
-                                    fontSize: 12.sp,
-                                  ),
-                                ],
+                  Obx(() => shipController.isDelivery.value
+                      ? const DummyEstimateDelivery()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, top: 20),
+                              child: AppText(
+                                text: "Delivery Estimates",
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: blackColor,
+                                fontSize: 16.sp,
                               ),
                             ),
-                          );
-                        }),
-                  ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8, top: 5),
+                              child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  itemCount: shipController
+                                      .estimateDeliveryList.length,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (ctx, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 8, left: 16, right: 16),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Image.asset(backImage,
+                                                height: 60,
+                                                width: 50,
+                                                fit: BoxFit.cover),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16),
+                                              child: AppText(
+                                                text: " Estimated delivery :",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: blackColor,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ),
+                                            AppText(
+                                              text: shipController
+                                                      .estimateDeliveryList[
+                                                  index]["estimated_delivery"],
+                                              fontFamily:
+                                                  "Franklin Gothic Bold",
+                                              fontWeight: FontWeight.w700,
+                                              color: blackColor,
+                                              fontSize: 12.sp,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ],
+                        )),
                   Container(
                     color: whiteColor,
                     child: Padding(

@@ -19,9 +19,11 @@ class ShipAddressController extends BaseController {
   RxInt defaultBilling = 0.obs;
   RxInt defaultShipping = 0.obs;
   RxBool isDetails = false.obs;
+  RxBool isDelivery = false.obs;
   dynamic addressDetails = "".obs;
   RxString type = "".obs;
   List cityList = [].obs;
+  List estimateDeliveryList = [].obs;
   RxInt current = 3.obs;
   RxInt cityId = 0.obs;
   RxInt cartId = 0.obs;
@@ -265,7 +267,7 @@ class ShipAddressController extends BaseController {
         if (type == "update") {
           Get.back();
         }
-        getAddressDetails(responseData["address"]["id"], 1);
+        getAddressDetails(responseData["address"]["id"], 1, responseData["id"]);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -280,7 +282,7 @@ class ShipAddressController extends BaseController {
     }
   }
 
-  getAddressDetails(int id, int value) async {
+  getAddressDetails(int id, int value, int cartId) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -292,6 +294,7 @@ class ShipAddressController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        getEstimateDelivery(cartId);
         print(responseData);
         if (responseData != null) {
           addressDetails = responseData;
@@ -356,5 +359,37 @@ class ShipAddressController extends BaseController {
       print("error$e");
     }
     isDetails.value = false;
+  }
+
+  getEstimateDelivery(int cartId) async {
+    isDelivery.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/orders/$cartId/estimated-delivery"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        estimateDeliveryList = responseData;
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get estimate delivery failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isDelivery.value = false;
   }
 }
