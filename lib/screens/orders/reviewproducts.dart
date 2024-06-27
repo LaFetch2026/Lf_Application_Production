@@ -8,15 +8,19 @@ import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/review_controller.dart';
-import '../commonwidget/app_text.dart';
-import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../utils/constants.dart';
+import '../../commonwidget/app_text.dart';
+import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../utils/constants.dart';
 
 class ReviewProductScreen extends StatefulWidget {
   final String productName;
+  final int productId;
   final String productimage;
   const ReviewProductScreen(
-      {super.key, required this.productName, required this.productimage});
+      {super.key,
+      required this.productName,
+      required this.productimage,
+      required this.productId});
 
   @override
   State<ReviewProductScreen> createState() => ReviewProductScreenState();
@@ -175,8 +179,8 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                                 backgroundColor: whiteColor,
                                 onPressed: () {
                                   if (controller.checkReviewValidation()) {
-                                    controller
-                                        .callAddReview(18); //id will change
+                                    controller.callAddReview(
+                                        widget.productId); //id will change
                                   }
                                 },
                                 borderColor: btnTextColor),

@@ -13,7 +13,8 @@ import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/singleiconbtn.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
-import 'package:lafetch/screens/reviewproducts.dart';
+import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
+import 'package:lafetch/screens/orders/reviewproducts.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/singlebtn.dart';
@@ -1198,6 +1199,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   onTap: () {
                                                                     Get.to(
                                                                         ReviewProductScreen(
+                                                                      productId: value.orderList[index]["order_lines"][0]["product"] !=
+                                                                              null
+                                                                          ? value.orderList[index]["order_lines"][0]["product"]
+                                                                              [
+                                                                              "id"]
+                                                                          : 0,
                                                                       productName: value.orderList[index]["order_lines"][0]["product"] !=
                                                                               null
                                                                           ? value.orderList[index]["order_lines"][0]["product"]
@@ -1254,30 +1261,31 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       bottom:
                                                                           20),
                                                                   child: DoubleIconButton(
-                                                                      firstText:
-                                                                          "Exchange Item",
-                                                                      secondText:
-                                                                          "Rate Order",
-                                                                      firstTextColor:
-                                                                          btnTextColor,
-                                                                      secondTextColor:
-                                                                          btnTextColor,
-                                                                      firstBackgroundColor:
-                                                                          whiteColor,
-                                                                      secondBackgroundColor:
-                                                                          whiteColor,
-                                                                      firstBorderColor:
-                                                                          btnTextColor,
-                                                                      secondBorderColor:
-                                                                          btnTextColor,
-                                                                      firstIcon:
-                                                                          exchangeItemImage,
-                                                                      onPressedFirst:
-                                                                          () {},
-                                                                      onPressedSecond:
-                                                                          () {},
-                                                                      secondIcon:
-                                                                          rateOrderImage),
+                                                                      firstText: "Exchange Item",
+                                                                      secondText: "Rate Order",
+                                                                      firstTextColor: btnTextColor,
+                                                                      secondTextColor: btnTextColor,
+                                                                      firstBackgroundColor: whiteColor,
+                                                                      secondBackgroundColor: whiteColor,
+                                                                      firstBorderColor: btnTextColor,
+                                                                      secondBorderColor: btnTextColor,
+                                                                      firstIcon: exchangeItemImage,
+                                                                      onPressedFirst: () {
+                                                                        Get.to(
+                                                                            ExchangeProductScreen(
+                                                                          productName: value.orderList[index]["order_lines"][0]["product"] != null
+                                                                              ? value.orderList[index]["order_lines"][0]["product"]["name"]
+                                                                              : "",
+                                                                          productimage: value.orderList[index]["order_lines"][0]["product"] != null
+                                                                              ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]
+                                                                              : "",
+                                                                          productDescription: value.orderList[index]["order_lines"][0]["product"] != null
+                                                                              ? value.orderList[index]["order_lines"][0]["product"]["short_description"]
+                                                                              : "",
+                                                                        ));
+                                                                      },
+                                                                      onPressedSecond: () {},
+                                                                      secondIcon: rateOrderImage),
                                                                 )
                                                               ] else if (value.orderList[
                                                                           index]
