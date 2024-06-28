@@ -33,7 +33,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductByCategoryData(widget.categoryId, 0));
+        productController.getProductByCategoryData(widget.categoryId, 0, ""));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -115,7 +115,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                       productController
                                                           .getProductByCategoryData(
                                                               widget.categoryId,
-                                                              0);
+                                                              0,
+                                                              "");
                                                     },
                                                   ));
                                         },

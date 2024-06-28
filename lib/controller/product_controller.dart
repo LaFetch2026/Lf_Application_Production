@@ -8,6 +8,7 @@ import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import '../screens/catalog/productlistscreen.dart';
 import '../utils/constants.dart';
 
 class ProductController extends BaseController {
@@ -624,7 +625,7 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductByCategoryData(int categoryId, int brandId) async {
+  getProductByCategoryData(int categoryId, int brandId, String value) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -651,6 +652,11 @@ class ProductController extends BaseController {
         if (responseData["data"] != null) {
           productCategoryList = responseData["data"];
           total.value = responseData["meta"]["total"];
+          if (value == "Product Vertical") {
+            Get.to(ProductListScreen(
+              categoryId: categoryId,
+            ));
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -1081,7 +1087,7 @@ class ProductController extends BaseController {
         if (type == "product") {
           getProductData("relevant");
         } else if (type == "category") {
-          getProductByCategoryData(categoryId, brandId);
+          getProductByCategoryData(categoryId, brandId, "");
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!);
         } else if (type == "brand") {

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/catalog_appbar.dart';
 import '../../controller/catalog_controller.dart';
+import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 import '../searchscreen.dart';
@@ -33,6 +33,7 @@ class CatalogDetailsScreen extends StatefulWidget {
 
 class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   final controller = Get.put(CatalogController());
+  final productController = Get.put(ProductController());
 
   @override
   void initState() {
@@ -145,10 +146,12 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                       children: [
                                         GestureDetector(
                                             onTap: () {
-                                              Get.to(ProductListScreen(
-                                                categoryId: controller
-                                                    .categoryList[index]["id"],
-                                              ));
+                                              productController
+                                                  .getProductByCategoryData(
+                                                      controller.categoryList[
+                                                          index]["id"],
+                                                      0,
+                                                      "Product Vertical");
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(
