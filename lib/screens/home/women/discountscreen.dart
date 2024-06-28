@@ -40,7 +40,8 @@ class DiscountScreenState extends State<DiscountScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
-        productController.fetchMoreTagsProductData(widget.tagId);
+        productController.fetchMoreTagsProductData(
+            widget.tagId, widget.genderType);
         productController.update();
       });
     });
@@ -52,7 +53,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressListController.addListener(() {
-        productController.fetchExpressMoreData();
+        productController.fetchExpressMoreData(widget.genderType);
         productController.update();
       });
     });
@@ -68,10 +69,10 @@ class DiscountScreenState extends State<DiscountScreen> {
         .addPostFrameCallback((_) => homeController.getBannar2Data());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => homeController.getCategoryData(widget.genderType));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getTagsProductData(widget.tagId, widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getTagsProductData(widget.tagId));
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getExpressProductData());
+        (_) => productController.getExpressProductData(widget.genderType));
   }
 
   @override

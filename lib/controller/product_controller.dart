@@ -22,7 +22,7 @@ class ProductController extends BaseController {
   RxBool isDetails = false.obs;
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
-  RxBool isColor = false.obs;
+  RxBool isBestSeller = false.obs;
   RxBool isFrequentlyBought = false.obs;
   RxInt currentpage = 0.obs;
   RxInt inventoryId = 0.obs;
@@ -51,6 +51,7 @@ class ProductController extends BaseController {
   List fabricInventoryList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
+  List bestSellerList = [].obs;
   final pincodeController = TextEditingController();
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
@@ -89,6 +90,10 @@ class ProductController extends BaseController {
   RxBool recommendedLoadMore = false.obs;
   RxBool recommendedHasnextpage = true.obs;
   RxInt recommendedPage = 1.obs;
+  ScrollController bestSellerController = ScrollController();
+  RxBool bestSellerLoadMore = false.obs;
+  RxBool bestSellerHasnextpage = true.obs;
+  RxInt bestSellerPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
 
   bool checkPinvalidation(String pin) {
@@ -286,17 +291,30 @@ class ProductController extends BaseController {
     }
   }
 
-  getTagsProductData(int tagId) async {
+  getTagsProductData(int tagId, int genderType) async {
     istagsProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-        Uri.parse("${ApiConstants.baseUrl}/products?tag_ids[]=$tagId"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
+      dynamic response;
+      if (genderType != 0) {
+        response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&gender_type=$genderType"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+        );
+      } else {
+        response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/products?tag_ids[]=$tagId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+        );
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -320,7 +338,7 @@ class ProductController extends BaseController {
     istagsProduct.value = false;
   }
 
-  fetchMoreTagsProductData(int tagId) async {
+  fetchMoreTagsProductData(int tagId, int genderType) async {
     if (tagsHasnextpage.value == true &&
         istagsProduct.value == false &&
         tagsLoadMore.value == false) {
@@ -329,13 +347,25 @@ class ProductController extends BaseController {
       print(page.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        dynamic response;
+        if (genderType != 0) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&gender_type=$genderType"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {
@@ -445,16 +475,28 @@ class ProductController extends BaseController {
     }
   }
 
-  getExpressProductData() async {
+  getExpressProductData(int genderType) async {
     isExpress.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (genderType != 0) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=express&gender_type=$genderType"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -479,7 +521,7 @@ class ProductController extends BaseController {
     isExpress.value = false;
   }
 
-  fetchExpressMoreData() async {
+  fetchExpressMoreData(int genderType) async {
     if (expressHasnextpage.value == true &&
         isExpress.value == false &&
         expressLoadMore.value == false) {
@@ -488,13 +530,25 @@ class ProductController extends BaseController {
       print(expressPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        dynamic response;
+        if (genderType != 0) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}&gender_type=$genderType"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {
@@ -521,6 +575,84 @@ class ProductController extends BaseController {
         print("error$e");
       }
       expressLoadMore.value = false;
+    }
+  }
+
+  getBestSellerProductData() async {
+    isBestSeller.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/products?type=relevant"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          bestSellerList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get best seller product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isBestSeller.value = false;
+  }
+
+  fetchBestSellerData() async {
+    if (bestSellerHasnextpage.value == true &&
+        isBestSeller.value == false &&
+        bestSellerLoadMore.value == false) {
+      bestSellerLoadMore.value = true;
+      bestSellerPage.value += 1;
+      print(bestSellerPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=relevant&page=${bestSellerPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              bestSellerList.addAll(responseData['data']);
+            } else {
+              bestSellerHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch best sellerproduct failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      bestSellerLoadMore.value = false;
     }
   }
 
@@ -1089,13 +1221,15 @@ class ProductController extends BaseController {
         } else if (type == "category") {
           getProductByCategoryData(categoryId, brandId, "");
         } else if (type == "tags") {
-          getTagsProductData(prefs.getInt('tagId')!);
+          getTagsProductData(prefs.getInt('tagId')!, 0);
         } else if (type == "brand") {
           getBrandExpressProductData(brandId);
         } else if (type == "bannerTag") {
           getTagsBannerData(list);
         } else if (type == "frequently") {
           getFrequentlyProductData("frequently-bought", existId);
+        } else if (type == "seller") {
+          getBestSellerProductData();
         } else {
           getProductRecommendations(existId);
         }
