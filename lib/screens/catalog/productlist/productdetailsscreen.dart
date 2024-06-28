@@ -436,12 +436,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   void initState() {
-    productController.productList.clear();
     productController.brandDetails = "";
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
     productController.colorInventoryId.value = 0;
     productController.fabricInventoryId.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductDetails(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.frequentlyBoughtController.addListener(() {
         productController.fetchFrequentlyMoreData(
@@ -470,8 +471,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) => productController
         .getFrequentlyProductData("frequently-bought", widget.productId));
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductDetails(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => wishlistController.getWishlistProductDetails(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(

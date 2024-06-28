@@ -127,20 +127,26 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 height: 112,
                                 width: double.infinity,
                                 fit: BoxFit.cover)
-                            : FadeInImage(
-                                fit: BoxFit.cover,
+                            : SizedBox(
                                 height: 112,
                                 width: double.infinity,
-                                image: NetworkImage(
-                                    brandController.brandbackground.value),
-                                placeholder: const AssetImage(brandback)),
-                        /*  FadeInImage(
-                            fit: BoxFit.cover,
-                            height: 112,
-                            width: double.infinity,
-                            image: NetworkImage(
-                                brandController.brandbackground.value),
-                            placeholder: const AssetImage(brandback)), */
+                                child: CachedNetworkImage(
+                                  cacheManager: CacheManager(Config(
+                                      "customCacheKey",
+                                      stalePeriod: const Duration(days: 15),
+                                      maxNrOfCacheObjects: 100)),
+                                  fit: BoxFit.cover,
+                                  imageUrl:
+                                      brandController.brandbackground.value,
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    downloadImage,
+                                    fit: BoxFit.cover,
+                                    height: 112,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                              ),
                         Container(
                           alignment: Alignment.bottomCenter,
                           margin: const EdgeInsets.only(top: 70),
@@ -152,13 +158,25 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               color: Colors.white,
                               shape: BoxShape.circle),
                           child: ClipOval(
-                            child: FadeInImage(
+                            child: SizedBox(
+                              height: 80,
+                              width: 80,
+                              child: CachedNetworkImage(
+                                cacheManager: CacheManager(Config(
+                                    "customCacheKey",
+                                    stalePeriod: const Duration(days: 15),
+                                    maxNrOfCacheObjects: 100)),
                                 fit: BoxFit.cover,
-                                height: 80,
-                                width: 80,
-                                image: NetworkImage(
-                                    brandController.brandlogo.value),
-                                placeholder: const AssetImage(chanelLogoImage)),
+                                imageUrl: brandController.brandlogo.value,
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  chanelLogoImage,
+                                  fit: BoxFit.cover,
+                                  height: 80,
+                                  width: 80,
+                                ),
+                              ),
+                            ),
                           ),
                         )
                       ],
