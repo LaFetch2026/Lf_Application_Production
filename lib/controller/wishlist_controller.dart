@@ -301,7 +301,7 @@ class WishlistController extends BaseController {
       if (response.statusCode == 201) {
         print(responseData);
         getSnackBar("Board Created");
-        Get.to(
+        Get.off(
           () => CreateBoardScreen(
             btnText: "Add",
             wishlistId: responseData["id"],
@@ -338,11 +338,6 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar("Board Updated");
-        /*  Get.to(
-          () => const CreateBoardScreen(
-            btnText: "Create board",
-          ),
-        ); */
         Get.close(2);
       } else if (response.statusCode == 400) {
         print(response.body);
