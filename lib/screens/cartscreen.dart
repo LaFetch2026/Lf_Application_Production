@@ -423,7 +423,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                         ? GestureDetector(
                                                                                             onTap: () {
                                                                                               scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
-                                                                                                    sizeList: productController.sizeInventoryList,
+                                                                                                    sizeList: value.orderList[index]["product"]["new_inventories"],
                                                                                                     controller: controller,
                                                                                                     onPressed: (p0) {
                                                                                                       controller.callAddtoCart(1, "size", p0, value.orderList[index]["product"]["id"]);
