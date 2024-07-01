@@ -15,6 +15,10 @@ getSnackBar(message, {SnackPosition? snackPosition}) {
   );
 }
 
+isImage(String path) {
+  return path.contains('product_photo');
+}
+
 Widget getSingleButton(
     {label,
     double fontSize = 14,

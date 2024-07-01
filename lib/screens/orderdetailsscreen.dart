@@ -6,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
@@ -273,21 +274,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           maxNrOfCacheObjects:
                                                               100)),
                                                   fit: BoxFit.cover,
-                                                  imageUrl: orderController
-                                                                  .orderDetails[
-                                                              "order_lines"][0]
-                                                          ["product"]["images"]
-                                                      [0]["name"],
-                                                  /*  progressIndicatorBuilder:
-                                                      (context, url,
-                                                              downloadProgress) =>
-                                                          Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                            value:
-                                                                downloadProgress
-                                                                    .progress),
-                                                  ), */
+                                                  imageUrl: isImage(orderController
+                                                                  .orderDetails["order_lines"]
+                                                              [0]["product"]
+                                                          ["images"][0]["name"])
+                                                      ? orderController.orderDetails["order_lines"]
+                                                              [0]["product"]
+                                                          ["images"][0]["name"]
+                                                      : orderController.orderDetails["order_lines"]
+                                                              [0]["product"]
+                                                          ["images"][1]["name"],
                                                   errorWidget:
                                                       (context, url, error) =>
                                                           Image.asset(
@@ -1129,10 +1125,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               child: CachedNetworkImage(
                                                                                 cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                 fit: BoxFit.cover,
-                                                                                imageUrl: orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"],
-                                                                                /* progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                                                  child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                ), */
+                                                                                imageUrl: isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]) ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"] : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"],
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   downloadImage,
                                                                                   fit: BoxFit.cover,

@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
+import '../common_widgets.dart';
 
 class HorizontalBrandList extends StatelessWidget {
   final String text;
@@ -84,8 +85,12 @@ class HorizontalBrandList extends StatelessWidget {
                                                         maxNrOfCacheObjects:
                                                             100)),
                                                 fit: BoxFit.cover,
-                                                imageUrl: list[index]["images"]
-                                                    [0]["name"],
+                                                imageUrl: isImage(list[index]
+                                                        ["images"][0]["name"])
+                                                    ? list[index]["images"][0]
+                                                        ["name"]
+                                                    : list[index]["images"][1]
+                                                        ["name"],
                                                 /*  progressIndicatorBuilder:
                                                     (context, url,
                                                             downloadProgress) =>

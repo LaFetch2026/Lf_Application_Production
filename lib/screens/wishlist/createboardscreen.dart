@@ -172,12 +172,17 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                           100)),
                                                                   fit: BoxFit
                                                                       .cover,
-                                                                  imageUrl: value
-                                                                              .wishListProduct[index]
+                                                                  imageUrl: isImage(value.wishListProduct[index]["images"]
+                                                                              [0]
                                                                           [
-                                                                          "images"]
-                                                                      [
-                                                                      0]["name"],
+                                                                          "name"])
+                                                                      ? value.wishListProduct[index]
+                                                                              ["images"][0]
+                                                                          [
+                                                                          "name"]
+                                                                      : value.wishListProduct[index]
+                                                                              ["images"][1]
+                                                                          ["name"],
                                                                   /*  progressIndicatorBuilder:
                                                                       (context,
                                                                               url,

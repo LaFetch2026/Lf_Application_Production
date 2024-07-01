@@ -471,10 +471,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                               maxNrOfCacheObjects:
                                                                   100)),
                                                           fit: BoxFit.cover,
-                                                          imageUrl: shipController
-                                                                      .estimateDeliveryList[
-                                                                  index]["image"]
-                                                              [0]["name"],
+                                                          imageUrl: isImage(shipController
+                                                                          .estimateDeliveryList[index]
+                                                                      ["image"]
+                                                                  [0]["name"])
+                                                              ? shipController
+                                                                          .estimateDeliveryList[index]
+                                                                      ["image"]
+                                                                  [0]["name"]
+                                                              : shipController
+                                                                          .estimateDeliveryList[index]
+                                                                      ["image"]
+                                                                  [1]["name"],
                                                           errorWidget: (context,
                                                                   url, error) =>
                                                               Image.asset(

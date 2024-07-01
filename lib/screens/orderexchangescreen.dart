@@ -17,6 +17,7 @@ import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:lafetch/screens/orders/reviewproducts.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../commonwidget/common_widgets.dart';
 import '../commonwidget/singlebtn.dart';
 import '../controller/order_controller.dart';
 import '../utils/constants.dart';
@@ -337,7 +338,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 child: CachedNetworkImage(
                                                                                   cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                   fit: BoxFit.cover,
-                                                                                  imageUrl: value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"],
+                                                                                  imageUrl: isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]) ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"] : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"],
                                                                                   errorWidget: (context, url, error) => Image.asset(
                                                                                     downloadImage,
                                                                                     fit: BoxFit.cover,
@@ -1213,9 +1214,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           : "",
                                                                       productimage: value.orderList[index]["order_lines"][0]["product"] !=
                                                                               null
-                                                                          ? value.orderList[index]["order_lines"][0]["product"]["images"][0]
-                                                                              [
-                                                                              "name"]
+                                                                          ? isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"])
+                                                                              ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]
+                                                                              : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"]
                                                                           : "",
                                                                     ));
                                                                   },
@@ -1277,7 +1278,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               ? value.orderList[index]["order_lines"][0]["product"]["name"]
                                                                               : "",
                                                                           productimage: value.orderList[index]["order_lines"][0]["product"] != null
-                                                                              ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]
+                                                                              ? isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"])
+                                                                                  ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]
+                                                                                  : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"]
                                                                               : "",
                                                                           productDescription: value.orderList[index]["order_lines"][0]["product"] != null
                                                                               ? value.orderList[index]["order_lines"][0]["product"]["short_description"]

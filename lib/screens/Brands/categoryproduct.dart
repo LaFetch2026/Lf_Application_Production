@@ -12,6 +12,7 @@ import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../commonwidget/common_widgets.dart';
 import '../../commonwidget/homewidget/dummy_grid_list.dart';
 
 class CategoryProductScreen extends StatefulWidget {
@@ -151,11 +152,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                   maxNrOfCacheObjects:
                                                                       100)),
                                                               fit: BoxFit.cover,
-                                                              imageUrl: productController
-                                                                              .productCategoryList[
-                                                                          index]
-                                                                      ["images"]
-                                                                  [0]["name"],
+                                                              imageUrl: isImage(productController
+                                                                              .productCategoryList[index]
+                                                                          ["images"][0]
+                                                                      ["name"])
+                                                                  ? productController
+                                                                              .productCategoryList[index]
+                                                                          ["images"]
+                                                                      [
+                                                                      0]["name"]
+                                                                  : productController
+                                                                              .productCategoryList[index]
+                                                                          ["images"]
+                                                                      [1]["name"],
                                                               /* progressIndicatorBuilder:
                                                                   (context, url,
                                                                           downloadProgress) =>

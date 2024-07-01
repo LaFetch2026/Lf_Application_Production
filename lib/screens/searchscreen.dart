@@ -12,6 +12,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
+import '../commonwidget/common_widgets.dart';
 import '../commonwidget/homewidget/dummy_product_list.dart';
 import '../commonwidget/homewidget/horizontal_home_list.dart';
 import '../controller/brand_controller.dart';
@@ -459,11 +460,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               100)),
                                                                       fit: BoxFit
                                                                           .cover,
-                                                                      imageUrl: productController.mostSeachList[index]["images"]
+                                                                      imageUrl: isImage(productController.mostSeachList[index]["images"][0]
                                                                               [
-                                                                              0]
-                                                                          [
-                                                                          "name"],
+                                                                              "name"])
+                                                                          ? productController.mostSeachList[index]["images"][0]
+                                                                              [
+                                                                              "name"]
+                                                                          : productController.mostSeachList[index]["images"][1]
+                                                                              [
+                                                                              "name"],
                                                                       errorWidget: (context,
                                                                               url,
                                                                               error) =>
@@ -619,15 +624,6 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             .brandList[index]
                                                                         [
                                                                         "logo"],
-                                                                    /*  progressIndicatorBuilder:
-                                                                        (context,
-                                                                                url,
-                                                                                downloadProgress) =>
-                                                                            Center(
-                                                                      child: CircularProgressIndicator(
-                                                                          value: downloadProgress
-                                                                              .progress),
-                                                                    ), */
                                                                     errorWidget: (context,
                                                                             url,
                                                                             error) =>

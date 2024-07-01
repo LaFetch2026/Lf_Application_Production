@@ -318,7 +318,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       child: CachedNetworkImage(
                                                                                         cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                         fit: BoxFit.cover,
-                                                                                        imageUrl: value.orderList[index]["product"]["images"][0]["name"],
+                                                                                        imageUrl: isImage(value.orderList[index]["product"]["images"][0]["name"]) ? value.orderList[index]["product"]["images"][0]["name"] : value.orderList[index]["product"]["images"][1]["name"],
                                                                                         /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                           child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                         ), */
@@ -697,7 +697,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                   child: CachedNetworkImage(
                                                                                     cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                     fit: BoxFit.cover,
-                                                                                    imageUrl: productController.productList[index]["images"][0]["name"],
+                                                                                    imageUrl: isImage(productController.productList[index]["images"][0]["name"]) ? productController.productList[index]["images"][0]["name"] : productController.productList[index]["images"][1]["name"],
                                                                                     /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
                                                                                       child: CircularProgressIndicator(value: downloadProgress.progress),
                                                                                     ), */

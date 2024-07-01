@@ -6,6 +6,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
+import '../common_widgets.dart';
 
 class HorizontalHomeList extends StatelessWidget {
   final String text;
@@ -96,15 +97,12 @@ class HorizontalHomeList extends StatelessWidget {
                                                         maxNrOfCacheObjects:
                                                             100)),
                                                 fit: BoxFit.cover,
-                                                imageUrl: list[index]["images"]
-                                                    [0]["name"],
-                                                /*  progressIndicatorBuilder: (context,
-                                                    url, downloadProgress) =>
-                                                Center(
-                                              child: CircularProgressIndicator(
-                                                  value: downloadProgress
-                                                      .progress),
-                                            ), */
+                                                imageUrl: isImage(list[index]
+                                                        ["images"][0]["name"])
+                                                    ? list[index]["images"][0]
+                                                        ["name"]
+                                                    : list[index]["images"][1]
+                                                        ["name"],
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(

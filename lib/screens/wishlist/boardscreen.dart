@@ -254,11 +254,15 @@ class BoardScreenState extends State<BoardScreen> {
                                                                               100)),
                                                                       fit: BoxFit
                                                                           .cover,
-                                                                      imageUrl: wishlistController.wishListProduct[index]["images"]
+                                                                      imageUrl: isImage(wishlistController.wishListProduct[index]["images"][0]
                                                                               [
-                                                                              0]
-                                                                          [
-                                                                          "name"],
+                                                                              "name"])
+                                                                          ? wishlistController.wishListProduct[index]["images"][0]
+                                                                              [
+                                                                              "name"]
+                                                                          : wishlistController.wishListProduct[index]["images"][1]
+                                                                              [
+                                                                              "name"],
                                                                       /*  progressIndicatorBuilder: (context,
                                                                               url,
                                                                               downloadProgress) =>

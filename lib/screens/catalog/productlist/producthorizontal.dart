@@ -11,6 +11,7 @@ import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomfiltters.dart';
 import '../../../commonwidget/catalogwidgets/bottomsortby.dart';
 import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
+import '../../../commonwidget/common_widgets.dart';
 import '../../../commonwidget/doublebtn.dart';
 import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
@@ -151,18 +152,18 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                 maxNrOfCacheObjects:
                                                                     100)),
                                                             fit: BoxFit.cover,
-                                                            imageUrl: productController
-                                                                        .productCategoryList[
-                                                                    index]["images"]
-                                                                [0]["name"],
-                                                            /*  progressIndicatorBuilder:
-                                                                (context, url,
-                                                                        downloadProgress) =>
-                                                                    Center(
-                                                              child: CircularProgressIndicator(
-                                                                  value: downloadProgress
-                                                                      .progress),
-                                                            ), */
+                                                            imageUrl: isImage(productController
+                                                                            .productCategoryList[index]
+                                                                        ["images"]
+                                                                    [0]["name"])
+                                                                ? productController
+                                                                            .productCategoryList[index]
+                                                                        ["images"]
+                                                                    [0]["name"]
+                                                                : productController
+                                                                            .productCategoryList[index]
+                                                                        ["images"]
+                                                                    [1]["name"],
                                                             errorWidget:
                                                                 (context, url,
                                                                         error) =>
