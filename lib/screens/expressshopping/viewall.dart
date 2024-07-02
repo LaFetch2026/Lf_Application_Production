@@ -101,19 +101,21 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                   .then((value) => setState(
                                                         () {
                                                           productController
-                                                              .hasnextpage
+                                                              .brandExpressHasnextpage
                                                               .value = true;
                                                           productController
-                                                              .loadMore
+                                                              .brandExpressLoadMore
                                                               .value = false;
                                                           productController
-                                                              .isProduct
+                                                              .isBrandExpressProduct
                                                               .value = false;
                                                           productController
-                                                              .page.value = 1;
+                                                              .brandExpressPage
+                                                              .value = 1;
                                                           productController
-                                                              .getProductData(
-                                                                  "express");
+                                                              .getBrandExpressProductData(
+                                                                  widget
+                                                                      .brandId);
                                                         },
                                                       ));
                                             },
