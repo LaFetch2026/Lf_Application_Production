@@ -34,6 +34,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     profileController.emailController.text = widget.email;
     /*   profileController.phoneController.text =
         widget.number.replaceAll("+91", ""); */
+    if (widget.number != "") {
+      profileController.phoneController.text =
+          widget.number.replaceAll("+91", "");
+    }
     profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
       profileController.gerderController.text = "Female";
