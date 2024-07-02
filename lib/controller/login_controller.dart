@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
@@ -78,9 +79,6 @@ class LoginController extends BaseController {
         getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
-          name: "",
-          email: "",
-          provider: "",
         ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
@@ -99,45 +97,21 @@ class LoginController extends BaseController {
     hideLoading();
   }
 
-  callResendOtp(String num, String name, String email, String provider) async {
+  callResendOtp(String num) async {
     secondsRemaining.value = 30;
     enableResend.value = false;
     try {
-      dynamic response;
-      if (name.isNotEmpty) {
-        response =
-            await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
-          "phone": num,
-          "email": email,
-          "name": name,
-          "provider": provider,
-        });
-      } else {
-        response =
-            await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
-          "phone": num,
-        });
-      }
-
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+        "phone": num,
+      });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar(responseData['message']);
-        if (name.isNotEmpty) {
-          Get.to(OTPVerficationScreen(
-            phoneMunber: number.value,
-            name: name,
-            email: email,
-            provider: provider,
-          ));
-        } else {
-          Get.to(OTPVerficationScreen(
-            phoneMunber: number.value,
-            name: "",
-            email: "",
-            provider: "",
-          ));
-        }
+        Get.to(OTPVerficationScreen(
+          phoneMunber: number.value,
+        ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
@@ -154,31 +128,50 @@ class LoginController extends BaseController {
     }
   }
 
-  callSocailMediaRegister(String name, String email, String provider) async {
+  callSocailMediaLogin(
+      String name, String email, String provider, String providerId) async {
     showLoading();
+    final prefs = await SharedPreferences.getInstance();
     secondsRemaining.value = 30;
     enableResend.value = false;
     try {
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
-        "phone": number.value,
         "email": email,
         "name": name,
         "provider": provider,
+        "provider_id": providerId,
       });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
         getSnackBar(responseData['message']);
-        Get.to(OTPVerficationScreen(
-          phoneMunber: number.value,
-          name: name,
-          email: email,
-          provider: provider,
-        ));
+        prefs.setString('token', responseData['meta']['access_token']);
+        prefs.setInt('userId', responseData['data']['id']);
+        if (responseData['data']['phone'] != null) {
+          prefs.setString('phonenumber', responseData['data']['phone']);
+        }
+        if (responseData['data']['email'] != null) {
+          prefs.setString('email', responseData['data']['email']);
+        }
+        if (responseData['data']['gender'] != null) {
+          prefs.setInt('gender', responseData['data']['gender']);
+        }
+        if (responseData['data']['name'] != null) {
+          prefs.setString('name', responseData['data']['name']);
+          Get.offAll(
+            () => const BottomNavScreen(),
+          );
+        } else {
+          Get.off(
+            () => const UserDetailsScreen(),
+          );
+        }
       } else if (response.statusCode == 400) {
-        if (responseData['errors']['phone'] != null) {
-          getSnackBar(responseData['errors']['phone'][0]);
+        if (responseData['errors']['email'] != null) {
+          getSnackBar(responseData['errors']['email'][0]);
+          GoogleSignIn googleSignIn = GoogleSignIn();
+          googleSignIn.signOut();
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -249,7 +242,7 @@ class LoginController extends BaseController {
     hideLoading();
   }
 
-  callSocailMediaVerifyOtp(
+/*   callSocailMediaVerifyOtp(
       String phone, String name, String email, String provider) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
@@ -308,4 +301,5 @@ class LoginController extends BaseController {
     }
     hideLoading();
   }
+ */
 }

@@ -31,10 +31,54 @@ class ProfileController extends BaseController {
     'Non-Binary',
   ].obs;
 
-  bool checkvalidation(String name, String email, int gender) {
+  bool checkvalidation(String name, String phone, String email, int gender) {
+    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     String p =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regExp = RegExp(p);
+    RegExp regExPhone = RegExp(patttern);
+    if (name.isEmpty) {
+      getSnackBar("Enter Name");
+      return false;
+    }
+    if (phone.isEmpty) {
+      getSnackBar(
+        "Enter Phone Number",
+      );
+      return false;
+    }
+    if (phone.length < 10) {
+      getSnackBar(
+        "Enter 10 digit Phone Number",
+      );
+      return false;
+    }
+    if (!regExPhone.hasMatch(phone)) {
+      getSnackBar(
+        "Enter valid Phone Number",
+      );
+      return false;
+    }
+    if (email.isEmpty) {
+      getSnackBar("Enter Email");
+      return false;
+    }
+    if (!regExp.hasMatch(email)) {
+      getSnackBar("Enter Valid Email Id");
+      return false;
+    }
+    if (gender == 0) {
+      getSnackBar("Select Gender");
+      return false;
+    }
+    return true;
+  }
+
+  bool checkUservalidation(String name, String email, int gender) {
+    String p =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = RegExp(p);
+
     if (name.isEmpty) {
       getSnackBar("Enter Name");
       return false;

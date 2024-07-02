@@ -171,7 +171,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                           genderId: controller
                                                                       .profileDetails[
                                                                   "gender"] ??
-                                                              "",
+                                                              0,
                                                         )))
                                             .then((value) => setState(
                                                   () {

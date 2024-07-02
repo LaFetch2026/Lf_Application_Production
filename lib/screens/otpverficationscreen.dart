@@ -14,15 +14,7 @@ import '../controller/login_controller.dart';
 
 class OTPVerficationScreen extends StatefulWidget {
   final String phoneMunber;
-  final String name;
-  final String email;
-  final String provider;
-  const OTPVerficationScreen(
-      {required this.phoneMunber,
-      required this.name,
-      required this.email,
-      required this.provider,
-      super.key});
+  const OTPVerficationScreen({required this.phoneMunber, super.key});
 
   @override
   State<OTPVerficationScreen> createState() => OTPVerficationScreenState();
@@ -158,11 +150,8 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                 onTap: () {
                                   otpController.otpClear.value = true;
                                   otpController.enableResend.value
-                                      ? otpController.callResendOtp(
-                                          widget.phoneMunber,
-                                          widget.name,
-                                          widget.email,
-                                          widget.provider)
+                                      ? otpController
+                                          .callResendOtp(widget.phoneMunber)
                                       : null;
                                 },
                                 child: AppText(
@@ -206,15 +195,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         onPressed: () {
                           if (otpController
                               .checkOtpvalidation(otpController.otp.value)) {
-                            if (widget.name.isNotEmpty) {
-                              otpController.callSocailMediaVerifyOtp(
-                                  widget.phoneMunber,
-                                  widget.name,
-                                  widget.email,
-                                  widget.provider);
-                            } else {
-                              otpController.callVerifyOtp(widget.phoneMunber);
-                            }
+                            otpController.callVerifyOtp(widget.phoneMunber);
                           }
                         },
                         borderColor: btnTextColor),

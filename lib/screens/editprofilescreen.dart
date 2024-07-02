@@ -32,14 +32,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     profileController.nameController.text = widget.name;
     profileController.emailController.text = widget.email;
-    profileController.phoneController.text =
-        widget.number.replaceAll("+91", "");
+    /*   profileController.phoneController.text =
+        widget.number.replaceAll("+91", ""); */
     profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
       profileController.gerderController.text = "Female";
     } else if (widget.genderId == 2) {
       profileController.gerderController.text = "Male";
-    } else {
+    } else if (widget.genderId == 3) {
       profileController.gerderController.text = "Non-Binary";
     }
     super.initState();
@@ -78,7 +78,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: NumberWidget(
-                          readonly: true,
+                          readonly: false,
                           controller: profileController.phoneController),
                     ),
                     Padding(
@@ -244,6 +244,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     onPressed: () {
                       if (profileController.checkvalidation(
                           profileController.nameController.text
+                              .toString()
+                              .trim(),
+                          profileController.phoneController.text
                               .toString()
                               .trim(),
                           profileController.emailController.text

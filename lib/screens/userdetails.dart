@@ -216,7 +216,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                     controller: userController,
                     backgroundColor: colorSecondary,
                     onPressed: () {
-                      if (userController.checkvalidation(
+                      if (userController.checkUservalidation(
                           userController.nameController.text.toString().trim(),
                           userController.emailController.text.toString().trim(),
                           userController.genderId.value)) {

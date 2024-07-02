@@ -71,10 +71,10 @@ class SocialMediaLoginScreenState extends State<SocialMediaLoginScreen> {
                       .phoneNumberRegister.text
                       .toString()
                       .trim())) {
-                    loginController.number.value =
+                    /* loginController.number.value =
                         "+91${loginController.phoneNumberRegister.text.toString().trim()}";
                     loginController.callSocailMediaRegister(
-                        widget.name, widget.email, widget.provider);
+                        widget.name, widget.email, widget.provider); */
                   }
                 },
               ),

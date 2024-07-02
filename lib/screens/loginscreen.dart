@@ -11,7 +11,6 @@ import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
-import 'package:lafetch/screens/socialmedialoginscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import '../commonwidget/app_text.dart';
 import '../controller/login_controller.dart';
@@ -52,10 +51,8 @@ class LoginScreenState extends State<LoginScreen> {
       print(fbData);
       print("${fbData!["name"]}");
       print("${fbData!["email"]}");
-      Get.to(SocialMediaLoginScreen(
-          name: fbData!["name"],
-          email: fbData!["email"],
-          provider: "facebook"));
+      loginController.callSocailMediaLogin(
+          fbData!["name"], fbData!["email"], "facebook", fbData!["id"]);
     } else {
       print(result.status);
       print(result.message);
@@ -75,10 +72,8 @@ class LoginScreenState extends State<LoginScreen> {
       print("id ${googleUser.id}");
       print("token $token");
       if (googleUser.displayName != null) {
-        Get.to(SocialMediaLoginScreen(
-            name: googleUser.displayName!,
-            email: googleUser.email,
-            provider: "google"));
+        loginController.callSocailMediaLogin(
+            googleUser.displayName!, googleUser.email, "google", googleUser.id);
       }
     }
   }
