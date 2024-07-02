@@ -305,6 +305,7 @@ class WishlistController extends BaseController {
           () => CreateBoardScreen(
             btnText: "Add",
             wishlistId: responseData["id"],
+            type: "add",
           ),
         );
       } else if (response.statusCode == 400) {
@@ -509,7 +510,7 @@ class WishlistController extends BaseController {
     }
   }
 
-  callAddWishlist(int wishlistId) async {
+  callAddWishlist(int wishlistId, String type) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -527,8 +528,13 @@ class WishlistController extends BaseController {
 
       if (response.statusCode == 200) {
         addList.clear();
+        getWishlistData();
         getSnackBar("item added");
-        Get.close(2);
+        if (type == "add") {
+          Get.close(1);
+        } else {
+          Get.close(2);
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -572,7 +578,7 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         deleteidList.clear();
         getSnackBar("Product deleted");
-        Get.close(4);
+        Get.close(3);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

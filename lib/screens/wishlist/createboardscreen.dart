@@ -17,8 +17,12 @@ import '../catalog/productlist/productdetailsscreen.dart';
 class CreateBoardScreen extends StatefulWidget {
   final String btnText;
   final int wishlistId;
+  final String type;
   const CreateBoardScreen(
-      {required this.btnText, required this.wishlistId, super.key});
+      {required this.btnText,
+      required this.wishlistId,
+      required this.type,
+      super.key});
 
   @override
   State<CreateBoardScreen> createState() => CreateBoardScreenState();
@@ -563,8 +567,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                         backgroundColor: colorPrimary,
                         onPressed: () {
                           if (wishlistController.checkIdvalidation()) {
-                            wishlistController
-                                .callAddWishlist(widget.wishlistId);
+                            wishlistController.callAddWishlist(
+                                widget.wishlistId, widget.type);
                           }
                         },
                         borderColor: colorPrimary),

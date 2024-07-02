@@ -68,6 +68,7 @@ class LoginScreenState extends State<LoginScreen> {
     if (googleUser != null) {
       GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
       String? token = googleAuth.idToken;
+      print("name $googleUser");
       print("name ${googleUser.displayName}");
       print("email ${googleUser.email}");
       print("photoUrl ${googleUser.photoUrl}");

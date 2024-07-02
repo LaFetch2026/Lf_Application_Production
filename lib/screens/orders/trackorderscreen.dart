@@ -303,8 +303,15 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                     ],
                                   )),
                             )
-                          : const SizedBox(
-                              height: 0,
+                          : const Padding(
+                              padding: EdgeInsets.only(top: 200),
+                              child: Center(
+                                child: Text("No Information Found",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontFamily: "Franklin Gothic Regular")),
+                              ),
                             )),
                 ],
               ),

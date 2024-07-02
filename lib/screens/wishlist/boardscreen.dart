@@ -79,6 +79,7 @@ class BoardScreenState extends State<BoardScreen> {
                           Get.to(CreateBoardScreen(
                             btnText: "",
                             wishlistId: widget.boardId,
+                            type: "edit",
                           ));
                         },
                         onPressedAddItem: () {
@@ -91,6 +92,7 @@ class BoardScreenState extends State<BoardScreen> {
                                   builder: (BuildContext context) =>
                                       CreateBoardScreen(
                                         btnText: "Add",
+                                        type: "addmore",
                                         wishlistId: widget.boardId,
                                       )))
                               .then((value) => setState(
@@ -99,8 +101,8 @@ class BoardScreenState extends State<BoardScreen> {
                                           .clear();
                                       wishlistController.addList.clear();
                                       wishlistController.deleteidList.clear();
-                                      wishlistController.getWishlistDetails(
-                                          widget.boardId, 1);
+                                      /*   wishlistController.getWishlistDetails(
+                                          widget.boardId, 1); */
                                     },
                                   ));
                         },
@@ -146,8 +148,8 @@ class BoardScreenState extends State<BoardScreen> {
                                           .clear();
                                       wishlistController.addList.clear();
                                       wishlistController.deleteidList.clear();
-                                      wishlistController.getWishlistDetails(
-                                          widget.boardId, 1);
+                                      /*  wishlistController.getWishlistDetails(
+                                          widget.boardId, 1); */
                                     },
                                   ));
                         },
@@ -566,7 +568,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                               )))
                                                                       .then((value) => setState(
                                                                             () {
-                                                                              wishlistController.getWishlistDetails(widget.boardId, 1);
+                                                                              //  wishlistController.getWishlistDetails(widget.boardId, 1);
                                                                             },
                                                                           ));
                                                                 }
