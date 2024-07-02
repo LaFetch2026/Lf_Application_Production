@@ -1,11 +1,15 @@
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import '../commonwidget/app_text.dart';
 import '../commonwidget/loginwidgets/number_widget.dart';
+import '../controller/login_controller.dart';
 import '../utils/constants.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -27,12 +31,13 @@ class EditProfileScreen extends StatefulWidget {
 
 class EditProfileScreenState extends State<EditProfileScreen> {
   final profileController = Get.put(ProfileController());
+  final otpController = Get.put(LoginController());
 
   @override
   void initState() {
     profileController.nameController.text = widget.name;
     profileController.emailController.text = widget.email;
-    /*   profileController.phoneController.text =
+    /* profileController.phoneController.text =
         widget.number.replaceAll("+91", ""); */
     if (widget.number != "") {
       profileController.phoneController.text =
@@ -84,6 +89,63 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       child: NumberWidget(
                           readonly: false,
                           controller: profileController.phoneController),
+                    ),
+                    Obx(
+                      () => profileController.isPhoneNumber.value
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  child: AppText(
+                                    text: "Enter OTP",
+                                    fontFamily: "Franklin Gothic",
+                                    fontSize: 14.sp,
+                                    color: colorPrimary,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 10, bottom: 10),
+                                  child: Center(
+                                    child: OtpTextField(
+                                      borderRadius: BorderRadius.circular(1),
+                                      numberOfFields: 4,
+                                      clearText: otpController.otpClear.value,
+                                      fieldWidth:
+                                          (MediaQuery.of(context).size.width -
+                                                  65) /
+                                              4,
+                                      textStyle: const TextStyle(
+                                          color: loginText,
+                                          fontSize: 16,
+                                          height: 2.5),
+                                      focusedBorderColor: borderColor,
+                                      borderWidth: 1,
+                                      enabledBorderColor: borderColor,
+                                      showFieldAsBox: true,
+                                      onCodeChanged: (String code) {
+                                        otpController.otpClear.value = false;
+                                        otpController.otp.value = code;
+                                      },
+                                      onSubmit: (String verificationCode) {
+                                        otpController.otpClear.value = false;
+                                        otpController.otp.value =
+                                            verificationCode;
+                                        if (otpController.otp.value.length ==
+                                            4) {
+                                          otpController.showButton.value = true;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const SizedBox(
+                              height: 0,
+                            ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
@@ -257,7 +319,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               .toString()
                               .trim(),
                           profileController.genderId.value)) {
-                        profileController.callupdateProfile("edit");
+                        if (profileController.isAddress.value) {
+                          getSnackBar("Enter OTP");
+                        } else {
+                          profileController.callupdateProfile(
+                              "edit",
+                              "+91${profileController.phoneController.text.toString().trim()}",
+                              otpController.otp.value);
+                        }
                       }
                     },
                     borderColor: colorPrimary),

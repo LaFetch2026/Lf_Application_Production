@@ -17,6 +17,7 @@ class ProfileController extends BaseController {
   RxBool showList = false.obs;
   RxBool isProfile = false.obs;
   RxBool isAddress = false.obs;
+  RxBool isPhoneNumber = false.obs;
   RxInt genderId = 0.obs;
   List addressList = [].obs;
   dynamic profileDetails = "".obs;
@@ -131,15 +132,34 @@ class ProfileController extends BaseController {
     isProfile.value = false;
   }
 
-  callupdateProfile(String type) async {
+  callupdateProfile(String type, String phone, String otp) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
-      final Map<String, dynamic> sendData = {
-        "name": nameController.text.toString().trim(),
-        "email": emailController.text.toString().trim(),
-        "gender": genderId.value,
-      };
+      dynamic sendData;
+      if (type == "user" && otp.isEmpty) {
+        sendData = {
+          "name": nameController.text.toString().trim(),
+          "email": emailController.text.toString().trim(),
+          "gender": genderId.value,
+        };
+      } else if (type == "edit" && otp.isNotEmpty) {
+        sendData = {
+          "name": nameController.text.toString().trim(),
+          "email": emailController.text.toString().trim(),
+          "gender": genderId.value,
+          "phone": phone,
+          "otp": otp
+        };
+      } else {
+        sendData = {
+          "name": nameController.text.toString().trim(),
+          "email": emailController.text.toString().trim(),
+          "gender": genderId.value,
+          "phone": phone,
+        };
+      }
+
       var response =
           await http.put(Uri.parse("${ApiConstants.baseUrl}/profile"),
               headers: <String, String>{
@@ -150,20 +170,36 @@ class ProfileController extends BaseController {
               body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        getSnackBar("Profile updated");
-        print(responseData);
-        if (responseData['data']['email'] != null) {
-          prefs.setString('email', responseData['data']['email']);
-        }
-        if (responseData['data']['gender'] != null) {
-          prefs.setInt('gender', responseData['data']['gender']);
-        }
-        if (responseData['data']['name'] != null) {
-          prefs.setString('name', responseData['data']['name']);
-        }
         if (type == "edit") {
-          Get.close(1);
+          if (otp.isNotEmpty) {
+            getSnackBar("Profile updated");
+            print(responseData);
+            if (responseData['data']['email'] != null) {
+              prefs.setString('email', responseData['data']['email']);
+            }
+            if (responseData['data']['gender'] != null) {
+              prefs.setInt('gender', responseData['data']['gender']);
+            }
+            if (responseData['data']['name'] != null) {
+              prefs.setString('name', responseData['data']['name']);
+            }
+            Get.close(1);
+          } else {
+            isPhoneNumber.value = true;
+            getSnackBar("Enter Otp");
+          }
         } else {
+          getSnackBar("Profile updated");
+          print(responseData);
+          if (responseData['data']['email'] != null) {
+            prefs.setString('email', responseData['data']['email']);
+          }
+          if (responseData['data']['gender'] != null) {
+            prefs.setInt('gender', responseData['data']['gender']);
+          }
+          if (responseData['data']['name'] != null) {
+            prefs.setString('name', responseData['data']['name']);
+          }
           Get.offAll(
             () => const BottomNavScreen(),
           );
