@@ -1003,6 +1003,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                     setState(() {
                                                       isSearch = false;
                                                     });
+                                                    Get.to(ProductDetailsScreen(
+                                                        productId: controller
+                                                                .searchList[
+                                                            index]["id"],
+                                                        type: "add"));
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets
