@@ -35,6 +35,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
+    otpController.otp.value = "";
+    profileController.isEditNumber.value = true;
+    profileController.isPhoneNumber.value = false;
     profileController.nameController.text = widget.name;
     profileController.emailController.text = widget.email;
     /* profileController.phoneController.text =
@@ -42,6 +45,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (widget.number != "") {
       profileController.phoneController.text =
           widget.number.replaceAll("+91", "");
+    } else {
+      profileController.isEditNumber.value = false;
     }
     profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
@@ -84,12 +89,45 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         controller: profileController.nameController,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: NumberWidget(
-                          readonly: false,
-                          controller: profileController.phoneController),
+                    Obx(
+                      () => Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: NumberWidget(
+                            readonly: profileController.isEditNumber.value,
+                            controller: profileController.phoneController),
+                      ),
                     ),
+                    Obx(() => profileController.isEditNumber.value
+                        ? Row(
+                            children: [
+                              const Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  height: 0,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  profileController.isEditNumber.value = false;
+                                  profileController.phoneController.clear();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 5),
+                                  child: AppText(
+                                    text: "Change number",
+                                    fontFamily: "Franklin Gothic",
+                                    fontSize: 14.sp,
+                                    textAlign: TextAlign.right,
+                                    color: colorPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          )),
                     Obx(
                       () => profileController.isPhoneNumber.value
                           ? Column(
@@ -319,13 +357,21 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               .toString()
                               .trim(),
                           profileController.genderId.value)) {
-                        if (profileController.isAddress.value) {
-                          getSnackBar("Enter OTP");
+                        if (profileController.isPhoneNumber.value) {
+                          if (otpController
+                              .checkOtpvalidation(otpController.otp.value)) {
+                            profileController.callupdateProfile(
+                                "edit",
+                                "+91${profileController.phoneController.text.toString().trim()}",
+                                otpController.otp.value,
+                                profileController.isEditNumber.value);
+                          }
                         } else {
                           profileController.callupdateProfile(
                               "edit",
                               "+91${profileController.phoneController.text.toString().trim()}",
-                              otpController.otp.value);
+                              otpController.otp.value,
+                              profileController.isEditNumber.value);
                         }
                       }
                     },

@@ -16,6 +16,7 @@ import '../screens/loginscreen.dart';
 class ProfileController extends BaseController {
   RxBool showList = false.obs;
   RxBool isProfile = false.obs;
+  RxBool isEditNumber = true.obs;
   RxBool isAddress = false.obs;
   RxBool isPhoneNumber = false.obs;
   RxInt genderId = 0.obs;
@@ -132,12 +133,18 @@ class ProfileController extends BaseController {
     isProfile.value = false;
   }
 
-  callupdateProfile(String type, String phone, String otp) async {
+  callupdateProfile(String type, String phone, String otp, bool check) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic sendData;
       if (type == "user" && otp.isEmpty) {
+        sendData = {
+          "name": nameController.text.toString().trim(),
+          "email": emailController.text.toString().trim(),
+          "gender": genderId.value,
+        };
+      } else if (type == "edit" && check == true && otp.isEmpty) {
         sendData = {
           "name": nameController.text.toString().trim(),
           "email": emailController.text.toString().trim(),
@@ -183,10 +190,16 @@ class ProfileController extends BaseController {
             if (responseData['data']['name'] != null) {
               prefs.setString('name', responseData['data']['name']);
             }
+            isPhoneNumber.value = false;
             Get.close(1);
           } else {
-            isPhoneNumber.value = true;
-            getSnackBar("Enter Otp");
+            if (check == false) {
+              isPhoneNumber.value = true;
+              getSnackBar("Enter Otp");
+            } else {
+              getSnackBar("Profile updated");
+              Get.close(1);
+            }
           }
         } else {
           getSnackBar("Profile updated");
@@ -206,6 +219,15 @@ class ProfileController extends BaseController {
         }
       } else if (response.statusCode == 400) {
         print(response.body);
+
+        if (responseData['errors']['phone'] != null) {
+          getSnackBar(responseData['errors']['phone']);
+        }
+        if (responseData['errors']['otp'] != null) {
+          for (var i = 0; i < responseData['errors']['otp'].length; i++) {
+            getSnackBar(responseData['errors']['otp'][i]);
+          }
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

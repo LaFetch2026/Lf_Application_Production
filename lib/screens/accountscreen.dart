@@ -176,6 +176,10 @@ class AccountScreenState extends State<AccountScreen> {
                                             .then((value) => setState(
                                                   () {
                                                     controller.getProfileData();
+                                                    controller.isEditNumber
+                                                        .value = true;
+                                                    controller.isPhoneNumber
+                                                        .value = false;
                                                   },
                                                 ));
                                       },
