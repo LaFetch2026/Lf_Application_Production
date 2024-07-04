@@ -995,19 +995,38 @@ class SearchScreenState extends State<SearchScreen> {
                                                     controller.callRecentSearch(
                                                         controller.searchList[
                                                             index]["id"],
-                                                        controller
-                                                            .searchController
-                                                            .text
-                                                            .toString()
-                                                            .trim());
+                                                        controller.searchList[
+                                                            index]["name"]);
                                                     setState(() {
                                                       isSearch = false;
                                                     });
-                                                    Get.to(ProductDetailsScreen(
-                                                        productId: controller
-                                                                .searchList[
-                                                            index]["id"],
-                                                        type: "add"));
+
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                ProductDetailsScreen(
+                                                                    productId:
+                                                                        controller.searchList[index]
+                                                                            [
+                                                                            "id"],
+                                                                    type:
+                                                                        "add")))
+                                                        .then(
+                                                            (value) => setState(
+                                                                  () {
+                                                                    controller
+                                                                        .isRecentSearch
+                                                                        .value = false;
+                                                                    controller
+                                                                        .getRecentSearchData();
+                                                                    controller
+                                                                        .searchController
+                                                                        .clear();
+                                                                    controller
+                                                                        .getSearchData();
+                                                                  },
+                                                                ));
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets
