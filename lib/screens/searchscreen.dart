@@ -34,33 +34,6 @@ class SearchScreenState extends State<SearchScreen> {
   bool isSearch = false;
   Timer? debounce;
 
-  /*  List<String> products = [
-    "Salwar Suits",
-    "Printed loose t-shirts",
-    "Clothing",
-    "Duffle bags",
-    "Tuxedos"
-  ]; */
-  List<String> items = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "100",
-    "200",
-    "300",
-    "400",
-  ];
-  List<String> searchItem = [
-    "100",
-    "200",
-    "300",
-    "400",
-    "500",
-    "400",
-    "500",
-  ];
-
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
@@ -292,22 +265,12 @@ class SearchScreenState extends State<SearchScreen> {
                                                         .then(
                                                             (value) => setState(
                                                                   () {
-                                                                    productController
-                                                                        .hasnextpage
-                                                                        .value = true;
-                                                                    productController
-                                                                        .loadMore
+                                                                    controller
+                                                                        .isRecentSearch
                                                                         .value = false;
-                                                                    productController
-                                                                        .isProduct
-                                                                        .value = false;
-                                                                    productController
-                                                                        .page
-                                                                        .value = 1;
                                                                     productController;
-                                                                    productController
-                                                                        .getProductData(
-                                                                            "recently-viewed");
+                                                                    controller
+                                                                        .getRecentSearchData();
                                                                   },
                                                                 ));
                                                   }
@@ -406,27 +369,26 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               "id"],
                                                                           type:
                                                                               "add")))
-                                                              .then(
-                                                                  (value) =>
-                                                                      setState(
-                                                                        () {
-                                                                          productController
-                                                                              .hasnextpage
-                                                                              .value = true;
-                                                                          productController
-                                                                              .loadMore
-                                                                              .value = false;
-                                                                          productController
-                                                                              .isProduct
-                                                                              .value = false;
-                                                                          productController
-                                                                              .page
-                                                                              .value = 1;
-                                                                          productController;
-                                                                          productController
-                                                                              .getProductData("recently-viewed");
-                                                                        },
-                                                                      ));
+                                                              .then((value) =>
+                                                                  setState(
+                                                                    () {
+                                                                      productController
+                                                                          .mostViewHasnextpage
+                                                                          .value = true;
+                                                                      productController
+                                                                          .mostViewLoadMore
+                                                                          .value = false;
+                                                                      productController
+                                                                          .isMostSearch
+                                                                          .value = false;
+                                                                      productController
+                                                                          .mostViewPage
+                                                                          .value = 1;
+                                                                      productController;
+                                                                      productController
+                                                                          .getMostViewProductData();
+                                                                    },
+                                                                  ));
                                                         }
                                                       },
                                                       child: SizedBox(
@@ -852,8 +814,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                     productController
                                                         .page.value = 1;
                                                     productController
-                                                        .getProductData(
-                                                            "relevant");
+                                                        .getProductData("recently-viewed");
                                                   },
                                                 ));
                                       }
