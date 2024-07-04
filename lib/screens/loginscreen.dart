@@ -91,7 +91,7 @@ class LoginScreenState extends State<LoginScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: appbarColor,
-              title: Align(
+              /*  title: Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
                   onTap: () {
@@ -108,7 +108,7 @@ class LoginScreenState extends State<LoginScreen> {
                     fontSize: 14,
                   ),
                 ),
-              ),
+              ), */
               bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(40),
                   child: Align(
