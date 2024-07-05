@@ -12,7 +12,20 @@
           "package_name": "com.lafetch.customer"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lafetch.customer",
+            "certificate_hash": "a2e1f47a59975cf75e5fcb7a145159e38e6d3324"
+          }
+        },
+        {
+          "client_id": "656354073125-ianmmj41p3ghu148uaspbhdk6j3fa6p4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCKveQDCOONBp6t6KOSrbg6fhoQWp8t-n0"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "656354073125-ianmmj41p3ghu148uaspbhdk6j3fa6p4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "656354073125-010t37n5lh9ec75su77mgu7pmm9qjp1a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.lafetch.customer"
+              }
+            }
+          ]
         }
       }
     }
