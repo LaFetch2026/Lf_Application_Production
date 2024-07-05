@@ -757,7 +757,8 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductByCategoryData(int categoryId, int brandId, String value) async {
+  getProductByCategoryData(
+      int categoryId, int brandId, String value, List categoryList) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -785,8 +786,15 @@ class ProductController extends BaseController {
           productCategoryList = responseData["data"];
           total.value = responseData["meta"]["total"];
           if (value == "Product Vertical") {
+            List<String> nameList = [];
+            List<int> idList = [];
+            for (var i = 0; i < categoryList.length; i++) {
+              nameList.add(categoryList[i]["name"]);
+              idList.add(categoryList[i]["id"]);
+            }
             Get.to(ProductListScreen(
-              categoryId: categoryId,
+              tabTextList: nameList,
+              idList: idList,
             ));
           }
         }
@@ -1219,7 +1227,7 @@ class ProductController extends BaseController {
         if (type == "product") {
           getProductData("relevant");
         } else if (type == "category") {
-          getProductByCategoryData(categoryId, brandId, "");
+          getProductByCategoryData(categoryId, brandId, "", []);
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0);
         } else if (type == "brand") {

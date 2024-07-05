@@ -40,7 +40,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     wishlistController.getWishlistData();
     if (widget.categoryId != 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) => productController
-          .getProductByCategoryData(widget.categoryId, widget.brandId, ""));
+          .getProductByCategoryData(widget.categoryId, widget.brandId, "", []));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.categoryProductController.addListener(() {
           productController.fetchCategoryProductMoreData(

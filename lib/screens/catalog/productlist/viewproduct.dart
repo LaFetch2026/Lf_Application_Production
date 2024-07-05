@@ -11,7 +11,9 @@ import '../../../utils/constants.dart';
 
 class ViewProductScreen extends StatefulWidget {
   final int categoryId;
-  const ViewProductScreen({super.key, required this.categoryId});
+  final String categoryName;
+  const ViewProductScreen(
+      {super.key, required this.categoryId, required this.categoryName});
 
   @override
   State<ViewProductScreen> createState() => ViewProductScreenState();
@@ -37,7 +39,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16, left: 16),
                   child: AppText(
-                    text: "Tops, T-shirts & Shirts",
+                    text: widget.categoryName,
                     fontFamily: "Franklin Gothic Regular",
                     fontWeight: FontWeight.w400,
                     color: blackColor,

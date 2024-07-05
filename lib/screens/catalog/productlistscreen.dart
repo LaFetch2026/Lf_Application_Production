@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/catalog_product_appbar.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
@@ -11,8 +10,10 @@ import '../../utils/constants.dart';
 import '../cartscreen.dart';
 
 class ProductListScreen extends StatefulWidget {
-  final int categoryId;
-  const ProductListScreen({super.key, required this.categoryId});
+  final List<String> tabTextList;
+  final List<int> idList;
+  const ProductListScreen(
+      {super.key, required this.tabTextList, required this.idList});
 
   @override
   State<ProductListScreen> createState() => ProductListScreenState();
@@ -20,11 +21,35 @@ class ProductListScreen extends StatefulWidget {
 
 class ProductListScreenState extends State<ProductListScreen> {
   final productController = Get.put(ProductController());
+  final List<Tab> _tabs = [];
+  int categoryId = 0;
+
+  @override
+  void initState() {
+    if (widget.idList.isNotEmpty) {
+      categoryId = widget.idList[0];
+    }
+    super.initState();
+  }
+
+  List<Tab> getTabs() {
+    _tabs.clear();
+    for (int i = 0; i < widget.tabTextList.length; i++) {
+      _tabs.add(getTab(i));
+    }
+    return _tabs;
+  }
+
+  Tab getTab(int widgetNumber) {
+    return Tab(
+      text: widget.tabTextList[widgetNumber],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: widget.tabTextList.length,
       initialIndex: 0,
       child: Scaffold(
         backgroundColor: whiteColor,
@@ -48,9 +73,14 @@ class ProductListScreenState extends State<ProductListScreen> {
                     indicatorColor: btnTextColor,
                     unselectedLabelColor: textHintColor,
                     labelColor: btnTextColor,
+                    onTap: (index) {
+                      categoryId = widget.idList[index];
+                      setState(() {});
+                    },
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicatorWeight: 3,
-                    tabs: [
+                    tabs: getTabs()
+                    /* [
                       Tab(
                           child: Text(
                         "View All",
@@ -83,7 +113,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                             fontFamily: "Franklin Gothic",
                             fontWeight: FontWeight.w400),
                       ))
-                    ]),
+                    ] */
+                    ),
               ),
             ),
             Container(
@@ -92,14 +123,22 @@ class ProductListScreenState extends State<ProductListScreen> {
               height: 1,
             ),
             Expanded(
-              child: TabBarView(children: [
+              child: /* TabBarView(children: [
                 ViewProductScreen(
                   categoryId: widget.categoryId,
                 ),
+                 ViewProductScreen(categoryId: widget.categoryId),
                 ViewProductScreen(categoryId: widget.categoryId),
                 ViewProductScreen(categoryId: widget.categoryId),
-                ViewProductScreen(categoryId: widget.categoryId),
-              ]),
+              ]), */
+                  TabBarView(
+                children: List.generate(
+                  widget.tabTextList.length,
+                  (index) => ViewProductScreen(
+                      categoryId: widget.idList[index],
+                      categoryName: widget.tabTextList[index]),
+                ),
+              ),
             ),
           ],
         ),

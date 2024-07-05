@@ -151,7 +151,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                       controller.categoryList[
                                                           index]["id"],
                                                       0,
-                                                      "Product Vertical");
+                                                      "Product Vertical",
+                                                      controller.categoryList);
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(
