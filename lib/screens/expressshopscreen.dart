@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -25,6 +26,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   int current = 0;
   int brandId = 0;
   PageController pageController = PageController();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -57,14 +59,32 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           HomeAppbar(
-            onPressedSearch: () {
+            onPressedSearch: () async {
               Get.to(const SearchScreen());
+              await analytics.logEvent(
+                name: 'search_page',
+                parameters: <String, Object>{
+                  'page_name': 'search_page',
+                },
+              );
             },
-            onPressedCatalog: () {
+            onPressedCatalog: () async {
               Get.to(const CatalogScreen());
+              await analytics.logEvent(
+                name: 'catalog_page',
+                parameters: <String, Object>{
+                  'page_name': 'catalog_page',
+                },
+              );
             },
-            onPressedCart: () {
+            onPressedCart: () async {
               Get.to(const CartScreen());
+              await analytics.logEvent(
+                name: 'cart_page',
+                parameters: <String, Object>{
+                  'page_name': 'cart_page',
+                },
+              );
             },
           ),
           Container(
@@ -148,7 +168,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                           MainAxisAlignment.center,
                                       children: [
                                         GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             setState(() {
                                               current = index;
                                               brandId = index == 0
@@ -161,6 +181,14 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                               duration: const Duration(
                                                   milliseconds: 200),
                                               curve: Curves.ease,
+                                            );
+                                            await analytics.logEvent(
+                                              name:
+                                                  'express_page_brandtabclick',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'express_page_brandtabclick',
+                                              },
                                             );
                                           },
                                           child: AnimatedContainer(

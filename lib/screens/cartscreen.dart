@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,7 @@ class CartScreenState extends State<CartScreen> {
   final productController = Get.put(ProductController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 //  List sizeList = ["XS", "S", "M", "L", "XL"];
   /*  final List<Map<String, dynamic>> sizeList = [
     {'id': '22', "product_matrix_size_name": 'M', 'stocks': '90'},
@@ -191,7 +193,7 @@ class CartScreenState extends State<CartScreen> {
                                                       const EdgeInsets.only(
                                                           bottom: 15),
                                                   child: GestureDetector(
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       showDialog(
                                                         barrierColor:
                                                             Colors.black26,
@@ -218,6 +220,16 @@ class CartScreenState extends State<CartScreen> {
                                                                   "Cancel",
                                                               btn2Text:
                                                                   "Clear");
+                                                        },
+                                                      );
+
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            'cart_page_clearbagclick',
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'cart_page_clearbagclick',
                                                         },
                                                       );
                                                     },
@@ -299,110 +311,171 @@ class CartScreenState extends State<CartScreen> {
                                                                     MainAxisAlignment
                                                                         .start,
                                                                 children: [
-                                                                  Row(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Expanded(
-                                                                          flex:
-                                                                              1,
-                                                                          child: value.orderList[index]["product"] != null
-                                                                              ? value.orderList[index]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["images"] != null
-                                                                                  ? SizedBox(
-                                                                                      height: 78,
-                                                                                      width: 64,
-                                                                                      child: CachedNetworkImage(
-                                                                                        cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                        fit: BoxFit.cover,
-                                                                                        imageUrl: isImage(value.orderList[index]["product"]["images"][0]["name"]) ? value.orderList[index]["product"]["images"][0]["name"] : value.orderList[index]["product"]["images"][1]["name"],
-                                                                                        /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                                                          child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                        ), */
-                                                                                        errorWidget: (context, url, error) => Image.asset(
-                                                                                          downloadImage,
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () async {
+                                                                      await analytics
+                                                                          .logEvent(
+                                                                        name:
+                                                                            'cart_product_details',
+                                                                        parameters: <String,
+                                                                            Object>{
+                                                                          'page_name':
+                                                                              'cart_product_details',
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    child: Row(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Expanded(
+                                                                            flex:
+                                                                                1,
+                                                                            child: value.orderList[index]["product"] != null
+                                                                                ? value.orderList[index]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["images"] != null
+                                                                                    ? SizedBox(
+                                                                                        height: 78,
+                                                                                        width: 64,
+                                                                                        child: CachedNetworkImage(
+                                                                                          cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                           fit: BoxFit.cover,
-                                                                                          height: 78,
-                                                                                          width: 64,
+                                                                                          imageUrl: isImage(value.orderList[index]["product"]["images"][0]["name"]) ? value.orderList[index]["product"]["images"][0]["name"] : value.orderList[index]["product"]["images"][1]["name"],
+                                                                                          /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                            child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                                          ), */
+                                                                                          errorWidget: (context, url, error) => Image.asset(
+                                                                                            downloadImage,
+                                                                                            fit: BoxFit.cover,
+                                                                                            height: 78,
+                                                                                            width: 64,
+                                                                                          ),
                                                                                         ),
-                                                                                      ),
-                                                                                    )
-                                                                                  : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)
-                                                                              : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)),
-                                                                      Expanded(
-                                                                        flex: 3,
-                                                                        child:
-                                                                            Padding(
-                                                                          padding:
-                                                                              const EdgeInsets.only(left: 8),
+                                                                                      )
+                                                                                    : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)
+                                                                                : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)),
+                                                                        Expanded(
+                                                                          flex:
+                                                                              3,
                                                                           child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                            children: [
-                                                                              AppText(
-                                                                                text: value.orderList[index]["product"]["name"] ?? "",
-                                                                                maxLines: 1,
-                                                                                fontFamily: "Franklin Gothic",
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: 14.sp,
-                                                                                color: blackColor,
-                                                                              ),
                                                                               Padding(
-                                                                                padding: const EdgeInsets.symmetric(vertical: 5),
-                                                                                child: AppText(
-                                                                                  text: value.orderList[index]["product"]["short_description"] ?? "",
-                                                                                  color: nameText,
-                                                                                  maxLines: 2,
-                                                                                  fontSize: 12.sp,
+                                                                            padding:
+                                                                                const EdgeInsets.only(left: 8),
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                              children: [
+                                                                                AppText(
+                                                                                  text: value.orderList[index]["product"]["name"] ?? "",
+                                                                                  maxLines: 1,
+                                                                                  fontFamily: "Franklin Gothic",
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                  fontSize: 14.sp,
+                                                                                  color: blackColor,
+                                                                                ),
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                                                                  child: AppText(
+                                                                                    text: value.orderList[index]["product"]["short_description"] ?? "",
+                                                                                    color: nameText,
+                                                                                    maxLines: 2,
+                                                                                    fontSize: 12.sp,
+                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                  ),
+                                                                                ),
+                                                                                AppText(
+                                                                                  text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["description"] ?? ""),
+                                                                                  color: textHintColor,
+                                                                                  fontSize: 10.sp,
                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                   fontWeight: FontWeight.w400,
                                                                                 ),
-                                                                              ),
-                                                                              AppText(
-                                                                                text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["description"] ?? ""),
-                                                                                color: textHintColor,
-                                                                                fontSize: 10.sp,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: const EdgeInsets.symmetric(vertical: 5),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    /*   value.orderList[index]["inventory"] != null
-                                                                                        ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
-                                                                                            ? Container(
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      /*   value.orderList[index]["inventory"] != null
+                                                                                          ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
+                                                                                              ? Container(
+                                                                                                  color: whiteTextColor,
+                                                                                                  height: 40,
+                                                                                                  width: 75,
+                                                                                                  child: Row(
+                                                                                                    children: [
+                                                                                                      GestureDetector(
+                                                                                                        onTap: () {
+                                                                                                          scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                                                sizeList: sizeList,
+                                                                                                                selectedSize: value.orderList[index]["inventory"] != null
+                                                                                                                    ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
+                                                                                                                        ? value.orderList[index]["inventory"]["product_matrix"]["name"]
+                                                                                                                        : ""
+                                                                                                                    : "",
+                                                                                                              ));
+                                                                                                        },
+                                                                                                        child: Padding(
+                                                                                                          padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
+                                                                                                          child: AppText(
+                                                                                                            text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size" ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S" : "S"}",
+                                                                                                            color: blackColor,
+                                                                                                            fontSize: 10.sp,
+                                                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                                                            fontWeight: FontWeight.w400,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                      const ImageIcon(
+                                                                                                        AssetImage(dropdownImage),
+                                                                                                        color: nameText,
+                                                                                                        size: 16,
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                )
+                                                                                              : const SizedBox(
+                                                                                                  height: 0,
+                                                                                                )
+                                                                                          : const SizedBox(
+                                                                                              height: 0,
+                                                                                            ), */
+                                                                                      value.orderList[index]["inventory"] != null
+                                                                                          ? GestureDetector(
+                                                                                              onTap: () async {
+                                                                                                scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                                      sizeList: value.orderList[index]["product"]["new_inventories"],
+                                                                                                      controller: controller,
+                                                                                                      onPressed: (p0) {
+                                                                                                        controller.callAddtoCart(1, "size", p0, value.orderList[index]["product"]["id"]);
+                                                                                                      },
+                                                                                                      selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : "",
+                                                                                                    ));
+                                                                                                await analytics.logEvent(
+                                                                                                  name: 'cart_product_updatesizeClick',
+                                                                                                  parameters: <String, Object>{
+                                                                                                    'page_name': 'cart_product_updatesizeClick',
+                                                                                                  },
+                                                                                                );
+                                                                                              },
+                                                                                              child: Container(
                                                                                                 color: whiteTextColor,
                                                                                                 height: 40,
                                                                                                 width: 75,
                                                                                                 child: Row(
                                                                                                   children: [
-                                                                                                    GestureDetector(
-                                                                                                      onTap: () {
-                                                                                                        scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
-                                                                                                              sizeList: sizeList,
-                                                                                                              selectedSize: value.orderList[index]["inventory"] != null
-                                                                                                                  ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
-                                                                                                                      ? value.orderList[index]["inventory"]["product_matrix"]["name"]
-                                                                                                                      : ""
-                                                                                                                  : "",
-                                                                                                            ));
-                                                                                                      },
-                                                                                                      child: Padding(
-                                                                                                        padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
-                                                                                                        child: AppText(
-                                                                                                          text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size" ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S" : "S"}",
-                                                                                                          color: blackColor,
-                                                                                                          fontSize: 10.sp,
-                                                                                                          fontFamily: "Franklin Gothic Regular",
-                                                                                                          fontWeight: FontWeight.w400,
-                                                                                                        ),
+                                                                                                    Padding(
+                                                                                                      padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
+                                                                                                      child: AppText(
+                                                                                                        text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
+                                                                                                        color: blackColor,
+                                                                                                        fontSize: 10.sp,
+                                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                                        fontWeight: FontWeight.w400,
                                                                                                       ),
                                                                                                     ),
                                                                                                     const ImageIcon(
@@ -412,178 +485,143 @@ class CartScreenState extends State<CartScreen> {
                                                                                                     ),
                                                                                                   ],
                                                                                                 ),
-                                                                                              )
-                                                                                            : const SizedBox(
-                                                                                                height: 0,
-                                                                                              )
-                                                                                        : const SizedBox(
-                                                                                            height: 0,
-                                                                                          ), */
-                                                                                    value.orderList[index]["inventory"] != null
-                                                                                        ? GestureDetector(
-                                                                                            onTap: () {
-                                                                                              scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
-                                                                                                    sizeList: value.orderList[index]["product"]["new_inventories"],
-                                                                                                    controller: controller,
-                                                                                                    onPressed: (p0) {
-                                                                                                      controller.callAddtoCart(1, "size", p0, value.orderList[index]["product"]["id"]);
-                                                                                                    },
-                                                                                                    selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : "",
-                                                                                                  ));
-                                                                                            },
-                                                                                            child: Container(
-                                                                                              color: whiteTextColor,
-                                                                                              height: 40,
-                                                                                              width: 75,
-                                                                                              child: Row(
-                                                                                                children: [
-                                                                                                  Padding(
-                                                                                                    padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
-                                                                                                    child: AppText(
-                                                                                                      text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
-                                                                                                      color: blackColor,
-                                                                                                      fontSize: 10.sp,
-                                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                                      fontWeight: FontWeight.w400,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  const ImageIcon(
-                                                                                                    AssetImage(dropdownImage),
-                                                                                                    color: nameText,
-                                                                                                    size: 16,
-                                                                                                  ),
-                                                                                                ],
                                                                                               ),
+                                                                                            )
+                                                                                          : const SizedBox(
+                                                                                              height: 0,
                                                                                             ),
-                                                                                          )
-                                                                                        : const SizedBox(
-                                                                                            height: 0,
-                                                                                          ),
-                                                                                    GestureDetector(
-                                                                                      onTap: () {
-                                                                                        scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
-                                                                                              qtyList: qtyList,
-                                                                                              selectedQty: value.orderList[index]["quantity"].toString(),
-                                                                                              controller: controller,
-                                                                                              onPressed: (p0) {
-                                                                                                controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
-                                                                                              },
-                                                                                            ));
-                                                                                      },
-                                                                                      child: Padding(
-                                                                                        padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                                                                                        child: Container(
-                                                                                          color: whiteTextColor,
-                                                                                          height: 40,
-                                                                                          width: 70,
-                                                                                          child: Row(
-                                                                                            children: [
-                                                                                              Padding(
-                                                                                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                                                                                child: AppText(
-                                                                                                  text: "Qty : ${value.orderList[index]["quantity"] ?? "0"}",
-                                                                                                  color: blackColor,
-                                                                                                  fontSize: 10.sp,
-                                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                                  fontWeight: FontWeight.w400,
+                                                                                      GestureDetector(
+                                                                                        onTap: () async {
+                                                                                          scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
+                                                                                                qtyList: qtyList,
+                                                                                                selectedQty: value.orderList[index]["quantity"].toString(),
+                                                                                                controller: controller,
+                                                                                                onPressed: (p0) {
+                                                                                                  controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
+                                                                                                },
+                                                                                              ));
+                                                                                          await analytics.logEvent(
+                                                                                            name: 'cart_product_updateqtyClick',
+                                                                                            parameters: <String, Object>{
+                                                                                              'page_name': 'cart_product_updateqtyClick',
+                                                                                            },
+                                                                                          );
+                                                                                        },
+                                                                                        child: Padding(
+                                                                                          padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                                                                                          child: Container(
+                                                                                            color: whiteTextColor,
+                                                                                            height: 40,
+                                                                                            width: 70,
+                                                                                            child: Row(
+                                                                                              children: [
+                                                                                                Padding(
+                                                                                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                                                                                  child: AppText(
+                                                                                                    text: "Qty : ${value.orderList[index]["quantity"] ?? "0"}",
+                                                                                                    color: blackColor,
+                                                                                                    fontSize: 10.sp,
+                                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                                    fontWeight: FontWeight.w400,
+                                                                                                  ),
                                                                                                 ),
-                                                                                              ),
-                                                                                              const ImageIcon(
-                                                                                                AssetImage(dropdownImage),
-                                                                                                color: nameText,
-                                                                                                size: 16,
-                                                                                              ),
-                                                                                            ],
+                                                                                                const ImageIcon(
+                                                                                                  AssetImage(dropdownImage),
+                                                                                                  color: nameText,
+                                                                                                  size: 16,
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                Padding(
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      AppText(
+                                                                                        text: "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
+                                                                                        color: blackColor,
+                                                                                        fontSize: 12.sp,
+                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left: 10),
+                                                                                        child: Text(
+                                                                                          "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
+                                                                                          style: TextStyle(
+                                                                                            color: textHintColor,
+                                                                                            fontSize: 12.sp,
+                                                                                            decoration: TextDecoration.lineThrough,
+                                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                                            fontWeight: FontWeight.w400,
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    )
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: const EdgeInsets.symmetric(vertical: 5),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    AppText(
-                                                                                      text: "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
-                                                                                      color: blackColor,
-                                                                                      fontSize: 12.sp,
-                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                    ),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 10),
-                                                                                      child: Text(
-                                                                                        "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
-                                                                                        style: TextStyle(
-                                                                                          color: textHintColor,
-                                                                                          fontSize: 12.sp,
-                                                                                          decoration: TextDecoration.lineThrough,
-                                                                                          fontFamily: "Franklin Gothic Regular",
-                                                                                          fontWeight: FontWeight.w400,
+                                                                                      Padding(
+                                                                                        padding: const EdgeInsets.only(left: 10),
+                                                                                        child: Text(
+                                                                                          "${value.orderList[index]["product"]["discount_percentage"] ?? "0 %"} OFF",
+                                                                                          style: TextStyle(
+                                                                                            color: blackColor,
+                                                                                            fontSize: 12.sp,
+                                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                                            fontWeight: FontWeight.w400,
+                                                                                          ),
                                                                                         ),
                                                                                       ),
-                                                                                    ),
-                                                                                    Padding(
-                                                                                      padding: const EdgeInsets.only(left: 10),
-                                                                                      child: Text(
-                                                                                        "${value.orderList[index]["product"]["discount_percentage"] ?? "0 %"} OFF",
-                                                                                        style: TextStyle(
-                                                                                          color: blackColor,
-                                                                                          fontSize: 12.sp,
-                                                                                          fontFamily: "Franklin Gothic Regular",
-                                                                                          fontWeight: FontWeight.w400,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
-                                                                              ),
-                                                                            ],
+                                                                              ],
+                                                                            ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                      GestureDetector(
-                                                                        onTap:
-                                                                            () {
-                                                                          showDialog(
-                                                                            barrierColor:
-                                                                                Colors.black26,
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (context) {
-                                                                              return showDoubleBtnDailog(
-                                                                                  click1: () {
-                                                                                    Get.back();
-                                                                                  },
-                                                                                  click2: () {
-                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
-                                                                                  },
-                                                                                  btncolor: colorPrimary,
-                                                                                  text: "Are you sure you want to remove this item?",
-                                                                                  btn1Text: "Cancel",
-                                                                                  btn2Text: "Remove");
-                                                                            },
-                                                                          );
-                                                                        },
-                                                                        child:
-                                                                            Container(
-                                                                          color:
-                                                                              Colors.transparent,
+                                                                        GestureDetector(
+                                                                          onTap:
+                                                                              () async {
+                                                                            showDialog(
+                                                                              barrierColor: Colors.black26,
+                                                                              context: context,
+                                                                              builder: (context) {
+                                                                                return showDoubleBtnDailog(
+                                                                                    click1: () {
+                                                                                      Get.back();
+                                                                                    },
+                                                                                    click2: () {
+                                                                                      value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
+                                                                                    },
+                                                                                    btncolor: colorPrimary,
+                                                                                    text: "Are you sure you want to remove this item?",
+                                                                                    btn1Text: "Cancel",
+                                                                                    btn2Text: "Remove");
+                                                                              },
+                                                                            );
+
+                                                                            await analytics.logEvent(
+                                                                              name: 'cart_product_removeClick',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'cart_product_removeClick',
+                                                                              },
+                                                                            );
+                                                                          },
                                                                           child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                                                                            child: Image.asset(blackCrossImage,
-                                                                                height: 10,
-                                                                                width: 10,
-                                                                                fit: BoxFit.cover),
+                                                                              Container(
+                                                                            color:
+                                                                                Colors.transparent,
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                                                              child: Image.asset(blackCrossImage, height: 10, width: 10, fit: BoxFit.cover),
+                                                                            ),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                    ],
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                   Padding(
                                                                     padding: const EdgeInsets
@@ -657,7 +695,8 @@ class CartScreenState extends State<CartScreen> {
                                                               return Column(
                                                                 children: [
                                                                   GestureDetector(
-                                                                    onTap: () {
+                                                                    onTap:
+                                                                        () async {
                                                                       Navigator.of(
                                                                               context)
                                                                           .push(
@@ -671,6 +710,16 @@ class CartScreenState extends State<CartScreen> {
                                                                                   productController.getProductData("relevant");
                                                                                 },
                                                                               ));
+                                                                      await analytics
+                                                                          .logEvent(
+                                                                        name:
+                                                                            'cart_youmay_product_details',
+                                                                        parameters: <String,
+                                                                            Object>{
+                                                                          'page_name':
+                                                                              'cart_youmay_product_details',
+                                                                        },
+                                                                      );
                                                                     },
                                                                     child:
                                                                         AnimatedContainer(
@@ -773,7 +822,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 const EdgeInsets.only(top: 10),
                                                                             child: getSmallButton(
                                                                                 label: "Add to bag",
-                                                                                onPressed: () {
+                                                                                onPressed: () async {
                                                                                   Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], type: "add"))).then((value) => setState(
                                                                                         () {
                                                                                           productController.hasnextpage.value = true;
@@ -783,6 +832,12 @@ class CartScreenState extends State<CartScreen> {
                                                                                           productController.getProductData("relevant");
                                                                                         },
                                                                                       ));
+                                                                                  await analytics.logEvent(
+                                                                                    name: 'cart_youmay_product_addtobag',
+                                                                                    parameters: <String, Object>{
+                                                                                      'page_name': 'cart_youmay_product_addtobag',
+                                                                                    },
+                                                                                  );
                                                                                   // controller.callAddtoCart(1, "addproduct");
                                                                                 },
                                                                                 textColor: btnTextColor,
@@ -873,13 +928,27 @@ class CartScreenState extends State<CartScreen> {
                                                       height: 0,
                                                     ),
                                                   ),
-                                                  AppText(
-                                                    text: "Select",
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: textColor,
-                                                    fontSize: 12.sp,
+                                                  GestureDetector(
+                                                    onTap: () async {
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            'cart_page_applycouponclick',
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'cart_page_applycouponclick',
+                                                        },
+                                                      );
+                                                    },
+                                                    child: AppText(
+                                                      text: "Select",
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: textColor,
+                                                      fontSize: 12.sp,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -1433,7 +1502,7 @@ class CartScreenState extends State<CartScreen> {
                                 textColor: whiteBorderColor,
                                 backgroundColor: colorPrimary,
                                 controller: controller,
-                                onPressed: () {
+                                onPressed: () async {
                                   controller.mrp.value =
                                       controller.cartDetails["total_mrp"] ?? "";
                                   controller.expressDelivery.value =
@@ -1463,6 +1532,12 @@ class CartScreenState extends State<CartScreen> {
                                   } else {
                                     controller.callInitiatePayment(0, context);
                                   }
+                                  await analytics.logEvent(
+                                    name: 'proceed_checkout_btnclick',
+                                    parameters: <String, Object>{
+                                      'page_name': 'proceed_checkout_btnclick',
+                                    },
+                                  );
                                 },
                                 borderColor: colorPrimary),
                           ),

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,7 @@ class BoardScreen extends StatefulWidget {
 class BoardScreenState extends State<BoardScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final wishlistController = Get.put(WishlistController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool isDrawer = false;
 
   @override
@@ -71,7 +73,7 @@ class BoardScreenState extends State<BoardScreen> {
                   setState(() {});
                   scaffoldKey.currentState?.showBottomSheet((context) =>
                       BottomSheetBoard(
-                        onPressedEdit: () {
+                        onPressedEdit: () async {
                           Get.back();
                           setState(() {
                             isDrawer = false;
@@ -81,8 +83,14 @@ class BoardScreenState extends State<BoardScreen> {
                             wishlistId: widget.boardId,
                             type: "edit",
                           ));
+                          await analytics.logEvent(
+                            name: 'board_edit_click',
+                            parameters: <String, Object>{
+                              'page_name': 'board_edit_click',
+                            },
+                          );
                         },
-                        onPressedAddItem: () {
+                        onPressedAddItem: () async {
                           setState(() {
                             isDrawer = false;
                           });
@@ -105,8 +113,14 @@ class BoardScreenState extends State<BoardScreen> {
                                           widget.boardId, 1); */
                                     },
                                   ));
+                          await analytics.logEvent(
+                            name: 'board_additem_click',
+                            parameters: <String, Object>{
+                              'page_name': 'board_additem_click',
+                            },
+                          );
                         },
-                        onPressedDelete: () {
+                        onPressedDelete: () async {
                           showDialog(
                             barrierColor: Colors.black26,
                             context: context,
@@ -126,8 +140,14 @@ class BoardScreenState extends State<BoardScreen> {
                                   btn2Text: "Yes");
                             },
                           );
+                          await analytics.logEvent(
+                            name: 'board_delete_click',
+                            parameters: <String, Object>{
+                              'page_name': 'board_delete_click',
+                            },
+                          );
                         },
-                        onPressedRename: () {
+                        onPressedRename: () async {
                           Get.back();
                           setState(() {
                             isDrawer = false;
@@ -152,6 +172,12 @@ class BoardScreenState extends State<BoardScreen> {
                                           widget.boardId, 1); */
                                     },
                                   ));
+                          await analytics.logEvent(
+                            name: 'board_rename_click',
+                            parameters: <String, Object>{
+                              'page_name': 'board_rename_click',
+                            },
+                          );
                         },
                       ));
                 }
@@ -213,7 +239,7 @@ class BoardScreenState extends State<BoardScreen> {
                                               value.wishListProduct.length,
                                               (index) {
                                                 return GestureDetector(
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     if (isDrawer) {
                                                     } else {
                                                       Get.to(() =>
@@ -223,6 +249,15 @@ class BoardScreenState extends State<BoardScreen> {
                                                                   index]["id"],
                                                               type: "add"));
                                                     }
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'board_product_details',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'board_product_details',
+                                                      },
+                                                    );
                                                   },
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -296,7 +331,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                         .cover),
                                                           ),
                                                           GestureDetector(
-                                                            onTap: () {
+                                                            onTap: () async {
                                                               if (isDrawer) {
                                                                 Get.back();
                                                                 isDrawer =
@@ -332,6 +367,16 @@ class BoardScreenState extends State<BoardScreen> {
                                                                           "No",
                                                                       btn2Text:
                                                                           "Yes");
+                                                                },
+                                                              );
+                                                              await analytics
+                                                                  .logEvent(
+                                                                name:
+                                                                    'remove_product_fromwishlistClick',
+                                                                parameters: <String,
+                                                                    Object>{
+                                                                  'page_name':
+                                                                      'remove_product_fromwishlistClick',
                                                                 },
                                                               );
                                                             },
@@ -554,7 +599,8 @@ class BoardScreenState extends State<BoardScreen> {
                                                                   whiteColor,
                                                               borderColor:
                                                                   btnTextColor,
-                                                              onPressed: () {
+                                                              onPressed:
+                                                                  () async {
                                                                 if (isDrawer) {
                                                                 } else {
                                                                   Navigator.of(
@@ -572,6 +618,16 @@ class BoardScreenState extends State<BoardScreen> {
                                                                             },
                                                                           ));
                                                                 }
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'board_product_movetobagClick',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'board_product_movetobagClick',
+                                                                  },
+                                                                );
                                                               },
                                                               width: 152),
                                                         ),

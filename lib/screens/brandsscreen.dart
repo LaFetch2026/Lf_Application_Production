@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -39,13 +40,20 @@ class BrandsScreen extends StatefulWidget {
 
 class BrandsScreenState extends State<BrandsScreen> {
   final brandController = Get.put(BrandController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 500), () {
+    debounce = Timer(const Duration(milliseconds: 500), () async {
       brandController.queryText.value = query;
       brandController.getBrandData();
+      await analytics.logEvent(
+        name: 'brand_page_search',
+        parameters: <String, Object>{
+          'page_name': 'brand_page_search',
+        },
+      );
     });
   }
 
@@ -100,14 +108,32 @@ class BrandsScreenState extends State<BrandsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 HomeAppbar(
-                  onPressedSearch: () {
+                  onPressedSearch: () async {
                     Get.to(const SearchScreen());
+                    await analytics.logEvent(
+                      name: 'search_page',
+                      parameters: <String, Object>{
+                        'page_name': 'search_page',
+                      },
+                    );
                   },
-                  onPressedCatalog: () {
+                  onPressedCatalog: () async {
                     Get.to(const CatalogScreen());
+                    await analytics.logEvent(
+                      name: 'catalog_page',
+                      parameters: <String, Object>{
+                        'page_name': 'catalog_page',
+                      },
+                    );
                   },
-                  onPressedCart: () {
+                  onPressedCart: () async {
                     Get.to(const CartScreen());
+                    await analytics.logEvent(
+                      name: 'cart_page',
+                      parameters: <String, Object>{
+                        'page_name': 'cart_page',
+                      },
+                    );
                   },
                 ),
                 Container(
@@ -198,7 +224,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                 ),
                                 Obx(
                                   () => GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       if (brandController.text.value ==
                                           "Expand All") {
                                         brandController.text.value =
@@ -221,6 +247,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                 (i) => false);
                                         brandController.update();
                                       }
+                                      await analytics.logEvent(
+                                        name: 'brand_page_expandAll',
+                                        parameters: <String, Object>{
+                                          'page_name': 'brand_page_expandAll',
+                                        },
+                                      );
                                     },
                                     child: AppText(
                                       text: brandController.text.value,
@@ -256,257 +288,299 @@ class BrandsScreenState extends State<BrandsScreen> {
                                             itemBuilder: (ctx, index) {
                                               return Column(
                                                 children: [
-                                                  GestureDetector(
-                                                      onTap: () {},
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                bottom: 10),
-                                                        child: Container(
-                                                          width:
-                                                              double.infinity,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          1),
-                                                              border: Border.all(
-                                                                  width: 1,
-                                                                  color: value.selected[
-                                                                          index]
-                                                                      ? greyTextColor
-                                                                      : whiteBorderColor),
-                                                              color:
-                                                                  whiteBorderColor),
-                                                          child: Column(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  brandController
-                                                                      .brandlogo
-                                                                      .value = value
-                                                                              .brandList[
-                                                                          index]
-                                                                      ["logo"];
-                                                                  brandController
-                                                                      .brandbackground
-                                                                      .value = value
-                                                                              .brandList[index]
-                                                                          [
-                                                                          "background_image"] ??
-                                                                      "";
-                                                                  brandController
-                                                                      .brandName
-                                                                      .value = value
-                                                                              .brandList[
-                                                                          index]
-                                                                      ["name"];
-                                                                  brandController
-                                                                      .showAllBrand
-                                                                      .value = true;
-                                                                  brandController
-                                                                      .brandId
-                                                                      .value = value
-                                                                          .brandList[
-                                                                      index]["id"];
-                                                                  brandController
-                                                                      .update();
-                                                                },
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          16,
-                                                                      vertical:
-                                                                          10),
-                                                                  child: Row(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      value.brandList[index]["logo"] !=
-                                                                              null
-                                                                          ? /*  FadeInImage(
-                                                                              fit: BoxFit
-                                                                                  .cover,
-                                                                              height:
-                                                                                  32,
-                                                                              width:
-                                                                                  32,
-                                                                              image: NetworkImage(value.brandList[index][
-                                                                                  "logo"]),
-                                                                              placeholder: const AssetImage(
-                                                                                  dummyWishlistImage)) */
-                                                                          SizedBox(
-                                                                              height: 32,
-                                                                              width: 32,
-                                                                              child: CachedNetworkImage(
-                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                fit: BoxFit.cover,
-                                                                                imageUrl: value.brandList[index]["logo"],
-                                                                                errorWidget: (context, url, error) => Image.asset(
-                                                                                  downloadImage,
-                                                                                  height: 32,
-                                                                                  width: 32,
-                                                                                ),
-                                                                              ),
-                                                                            )
-                                                                          : Image.asset(
-                                                                              dummyWishlistImage,
-                                                                              height: 32,
-                                                                              width: 32,
-                                                                              fit: BoxFit.cover),
-                                                                      Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.symmetric(horizontal: 10),
-                                                                        child:
-                                                                            AppText(
-                                                                          text: value.brandList[index]["name"] ??
-                                                                              "",
-                                                                          color:
-                                                                              colorPrimary,
-                                                                          fontSize:
-                                                                              14.sp,
-                                                                          fontFamily:
-                                                                              "Franklin Gothic Regular",
-                                                                          fontWeight:
-                                                                              FontWeight.w400,
-                                                                        ),
-                                                                      ),
-                                                                      const Expanded(
-                                                                        child:
-                                                                            SizedBox(
-                                                                          width:
-                                                                              0,
-                                                                        ),
-                                                                      ),
-                                                                      GestureDetector(
-                                                                        onTap:
-                                                                            () {
-                                                                          value.selected[index] =
-                                                                              !value.selected[index];
-                                                                          value
-                                                                              .update();
-                                                                        },
-                                                                        child: Image.asset(
-                                                                            upArrowIcon,
-                                                                            height:
-                                                                                20,
-                                                                            width:
-                                                                                20,
-                                                                            fit:
-                                                                                BoxFit.cover),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              value.selected[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 10),
+                                                    child: Container(
+                                                      width: double.infinity,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(1),
+                                                          border: Border.all(
+                                                              width: 1,
+                                                              color: value.selected[
                                                                       index]
-                                                                  ? value
-                                                                          .brandList[
-                                                                              index]
+                                                                  ? greyTextColor
+                                                                  : whiteBorderColor),
+                                                          color:
+                                                              whiteBorderColor),
+                                                      child: Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              brandController
+                                                                  .brandlogo
+                                                                  .value = value
+                                                                      .brandList[
+                                                                  index]["logo"];
+                                                              brandController
+                                                                  .brandbackground
+                                                                  .value = value
+                                                                              .brandList[
+                                                                          index]
+                                                                      [
+                                                                      "background_image"] ??
+                                                                  "";
+                                                              brandController
+                                                                  .brandName
+                                                                  .value = value
+                                                                      .brandList[
+                                                                  index]["name"];
+                                                              brandController
+                                                                  .showAllBrand
+                                                                  .value = true;
+                                                              brandController
+                                                                  .brandId
+                                                                  .value = value
+                                                                      .brandList[
+                                                                  index]["id"];
+                                                              brandController
+                                                                  .update();
+                                                              await analytics
+                                                                  .logEvent(
+                                                                name:
+                                                                    'brand_details',
+                                                                parameters: <String,
+                                                                    Object>{
+                                                                  'page_name':
+                                                                      'brand_details',
+                                                                },
+                                                              );
+                                                            },
+                                                            child: Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      16,
+                                                                  vertical: 10),
+                                                              child: Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  value.brandList[index]
                                                                               [
-                                                                              "categories"]
-                                                                          .isNotEmpty
-                                                                      ? Column(
-                                                                          children: [
-                                                                            const SizedBox(
-                                                                              height: 10,
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.only(left: 16, right: 16),
-                                                                              child:
-                                                                                  /*   GetBuilder<BrandController>(
-                                                                                    builder: (val) => */
-                                                                                  GridView.count(
-                                                                                shrinkWrap: true,
-                                                                                crossAxisCount: 3,
-                                                                                scrollDirection: Axis.vertical,
-                                                                                padding: EdgeInsets.zero,
-                                                                                childAspectRatio: 0.8,
-                                                                                physics: const ScrollPhysics(),
-                                                                                crossAxisSpacing: 1,
-                                                                                mainAxisSpacing: 0,
-                                                                                children: List.generate(
-                                                                                  value.brandList[index]["categories"].length,
-                                                                                  (i) {
-                                                                                    return GestureDetector(
-                                                                                      onTap: () {
-                                                                                        Get.to(CategoryProductScreen(
-                                                                                          categoryId: value.brandList[index]["categories"][i]["id"],
-                                                                                          brandId: value.brandList[index]["id"],
-                                                                                          tagIds: const [],
-                                                                                        ));
-                                                                                      },
-                                                                                      child: Container(
-                                                                                        alignment: Alignment.center,
-                                                                                        child: Column(
-                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                          children: [
-                                                                                            value.brandList[index]["categories"][i]["thumbnail"] != null
-                                                                                                ? SizedBox(
-                                                                                                    height: 70,
-                                                                                                    width: 90,
-                                                                                                    child: CachedNetworkImage(
-                                                                                                      cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                      fit: BoxFit.cover,
-                                                                                                      imageUrl: value.brandList[index]["categories"][i]["thumbnail"],
-                                                                                                      errorWidget: (context, url, error) => Image.asset(
-                                                                                                        downloadImage,
-                                                                                                        height: 70,
-                                                                                                        width: 90,
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  )
-                                                                                                : Image.asset(dummyWishlistImage, height: 70, width: 90, fit: BoxFit.cover),
-                                                                                            Padding(
-                                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                                              child: Center(
-                                                                                                child: AppText(
-                                                                                                  textAlign: TextAlign.center,
-                                                                                                  text: value.brandList[index]["categories"][i]["name"] ?? "",
-                                                                                                  color: greyTextColor,
-                                                                                                  fontSize: 10.sp,
-                                                                                                  maxLines: 2,
-                                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                                  fontWeight: FontWeight.w400,
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                    );
-                                                                                  },
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            //  ),
-                                                                          ],
-                                                                        )
-                                                                      : const SizedBox(
+                                                                              "logo"] !=
+                                                                          null
+                                                                      ? /*  FadeInImage(
+                                                                          fit: BoxFit
+                                                                              .cover,
                                                                           height:
-                                                                              50,
+                                                                              32,
                                                                           width:
-                                                                              double.infinity,
+                                                                              32,
+                                                                          image: NetworkImage(value.brandList[index][
+                                                                              "logo"]),
+                                                                          placeholder: const AssetImage(
+                                                                              dummyWishlistImage)) */
+                                                                      SizedBox(
+                                                                          height:
+                                                                              32,
+                                                                          width:
+                                                                              32,
                                                                           child:
-                                                                              Center(
-                                                                            child:
-                                                                                Text("No Category Found", style: TextStyle(fontSize: 14, color: Colors.black, fontFamily: "Franklin Gothic Regular")),
+                                                                              CachedNetworkImage(
+                                                                            cacheManager: CacheManager(Config("customCacheKey",
+                                                                                stalePeriod: const Duration(days: 15),
+                                                                                maxNrOfCacheObjects: 100)),
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            imageUrl:
+                                                                                value.brandList[index]["logo"],
+                                                                            errorWidget: (context, url, error) =>
+                                                                                Image.asset(
+                                                                              downloadImage,
+                                                                              height: 32,
+                                                                              width: 32,
+                                                                            ),
                                                                           ),
                                                                         )
-                                                                  : const SizedBox(
-                                                                      height: 0,
-                                                                    )
-                                                            ],
+                                                                      : Image.asset(
+                                                                          dummyWishlistImage,
+                                                                          height:
+                                                                              32,
+                                                                          width:
+                                                                              32,
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            10),
+                                                                    child:
+                                                                        AppText(
+                                                                      text: value.brandList[index]
+                                                                              [
+                                                                              "name"] ??
+                                                                          "",
+                                                                      color:
+                                                                          colorPrimary,
+                                                                      fontSize:
+                                                                          14.sp,
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                  ),
+                                                                  const Expanded(
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: 0,
+                                                                    ),
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      value.selected[
+                                                                          index] = !value
+                                                                              .selected[
+                                                                          index];
+                                                                      value
+                                                                          .update();
+                                                                    },
+                                                                    child: Image.asset(
+                                                                        upArrowIcon,
+                                                                        height:
+                                                                            20,
+                                                                        width:
+                                                                            20,
+                                                                        fit: BoxFit
+                                                                            .cover),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      )),
+                                                          value.selected[index]
+                                                              ? value
+                                                                      .brandList[
+                                                                          index]
+                                                                          [
+                                                                          "categories"]
+                                                                      .isNotEmpty
+                                                                  ? Column(
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              10,
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                              left: 16,
+                                                                              right: 16),
+                                                                          child:
+                                                                              /*   GetBuilder<BrandController>(
+                                                                                builder: (val) => */
+                                                                              GridView.count(
+                                                                            shrinkWrap:
+                                                                                true,
+                                                                            crossAxisCount:
+                                                                                3,
+                                                                            scrollDirection:
+                                                                                Axis.vertical,
+                                                                            padding:
+                                                                                EdgeInsets.zero,
+                                                                            childAspectRatio:
+                                                                                0.8,
+                                                                            physics:
+                                                                                const ScrollPhysics(),
+                                                                            crossAxisSpacing:
+                                                                                1,
+                                                                            mainAxisSpacing:
+                                                                                0,
+                                                                            children:
+                                                                                List.generate(
+                                                                              value.brandList[index]["categories"].length,
+                                                                              (i) {
+                                                                                return GestureDetector(
+                                                                                  onTap: () async {
+                                                                                    Get.to(CategoryProductScreen(
+                                                                                      categoryId: value.brandList[index]["categories"][i]["id"],
+                                                                                      brandId: value.brandList[index]["id"],
+                                                                                      tagIds: const [],
+                                                                                    ));
+                                                                                    await analytics.logEvent(
+                                                                                      name: 'brand_category_click',
+                                                                                      parameters: <String, Object>{
+                                                                                        'page_name': 'brand_category_click',
+                                                                                      },
+                                                                                    );
+                                                                                  },
+                                                                                  child: Container(
+                                                                                    alignment: Alignment.center,
+                                                                                    child: Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        value.brandList[index]["categories"][i]["thumbnail"] != null
+                                                                                            ? SizedBox(
+                                                                                                height: 70,
+                                                                                                width: 90,
+                                                                                                child: CachedNetworkImage(
+                                                                                                  cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                  fit: BoxFit.cover,
+                                                                                                  imageUrl: value.brandList[index]["categories"][i]["thumbnail"],
+                                                                                                  errorWidget: (context, url, error) => Image.asset(
+                                                                                                    downloadImage,
+                                                                                                    height: 70,
+                                                                                                    width: 90,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              )
+                                                                                            : Image.asset(dummyWishlistImage, height: 70, width: 90, fit: BoxFit.cover),
+                                                                                        Padding(
+                                                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                                          child: Center(
+                                                                                            child: AppText(
+                                                                                              textAlign: TextAlign.center,
+                                                                                              text: value.brandList[index]["categories"][i]["name"] ?? "",
+                                                                                              color: greyTextColor,
+                                                                                              fontSize: 10.sp,
+                                                                                              maxLines: 2,
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        //  ),
+                                                                      ],
+                                                                    )
+                                                                  : const SizedBox(
+                                                                      height:
+                                                                          50,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      child:
+                                                                          Center(
+                                                                        child: Text(
+                                                                            "No Category Found",
+                                                                            style: TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors.black,
+                                                                                fontFamily: "Franklin Gothic Regular")),
+                                                                      ),
+                                                                    )
+                                                              : const SizedBox(
+                                                                  height: 0,
+                                                                )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ],
                                               );
                                             }),

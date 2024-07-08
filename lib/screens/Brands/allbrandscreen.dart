@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,6 +42,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   final brandController = Get.put(BrandController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   int tagId = 0;
 
   @override
@@ -108,11 +110,23 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   brandController.showAllBrand.value = false;
                 }
               },
-              onPressedSearch: () {
+              onPressedSearch: () async {
                 Get.to(const SearchScreen());
+                await analytics.logEvent(
+                  name: 'search_page',
+                  parameters: <String, Object>{
+                    'page_name': 'search_page',
+                  },
+                );
               },
-              onPressedCart: () {
+              onPressedCart: () async {
                 Get.to(const CartScreen());
+                await analytics.logEvent(
+                  name: 'cart_page',
+                  parameters: <String, Object>{
+                    'page_name': 'cart_page',
+                  },
+                );
               },
             ),
             Expanded(
@@ -197,13 +211,20 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 itemBuilder: (context, index) {
                                   double ht = index % 2 == 0 ? 100 : 180;
                                   return GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       Get.to(CategoryProductScreen(
                                         categoryId: brandController
                                             .categoryList[index]["id"],
                                         tagIds: const [],
                                         brandId: 0,
                                       ));
+                                      await analytics.logEvent(
+                                        name: 'allbrand_categoryList_page',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'allbrand_categoryList_page',
+                                        },
+                                      );
                                     },
                                     child: Column(
                                       crossAxisAlignment:
@@ -296,7 +317,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 text: "New Arrivals",
                                 controller:
                                     productController.tagsProductController,
-                                onPressed: (p0) {
+                                onPressed: (p0) async {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (BuildContext context) =>
@@ -316,8 +337,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                   .getTagsProductData(tagId, 0);
                                             },
                                           ));
+                                  await analytics.logEvent(
+                                    name: 'allbrand_newarrival_details',
+                                    parameters: <String, Object>{
+                                      'page_name':
+                                          'allbrand_newarrival_details',
+                                    },
+                                  );
                                 },
-                                onPressedHeart: (p0, p1) {
+                                onPressedHeart: (p0, p1) async {
                                   if (productController.tagProductList[p1]
                                       ["wishlisted"]) {
                                     productController.callAddProductToWishlist(
@@ -348,6 +376,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                             },
                                             wishlistList: wishlistController
                                                 .wishlistList));
+                                    await analytics.logEvent(
+                                      name: 'allbrand_newarrival_wishlist',
+                                      parameters: <String, Object>{
+                                        'page_name':
+                                            'allbrand_newarrival_wishlist',
+                                      },
+                                    );
                                   }
                                 },
                                 list: productController.tagProductList,
@@ -362,7 +397,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               text: "Bestsellers",
                               controller:
                                   productController.bestSellerController,
-                              onPressed: (p0) {
+                              onPressed: (p0) async {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (BuildContext context) =>
@@ -383,8 +418,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 .getBestSellerProductData();
                                           },
                                         ));
+                                await analytics.logEvent(
+                                  name: 'allbrand_bestseller_details',
+                                  parameters: <String, Object>{
+                                    'page_name': 'allbrand_bestseller_details',
+                                  },
+                                );
                               },
-                              onPressedHeart: (p0, p1) {
+                              onPressedHeart: (p0, p1) async {
                                 if (productController.bestSellerList[p1]
                                     ["wishlisted"]) {
                                   productController.callAddProductToWishlist(
@@ -415,6 +456,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           },
                                           wishlistList:
                                               wishlistController.wishlistList));
+                                  await analytics.logEvent(
+                                    name: 'allbrand_bestseller_wishlist',
+                                    parameters: <String, Object>{
+                                      'page_name':
+                                          'allbrand_bestseller_wishlist',
+                                    },
+                                  );
                                 }
                               },
                               list: productController.bestSellerList,

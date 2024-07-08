@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,6 +29,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -88,7 +90,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                       return Column(
                                         children: [
                                           GestureDetector(
-                                            onTap: () {
+                                            onTap: () async {
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(
                                                       builder: (BuildContext
@@ -118,6 +120,14 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                       .brandId);
                                                         },
                                                       ));
+                                              await analytics.logEvent(
+                                                name:
+                                                    'express_page_brandproduct',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'express_page_brandproduct',
+                                                },
+                                              );
                                             },
                                             child: Column(
                                               crossAxisAlignment:
@@ -186,7 +196,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                   BoxFit.cover),
                                                     ),
                                                     GestureDetector(
-                                                      onTap: () {
+                                                      onTap: () async {
                                                         if (productController
                                                                 .productExpressBrandList[
                                                             index]["wishlisted"]) {
@@ -224,6 +234,16 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                       wishlistList:
                                                                           wishlistController
                                                                               .wishlistList));
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'express_page_brandproduct_wishlist',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'express_page_brandproduct_wishlist',
+                                                            },
+                                                          );
                                                         }
                                                       },
                                                       child: Padding(
@@ -493,12 +513,24 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             secondBackgroundColor: backWhite,
                             firstBorderColor: deepGreytextColor,
                             secondBorderColor: deepGreytextColor,
-                            onPressedFirst: () {
+                            onPressedFirst: () async {
                               scaffoldKey.currentState?.showBottomSheet(
                                   (context) => const BottomSortBy());
+                              await analytics.logEvent(
+                                name: 'express_page_sortby',
+                                parameters: <String, Object>{
+                                  'page_name': 'express_page_sortby',
+                                },
+                              );
                             },
-                            onPressedSecond: () {
+                            onPressedSecond: () async {
                               Get.to(const BottomFilters());
+                              await analytics.logEvent(
+                                name: 'express_page_filter',
+                                parameters: <String, Object>{
+                                  'page_name': 'express_page_filter',
+                                },
+                              );
                             },
                           ),
                         ),

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,6 +31,7 @@ class CreateBoardScreen extends StatefulWidget {
 
 class CreateBoardScreenState extends State<CreateBoardScreen> {
   final wishlistController = Get.put(WishlistController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
     wishlistController.addItem.value = 0;
@@ -60,7 +62,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
           widget.btnText == ""
               ? EditBoardAppbar(
                   text: "Edit Board",
-                  onPressedDelete: () {
+                  onPressedDelete: () async {
                     showDialog(
                       barrierColor: Colors.black26,
                       context: context,
@@ -84,8 +86,21 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                             btn2Text: "Yes");
                       },
                     );
+                    await analytics.logEvent(
+                      name: 'delete_board_iconclick',
+                      parameters: <String, Object>{
+                        'page_name': 'delete_board_iconclick',
+                      },
+                    );
                   },
-                  onPressedShare: () {},
+                  onPressedShare: () async {
+                    await analytics.logEvent(
+                      name: 'share_board_iconclick',
+                      parameters: <String, Object>{
+                        'page_name': 'share_board_iconclick',
+                      },
+                    );
+                  },
                 )
               : const BackButtonAppbar(
                   text: "Add items to board",
@@ -138,12 +153,19 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                         return Column(
                                           children: [
                                             GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
                                                 Get.to(ProductDetailsScreen(
                                                     productId:
                                                         value.wishListProduct[
                                                             index]["id"],
                                                     type: "add"));
+                                                await analytics.logEvent(
+                                                  name: 'board_product_details',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'board_product_details',
+                                                  },
+                                                );
                                               },
                                               child: Column(
                                                 crossAxisAlignment:
@@ -218,7 +240,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                       ),
                                                       value.selected[index]
                                                           ? GestureDetector(
-                                                              onTap: () {
+                                                              onTap: () async {
                                                                 value.selected[
                                                                         index] =
                                                                     false;
@@ -250,6 +272,16 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                 /*  value.productId
                                                                     .value = 0; */
                                                                 value.update();
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'board_product_selected',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'board_product_selected',
+                                                                  },
+                                                                );
                                                               },
                                                               child: Padding(
                                                                 padding: const EdgeInsets
@@ -288,7 +320,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                               ),
                                                             )
                                                           : GestureDetector(
-                                                              onTap: () {
+                                                              onTap: () async {
                                                                 value.selected[
                                                                         index] =
                                                                     !value.selected[
@@ -323,6 +355,16 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                         .wishListProduct[
                                                                     index]["id"]; */
                                                                 value.update();
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'board_product_unselected',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'board_product_unselected',
+                                                                  },
+                                                                );
                                                               },
                                                               child: Padding(
                                                                 padding: const EdgeInsets

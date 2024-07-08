@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -59,6 +60,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   final Razorpay razorpay = Razorpay();
   final razorPayKey = "rzp_test_qByVM96GsY8Ydt";
   final razorPaySecret = "Mo5w1Av5SV84qO0c4k1Uc0Ob";
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -569,12 +571,23 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                         height: 0,
                                       ),
                                     ),
-                                    AppText(
-                                      text: "Apply",
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
-                                      color: textColor,
-                                      fontSize: 12.sp,
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await analytics.logEvent(
+                                          name: 'checkoutPage_apply_gift',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'checkoutPage_apply_gift',
+                                          },
+                                        );
+                                      },
+                                      child: AppText(
+                                        text: "Apply",
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                        color: textColor,
+                                        fontSize: 12.sp,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -910,7 +923,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         label: "Pay Now",
                         textColor: whiteColor,
                         backgroundColor: colorPrimary,
-                        onPressed: () {
+                        onPressed: () async {
                           if (shipController.addressId.value != 0) {
                             var options = {
                               'key': razorPayKey,
@@ -928,6 +941,12 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           } else {
                             getSnackBar("Add Address");
                           }
+                          await analytics.logEvent(
+                            name: 'checkoutPage_btnpaynow',
+                            parameters: <String, Object>{
+                              'page_name': 'checkoutPage_btnpaynow',
+                            },
+                          );
                         },
                         borderColor: colorPrimary),
                   ),

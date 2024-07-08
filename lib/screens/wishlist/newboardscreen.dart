@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
@@ -28,6 +29,7 @@ class NewBoardScreen extends StatefulWidget {
 
 class NewBoardScreenState extends State<NewBoardScreen> {
   final wishlistController = Get.put(WishlistController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -74,7 +76,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     textColor: whiteBorderColor,
                     backgroundColor: colorPrimary,
                     controller: wishlistController,
-                    onPressed: () {
+                    onPressed: () async {
                       if (widget.boardId == 0) {
                         if (wishlistController.checkIdNamevalidation(
                             wishlistController.boardNameController.text
@@ -82,6 +84,12 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                           wishlistController.callCreateWishlist(
                             wishlistController.boardNameController.text
                                 .toString(),
+                          );
+                          await analytics.logEvent(
+                            name: 'create_board_btnClick',
+                            parameters: <String, Object>{
+                              'page_name': 'create_board_btnClick',
+                            },
                           );
                         }
                       } else {
@@ -92,6 +100,12 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                               wishlistController.boardNameController.text
                                   .toString(),
                               widget.boardId);
+                          await analytics.logEvent(
+                            name: 'edit_board_btnClick',
+                            parameters: <String, Object>{
+                              'page_name': 'edit_board_btnClick',
+                            },
+                          );
                         }
                       }
                     },

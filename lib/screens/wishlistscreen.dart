@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,6 +28,7 @@ class WishlistScreen extends StatefulWidget {
 
 class WishlistScreenState extends State<WishlistScreen> {
   final wishlistController = Get.put(WishlistController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -62,14 +64,32 @@ class WishlistScreenState extends State<WishlistScreen> {
       body: Column(
         children: [
           HomeAppbar(
-            onPressedSearch: () {
+            onPressedSearch: () async {
               Get.to(const SearchScreen());
+              await analytics.logEvent(
+                name: 'search_page',
+                parameters: <String, Object>{
+                  'page_name': 'search_page',
+                },
+              );
             },
-            onPressedCatalog: () {
+            onPressedCatalog: () async {
               Get.to(const CatalogScreen());
+              await analytics.logEvent(
+                name: 'catalog_page',
+                parameters: <String, Object>{
+                  'page_name': 'catalog_page',
+                },
+              );
             },
-            onPressedCart: () {
+            onPressedCart: () async {
               Get.to(const CartScreen());
+              await analytics.logEvent(
+                name: 'cart_page',
+                parameters: <String, Object>{
+                  'page_name': 'cart_page',
+                },
+              );
             },
           ),
           Expanded(
@@ -99,7 +119,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   padding: const EdgeInsets.only(
                                       top: 10, left: 16, right: 16),
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (BuildContext context) =>
@@ -125,6 +145,13 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                       .getWishlistData();
                                                 },
                                               ));
+                                      await analytics.logEvent(
+                                        name: 'wishlist_page_newboardclick',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'wishlist_page_newboardclick',
+                                        },
+                                      );
                                     },
                                     child: Row(
                                       children: [
@@ -210,7 +237,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   padding: const EdgeInsets.only(
                                       top: 10, left: 16, right: 16),
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (BuildContext context) =>
@@ -236,6 +263,12 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                       .getWishlistData();
                                                 },
                                               ));
+                                      await analytics.logEvent(
+                                        name: 'create_board',
+                                        parameters: <String, Object>{
+                                          'page_name': 'create_board',
+                                        },
+                                      );
                                     },
                                     child: Row(
                                       children: [
