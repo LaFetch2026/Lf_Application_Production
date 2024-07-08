@@ -34,22 +34,28 @@ class ProductListScreenState extends State<ProductListScreen> {
 
   List<Tab> getTabs() {
     _tabs.clear();
-    for (int i = 0; i < widget.tabTextList.length; i++) {
+    for (int i = 0; i < widget.tabTextList.length + 1; i++) {
       _tabs.add(getTab(i));
     }
     return _tabs;
   }
 
   Tab getTab(int widgetNumber) {
-    return Tab(
-      text: widget.tabTextList[widgetNumber],
-    );
+    if (widgetNumber == 0) {
+      return const Tab(
+        text: "View All",
+      );
+    } else {
+      return Tab(
+        text: widget.tabTextList[widgetNumber - 1],
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: widget.tabTextList.length,
+      length: widget.tabTextList.length + 1,
       initialIndex: 0,
       child: Scaffold(
         backgroundColor: whiteColor,
@@ -133,10 +139,11 @@ class ProductListScreenState extends State<ProductListScreen> {
               ]), */
                   TabBarView(
                 children: List.generate(
-                  widget.tabTextList.length,
+                  widget.tabTextList.length + 1,
                   (index) => ViewProductScreen(
-                      categoryId: widget.idList[index],
-                      categoryName: widget.tabTextList[index]),
+                      categoryId: index == 0 ? 0 : widget.idList[index - 1],
+                      categoryName:
+                          index == 0 ? "" : widget.tabTextList[index - 1]),
                 ),
               ),
             ),

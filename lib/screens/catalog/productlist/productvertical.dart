@@ -36,8 +36,13 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   void initState() {
     productController.curr.value = 0;
     productController.productCategoryList.clear();
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getProductByCategoryData(widget.categoryId, 0, "", []));
+    if (widget.categoryId == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => productController
+          .getProductByCategoryData(widget.categoryId, 0, "", []));
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => productController
+          .getProductByCategoryData(widget.categoryId, 0, "", []));
+    }
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

@@ -772,13 +772,22 @@ class ProductController extends BaseController {
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
       } else {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?category_id=$categoryId"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        if (categoryId == 0) {
+          response = await http.get(
+              Uri.parse("${ApiConstants.baseUrl}/products?type=relevant"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?category_id=$categoryId"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -835,13 +844,23 @@ class ProductController extends BaseController {
                 "Authorization": "Bearer ${prefs.getString('token')} ",
               });
         } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
+          if (categoryId == 0) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
         }
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
