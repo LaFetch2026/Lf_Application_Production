@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,6 +30,7 @@ class DiscountScreen extends StatefulWidget {
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -180,7 +182,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           itemBuilder: (BuildContext context, int itemIndex,
                                   int pageViewIndex) =>
                               GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               homeController.bannerTag1Id.clear();
                               if (homeController
                                   .banner1List[itemIndex]["tags"].isNotEmpty) {
@@ -199,6 +201,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   brandId: 0,
                                   tagIds: homeController.bannerTag1Id,
                                 ));
+                                await analytics.logEvent(
+                                  name: 'banner_home_page',
+                                  parameters: <String, Object>{
+                                    'page_name': 'banner_home_page',
+                                  },
+                                );
                               }
                             },
                             child: CachedNetworkImage(
@@ -246,7 +254,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     controller: productController.expressListController,
                     list: productController.expressProductList,
                     visibleExpress: true,
-                    onPressed: (p0) {
+                    onPressed: (p0) async {
                       Navigator.of(context)
                           .push(MaterialPageRoute(
                               builder: (BuildContext context) =>
@@ -263,6 +271,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   //  productController.getExpressProductData();
                                 },
                               ));
+                      await analytics.logEvent(
+                        name: 'expressproduct_home_page',
+                        parameters: <String, Object>{
+                          'page_name': 'expressproduct_home_page',
+                        },
+                      );
                     },
                   )),
             Obx(() => productController.istagsProduct.value
@@ -273,7 +287,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                         controller: productController.tagsProductController,
                         height: 250,
                         visibleExpress: false,
-                        onPressed: (p0) {
+                        onPressed: (p0) async {
                           Navigator.of(context)
                               .push(MaterialPageRoute(
                                   builder: (BuildContext context) =>
@@ -292,6 +306,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                       .getTagsProductData(widget.tagId); */
                                     },
                                   ));
+                          await analytics.logEvent(
+                            name: 'product_tabid_home_page',
+                            parameters: <String, Object>{
+                              'page_name': 'product_tabid_home_page',
+                            },
+                          );
                         },
                         list: productController.tagProductList,
                       )
@@ -323,12 +343,18 @@ class DiscountScreenState extends State<DiscountScreen> {
                               // ignore: prefer_is_empty
                               homeController.categoryList.length >= 1
                                   ? GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Get.to(CategoryProductScreen(
                                             categoryId: homeController
                                                 .categoryList[0]["id"],
                                             brandId: 0,
                                             tagIds: const []));
+                                        await analytics.logEvent(
+                                          name: 'categories_home_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'categories_home_page',
+                                          },
+                                        );
                                       },
                                       child: Expanded(
                                         flex: 1,
@@ -411,12 +437,18 @@ class DiscountScreenState extends State<DiscountScreen> {
                               ),
                               homeController.categoryList.length >= 2
                                   ? GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Get.to(CategoryProductScreen(
                                             categoryId: homeController
                                                 .categoryList[1]["id"],
                                             brandId: 0,
                                             tagIds: const []));
+                                        await analytics.logEvent(
+                                          name: 'categories_home_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'categories_home_page',
+                                          },
+                                        );
                                       },
                                       child: Expanded(
                                         flex: 1,
@@ -514,13 +546,20 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         return Column(
                                           children: [
                                             GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
                                                 Get.to(CategoryProductScreen(
                                                     categoryId: homeController
                                                             .categoryList[
                                                         index + 2]["id"],
                                                     brandId: 0,
                                                     tagIds: const []));
+                                                await analytics.logEvent(
+                                                  name: 'categories_home_page',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'categories_home_page',
+                                                  },
+                                                );
                                               },
                                               child: SizedBox(
                                                 height: 100,
@@ -661,7 +700,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 itemBuilder: (BuildContext context,
                                         int itemIndex, int pageViewIndex) =>
                                     GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     homeController.bannerTag2Id.clear();
                                     if (homeController
                                         .banner2List[itemIndex]["tags"]
@@ -684,6 +723,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         brandId: 0,
                                         tagIds: homeController.bannerTag2Id,
                                       ));
+                                      await analytics.logEvent(
+                                        name: 'promotion_home_page',
+                                        parameters: <String, Object>{
+                                          'page_name': 'promotion_home_page',
+                                        },
+                                      );
                                     }
                                   },
                                   child: CachedNetworkImage(
@@ -788,12 +833,26 @@ class DiscountScreenState extends State<DiscountScreen> {
             QuestionCardWidget(
                 text1: "FAQs",
                 text2: "Your questions answered",
-                onPressed: () {},
+                onPressed: () async {
+                  await analytics.logEvent(
+                    name: 'FAQ_home_page',
+                    parameters: <String, Object>{
+                      'page_name': 'FAQ_home_page',
+                    },
+                  );
+                },
                 icon: question2Image),
             QuestionCardWidget(
                 text1: "Need Help?",
                 text2: "Contact customer service",
-                onPressed: () {},
+                onPressed: () async {
+                  await analytics.logEvent(
+                    name: 'needhelp_home_page',
+                    parameters: <String, Object>{
+                      'page_name': 'needhelp_home_page',
+                    },
+                  );
+                },
                 icon: question1Image),
             const SizedBox(
               height: 40,

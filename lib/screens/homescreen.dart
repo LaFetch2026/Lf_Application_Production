@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   final homeController = Get.put(HomeController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? city;
 
   @override
@@ -100,14 +102,32 @@ class HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HomeAppbar(
-              onPressedSearch: () {
+              onPressedSearch: () async {
                 Get.to(const SearchScreen());
+                await analytics.logEvent(
+                  name: 'search_page',
+                  parameters: <String, Object>{
+                    'page_name': 'search_page',
+                  },
+                );
               },
-              onPressedCatalog: () {
+              onPressedCatalog: () async {
                 Get.to(const CatalogScreen());
+                await analytics.logEvent(
+                  name: 'catalog_page',
+                  parameters: <String, Object>{
+                    'page_name': 'catalog_page',
+                  },
+                );
               },
-              onPressedCart: () {
+              onPressedCart: () async {
                 Get.to(const CartScreen());
+                await analytics.logEvent(
+                  name: 'cart_page',
+                  parameters: <String, Object>{
+                    'page_name': 'cart_page',
+                  },
+                );
               },
             ),
             Container(
@@ -212,7 +232,14 @@ class HomeScreenState extends State<HomeScreen> {
                                     city = value;
                                     savePrefrenceValue(city!);
                                   },
-                                  onSaved: (value) {},
+                                  onSaved: (value) async {
+                                    await analytics.logEvent(
+                                      name: 'location_home_page',
+                                      parameters: <String, Object>{
+                                        'page_name': 'location_home_page',
+                                      },
+                                    );
+                                  },
                                   buttonStyleData: const ButtonStyleData(
                                     height: 60,
                                     padding: EdgeInsets.only(right: 10),
@@ -248,6 +275,22 @@ class HomeScreenState extends State<HomeScreen> {
                         indicatorColor: btnTextColor,
                         unselectedLabelColor: textHintColor,
                         labelColor: btnTextColor,
+                        onTap: (value) async {
+                          String type;
+                          if (value == 0) {
+                            type = "Women";
+                          } else if (value == 1) {
+                            type = "Men";
+                          } else {
+                            type = "Kids";
+                          }
+                          await analytics.logEvent(
+                            name: '$type home_page',
+                            parameters: <String, Object>{
+                              'page_name': '$type home_page',
+                            },
+                          );
+                        },
                         indicatorSize: TabBarIndicatorSize.tab,
                         indicatorWeight: 3,
                         tabs: [

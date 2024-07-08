@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,7 @@ class OTPVerficationScreen extends StatefulWidget {
 
 class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   final otpController = Get.put(LoginController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? timer;
   @override
   void initState() {
@@ -206,7 +208,14 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         label: "Submit",
                         textColor: greyTextColor,
                         backgroundColor: colorSecondary,
-                        onPressed: () {},
+                        onPressed: () async {
+                          await analytics.logEvent(
+                            name: 'otp_screen_btnsubmit',
+                            parameters: <String, Object>{
+                              'page_name': 'otp_screen_btnsubmit',
+                            },
+                          );
+                        },
                         borderColor: colorSecondary),
                   ))
           ],

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,6 +19,7 @@ class UserDetailsScreen extends StatefulWidget {
 
 class UserDetailsScreenState extends State<UserDetailsScreen> {
   final userController = Get.put(ProfileController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -215,12 +217,18 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                     textColor: greyTextColor,
                     controller: userController,
                     backgroundColor: colorSecondary,
-                    onPressed: () {
+                    onPressed: () async {
                       if (userController.checkUservalidation(
                           userController.nameController.text.toString().trim(),
                           userController.emailController.text.toString().trim(),
                           userController.genderId.value)) {
                         userController.callupdateProfile("user", "", "", false);
+                        await analytics.logEvent(
+                          name: 'user_detail_btnContinue',
+                          parameters: <String, Object>{
+                            'page_name': 'user_detail_btnContinue',
+                          },
+                        );
                       }
                     },
                     borderColor: colorSecondary),

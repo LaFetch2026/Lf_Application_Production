@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class WomenScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeController = Get.put(HomeController());
     PageController pageController = PageController();
+    final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
     callOnchanged(int index) {
       homeController.current.value = index;
@@ -69,7 +71,7 @@ class WomenScreen extends StatelessWidget {
                                 return Column(
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         homeController.current.value = index;
                                         homeController.tagId.value =
                                             homeController.tagsList[index]
@@ -81,6 +83,12 @@ class WomenScreen extends StatelessWidget {
                                           curve: Curves.ease,
                                         );
                                         homeController.update();
+                                        await analytics.logEvent(
+                                          name: 'tabclick_home_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'tabclick_home_page',
+                                          },
+                                        );
                                       },
                                       child: AnimatedContainer(
                                         duration:

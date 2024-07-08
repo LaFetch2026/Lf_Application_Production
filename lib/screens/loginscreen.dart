@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,6 +29,7 @@ class LoginScreenState extends State<LoginScreen> {
   Color appbarColor = colorPrimary;
   Map<String, dynamic>? fbData;
   AccessToken? accessToken;
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -40,7 +42,7 @@ class LoginScreenState extends State<LoginScreen> {
     super.initState();
   }
 
-  facebooklogin() async {
+  facebooklogin(String type) async {
     final LoginResult result = await FacebookAuth.instance.login();
 
     if (result.status == LoginStatus.success) {
@@ -53,13 +55,19 @@ class LoginScreenState extends State<LoginScreen> {
       print("${fbData!["email"]}");
       loginController.callSocailMediaLogin(
           fbData!["name"], fbData!["email"], "facebook", fbData!["id"]);
+      await analytics.logEvent(
+        name: '$type btnFacebook',
+        parameters: <String, Object>{
+          'page_name': '$type btnFacebook',
+        },
+      );
     } else {
       print(result.status);
       print(result.message);
     }
   }
 
-  void googleSignInProcess(BuildContext context) async {
+  void googleSignInProcess(BuildContext context, String type) async {
     GoogleSignIn googleSignIn = GoogleSignIn();
     GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
@@ -74,6 +82,12 @@ class LoginScreenState extends State<LoginScreen> {
       if (googleUser.displayName != null) {
         loginController.callSocailMediaLogin(
             googleUser.displayName!, googleUser.email, "google", googleUser.id);
+        await analytics.logEvent(
+          name: '$type btnGoogle',
+          parameters: <String, Object>{
+            'page_name': '$type btnGoogle',
+          },
+        );
       }
     }
   }
@@ -174,7 +188,7 @@ class LoginScreenState extends State<LoginScreen> {
                               textColor: whiteColor,
                               borderColor: blue,
                               onPressed: () {
-                                facebooklogin();
+                                facebooklogin("SignIn");
                               },
                               fontSize: 14.sp,
                               backgroundColor: blue),
@@ -188,7 +202,7 @@ class LoginScreenState extends State<LoginScreen> {
                               textColor: greyTextColor,
                               onPressed: () {
                                 //  signup(context);
-                                googleSignInProcess(context);
+                                googleSignInProcess(context, "SignIn");
                               },
                               borderColor: colorSecondary,
                               fontSize: 14.sp,
@@ -219,7 +233,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 textColor: whiteTextColor,
                                 borderColor: colorPrimary,
                                 controller: loginController,
-                                onPressed: () {
+                                onPressed: () async {
                                   if (loginController.checkNumbervalidation(
                                       loginController.phoneNumberLogin.text
                                           .toString()
@@ -227,6 +241,12 @@ class LoginScreenState extends State<LoginScreen> {
                                     loginController.number.value =
                                         "+91${loginController.phoneNumberLogin.text.toString().trim()}";
                                     loginController.callRegisterAccount();
+                                    await analytics.logEvent(
+                                      name: 'signin_phonelogin',
+                                      parameters: <String, Object>{
+                                        'page_name': 'signin_phonelogin',
+                                      },
+                                    );
                                   }
                                 },
                                 fontSize: 14.sp,
@@ -274,7 +294,7 @@ class LoginScreenState extends State<LoginScreen> {
                               textColor: whiteColor,
                               borderColor: blue,
                               onPressed: () {
-                                facebooklogin();
+                                facebooklogin("SignUp");
                               },
                               fontSize: 14.sp,
                               backgroundColor: blue),
@@ -289,7 +309,7 @@ class LoginScreenState extends State<LoginScreen> {
                               borderColor: colorSecondary,
                               fontSize: 14.sp,
                               onPressed: () {
-                                googleSignInProcess(context);
+                                googleSignInProcess(context, "SignUp");
                               },
                               backgroundColor: whiteTextColor),
                         ),
@@ -318,7 +338,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 textColor: whiteTextColor,
                                 borderColor: colorPrimary,
                                 controller: loginController,
-                                onPressed: () {
+                                onPressed: () async {
                                   if (loginController.checkNumbervalidation(
                                       loginController.phoneNumberRegister.text
                                           .toString()
@@ -326,6 +346,12 @@ class LoginScreenState extends State<LoginScreen> {
                                     loginController.number.value =
                                         "+91${loginController.phoneNumberRegister.text.toString().trim()}";
                                     loginController.callRegisterAccount();
+                                    await analytics.logEvent(
+                                      name: 'signup_phonelogin',
+                                      parameters: <String, Object>{
+                                        'page_name': 'signup_phonelogin',
+                                      },
+                                    );
                                   }
                                 },
                                 fontSize: 14.sp,
@@ -343,7 +369,14 @@ class LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 40),
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () async {
+                              await analytics.logEvent(
+                                name: 'signin_privacypolicy',
+                                parameters: <String, Object>{
+                                  'page_name': 'signin_privacypolicy',
+                                },
+                              );
+                            },
                             child: Center(
                               child: Text(
                                 "Privacy Policy",
