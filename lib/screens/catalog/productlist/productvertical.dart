@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,6 +31,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   //late Future<void> _initializeVideoPlayerFuture;
 
   @override
@@ -233,7 +235,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                   scrollDirection: Axis.vertical,
                                   itemBuilder: (ctx, index) {
                                     return GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                                 builder: (BuildContext
@@ -261,6 +263,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                             0);
                                                   },
                                                 ));
+                                        await analytics.logEvent(
+                                          name:
+                                              'catalog_product_linear_details',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'catalog_product_linear_details',
+                                          },
+                                        );
                                       },
                                       child: Column(
                                         crossAxisAlignment:
@@ -305,7 +315,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       width: double.infinity,
                                                       fit: BoxFit.cover),
                                               GestureDetector(
-                                                onTap: () {
+                                                onTap: () async {
                                                   if (value.productCategoryList[
                                                       index]["wishlisted"]) {
                                                     value.callAddProductToWishlist(
@@ -344,6 +354,15 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                     wishlistController
                                                                         .wishlistList));
                                                   }
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        'catalog_product_linear_wishlist',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'catalog_product_linear_wishlist',
+                                                    },
+                                                  );
                                                 },
                                                 child: Padding(
                                                   padding: const EdgeInsets

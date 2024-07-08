@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,6 +31,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -89,7 +91,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                         .productCategoryList.length,
                                     (index) {
                                       return GestureDetector(
-                                        onTap: () {
+                                        onTap: () async {
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(
                                                   builder: (BuildContext
@@ -121,6 +123,14 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                               "", []);
                                                     },
                                                   ));
+                                          await analytics.logEvent(
+                                            name:
+                                                'catalog_product_grid_details',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'catalog_product_grid_details',
+                                            },
+                                          );
                                         },
                                         child: Column(
                                           crossAxisAlignment:
@@ -183,7 +193,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                           fit: BoxFit.cover),
                                                 ),
                                                 GestureDetector(
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     if (productController
                                                             .productCategoryList[
                                                         index]["wishlisted"]) {
@@ -225,6 +235,15 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                       wishlistController
                                                                           .wishlistList));
                                                     }
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'catalog_product_grid_wishlist',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'catalog_product_grid_wishlist',
+                                                      },
+                                                    );
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets

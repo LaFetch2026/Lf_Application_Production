@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class CatalogScreen extends StatefulWidget {
 
 class CatalogScreenState extends State<CatalogScreen> {
   final productController = Get.put(ProductController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
     /*  WidgetsBinding.instance.addPostFrameCallback(
@@ -37,11 +39,19 @@ class CatalogScreenState extends State<CatalogScreen> {
           children: [
             CatalogAppbar(
               text: "Catalog",
-              onPressedSearch: () {
+              onPressedSearch: () async {
                 Get.to(const SearchScreen());
+                analytics
+                    .logEvent(name: "search_page", parameters: <String, Object>{
+                  "page_name": "search_page",
+                });
               },
-              onPressedCart: () {
+              onPressedCart: () async {
                 Get.to(const CartScreen());
+                analytics
+                    .logEvent(name: "cart_page", parameters: <String, Object>{
+                  "page_name": "cart_page",
+                });
               },
             ),
             PreferredSize(
@@ -54,6 +64,22 @@ class CatalogScreenState extends State<CatalogScreen> {
                     indicatorColor: btnTextColor,
                     unselectedLabelColor: textHintColor,
                     labelColor: btnTextColor,
+                    onTap: (value) async {
+                      String type;
+                      if (value == 0) {
+                        type = "Women_catalog_page";
+                      } else if (value == 1) {
+                        type = "Men_catalog_page";
+                      } else {
+                        type = "Kids_catalog_page";
+                      }
+                      await analytics.logEvent(
+                        name: type,
+                        parameters: <String, Object>{
+                          'page_name': type,
+                        },
+                      );
+                    },
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicatorWeight: 3,
                     tabs: [

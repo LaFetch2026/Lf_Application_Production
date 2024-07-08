@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,6 +34,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -114,12 +116,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                           .productCategoryList.length,
                                       (index) {
                                         return GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             Get.to(ProductDetailsScreen(
                                                 productId: productController
                                                         .productCategoryList[
                                                     index]["id"],
                                                 type: "add"));
+                                            await analytics.logEvent(
+                                              name: 'category_product_details',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'category_product_details',
+                                              },
+                                            );
                                           },
                                           child: Column(
                                             crossAxisAlignment:
@@ -192,7 +201,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                             fit: BoxFit.cover),
                                                   ),
                                                   GestureDetector(
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       if (widget.categoryId !=
                                                           0) {
                                                         if (productController
@@ -273,6 +282,15 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                               .wishlistList));
                                                         }
                                                       }
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            'category_product_wishlist',
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'category_product_wishlist',
+                                                        },
+                                                      );
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets

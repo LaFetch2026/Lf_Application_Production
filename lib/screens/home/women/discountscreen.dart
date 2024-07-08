@@ -272,9 +272,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 },
                               ));
                       await analytics.logEvent(
-                        name: 'expressproduct_home_page',
+                        name: 'expressproductDetails_home_page',
                         parameters: <String, Object>{
-                          'page_name': 'expressproduct_home_page',
+                          'page_name': 'expressproductDetails_home_page',
                         },
                       );
                     },
@@ -307,9 +307,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     },
                                   ));
                           await analytics.logEvent(
-                            name: 'product_tabid_home_page',
+                            name: 'product_tabid_details_home_page',
                             parameters: <String, Object>{
-                              'page_name': 'product_tabid_home_page',
+                              'page_name': 'product_tabid_details_home_page',
                             },
                           );
                         },

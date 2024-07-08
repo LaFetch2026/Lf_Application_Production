@@ -2,6 +2,7 @@
 
 import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,6 +52,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   late Function(GlobalKey) runAddToCartAnimation;
   var cartQuantityItems = 0;
   final GlobalKey widgetKey = GlobalKey();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
@@ -209,7 +211,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         Column(
                           children: [
                             GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 selectedProductSize = i;
                                 productController.sizeInventoryId.value =
                                     selectedProductSize["id"];
@@ -217,6 +219,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 productController.colorInventoryList =
                                     i["product_matrix_available_colors"];
                                 setState(() {});
+                                await analytics.logEvent(
+                                  name: 'productDetails_sizeSelect',
+                                  parameters: <String, Object>{
+                                    'page_name': 'productDetails_sizeSelect',
+                                  },
+                                );
                               },
                               child: Container(
                                   decoration: BoxDecoration(
@@ -294,7 +302,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         Column(
                           children: [
                             GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 selectedProductColor = i;
                                 productController.colorInventoryId.value =
                                     selectedProductColor["id"];
@@ -302,6 +310,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     selectedProductColor["id"];
                                 print(productController.colorInventoryId.value);
                                 setState(() {});
+                                await analytics.logEvent(
+                                  name: 'productDetails_colorSelect',
+                                  parameters: <String, Object>{
+                                    'page_name': 'productDetails_colorSelect',
+                                  },
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -599,9 +613,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       },
                                                     ), */
                                                     GestureDetector(
-                                                      onTap: () {
+                                                      onTap: () async {
                                                         Get.to(
                                                             const CartScreen());
+                                                        await analytics
+                                                            .logEvent(
+                                                          name: 'cart_page',
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'cart_page',
+                                                          },
+                                                        );
                                                       },
                                                       child: AddToCartIcon(
                                                         key: cartKey,
@@ -624,7 +647,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               whiteColor,
                                                           child: Image.asset(
                                                               shareImage)),
-                                                      onPressed: () {},
+                                                      onPressed: () async {
+                                                        await analytics
+                                                            .logEvent(
+                                                          name: 'share_product',
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'share_product',
+                                                          },
+                                                        );
+                                                      },
                                                     ),
                                                   ],
                                                 )
@@ -757,7 +790,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           .brandDetails !=
                                                       ""
                                               ? GestureDetector(
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     Get.to(BrandsScreen(
                                                       screen: "search",
                                                       logo: productController
@@ -771,6 +804,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       brandId: productController
                                                           .brandDetails["id"],
                                                     ));
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'productdetails_explorebrand',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'productdetails_explorebrand',
+                                                      },
+                                                    );
                                                   },
                                                   child: Padding(
                                                     padding:
@@ -1034,7 +1076,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 filled: true,
                                 fillColor: whiteColor,
                                 suffixIcon: TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (productController.checkPinvalidation(
                                         productController.pincodeController.text
                                             .toString()
@@ -1044,6 +1086,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               .pincodeController.text
                                               .toString()
                                               .trim());
+                                      await analytics.logEvent(
+                                        name: 'check_pincode_productdetails',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'check_pincode_productdetails',
+                                        },
+                                      );
                                     }
                                   },
                                   child: Padding(
@@ -1935,7 +1984,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         list: productController.recommendedList,
                                         visibleExpress: true,
                                         visibleheart: true,
-                                        onPressedHeart: (p0, p1) {
+                                        onPressedHeart: (p0, p1) async {
                                           if (productController
                                                   .recommendedList[p1]
                                               ["wishlisted"]) {
@@ -1974,8 +2023,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             wishlistController
                                                                 .wishlistList));
                                           }
+                                          await analytics.logEvent(
+                                            name:
+                                                'recommended_product_wishlist',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'recommended_product_wishlist',
+                                            },
+                                          );
                                         },
-                                        onPressed: (p0) {
+                                        onPressed: (p0) async {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder:
@@ -1983,6 +2040,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           ProductDetailsScreen(
                                                               productId: p0,
                                                               type: "add")));
+                                          await analytics.logEvent(
+                                            name: 'recommended_productdetails',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'recommended_productdetails',
+                                            },
+                                          );
                                         },
                                       ),
                                       const Divider(
@@ -2010,7 +2074,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             .frequentlyProductList,
                                         visibleExpress: true,
                                         visibleheart: true,
-                                        onPressedHeart: (p0, p1) {
+                                        onPressedHeart: (p0, p1) async {
                                           if (productController
                                                   .frequentlyProductList[p1]
                                               ["wishlisted"]) {
@@ -2049,8 +2113,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             wishlistController
                                                                 .wishlistList));
                                           }
+                                          await analytics.logEvent(
+                                            name: 'frequently_product_wishlist',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'frequently_product_wishlist',
+                                            },
+                                          );
                                         },
-                                        onPressed: (p0) {
+                                        onPressed: (p0) async {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder:
@@ -2058,6 +2129,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           ProductDetailsScreen(
                                                               productId: p0,
                                                               type: "add")));
+                                          await analytics.logEvent(
+                                            name: 'frequently_product_details',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'frequently_product_details',
+                                            },
+                                          );
                                         },
                                       ),
                                       const Divider(
@@ -2093,7 +2171,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         color: btnTextColor, width: 1),
                                   ),
                                   child: IconButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         wishlistController
                                             .callAddProductToWishlist(
                                                 wishlistController
@@ -2101,6 +2179,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     "wishlist_id"],
                                                 productController
                                                     .productDetails["id"]);
+                                        await analytics.logEvent(
+                                          name:
+                                              'productdetails_wishlist_remove',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'productdetails_wishlist_remove',
+                                          },
+                                        );
                                       },
                                       icon: Image.asset(wishlistSelectImage)))
                               : Container(
@@ -2110,7 +2196,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         color: btnTextColor, width: 1),
                                   ),
                                   child: IconButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         scaffoldKey.currentState
                                             ?.showBottomSheet((context) =>
                                                 BottomWishlist(
@@ -2127,6 +2213,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     wishlistList:
                                                         wishlistController
                                                             .wishlistList));
+                                        await analytics.logEvent(
+                                          name: 'productdetails_wishlist_add',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'productdetails_wishlist_add',
+                                          },
+                                        );
                                       },
                                       icon: Image.asset(heartIcon24))),
                     ),
@@ -2171,7 +2264,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 textColor: whiteBorderColor,
                                 backgroundColor: colorPrimary,
                                 controller: productController,
-                                onPressed: () {
+                                onPressed: () async {
                                   if (widget.type == "add") {
                                     if (productController
                                         .checkDetailsValidation()) {
@@ -2190,6 +2283,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       listClick(widgetKey);
                                     }
                                   }
+                                  await analytics.logEvent(
+                                    name: 'productDetails_btnaddtocart',
+                                    parameters: <String, Object>{
+                                      'page_name':
+                                          'productDetails_btnaddtocart',
+                                    },
+                                  );
                                 },
                                 borderColor: colorPrimary),
                           ],

@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -31,6 +32,7 @@ class SearchScreenState extends State<SearchScreen> {
   final productController = Get.put(ProductController());
   final brandController = Get.put(BrandController());
   final controller = Get.put(SearchScreenController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool isSearch = false;
   Timer? debounce;
 
@@ -119,13 +121,19 @@ class SearchScreenState extends State<SearchScreen> {
                         Expanded(
                           flex: 1,
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               if (isSearch) {
                                 isSearch = false;
                               } else {
                                 isSearch = true;
                               }
                               setState(() {});
+                              await analytics.logEvent(
+                                name: "search_page_searches",
+                                parameters: <String, Object>{
+                                  'page_name': 'search_page_searches',
+                                },
+                              );
                             },
                             child: Container(
                               height: 40,
@@ -248,7 +256,7 @@ class SearchScreenState extends State<SearchScreen> {
                                             for (var product
                                                 in controller.recentSearchList)
                                               GestureDetector(
-                                                onTap: () {
+                                                onTap: () async {
                                                   if (isSearch) {
                                                   } else {
                                                     Navigator.of(context)
@@ -274,6 +282,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                   },
                                                                 ));
                                                   }
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        "search_page_recentsearch_details",
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'search_page_recentsearch_details',
+                                                    },
+                                                  );
                                                 },
                                                 child: Container(
                                                   height: 33,
@@ -356,7 +373,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                 return Column(
                                                   children: [
                                                     GestureDetector(
-                                                      onTap: () {
+                                                      onTap: () async {
                                                         if (isSearch) {
                                                         } else {
                                                           Navigator.of(context)
@@ -390,6 +407,16 @@ class SearchScreenState extends State<SearchScreen> {
                                                                     },
                                                                   ));
                                                         }
+                                                        await analytics
+                                                            .logEvent(
+                                                          name:
+                                                              "search_page_mostsearch_details",
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'search_page_mostsearch_details',
+                                                          },
+                                                        );
                                                       },
                                                       child: SizedBox(
                                                         height: 100,
@@ -528,7 +555,7 @@ class SearchScreenState extends State<SearchScreen> {
                                               return Column(
                                                 children: [
                                                   GestureDetector(
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       if (isSearch) {
                                                       } else {
                                                         Get.to(BrandsScreen(
@@ -550,6 +577,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                   index]["id"],
                                                         ));
                                                       }
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            "continuebrowsing_branddetails",
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'continuebrowsing_branddetails',
+                                                        },
+                                                      );
                                                     },
                                                     child: AnimatedContainer(
                                                       duration: const Duration(
@@ -792,7 +828,7 @@ class SearchScreenState extends State<SearchScreen> {
                                     visibleExpress: false,
                                     textColor: bottomnavBack,
                                     fontFamily: "Franklin Gothic Regular",
-                                    onPressed: (p0) {
+                                    onPressed: (p0) async {
                                       if (isSearch) {
                                       } else {
                                         Navigator.of(context)
@@ -814,10 +850,18 @@ class SearchScreenState extends State<SearchScreen> {
                                                     productController
                                                         .page.value = 1;
                                                     productController
-                                                        .getProductData("recently-viewed");
+                                                        .getProductData(
+                                                            "recently-viewed");
                                                   },
                                                 ));
                                       }
+                                      await analytics.logEvent(
+                                        name: "search_page_itemviewed_details",
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'search_page_itemviewed_details',
+                                        },
+                                      );
                                     },
                                     list: productController.productList,
                                   )
@@ -952,7 +996,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                     const EdgeInsets.symmetric(
                                                         vertical: 4),
                                                 child: GestureDetector(
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     controller.callRecentSearch(
                                                         controller.searchList[
                                                             index]["id"],
@@ -988,6 +1032,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         .getSearchData();
                                                                   },
                                                                 ));
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          "search_page_searchproductdetails",
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'search_page_searchproductdetails',
+                                                      },
+                                                    );
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets

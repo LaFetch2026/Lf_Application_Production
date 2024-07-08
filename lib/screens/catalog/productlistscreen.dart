@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/catalog_product_appbar.dart';
@@ -21,6 +22,7 @@ class ProductListScreen extends StatefulWidget {
 
 class ProductListScreenState extends State<ProductListScreen> {
   final productController = Get.put(ProductController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final List<Tab> _tabs = [];
   int categoryId = 0;
 
@@ -79,48 +81,19 @@ class ProductListScreenState extends State<ProductListScreen> {
                     indicatorColor: btnTextColor,
                     unselectedLabelColor: textHintColor,
                     labelColor: btnTextColor,
-                    onTap: (index) {
+                    onTap: (index) async {
                       categoryId = widget.idList[index];
                       setState(() {});
+                      await analytics.logEvent(
+                        name: "catalog_category_tabclick}",
+                        parameters: <String, Object>{
+                          'page_name': "catalog_category_tabclick",
+                        },
+                      );
                     },
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicatorWeight: 3,
-                    tabs: getTabs()
-                    /* [
-                      Tab(
-                          child: Text(
-                        "View All",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "T-shirts",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "Shirts",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "Over-sized Shirts",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      ))
-                    ] */
-                    ),
+                    tabs: getTabs()),
               ),
             ),
             Container(
@@ -129,15 +102,7 @@ class ProductListScreenState extends State<ProductListScreen> {
               height: 1,
             ),
             Expanded(
-              child: /* TabBarView(children: [
-                ViewProductScreen(
-                  categoryId: widget.categoryId,
-                ),
-                 ViewProductScreen(categoryId: widget.categoryId),
-                ViewProductScreen(categoryId: widget.categoryId),
-                ViewProductScreen(categoryId: widget.categoryId),
-              ]), */
-                  TabBarView(
+              child: TabBarView(
                 children: List.generate(
                   widget.tabTextList.length + 1,
                   (index) => ViewProductScreen(

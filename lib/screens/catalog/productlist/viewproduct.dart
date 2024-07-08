@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,7 @@ class ViewProductScreen extends StatefulWidget {
 
 class ViewProductScreenState extends State<ViewProductScreen> {
   final productController = Get.put(ProductController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +72,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                             width: 0,
                           ),
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 100,
                           height: 30,
                           child: Align(
@@ -81,11 +83,25 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                                 unselectedLabelColor: textHintColor,
                                 labelColor: btnTextColor,
                                 padding: EdgeInsets.zero,
+                                onTap: (value) async {
+                                  String type;
+                                  if (value == 0) {
+                                    type = "catalog_product_linear";
+                                  } else {
+                                    type = "catalog_product_Grid";
+                                  }
+                                  await analytics.logEvent(
+                                    name: type,
+                                    parameters: <String, Object>{
+                                      'page_name': type,
+                                    },
+                                  );
+                                },
                                 indicatorPadding: EdgeInsets.zero,
                                 labelPadding: EdgeInsets.zero,
                                 indicatorSize: TabBarIndicatorSize.label,
                                 indicatorWeight: 2,
-                                tabs: [
+                                tabs: const [
                                   Padding(
                                     padding: EdgeInsets.only(right: 5, left: 5),
                                     child: Tab(

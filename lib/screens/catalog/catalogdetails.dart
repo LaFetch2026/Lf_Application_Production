@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,6 +35,7 @@ class CatalogDetailsScreen extends StatefulWidget {
 class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   final controller = Get.put(CatalogController());
   final productController = Get.put(ProductController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -145,7 +147,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                     return Column(
                                       children: [
                                         GestureDetector(
-                                            onTap: () {
+                                            onTap: () async {
                                               productController
                                                   .getProductByCategoryData(
                                                       controller.categoryList[
@@ -153,6 +155,14 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                       0,
                                                       "Product Vertical",
                                                       controller.categoryList);
+                                              await analytics.logEvent(
+                                                name:
+                                                    "catalog_details_${widget.genderType}",
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      "catalog_details_${widget.genderType}",
+                                                },
+                                              );
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(

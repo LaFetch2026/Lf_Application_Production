@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,6 +24,7 @@ class WomenCatalogScreen extends StatefulWidget {
 
 class WomenCatalogScreenState extends State<WomenCatalogScreen> {
   final controller = Get.put(CatalogController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -76,7 +78,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                               return Column(
                                 children: [
                                   GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Get.to(CatalogDetailsScreen(
                                           title: controller.catalogList[index]
                                                   ["name"] ??
@@ -88,6 +90,13 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                           genderType: widget.type,
                                           catalogText: widget.categorytext,
                                         ));
+                                        await analytics.logEvent(
+                                          name: "catalog_page_${widget.type}",
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                "catalog_page_${widget.type}",
+                                          },
+                                        );
                                       },
                                       child: Padding(
                                         padding:
