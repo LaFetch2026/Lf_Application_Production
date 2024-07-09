@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,7 @@ class ShippingAddressScreen extends StatefulWidget {
 
 class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   final shipController = Get.put(ShipAddressController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   /*  late GoogleMapController googleMapController;
   static const CameraPosition initialCameraPosition = CameraPosition(
       target: LatLng(37.42796133580664, -122.085749655962), zoom: 14);
@@ -514,10 +516,17 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 ),
                                 Obx(() => shipController.onButton.value
                                     ? GestureDetector(
-                                        onTap: () {
+                                        onTap: () async {
                                           shipController.onButton.value = false;
                                           shipController.defaultBilling.value =
                                               0;
+                                          await analytics.logEvent(
+                                            name: 'billing_addressClick',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'billing_addressClick',
+                                            },
+                                          );
                                         },
                                         child: Image.asset(
                                           switchOnImage,
@@ -566,7 +575,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                       () => Column(
                                         children: [
                                           GestureDetector(
-                                            onTap: () {
+                                            onTap: () async {
                                               shipController.current.value =
                                                   index;
                                               if (index == 0) {
@@ -577,6 +586,12 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                     "Work";
                                               }
                                               shipController.update();
+                                              await analytics.logEvent(
+                                                name: 'save_addressAs',
+                                                parameters: <String, Object>{
+                                                  'page_name': 'save_addressAs',
+                                                },
+                                              );
                                             },
                                             child: AnimatedContainer(
                                               duration: const Duration(
@@ -674,7 +689,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                       width: 10,
                                     ),
                                     GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         if (shipController.isCheck.value) {
                                           shipController.isCheck.value = false;
                                           shipController.defaultShipping.value =
@@ -684,6 +699,12 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                           shipController.defaultShipping.value =
                                               1;
                                         }
+                                        await analytics.logEvent(
+                                          name: 'default_addressClick',
+                                          parameters: <String, Object>{
+                                            'page_name': 'default_addressClick',
+                                          },
+                                        );
                                       },
                                       child: AppText(
                                         text: "Make this my default address",
@@ -717,7 +738,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             controller: shipController,
                             textColor: whiteBorderColor,
                             backgroundColor: colorPrimary,
-                            onPressed: () {
+                            onPressed: () async {
                               if (widget.addressId != 0) {
                                 if (shipController.checkvalidation()) {
                                   shipController.callUpdateAddress(
@@ -731,6 +752,12 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                       widget.latitude, widget.longitude);
                                 }
                               }
+                              await analytics.logEvent(
+                                name: 'save_address_btnClick',
+                                parameters: <String, Object>{
+                                  'page_name': 'save_address_btnClick',
+                                },
+                              );
                             },
                             borderColor: colorPrimary),
                       ),

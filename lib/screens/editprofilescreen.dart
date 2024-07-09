@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,6 +33,7 @@ class EditProfileScreen extends StatefulWidget {
 class EditProfileScreenState extends State<EditProfileScreen> {
   final profileController = Get.put(ProfileController());
   final otpController = Get.put(LoginController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -107,9 +109,15 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   profileController.isEditNumber.value = false;
                                   profileController.phoneController.clear();
+                                  await analytics.logEvent(
+                                    name: 'change_number_click',
+                                    parameters: <String, Object>{
+                                      'page_name': 'change_number_click',
+                                    },
+                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -345,7 +353,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     textColor: whiteBorderColor,
                     backgroundColor: colorPrimary,
                     controller: profileController,
-                    onPressed: () {
+                    onPressed: () async {
                       if (profileController.checkvalidation(
                           profileController.nameController.text
                               .toString()
@@ -374,6 +382,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               profileController.isEditNumber.value);
                         }
                       }
+                      await analytics.logEvent(
+                        name: 'editprofile_save_btnclick',
+                        parameters: <String, Object>{
+                          'page_name': 'editprofile_save_btnclick',
+                        },
+                      );
                     },
                     borderColor: colorPrimary),
               ),

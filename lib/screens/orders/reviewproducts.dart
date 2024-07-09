@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,6 +29,7 @@ class ReviewProductScreen extends StatefulWidget {
 
 class ReviewProductScreenState extends State<ReviewProductScreen> {
   final controller = Get.put(ReviewController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -177,11 +179,17 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                                 textColor: btnTextColor,
                                 controller: controller,
                                 backgroundColor: whiteColor,
-                                onPressed: () {
+                                onPressed: () async {
                                   if (controller.checkReviewValidation()) {
                                     controller.callAddReview(
                                         widget.productId); //id will change
                                   }
+                                  await analytics.logEvent(
+                                    name: 'submit_productReviewClick',
+                                    parameters: <String, Object>{
+                                      'page_name': 'submit_productReviewClick',
+                                    },
+                                  );
                                 },
                                 borderColor: btnTextColor),
                           ))

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ class SavedAddressScreen extends StatefulWidget {
 
 class SavedAddressScreenState extends State<SavedAddressScreen> {
   final controller = Get.put(ProfileController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -52,7 +54,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                     padding:
                         const EdgeInsets.only(top: 10, left: 16, right: 16),
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         Navigator.of(context)
                             .push(MaterialPageRoute(
                                 builder: (BuildContext context) =>
@@ -65,6 +67,12 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                     controller.getAddressData();
                                   },
                                 ));
+                        await analytics.logEvent(
+                          name: 'map_page',
+                          parameters: <String, Object>{
+                            'page_name': 'map_page',
+                          },
+                        );
                       },
                       child: Row(
                         children: [
@@ -295,12 +303,21 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                   secondBorderColor:
                                                       btnTextColor,
                                                   firstIcon: blackCrossImage,
-                                                  onPressedFirst: () {
+                                                  onPressedFirst: () async {
                                                     controller.callRemoveAddress(
                                                         controller.addressList[
                                                             index]["id"]);
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'remove_addressClick',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'remove_addressClick',
+                                                      },
+                                                    );
                                                   },
-                                                  onPressedSecond: () {
+                                                  onPressedSecond: () async {
                                                     Navigator.of(context)
                                                         .push(MaterialPageRoute(
                                                             builder: (BuildContext
@@ -318,6 +335,13 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                         .getAddressData();
                                                                   },
                                                                 ));
+                                                    await analytics.logEvent(
+                                                      name: 'map_page',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name': 'map_page',
+                                                      },
+                                                    );
                                                   },
                                                   secondIcon: editImage),
                                             )

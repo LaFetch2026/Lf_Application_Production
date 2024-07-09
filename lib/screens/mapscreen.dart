@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
@@ -30,6 +31,7 @@ class MapScreen extends StatefulWidget {
 class MapScreenState extends State<MapScreen> {
   final shipController = Get.put(ShipAddressController());
   Completer<GoogleMapController> googleMapController = Completer();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String draggedAddress = "";
   late String mapStyle;
   Placemark? address;
@@ -189,13 +191,19 @@ class MapScreenState extends State<MapScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (shipController.checkLocationValidation()) {
                   Get.to(ShippingAddressScreen(
                       addressId: widget.addressId,
                       cartId: widget.cartId,
                       latitude: shipController.lat.value,
                       longitude: shipController.lng.value));
+                  await analytics.logEvent(
+                    name: 'shipAddress_page',
+                    parameters: <String, Object>{
+                      'page_name': 'shipAddress_page',
+                    },
+                  );
                 } else {
                   _determineUserCurrentPosition();
                 }

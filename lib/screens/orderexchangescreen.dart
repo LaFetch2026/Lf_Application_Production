@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -34,6 +35,7 @@ class OrderExchangeScreen extends StatefulWidget {
 
 class OrderExchangeScreenState extends State<OrderExchangeScreen> {
   final orderController = Get.put(OrderController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? filter;
   Timer? debounce;
 
@@ -59,10 +61,16 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 500), () {
+    debounce = Timer(const Duration(milliseconds: 500), () async {
       orderController.queryText.value = query;
       orderController.getOrderData();
       orderController.update();
+      await analytics.logEvent(
+        name: 'search_orderclick',
+        parameters: <String, Object>{
+          'page_name': 'search_orderclick',
+        },
+      );
     });
   }
 
@@ -156,12 +164,6 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                         ),
                                         onChanged: onSearchChanged,
-                                        /*  onChanged: (value) {
-                                          orderController.queryText.value =
-                                              value;
-                                          orderController.getOrderData();
-                                          orderController.update();
-                                        }, */
                                         controller:
                                             orderController.searchController,
                                         keyboardType: TextInputType.text,
@@ -242,7 +244,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                     }
                                     return null;
                                   },
-                                  onChanged: (value) {
+                                  onChanged: (value) async {
                                     filter = value;
                                     print(orderController.filterId[
                                         orderController.filterList
@@ -252,6 +254,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                             .filterList
                                             .indexOf(filter.toString())];
                                     orderController.getOrderData();
+                                    await analytics.logEvent(
+                                      name: 'order_filterClick',
+                                      parameters: <String, Object>{
+                                        'page_name': 'order_filterClick',
+                                      },
+                                    );
                                   },
                                   onSaved: (value) {},
                                   buttonStyleData: const ButtonStyleData(
@@ -297,11 +305,19 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                           child: Column(
                                             children: [
                                               GestureDetector(
-                                                onTap: () {
+                                                onTap: () async {
                                                   Get.to(OrderDetailsScreen(
                                                     orderId: value
                                                         .orderList[index]["id"],
                                                   ));
+                                                  await analytics.logEvent(
+                                                    name: 'order_details',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'order_details',
+                                                    },
+                                                  );
                                                 },
                                                 child: Container(
                                                   color: whiteColor,
@@ -1197,7 +1213,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       "status"] ==
                                                                   6
                                                               ? GestureDetector(
-                                                                  onTap: () {
+                                                                  onTap:
+                                                                      () async {
                                                                     Get.to(
                                                                         ReviewProductScreen(
                                                                       productId: value.orderList[index]["order_lines"][0]["product"] !=
@@ -1219,6 +1236,16 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"]
                                                                           : "",
                                                                     ));
+                                                                    await analytics
+                                                                        .logEvent(
+                                                                      name:
+                                                                          'order_reviewClick',
+                                                                      parameters: <String,
+                                                                          Object>{
+                                                                        'page_name':
+                                                                            'order_reviewClick',
+                                                                      },
+                                                                    );
                                                                   },
                                                                   child:
                                                                       Padding(
@@ -1271,7 +1298,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       firstBorderColor: btnTextColor,
                                                                       secondBorderColor: btnTextColor,
                                                                       firstIcon: exchangeItemImage,
-                                                                      onPressedFirst: () {
+                                                                      onPressedFirst: () async {
                                                                         Get.to(
                                                                             ExchangeProductScreen(
                                                                           productName: value.orderList[index]["order_lines"][0]["product"] != null
@@ -1286,8 +1313,29 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               ? value.orderList[index]["order_lines"][0]["product"]["short_description"]
                                                                               : "",
                                                                         ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_exchangeClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_exchangeClick',
+                                                                          },
+                                                                        );
                                                                       },
-                                                                      onPressedSecond: () {},
+                                                                      onPressedSecond: () async {
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_rateOrderClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_rateOrderClick',
+                                                                          },
+                                                                        );
+                                                                      },
                                                                       secondIcon: rateOrderImage),
                                                                 )
                                                               ] else if (value.orderList[
@@ -1312,13 +1360,34 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       firstBorderColor: btnTextColor,
                                                                       secondBorderColor: btnTextColor,
                                                                       firstIcon: blackCrossImage,
-                                                                      onPressedFirst: () {},
-                                                                      onPressedSecond: () {
+                                                                      onPressedFirst: () async {
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_cancelOrderClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_cancelOrderClick',
+                                                                          },
+                                                                        );
+                                                                      },
+                                                                      onPressedSecond: () async {
                                                                         Get.to(
                                                                             TrackOrderScreen(
                                                                           orderId:
                                                                               value.orderList[index]["id"],
                                                                         ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_trackOrderClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_trackOrderClick',
+                                                                          },
+                                                                        );
                                                                       },
                                                                       secondIcon: locationIcon),
                                                                 )
@@ -1339,12 +1408,22 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       label: "Track Order",
                                                                       textColor: btnTextColor,
                                                                       backgroundColor: whiteColor,
-                                                                      onPressed: () {
+                                                                      onPressed: () async {
                                                                         Get.to(
                                                                             TrackOrderScreen(
                                                                           orderId:
                                                                               value.orderList[index]["id"],
                                                                         ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_trackOrderClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_trackOrderClick',
+                                                                          },
+                                                                        );
                                                                       },
                                                                       borderColor: btnTextColor,
                                                                       icon: locationIcon),
@@ -1365,12 +1444,22 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       height: 40,
                                                                       textColor: btnTextColor,
                                                                       backgroundColor: whiteColor,
-                                                                      onPressed: () {
+                                                                      onPressed: () async {
                                                                         Get.to(
                                                                             OrderDetailsScreen(
                                                                           orderId:
                                                                               value.orderList[index]["id"],
                                                                         ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_details',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_details',
+                                                                          },
+                                                                        );
                                                                       },
                                                                       borderColor: btnTextColor),
                                                                 )
@@ -1386,12 +1475,22 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       height: 40,
                                                                       textColor: btnTextColor,
                                                                       backgroundColor: whiteColor,
-                                                                      onPressed: () {
+                                                                      onPressed: () async {
                                                                         Get.to(
                                                                             OrderDetailsScreen(
                                                                           orderId:
                                                                               value.orderList[index]["id"],
                                                                         ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_details',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_details',
+                                                                          },
+                                                                        );
                                                                       },
                                                                       borderColor: btnTextColor),
                                                                 )

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,7 @@ class AccountScreen extends StatefulWidget {
 
 class AccountScreenState extends State<AccountScreen> {
   final controller = Get.put(ProfileController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -58,8 +60,14 @@ class AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     Get.to(const CartScreen());
+                    await analytics.logEvent(
+                      name: 'cart_page',
+                      parameters: <String, Object>{
+                        'page_name': 'cart_page',
+                      },
+                    );
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
@@ -150,7 +158,7 @@ class AccountScreenState extends State<AccountScreen> {
                                       ),
                                     ),
                                     GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                                 builder:
@@ -182,6 +190,12 @@ class AccountScreenState extends State<AccountScreen> {
                                                         .value = false;
                                                   },
                                                 ));
+                                        await analytics.logEvent(
+                                          name: 'edit_profile_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'edit_profile_page',
+                                          },
+                                        );
                                       },
                                       child: Padding(
                                         padding:
@@ -323,8 +337,14 @@ class AccountScreenState extends State<AccountScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               Get.to(const OrderExchangeScreen());
+                              await analytics.logEvent(
+                                name: 'order_page',
+                                parameters: <String, Object>{
+                                  'page_name': 'order_page',
+                                },
+                              );
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -339,8 +359,14 @@ class AccountScreenState extends State<AccountScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               widget.onPressed?.call();
+                              await analytics.logEvent(
+                                name: 'wishlist_page',
+                                parameters: <String, Object>{
+                                  'page_name': 'wishlist_page',
+                                },
+                              );
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -377,8 +403,14 @@ class AccountScreenState extends State<AccountScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   Get.to(const SavedAddressScreen());
+                                  await analytics.logEvent(
+                                    name: 'addresslist_page',
+                                    parameters: <String, Object>{
+                                      'page_name': 'addresslist_page',
+                                    },
+                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -429,8 +461,14 @@ class AccountScreenState extends State<AccountScreen> {
                                           click1: () {
                                             Get.back();
                                           },
-                                          click2: () {
+                                          click2: () async {
                                             controller.callLogout();
+                                            await analytics.logEvent(
+                                              name: 'logout_btnclick',
+                                              parameters: <String, Object>{
+                                                'page_name': 'logout_btnclick',
+                                              },
+                                            );
                                           },
                                           btncolor: colorPrimary,
                                           text:
