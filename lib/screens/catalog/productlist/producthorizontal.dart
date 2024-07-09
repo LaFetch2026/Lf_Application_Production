@@ -36,8 +36,19 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   @override
   void initState() {
     productController.productCategoryList.clear();
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getProductByCategoryData(widget.categoryId, 0, "", []));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.categoryProductHasnextpage.value = true;
+      productController.categoryProductLoadMore.value = false;
+      productController.isCategoryProduct.value = false;
+      productController.categoryProductPage.value = 1;
+    });
+    if (widget.categoryId == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => productController
+          .getProductByCategoryData(widget.categoryId, 0, "", []));
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) => productController
+          .getProductByCategoryData(widget.categoryId, 0, "", []));
+    }
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -45,12 +56,6 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
         productController.fetchCategoryProductMoreData(widget.categoryId, 0);
         productController.update();
       });
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.categoryProductHasnextpage.value = true;
-      productController.categoryProductLoadMore.value = false;
-      productController.isCategoryProduct.value = false;
-      productController.categoryProductPage.value = 1;
     });
     super.initState();
   }
