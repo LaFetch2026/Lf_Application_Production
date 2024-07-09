@@ -145,6 +145,7 @@ const razorpayImage = 'assets/images/razorpay.png';
 const dummyImage = 'assets/images/dummy.jpeg';
 const whiteCircleImage = 'assets/images/whitecircle.png';
 const locationAnim = 'assets/images/location.json';
+const appLogoImage = 'assets/images/logo_image.png';
 
 class ApiConstants {
   ApiConstants._();
