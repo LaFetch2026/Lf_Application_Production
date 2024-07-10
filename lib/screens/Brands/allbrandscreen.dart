@@ -96,10 +96,17 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   }
 
   @override
+  void dispose() {
+    videoController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         if (widget.screen == "search") {
+          videoController.pause();
           Get.close(1);
         } else {
           brandController.showAllBrand.value = false;
@@ -116,6 +123,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               onPressedback: () {
                 print(widget.screen);
                 if (widget.screen == "search") {
+                  videoController.pause();
                   Get.close(1);
                 } else {
                   brandController.showAllBrand.value = false;
@@ -203,7 +211,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               ),
                         Container(
                           alignment: Alignment.bottomCenter,
-                          margin: const EdgeInsets.only(top: 120),
+                          margin: const EdgeInsets.only(top: 110),
                           decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.white,

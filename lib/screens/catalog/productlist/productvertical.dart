@@ -645,7 +645,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                 ),
                               ),
                               //  ),
-                              productController.loadMore.value
+                              productController.categoryProductLoadMore.value
                                   ? const DummyVerticalList()
                                   : const SizedBox(
                                       height: 0,

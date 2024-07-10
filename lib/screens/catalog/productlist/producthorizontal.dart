@@ -465,7 +465,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                   ),
                                 ),
                               ),
-                              productController.loadMore.value
+                              productController.categoryProductLoadMore.value
                                   ? const DummyGridList()
                                   : const SizedBox(
                                       height: 0,
