@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
@@ -26,11 +27,13 @@ class ProductDetailsScreen extends StatefulWidget {
   final String type;
   final int wishlistProductId;
   final int boardId;
+  final bool color;
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
       required this.type,
       this.boardId = 0,
+      this.color = false,
       this.wishlistProductId = 0});
 
   @override
@@ -53,7 +56,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var cartQuantityItems = 0;
   final GlobalKey widgetKey = GlobalKey();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
   final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
     {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
@@ -77,6 +79,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       default:
         return colorPrimary;
     }
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getInt('inventorySizeId') != null) {
+      selectedProductSize["id"] = prefs.getInt('inventorySizeId')!;
+    }
+    if (prefs.getInt('inventoryColorId') != null) {
+      productController.sizeInventoryId.value =
+          prefs.getInt('inventoryColorId')!;
+      selectedProductColor["id"] = prefs.getInt('inventoryColorId')!;
+    }
+    print("prefrences call ${productController.sizeInventoryId.value}");
   }
 
   List<Widget> getListForPageView() {
@@ -212,12 +228,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             GestureDetector(
                               onTap: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
                                 selectedProductSize = i;
                                 productController.sizeInventoryId.value =
                                     selectedProductSize["id"];
                                 print(productController.sizeInventoryId.value);
                                 productController.colorInventoryList =
                                     i["product_matrix_available_colors"];
+                                prefs.setInt("inventorySizeId",
+                                    selectedProductSize["id"]);
+                                print(selectedProductSize["id"]);
+                                print(i['product_matrix_size_name']);
+                                prefs.remove("inventoryColorId");
                                 setState(() {});
                                 await analytics.logEvent(
                                   name: 'productDetails_sizeSelect',
@@ -303,13 +326,30 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             GestureDetector(
                               onTap: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
                                 selectedProductColor = i;
                                 productController.colorInventoryId.value =
                                     selectedProductColor["id"];
                                 productController.sizeInventoryId.value =
                                     selectedProductColor["id"];
-                                print(productController.colorInventoryId.value);
-                                setState(() {});
+                                prefs.setInt("inventoryColorId",
+                                    selectedProductColor["id"]);
+                                print(selectedProductColor["id"]);
+                                print(i['name']);
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ProductDetailsScreen(
+                                              productId: i['product_id'],
+                                              type: "add",
+                                              color: true,
+                                            )));
+                                /*   Get.off(ProductDetailsScreen(
+                                  productId: i['product_id'],
+                                  type: "add",
+                                  color: true,
+                                )); */
                                 await analytics.logEvent(
                                   name: 'productDetails_colorSelect',
                                   parameters: <String, Object>{
@@ -454,9 +494,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
     productController.colorInventoryId.value = 0;
-    productController.fabricInventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductDetails(widget.productId));
+    if (widget.color) {
+      getPrefrenceValue();
+    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.frequentlyBoughtController.addListener(() {
         productController.fetchFrequentlyMoreData(
