@@ -337,19 +337,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     selectedProductColor["id"]);
                                 print(selectedProductColor["id"]);
                                 print(i['name']);
-                                Navigator.of(context).pushReplacement(
+                                setState(() {});
+                                /*  Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                         builder: (BuildContext context) =>
                                             ProductDetailsScreen(
                                               productId: i['product_id'],
                                               type: "add",
                                               color: true,
-                                            )));
-                                /*   Get.off(ProductDetailsScreen(
-                                  productId: i['product_id'],
-                                  type: "add",
-                                  color: true,
-                                )); */
+                                            ))); */
                                 await analytics.logEvent(
                                   name: 'productDetails_colorSelect',
                                   parameters: <String, Object>{
