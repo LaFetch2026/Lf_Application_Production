@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,7 @@ class ChangeAddressScreen extends StatefulWidget {
 class ChangeAddressScreenState extends State<ChangeAddressScreen> {
   final controller = Get.put(ProfileController());
   final shipController = Get.put(ShipAddressController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
     WidgetsBinding.instance
@@ -285,7 +287,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                   textColor: btnTextColor,
                                                   backgroundColor: whiteColor,
                                                   controller: shipController,
-                                                  onPressed: () {
+                                                  onPressed: () async {
                                                     shipController.addressId
                                                         .value = controller
                                                             .addressList[index]
@@ -295,6 +297,15 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                     shipController
                                                         .callCartAddressUpdate(
                                                             "update");
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'changeAddress_btnclick',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'changeAddress_btnclick',
+                                                      },
+                                                    );
                                                   },
                                                   borderColor: btnTextColor),
                                             )

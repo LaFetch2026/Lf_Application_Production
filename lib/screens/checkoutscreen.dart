@@ -185,7 +185,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   width: 1),
                                             ),
                                             child: GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
                                                         builder: (BuildContext
@@ -197,6 +197,14 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                     .then((value) => setState(
                                                           () {},
                                                         ));
+                                                await analytics.logEvent(
+                                                  name:
+                                                      'checkoutPage_changeAddressclick',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'checkoutPage_changeAddressclick',
+                                                  },
+                                                );
                                               },
                                               child: Padding(
                                                 padding:
