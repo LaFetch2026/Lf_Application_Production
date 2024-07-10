@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/brandwidgits/dummy_product_brand.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_list.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../controller/brand_controller.dart';
@@ -44,9 +45,19 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   int tagId = 0;
+  late Future<void> _initializeVideoPlayerFuture;
+  late VideoPlayerController videoController;
 
   @override
   void initState() {
+    videoController = VideoPlayerController.networkUrl(
+      Uri.parse(
+        brandController.brandbackground.value,
+      ),
+    );
+    _initializeVideoPlayerFuture = videoController.initialize();
+    videoController.play();
+    videoController.setLooping(true);
     getprefrenceData();
     wishlistController.getWishlistData();
     WidgetsBinding.instance.addPostFrameCallback(
@@ -141,7 +152,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 height: 112,
                                 width: double.infinity,
                                 fit: BoxFit.cover)
-                            : SizedBox(
+                            : /* SizedBox(
                                 height: 112,
                                 width: double.infinity,
                                 child: CachedNetworkImage(
@@ -160,10 +171,39 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     width: double.infinity,
                                   ),
                                 ),
+                              ) */
+                            Container(
+                                height: 160,
+                                width: double.infinity,
+                                child: FutureBuilder(
+                                  future: _initializeVideoPlayerFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return Stack(
+                                        fit: StackFit.expand,
+                                        children: [
+                                          AspectRatio(
+                                            aspectRatio: videoController
+                                                .value.aspectRatio,
+                                            child: VideoPlayer(videoController),
+                                          ),
+                                        ],
+                                      );
+                                    } else {
+                                      return const Center(
+                                        child: SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator()),
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
                         Container(
                           alignment: Alignment.bottomCenter,
-                          margin: const EdgeInsets.only(top: 70),
+                          margin: const EdgeInsets.only(top: 120),
                           decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.white,
