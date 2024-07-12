@@ -617,7 +617,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         maxNrOfCacheObjects:
                                                                             100)),
                                                                     fit: BoxFit
-                                                                        .cover,
+                                                                        .contain,
                                                                     imageUrl: brandController
                                                                             .brandList[index]
                                                                         [
