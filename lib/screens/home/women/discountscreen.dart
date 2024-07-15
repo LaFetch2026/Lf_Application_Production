@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -75,6 +78,14 @@ class DiscountScreenState extends State<DiscountScreen> {
         productController.getTagsProductData(widget.tagId, widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getExpressProductData(widget.genderType));
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('bannerImage') != null) {
+      var list = prefs.getString('bannerImage');
+      homeController.banners = jsonDecode(list!);
+    }
   }
 
   @override

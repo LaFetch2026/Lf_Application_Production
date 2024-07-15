@@ -303,6 +303,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ));
   }
 
+  movetoNextScreen(int id) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => ProductDetailsScreen(
+                  productId: id,
+                  type: "add",
+                  color: true,
+                )));
+      });
+    });
+  }
+
   SizedBox getListForProductColor() {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -337,21 +350,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     selectedProductColor["id"]);
                                 print(selectedProductColor["id"]);
                                 print(i['name']);
-                                setState(() {});
-                                /*  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            ProductDetailsScreen(
-                                              productId: i['product_id'],
-                                              type: "add",
-                                              color: true,
-                                            ))); */
                                 await analytics.logEvent(
                                   name: 'productDetails_colorSelect',
                                   parameters: <String, Object>{
                                     'page_name': 'productDetails_colorSelect',
                                   },
                                 );
+                                movetoNextScreen(i['product_id']);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -829,19 +834,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       ""
                                               ? GestureDetector(
                                                   onTap: () async {
-                                                    Get.to(BrandsScreen(
-                                                      screen: "search",
-                                                      logo: productController
-                                                          .brandDetails["logo"],
-                                                      backImage: productController
-                                                                  .brandDetails[
-                                                              "background_image"] ??
-                                                          "",
-                                                      name: productController
-                                                          .brandDetails["name"],
-                                                      brandId: productController
-                                                          .brandDetails["id"],
-                                                    ));
                                                     await analytics.logEvent(
                                                       name:
                                                           'productdetails_explorebrand',
@@ -851,6 +843,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             'productdetails_explorebrand',
                                                       },
                                                     );
+                                                    WidgetsBinding.instance
+                                                        .addPostFrameCallback(
+                                                            (_) {
+                                                      setState(() {
+                                                        Navigator.of(context)
+                                                            .pushReplacement(
+                                                                MaterialPageRoute(
+                                                                    builder: (BuildContext
+                                                                            context) =>
+                                                                        BrandsScreen(
+                                                                          screen:
+                                                                              "search",
+                                                                          logo:
+                                                                              productController.brandDetails["logo"],
+                                                                          backImage:
+                                                                              productController.brandDetails["background_image"] ?? "",
+                                                                          name:
+                                                                              productController.brandDetails["name"],
+                                                                          brandId:
+                                                                              productController.brandDetails["id"],
+                                                                        )));
+                                                      });
+                                                    });
                                                   },
                                                   child: Padding(
                                                     padding:
