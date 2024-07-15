@@ -13,6 +13,7 @@ import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
@@ -441,7 +442,13 @@ class AccountScreenState extends State<AccountScreen> {
                               const SettingWidgets(),
                             ],
                           ),
-                          const SupportWidgets(visibilty: false),
+                          SupportWidgets(
+                            visibilty: false,
+                            onPressedPrivacy: () {
+                              launchUrl(Uri.parse(
+                                  "https://la-fetch.com/privacy-policy/"));
+                            },
+                          ),
                           /*   controller.profileDetails.isEmpty
                               ? const SizedBox(
                                   height: 0,

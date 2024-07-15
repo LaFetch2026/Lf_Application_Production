@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
 import 'package:lafetch/utils/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/app_text.dart';
 import '../controller/login_controller.dart';
 
@@ -256,12 +257,23 @@ class LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 40),
                           child: MultipleTextWidget(
-                              fontSize: 11.sp,
-                              text1: "By continuing, I agree to the",
-                              text2: " Terms of Use",
-                              text3: " and",
-                              visible: true,
-                              text4: " Privacy Policy"),
+                            fontSize: 11.sp,
+                            text1: "By continuing, I agree to the",
+                            text2: " Terms of Use",
+                            text3: " and",
+                            visible: true,
+                            text4: " Privacy Policy",
+                            onPressedPolicy: () async {
+                              launchUrl(Uri.parse(
+                                  "https://la-fetch.com/privacy-policy/"));
+                              await analytics.logEvent(
+                                name: 'signin_privacypolicy',
+                                parameters: <String, Object>{
+                                  'page_name': 'signin_privacypolicy',
+                                },
+                              );
+                            },
+                          ),
                         )
                       ],
                     ),
@@ -370,6 +382,8 @@ class LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.only(bottom: 40),
                           child: GestureDetector(
                             onTap: () async {
+                              launchUrl(Uri.parse(
+                                  "https://la-fetch.com/privacy-policy/"));
                               await analytics.logEvent(
                                 name: 'signin_privacypolicy',
                                 parameters: <String, Object>{
