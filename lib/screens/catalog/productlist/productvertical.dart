@@ -183,468 +183,475 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 16, right: 16, bottom: 60),
-                                child: /*  GetBuilder<ProductController>(
-                                builder: (value) =>  */
-                                    ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  controller: productController
-                                      .categoryProductController,
-                                  padding: EdgeInsets.zero,
-                                  physics: const ScrollPhysics(),
-                                  itemCount: productController
-                                      .productCategoryList.length,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (ctx, index) {
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    ProductDetailsScreen(
-                                                        productId: productController
-                                                                .productCategoryList[
-                                                            index]["id"],
-                                                        type: "add")))
-                                            .then((productController) =>
-                                                setState(
-                                                  () {
-                                                    productController
-                                                        .categoryProductHasnextpage
-                                                        .productController = true;
-                                                    productController
-                                                        .categoryProductLoadMore
-                                                        .productController = false;
-                                                    productController
-                                                            .isCategoryProduct
-                                                            .productController =
-                                                        false;
-                                                    productController
-                                                        .categoryProductPage
-                                                        .productController = 1;
-                                                    productController
-                                                        .getProductByCategoryData(
-                                                            widget.categoryId,
-                                                            0);
-                                                  },
-                                                ));
-                                        await analytics.logEvent(
-                                          name:
-                                              'catalog_product_linear_details',
-                                          parameters: <String, Object>{
-                                            'page_name':
+                                child: GetBuilder<ProductController>(
+                                  builder: (value) => ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    controller: productController
+                                        .categoryProductController,
+                                    padding: EdgeInsets.zero,
+                                    physics: const ScrollPhysics(),
+                                    itemCount: productController
+                                        .productCategoryList.length,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (ctx, index) {
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      ProductDetailsScreen(
+                                                          productId:
+                                                              productController
+                                                                      .productCategoryList[
+                                                                  index]["id"],
+                                                          type: "add")))
+                                              .then((productController) =>
+                                                  setState(
+                                                    () {
+                                                      productController
+                                                          .categoryProductHasnextpage
+                                                          .productController = true;
+                                                      productController
+                                                          .categoryProductLoadMore
+                                                          .productController = false;
+                                                      productController
+                                                              .isCategoryProduct
+                                                              .productController =
+                                                          false;
+                                                      productController
+                                                          .categoryProductPage
+                                                          .productController = 1;
+                                                      productController
+                                                          .getProductByCategoryData(
+                                                              widget.categoryId,
+                                                              0);
+                                                    },
+                                                  ));
+                                          await analytics.logEvent(
+                                            name:
                                                 'catalog_product_linear_details',
-                                          },
-                                        );
-                                      },
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Stack(
-                                            children: [
-                                              productController
-                                                              .productCategoryList[
-                                                          index]["images"] !=
-                                                      null
-                                                  ? Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 0),
-                                                      child: SizedBox(
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'catalog_product_linear_details',
+                                            },
+                                          );
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Stack(
+                                              children: [
+                                                productController
+                                                                .productCategoryList[
+                                                            index]["images"] !=
+                                                        null
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 0),
+                                                        child: SizedBox(
+                                                          height: 400,
+                                                          width:
+                                                              double.infinity,
+                                                          child: PageView(
+                                                              allowImplicitScrolling:
+                                                                  true,
+                                                              scrollDirection:
+                                                                  Axis
+                                                                      .horizontal,
+                                                              onPageChanged:
+                                                                  (number) {
+                                                                productController
+                                                                        .curr
+                                                                        .value =
+                                                                    number;
+                                                                productController
+                                                                        .index
+                                                                        .value =
+                                                                    index;
+                                                                productController
+                                                                    .isVideoPlaying
+                                                                    .value = true;
+                                                                productController
+                                                                    .update();
+                                                              },
+                                                              children:
+                                                                  getListForPageView(
+                                                                      index)),
+                                                        ))
+                                                    : Image.asset(
+                                                        dummyWishlistImage,
                                                         height: 400,
                                                         width: double.infinity,
-                                                        child: PageView(
-                                                            allowImplicitScrolling:
-                                                                true,
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            onPageChanged:
-                                                                (number) {
+                                                        fit: BoxFit.cover),
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    if (productController
+                                                            .productCategoryList[
+                                                        index]["wishlisted"]) {
+                                                      productController
+                                                          .callAddProductToWishlist(
                                                               productController
-                                                                      .curr
-                                                                      .value =
-                                                                  number;
+                                                                          .productCategoryList[
+                                                                      index][
+                                                                  "wishlist_id"],
+                                                              "category",
                                                               productController
-                                                                      .index
-                                                                      .value =
-                                                                  index;
-                                                              productController
-                                                                  .isVideoPlaying
-                                                                  .value = true;
-                                                              productController
-                                                                  .update();
-                                                            },
-                                                            children:
-                                                                getListForPageView(
-                                                                    index)),
-                                                      ))
-                                                  : Image.asset(
-                                                      dummyWishlistImage,
-                                                      height: 400,
-                                                      width: double.infinity,
-                                                      fit: BoxFit.cover),
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  if (productController
-                                                          .productCategoryList[
-                                                      index]["wishlisted"]) {
-                                                    productController
-                                                        .callAddProductToWishlist(
-                                                            productController
-                                                                        .productCategoryList[
-                                                                    index]
-                                                                ["wishlist_id"],
-                                                            "category",
-                                                            productController
-                                                                    .productCategoryList[
-                                                                index]["id"],
-                                                            widget.categoryId,
-                                                            0,
-                                                            [],
-                                                            0);
-                                                  } else {
-                                                    scaffoldKey.currentState
-                                                        ?.showBottomSheet((context) =>
-                                                            BottomWishlist(
-                                                                controller:
-                                                                    wishlistController,
-                                                                onPressed:
-                                                                    (p0) {
-                                                                  productController.callAddProductToWishlist(
-                                                                      p0,
-                                                                      "category",
-                                                                      productController
-                                                                              .productCategoryList[index]
-                                                                          [
-                                                                          "id"],
-                                                                      widget
-                                                                          .categoryId,
-                                                                      0,
-                                                                      [],
-                                                                      0);
-                                                                },
-                                                                wishlistList:
-                                                                    wishlistController
-                                                                        .wishlistList));
-                                                  }
-                                                  await analytics.logEvent(
-                                                    name:
-                                                        'catalog_product_linear_wishlist',
-                                                    parameters: <String,
-                                                        Object>{
-                                                      'page_name':
+                                                                      .productCategoryList[
+                                                                  index]["id"],
+                                                              widget.categoryId,
+                                                              0,
+                                                              [],
+                                                              0);
+                                                    } else {
+                                                      scaffoldKey.currentState
+                                                          ?.showBottomSheet((context) =>
+                                                              BottomWishlist(
+                                                                  controller:
+                                                                      wishlistController,
+                                                                  onPressed:
+                                                                      (p0) {
+                                                                    productController.callAddProductToWishlist(
+                                                                        p0,
+                                                                        "category",
+                                                                        productController.productCategoryList[index]
+                                                                            [
+                                                                            "id"],
+                                                                        widget
+                                                                            .categoryId,
+                                                                        0,
+                                                                        [],
+                                                                        0);
+                                                                  },
+                                                                  wishlistList:
+                                                                      wishlistController
+                                                                          .wishlistList));
+                                                    }
+                                                    await analytics.logEvent(
+                                                      name:
                                                           'catalog_product_linear_wishlist',
-                                                    },
-                                                  );
-                                                },
-                                                child: Padding(
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'catalog_product_linear_wishlist',
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 10),
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: InkWell(
+                                                        child: SizedBox(
+                                                          height: 30,
+                                                          width: 30,
+                                                          child: CircleAvatar(
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            child: productController
+                                                                            .productCategoryList[
+                                                                        index][
+                                                                    "wishlisted"]
+                                                                ? Image.asset(
+                                                                    wishlistSelectImage,
+                                                                    height: 22,
+                                                                    width: 22,
+                                                                  )
+                                                                : Image.asset(
+                                                                    heartImage,
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                  ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
                                                   padding: const EdgeInsets
                                                           .symmetric(
                                                       horizontal: 16,
                                                       vertical: 10),
                                                   child: Align(
                                                     alignment:
-                                                        Alignment.topRight,
-                                                    child: InkWell(
-                                                      child: SizedBox(
-                                                        height: 30,
-                                                        width: 30,
-                                                        child: CircleAvatar(
-                                                          backgroundColor:
-                                                              whiteColor,
-                                                          child: productController
-                                                                          .productCategoryList[
-                                                                      index]
-                                                                  ["wishlisted"]
-                                                              ? Image.asset(
-                                                                  wishlistSelectImage,
-                                                                  height: 22,
-                                                                  width: 22,
-                                                                )
-                                                              : Image.asset(
-                                                                  heartImage,
-                                                                  height: 30,
-                                                                  width: 30,
-                                                                ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.bottomLeft,
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            top: 350),
-                                                    color:
-                                                        const Color(0xB3F7F7F5),
-                                                    height: 26,
-                                                    width: 80,
-                                                    child: Row(
-                                                      children: [
-                                                        Image.asset(
-                                                          starImage,
-                                                          height: 24,
-                                                          color: bottomnavBack,
-                                                          width: 24,
-                                                        ),
-                                                        AppText(
-                                                          text: productController
-                                                                              .productCategoryList[
-                                                                          index]
-                                                                      [
-                                                                      "aggregated_rating"] !=
-                                                                  null
-                                                              ? productController
-                                                                  .productCategoryList[
-                                                                      index][
-                                                                      "aggregated_rating"]
-                                                                  .toString()
-                                                              : "",
-                                                          color: colorPrimary,
-                                                          fontSize: 12.sp,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      10),
-                                                          child: Container(
-                                                            width: 1,
+                                                        Alignment.bottomLeft,
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 350),
+                                                      color: const Color(
+                                                          0xB3F7F7F5),
+                                                      height: 26,
+                                                      width: 80,
+                                                      child: Row(
+                                                        children: [
+                                                          Image.asset(
+                                                            starImage,
+                                                            height: 24,
                                                             color:
-                                                                textHintColor,
-                                                            height: 16,
+                                                                bottomnavBack,
+                                                            width: 24,
                                                           ),
-                                                        ),
-                                                        AppText(
-                                                          text: "8",
-                                                          color: colorPrimary,
-                                                          fontSize: 12.sp,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          productController
-                                                      .productCategoryList[
-                                                          index]["images"]
-                                                      .length ==
-                                                  1
-                                              ? const SizedBox(
-                                                  height: 0,
-                                                )
-                                              : Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 10),
-                                                  child: SizedBox(
-                                                    width: double.infinity,
-                                                    child: Center(
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        child: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: List<
-                                                                    Widget>.generate(
-                                                                productController
+                                                          AppText(
+                                                            text: productController
+                                                                            .productCategoryList[index]
+                                                                        [
+                                                                        "aggregated_rating"] !=
+                                                                    null
+                                                                ? productController
                                                                     .productCategoryList[
                                                                         index][
-                                                                        "images"]
-                                                                    .length,
-                                                                (int l) {
-                                                              if (isImage(productController
-                                                                              .productCategoryList[
-                                                                          index]
-                                                                      ["images"]
-                                                                  [
-                                                                  l]['name'])) {
-                                                                return Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .only(
-                                                                      top: 2),
-                                                                  child:
-                                                                      AnimatedContainer(
-                                                                    duration: const Duration(
-                                                                        milliseconds:
-                                                                            400),
-                                                                    height: 6,
-                                                                    width: 6,
-                                                                    margin: const EdgeInsets
+                                                                        "aggregated_rating"]
+                                                                    .toString()
+                                                                : "",
+                                                            color: colorPrimary,
+                                                            fontSize: 12.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
                                                                         .symmetric(
-                                                                      horizontal:
-                                                                          5,
-                                                                    ),
-                                                                    decoration: BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                5),
-                                                                        color: (l == productController.curr.value &&
-                                                                                productController.index.value == index)
-                                                                            ? colorPrimary
-                                                                            : colorSecondary),
-                                                                  ),
-                                                                );
-                                                              } else {
-                                                                return Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          2.0),
-                                                                  child:
-                                                                      AppText(
-                                                                    text:
-                                                                        '\u{25B6}',
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: (l == productController.curr.value &&
-                                                                            productController.index.value ==
-                                                                                index)
-                                                                        ? colorPrimary
-                                                                        : colorSecondary,
-                                                                  ),
-                                                                );
-                                                              }
-                                                            })),
+                                                                    horizontal:
+                                                                        10),
+                                                            child: Container(
+                                                              width: 1,
+                                                              color:
+                                                                  textHintColor,
+                                                              height: 16,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text: "8",
+                                                            color: colorPrimary,
+                                                            fontSize: 12.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            child: AppText(
-                                              text: productController
-                                                          .productCategoryList[
-                                                      index]["name"] ??
-                                                  "",
-                                              color: nameText,
-                                              maxLines: 2,
-                                              fontSize: 14.sp,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
+                                              ],
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: AppText(
-                                              text: productController
-                                                              .productCategoryList[
-                                                          index]
-                                                      ["short_description"] ??
-                                                  "",
-                                              color: nameText,
-                                              maxLines: 2,
-                                              fontSize: 12.sp,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
+                                            productController
+                                                        .productCategoryList[
+                                                            index]["images"]
+                                                        .length ==
+                                                    1
+                                                ? const SizedBox(
+                                                    height: 0,
+                                                  )
+                                                : Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 10),
+                                                    child: SizedBox(
+                                                      width: double.infinity,
+                                                      child: Center(
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: List<
+                                                                      Widget>.generate(
+                                                                  productController
+                                                                      .productCategoryList[
+                                                                          index]
+                                                                          [
+                                                                          "images"]
+                                                                      .length,
+                                                                  (int l) {
+                                                                if (isImage(productController
+                                                                            .productCategoryList[index]
+                                                                        [
+                                                                        "images"]
+                                                                    [
+                                                                    l]['name'])) {
+                                                                  return Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        top: 2),
+                                                                    child:
+                                                                        AnimatedContainer(
+                                                                      duration: const Duration(
+                                                                          milliseconds:
+                                                                              400),
+                                                                      height: 6,
+                                                                      width: 6,
+                                                                      margin: const EdgeInsets
+                                                                          .symmetric(
+                                                                        horizontal:
+                                                                            5,
+                                                                      ),
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(
+                                                                              5),
+                                                                          color: (l == productController.curr.value && productController.index.value == index)
+                                                                              ? colorPrimary
+                                                                              : colorSecondary),
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  return Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            2.0),
+                                                                    child:
+                                                                        AppText(
+                                                                      text:
+                                                                          '\u{25B6}',
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: (l == productController.curr.value &&
+                                                                              productController.index.value == index)
+                                                                          ? colorPrimary
+                                                                          : colorSecondary,
+                                                                    ),
+                                                                  );
+                                                                }
+                                                              })),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                            const SizedBox(
+                                              height: 10,
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 10, left: 10, right: 1),
-                                            child: Row(
-                                              children: [
-                                                AppText(
-                                                  text:
-                                                      "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
-                                                  color: deepGreytextColor,
-                                                  maxLines: 2,
-                                                  fontSize: 14.sp,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 5),
-                                                  child: Text(
-                                                    "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
-                                                    style: TextStyle(
-                                                      color: textHintColor,
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                              child: AppText(
+                                                text: productController
+                                                            .productCategoryList[
+                                                        index]["name"] ??
+                                                    "",
+                                                color: nameText,
+                                                maxLines: 2,
+                                                fontSize: 14.sp,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              child: AppText(
+                                                text: productController
+                                                                .productCategoryList[
+                                                            index]
+                                                        ["short_description"] ??
+                                                    "",
+                                                color: nameText,
+                                                maxLines: 2,
+                                                fontSize: 12.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10, left: 10, right: 1),
+                                              child: Row(
+                                                children: [
+                                                  AppText(
+                                                    text:
+                                                        "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
+                                                    color: deepGreytextColor,
+                                                    maxLines: 2,
+                                                    fontSize: 14.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    child: Text(
+                                                      "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
+                                                      style: TextStyle(
+                                                        color: textHintColor,
+                                                        fontSize: 11.sp,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 5,
+                                                  left: 10,
+                                                  right: 10,
+                                                  bottom: 30),
+                                              child: Row(
+                                                children: [
+                                                  const ImageIcon(
+                                                    AssetImage(truckImage),
+                                                    color: expressText,
+                                                    size: 14,
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 5),
+                                                    child: AppText(
+                                                      text: "Express",
+                                                      color: expressText,
+                                                      maxLines: 2,
                                                       fontSize: 11.sp,
-                                                      decoration: TextDecoration
-                                                          .lineThrough,
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 5,
-                                                left: 10,
-                                                right: 10,
-                                                bottom: 30),
-                                            child: Row(
-                                              children: [
-                                                const ImageIcon(
-                                                  AssetImage(truckImage),
-                                                  color: expressText,
-                                                  size: 14,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 5),
-                                                  child: AppText(
-                                                    text: "Express",
-                                                    color: expressText,
-                                                    maxLines: 2,
-                                                    fontSize: 11.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                              //  ),
                               productController.categoryProductLoadMore.value
                                   ? const DummyVerticalList()
                                   : const SizedBox(
