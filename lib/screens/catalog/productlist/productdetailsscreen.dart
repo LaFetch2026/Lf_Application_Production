@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
@@ -691,6 +692,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           child: Image.asset(
                                                               shareImage)),
                                                       onPressed: () async {
+                                                        Share.share(
+                                                            'https://la-fetch.com/privacy-policy/');
                                                         await analytics
                                                             .logEvent(
                                                           name: 'share_product',
