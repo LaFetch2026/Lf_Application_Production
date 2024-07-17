@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
+import 'package:lafetch/commonwidget/cartwidgets/bottomCoupon.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
@@ -34,11 +35,11 @@ class CartScreenState extends State<CartScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-//  List sizeList = ["XS", "S", "M", "L", "XL"];
-  /*  final List<Map<String, dynamic>> sizeList = [
-    {'id': '22', "product_matrix_size_name": 'M', 'stocks': '90'},
-    {'id': '73', "product_matrix_size_name": 'L', 'stocks': '90'}
-  ].obs; */
+  final List<Map<String, dynamic>> couponList = [
+    {'id': '22', "coupan": 'ECoupan'},
+    {'id': '73', "coupan": 'AXIS20'},
+    {'id': '13', "coupan": 'MASTERCARD30'}
+  ].obs;
 
   @override
   void initState() {
@@ -939,6 +940,10 @@ class CartScreenState extends State<CartScreen> {
                                                               'cart_page_applycouponclick',
                                                         },
                                                       );
+                                                      Get.to(BottomCoupon(
+                                                        list: couponList,
+                                                        onressed: (p0) {},
+                                                      ));
                                                     },
                                                     child: AppText(
                                                       text: "Select",

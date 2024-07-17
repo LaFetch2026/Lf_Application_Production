@@ -30,6 +30,7 @@ class AppText extends StatelessWidget {
       style: TextStyle(
         fontSize: fontSize,
         height: 1.3,
+        decoration: TextDecoration.none,
         overflow: TextOverflow.ellipsis,
         fontWeight: fontWeight,
         fontFamily: fontFamily,
