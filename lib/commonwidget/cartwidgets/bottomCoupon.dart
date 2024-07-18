@@ -7,12 +7,12 @@ import '../app_text.dart';
 
 class BottomCoupon extends StatefulWidget {
   final List list;
-  final Function(String) onressed;
+  final Function(String) onPressed;
 
   const BottomCoupon({
     Key? key,
     required this.list,
-    required this.onressed,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -122,37 +122,44 @@ class BottomCouponState extends State<BottomCoupon> {
                                               ),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                            ),
-                                            child: AnimatedContainer(
-                                              duration: const Duration(
-                                                  milliseconds: 300),
-                                              margin: const EdgeInsets.only(
-                                                  right: 5),
-                                              width: 80,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                color: btnTextColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                border: Border.all(
-                                                    color: btnTextColor,
-                                                    width: 1),
+                                          GestureDetector(
+                                            onTap: () {
+                                              widget.onPressed.call(
+                                                  widget.list[index]["coupan"]);
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 14,
                                               ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
-                                                child: Center(
-                                                  child: AppText(
-                                                    text: "Apply",
-                                                    color: whiteBack,
-                                                    fontSize: 12.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w500,
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                margin: const EdgeInsets.only(
+                                                    right: 5),
+                                                width: 80,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                  color: btnTextColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                      color: btnTextColor,
+                                                      width: 1),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 5),
+                                                  child: Center(
+                                                    child: AppText(
+                                                      text: "Apply",
+                                                      color: whiteBack,
+                                                      fontSize: 12.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
                                                   ),
                                                 ),
                                               ),

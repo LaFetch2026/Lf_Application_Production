@@ -911,8 +911,9 @@ class CartScreenState extends State<CartScreen> {
                                                                   horizontal:
                                                                       8),
                                                           child: AppText(
-                                                            text:
-                                                                "Apply Coupon",
+                                                            text: controller
+                                                                .couponText
+                                                                .value,
                                                             fontFamily:
                                                                 "Franklin Gothic",
                                                             fontWeight:
@@ -942,7 +943,11 @@ class CartScreenState extends State<CartScreen> {
                                                       );
                                                       Get.to(BottomCoupon(
                                                         list: couponList,
-                                                        onressed: (p0) {},
+                                                        onPressed: (p0) {
+                                                          Get.back();
+                                                          controller.couponText
+                                                              .value = p0;
+                                                        },
                                                       ));
                                                     },
                                                     child: AppText(

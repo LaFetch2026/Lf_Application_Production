@@ -24,6 +24,7 @@ class CartController extends BaseController {
   RxString convenienceFee = "".obs;
   RxString tax = "".obs;
   RxString total = "".obs;
+  RxString couponText = "Apply Coupon".obs;
 
   getCartData() async {
     isOrder.value = true;
