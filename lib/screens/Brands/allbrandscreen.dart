@@ -65,12 +65,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getBestSellerProductData());
     wishlistController.getWishlistData();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.bestSellerController.addListener(() {
         productController.fetchBestSellerData();
         productController.update();
       });
-    });
+    }); */
     productController.bestSellerHasnextpage.value = true;
     productController.bestSellerLoadMore.value = false;
     productController.isBestSeller.value = false;
@@ -330,7 +330,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 alignment: Alignment.bottomLeft,
                                                 child: Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 18,
                                                       vertical: 10),
                                                   child: AppText(

@@ -35,11 +35,6 @@ class CartScreenState extends State<CartScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  final List<Map<String, dynamic>> couponList = [
-    {'id': '22', "coupan": 'ECoupan'},
-    {'id': '73', "coupan": 'AXIS20'},
-    {'id': '13', "coupan": 'MASTERCARD30'}
-  ].obs;
 
   @override
   void initState() {
@@ -48,6 +43,10 @@ class CartScreenState extends State<CartScreen> {
         productController.fetchMoreData("relevant");
         productController.update();
       });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.couponList.clear();
+      controller.getCouponData();
     });
     productController.hasnextpage.value = true;
     productController.loadMore.value = false;
@@ -158,7 +157,7 @@ class CartScreenState extends State<CartScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10),
                                                             child: Container(
@@ -248,7 +247,7 @@ class CartScreenState extends State<CartScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       2),
                                                           child: AppText(
@@ -295,12 +294,12 @@ class CartScreenState extends State<CartScreen> {
                                                         return Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   vertical: 5),
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     top: 10,
                                                                     left: 16,
                                                                     right: 16),
@@ -626,7 +625,7 @@ class CartScreenState extends State<CartScreen> {
                                                                   ),
                                                                   Padding(
                                                                     padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        .symmetric(
                                                                         vertical:
                                                                             8),
                                                                     child:
@@ -728,7 +727,7 @@ class CartScreenState extends State<CartScreen> {
                                                                           milliseconds:
                                                                               300),
                                                                       margin: const EdgeInsets
-                                                                              .only(
+                                                                          .only(
                                                                           right:
                                                                               8),
                                                                       color:
@@ -907,7 +906,7 @@ class CartScreenState extends State<CartScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       8),
                                                           child: AppText(
@@ -942,7 +941,8 @@ class CartScreenState extends State<CartScreen> {
                                                         },
                                                       );
                                                       Get.to(BottomCoupon(
-                                                        list: couponList,
+                                                        list: controller
+                                                            .couponList,
                                                         onPressed: (p0) {
                                                           Get.back();
                                                           controller.couponText

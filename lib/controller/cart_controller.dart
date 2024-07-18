@@ -14,6 +14,7 @@ import '../utils/constants.dart';
 
 class CartController extends BaseController {
   RxBool isOrder = false.obs;
+  RxBool isCoupan = false.obs;
   List orderList = [].obs;
   RxInt cartId = 0.obs;
   dynamic cartDetails = "".obs;
@@ -25,6 +26,12 @@ class CartController extends BaseController {
   RxString tax = "".obs;
   RxString total = "".obs;
   RxString couponText = "Apply Coupon".obs;
+  List couponList = [].obs;
+  /* List<Map<String, dynamic>> couponList = [
+    {'id': '22', "coupan": 'ECoupan'},
+    {'id': '73', "coupan": 'AXIS20'},
+    {'id': '13', "coupan": 'MASTERCARD30'}
+  ].obs; */
 
   getCartData() async {
     isOrder.value = true;
@@ -60,6 +67,39 @@ class CartController extends BaseController {
       print("error$e");
     }
     isOrder.value = false;
+  }
+
+  getCouponData() async {
+    isCoupan.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/discounts"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          couponList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get coupan failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCoupan.value = false;
   }
 
   callDeleteCart() async {

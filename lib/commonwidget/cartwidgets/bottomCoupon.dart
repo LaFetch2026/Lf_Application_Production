@@ -20,8 +20,6 @@ class BottomCoupon extends StatefulWidget {
 }
 
 class BottomCouponState extends State<BottomCoupon> {
-  List<bool> selected = List.generate(50, (i) => false);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -113,7 +111,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                       vertical: 5),
                                               child: AppText(
                                                 text: widget.list[index]
-                                                    ["coupan"],
+                                                    ["code"],
                                                 color: loginText,
                                                 fontSize: 16.sp,
                                                 fontFamily:
@@ -125,7 +123,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                           GestureDetector(
                                             onTap: () {
                                               widget.onPressed.call(
-                                                  widget.list[index]["coupan"]);
+                                                  widget.list[index]["code"]);
                                             },
                                             child: Padding(
                                               padding:
@@ -171,8 +169,9 @@ class BottomCouponState extends State<BottomCoupon> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 14, vertical: 20),
                                         child: AppText(
-                                          text:
-                                              "Get upto Rs 150 cashback using Amazon Pay Balance",
+                                          text: widget.list[index]
+                                                  ["description"] ??
+                                              "",
                                           color: greyTextColor,
                                           fontSize: 12.sp,
                                           fontFamily: "Franklin Gothic Regular",

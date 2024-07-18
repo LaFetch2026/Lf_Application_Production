@@ -583,15 +583,15 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=relevant"),
+          Uri.parse("${ApiConstants.baseUrl}/best-seller-products"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          bestSellerList = responseData["data"];
+        if (responseData != null) {
+          bestSellerList = responseData;
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -611,7 +611,7 @@ class ProductController extends BaseController {
     isBestSeller.value = false;
   }
 
-  fetchBestSellerData() async {
+  /*  fetchBestSellerData() async {
     if (bestSellerHasnextpage.value == true &&
         isBestSeller.value == false &&
         bestSellerLoadMore.value == false) {
@@ -622,7 +622,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=relevant&page=${bestSellerPage.value}"),
+                "${ApiConstants.baseUrl}/best-seller-products?page=${bestSellerPage.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -655,7 +655,7 @@ class ProductController extends BaseController {
       bestSellerLoadMore.value = false;
     }
   }
-
+ */
   getBrandExpressProductData(int brandId) async {
     isBrandExpressProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
