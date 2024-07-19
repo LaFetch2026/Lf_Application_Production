@@ -264,6 +264,39 @@ class CartController extends BaseController {
     hideLoading();
   }
 
+  callAddCoupon(String code) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "code": code,
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/discounts/apply"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        Get.back();
+        getCartData();
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
+  }
+
   callProcessPayment(
       int cartId, String paymentId, String orderId, String signature) async {
     showLoading();

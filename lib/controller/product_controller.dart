@@ -583,7 +583,7 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/best-seller-products"),
+          Uri.parse("${ApiConstants.baseUrl}/products-best-seller"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
