@@ -514,8 +514,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             firstBorderColor: deepGreytextColor,
                             secondBorderColor: deepGreytextColor,
                             onPressedFirst: () async {
-                              scaffoldKey.currentState?.showBottomSheet(
-                                  (context) => const BottomSortBy());
+                              scaffoldKey.currentState
+                                  ?.showBottomSheet((context) => BottomSortBy(
+                                        onPressedButton: (p0) {},
+                                      ));
                               await analytics.logEvent(
                                 name: 'express_page_sortby',
                                 parameters: <String, Object>{

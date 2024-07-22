@@ -37,6 +37,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   @override
   void initState() {
     productController.curr.value = 0;
+    productController.sortBy.value = "";
     productController.productCategoryList.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductHasnextpage.value = true;
@@ -44,18 +45,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
     });
-    if (widget.categoryId == 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => productController
-          .getProductByCategoryData(widget.categoryId, 0, "", []));
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => productController
-          .getProductByCategoryData(widget.categoryId, 0, "", []));
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getProductByCategoryData(widget.categoryId, 0, "", [], ""));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
-        productController.fetchCategoryProductMoreData(widget.categoryId, 0);
+        productController.fetchCategoryProductMoreData(
+            widget.categoryId, 0, productController.sortBy.value);
         productController.update();
       });
     });
@@ -676,8 +673,19 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                               firstBorderColor: deepGreytextColor,
                               secondBorderColor: deepGreytextColor,
                               onPressedFirst: () {
-                                scaffoldKey.currentState?.showBottomSheet(
-                                    (context) => const BottomSortBy());
+                                scaffoldKey.currentState
+                                    ?.showBottomSheet((context) => BottomSortBy(
+                                          onPressedButton: (p0) {
+                                            productController.sortBy.value = p0;
+                                            productController
+                                                .getProductByCategoryData(
+                                                    widget.categoryId,
+                                                    0,
+                                                    "",
+                                                    [],
+                                                    p0);
+                                          },
+                                        ));
                               },
                               onPressedSecond: () {
                                 Get.to(const BottomFilters());

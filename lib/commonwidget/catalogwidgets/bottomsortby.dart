@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
 
 class BottomSortBy extends StatefulWidget {
-  final Function? onPressedEdit;
+  final Function(String) onPressedButton;
 
   const BottomSortBy({
     Key? key,
-    this.onPressedEdit,
+    required this.onPressedButton,
   }) : super(key: key);
 
   @override
@@ -47,16 +47,18 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "recommended",
+                    value: "",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
                       text1 = value.toString();
+                      widget.onPressedButton.call(text1!);
                       setState(() {});
                     }),
                 GestureDetector(
                   onTap: () {
-                    text1 = "recommended";
+                    text1 = "";
+                    widget.onPressedButton.call(text1!);
                     setState(() {});
                   },
                   child: Text(
@@ -74,17 +76,19 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "Price Low",
+                    value: "low-to-high",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
                       text1 = value.toString();
                       setState(() {});
+                      widget.onPressedButton.call(text1!);
                     }),
                 GestureDetector(
                   onTap: () {
-                    text1 = "Price Low";
+                    text1 = "low-to-high";
                     setState(() {});
+                    widget.onPressedButton.call(text1!);
                   },
                   child: Text(
                     "Price - low to high",
@@ -101,17 +105,19 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "What’s new",
+                    value: "whats-new",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
                       text1 = value.toString();
                       setState(() {});
+                      widget.onPressedButton.call(text1!);
                     }),
                 GestureDetector(
                   onTap: () {
-                    text1 = "What’s new";
+                    text1 = "whats-new";
                     setState(() {});
+                    widget.onPressedButton.call(text1!);
                   },
                   child: Text(
                     "What’s new",
@@ -128,17 +134,19 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "Price high",
+                    value: "high-to-low",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
                       text1 = value.toString();
                       setState(() {});
+                      widget.onPressedButton.call(text1!);
                     }),
                 GestureDetector(
                   onTap: () {
-                    text1 = "Price high";
+                    text1 = "high-to-low";
                     setState(() {});
+                    widget.onPressedButton.call(text1!);
                   },
                   child: Text(
                     "Price - high to low",
@@ -155,17 +163,19 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "Customer rating",
+                    value: "customer-rating",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
                       text1 = value.toString();
                       setState(() {});
+                      widget.onPressedButton.call(text1!);
                     }),
                 GestureDetector(
                   onTap: () {
-                    text1 = "Customer rating";
+                    text1 = "customer-rating";
                     setState(() {});
+                    widget.onPressedButton.call(text1!);
                   },
                   child: Text(
                     "Customer rating",

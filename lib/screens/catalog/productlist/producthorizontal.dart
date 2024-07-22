@@ -42,18 +42,14 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
     });
-    if (widget.categoryId == 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => productController
-          .getProductByCategoryData(widget.categoryId, 0, "", []));
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => productController
-          .getProductByCategoryData(widget.categoryId, 0, "", []));
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getProductByCategoryData(widget.categoryId, 0, "", [], ""));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
-        productController.fetchCategoryProductMoreData(widget.categoryId, 0);
+        productController.fetchCategoryProductMoreData(
+            widget.categoryId, 0, productController.sortBy.value);
         productController.update();
       });
     });
@@ -125,7 +121,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                           .getProductByCategoryData(
                                                               widget.categoryId,
                                                               0,
-                                                              "", []);
+                                                              "",
+                                                              [],
+                                                              productController
+                                                                  .sortBy
+                                                                  .value);
                                                     },
                                                   ));
                                           await analytics.logEvent(
@@ -489,8 +489,19 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                               firstBorderColor: deepGreytextColor,
                               secondBorderColor: deepGreytextColor,
                               onPressedFirst: () {
-                                scaffoldKey.currentState?.showBottomSheet(
-                                    (context) => const BottomSortBy());
+                                scaffoldKey.currentState
+                                    ?.showBottomSheet((context) => BottomSortBy(
+                                          onPressedButton: (p0) {
+                                            productController.sortBy.value = p0;
+                                            productController
+                                                .getProductByCategoryData(
+                                                    widget.categoryId,
+                                                    0,
+                                                    "",
+                                                    [],
+                                                    p0);
+                                          },
+                                        ));
                               },
                               onPressedSecond: () {
                                 Get.to(const BottomFilters());

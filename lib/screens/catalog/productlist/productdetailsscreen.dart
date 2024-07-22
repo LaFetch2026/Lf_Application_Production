@@ -357,7 +357,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     'page_name': 'productDetails_colorSelect',
                                   },
                                 );
-                                movetoNextScreen(i['product_id']);
+                                //   movetoNextScreen(i['product_id']);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
