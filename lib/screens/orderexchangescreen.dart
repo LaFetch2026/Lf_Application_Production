@@ -1361,14 +1361,31 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       secondBorderColor: btnTextColor,
                                                                       firstIcon: blackCrossImage,
                                                                       onPressedFirst: () async {
-                                                                        await analytics
-                                                                            .logEvent(
-                                                                          name:
-                                                                              'order_cancelOrderClick',
-                                                                          parameters: <String,
-                                                                              Object>{
-                                                                            'page_name':
-                                                                                'order_cancelOrderClick',
+                                                                        showDialog(
+                                                                          barrierColor:
+                                                                              Colors.black26,
+                                                                          context:
+                                                                              context,
+                                                                          builder:
+                                                                              (context) {
+                                                                            return showDoubleBtnDailog(
+                                                                                click1: () {
+                                                                                  Get.back();
+                                                                                },
+                                                                                click2: () async {
+                                                                                  orderController.callCancelOrder(value.orderList[
+                                                                          index]["id"]);
+                                                                                  await analytics.logEvent(
+                                                                                    name: 'order_cancelOrderClick',
+                                                                                    parameters: <String, Object>{
+                                                                                      'page_name': 'order_cancelOrderClick',
+                                                                                    },
+                                                                                  );
+                                                                                },
+                                                                                btncolor: colorPrimary,
+                                                                                text: "Are you sure you want to cancel order?",
+                                                                                btn1Text: "No",
+                                                                                btn2Text: "Yes");
                                                                           },
                                                                         );
                                                                       },

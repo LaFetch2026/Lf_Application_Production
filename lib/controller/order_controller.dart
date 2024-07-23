@@ -190,4 +190,34 @@ class OrderController extends BaseController {
     }
     isDetails.value = false;
   }
+
+  void callCancelOrder(int orderId) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/orders/$orderId/cancel"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      if (response.statusCode == 200) {
+        Get.close(1);
+        getSnackBar("Order Cancelled");
+        getOrderData();
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else {
+        getSnackBar("cancel order failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
