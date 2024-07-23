@@ -504,7 +504,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                         ));
                               },
                               onPressedSecond: () {
-                                Get.to(const BottomFilters());
+                                Get.to(BottomFilters(
+                                  onClick: () {},
+                                ));
                               },
                             ),
                           ),

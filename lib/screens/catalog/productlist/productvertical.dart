@@ -688,7 +688,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                         ));
                               },
                               onPressedSecond: () {
-                                Get.to(const BottomFilters());
+                                Get.to(BottomFilters(
+                                  onClick: () {},
+                                ));
                               },
                             ),
                           ),

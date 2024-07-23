@@ -13,6 +13,7 @@ import '../utils/constants.dart';
 
 class ProductController extends BaseController {
   RxBool isProduct = false.obs;
+  RxBool isFilter = false.obs;
   RxBool isMostSearch = false.obs;
   RxBool isCategoryProduct = false.obs;
   RxBool istagsProduct = false.obs;
@@ -37,6 +38,7 @@ class ProductController extends BaseController {
   List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
   List productList = [].obs;
+  List filterList = [].obs;
   List mostSeachList = [].obs;
   List expressProductList = [].obs;
   List productCategoryList = [].obs;
@@ -97,6 +99,9 @@ class ProductController extends BaseController {
   RxInt bestSellerPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
   RxString sortBy = "".obs;
+  List brand_ids = [].obs;
+  List color_ids = [].obs;
+  List size_ids = [].obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -658,6 +663,40 @@ class ProductController extends BaseController {
     }
   }
  */
+  getFilterData(String type) async {
+    isFilter.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products-filter-paramters?type=$type"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          filterList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get filter failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isFilter.value = false;
+  }
+
   getBrandExpressProductData(int brandId) async {
     isBrandExpressProduct.value = true;
     final prefs = await SharedPreferences.getInstance();

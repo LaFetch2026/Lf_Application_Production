@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import '../../utils/constants.dart';
 
 class FilterButton extends StatelessWidget {
-  final List<String>? list;
-  const FilterButton({Key? key, required this.list}) : super(key: key);
+  final Function onPresedApply;
+  const FilterButton({Key? key, required this.onPresedApply}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +39,19 @@ class FilterButton extends StatelessWidget {
               height: 32,
             ),
           ),
-          Text(
-            "Show ${list?.length} items",
-            style: TextStyle(
-              color: btnTextColor,
-              decoration: TextDecoration.none,
-              fontSize: 14.sp,
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
+          GestureDetector(
+            onTap: () {
+              onPresedApply.call();
+            },
+            child: Text(
+              "Apply",
+              style: TextStyle(
+                color: btnTextColor,
+                decoration: TextDecoration.none,
+                fontSize: 14.sp,
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ],
