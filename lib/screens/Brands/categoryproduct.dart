@@ -45,7 +45,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           productController.getProductByCategoryData(
               widget.categoryId, widget.brandId, "", [], ""));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.categoryProductController.addListener(() {
+        productController.brandProductController.addListener(() {
           productController.fetchCategoryProductMoreData(
               widget.categoryId, widget.brandId, "");
           productController.update();
@@ -94,7 +94,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       ? Expanded(
                           child: SingleChildScrollView(
                             controller:
-                                productController.categoryProductController,
+                                productController.brandProductController,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -105,7 +105,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
                                     controller: productController
-                                        .categoryProductController,
+                                        .brandProductController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.5,

@@ -63,6 +63,7 @@ class ProductController extends BaseController {
   RxInt expressPage = 1.obs;
   ScrollController expressListController = ScrollController();
   ScrollController categoryProductController = ScrollController();
+  ScrollController brandProductController = ScrollController();
   RxBool categoryProductLoadMore = false.obs;
   RxBool categoryProductHasnextpage = true.obs;
   RxInt categoryProductPage = 1.obs;
