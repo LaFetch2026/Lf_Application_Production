@@ -357,6 +357,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     'page_name': 'productDetails_colorSelect',
                                   },
                                 );
+                                setState(() {});
                                 //   movetoNextScreen(i['product_id']);
                               },
                               child: Container(
@@ -544,6 +545,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     await runAddToCartAnimation(widgetKey);
     await cartKey.currentState!
         .runCartAnimation((++cartQuantityItems).toString());
+    //  productController.getProductDetails(widget.productId);
   }
 
   @override
@@ -2313,41 +2315,64 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     .productDetails["images"][1]
                                                 ["name"],
                                             fit: BoxFit.fitHeight)),
-                            getSingleButton(
-                                label: widget.type == "add"
-                                    ? "Add to bag"
-                                    : "Move to bag",
-                                textColor: whiteBorderColor,
-                                backgroundColor: colorPrimary,
-                                controller: productController,
-                                onPressed: () async {
-                                  if (widget.type == "add") {
-                                    if (productController
-                                        .checkDetailsValidation()) {
-                                      productController.callAddtoCart(1);
-                                      listClick(widgetKey);
-                                    }
-                                  } else {
-                                    if (productController
-                                        .checkDetailsValidation()) {
-                                      wishlistController.callMovetoCart(
-                                          widget.boardId,
-                                          widget.wishlistProductId,
-                                          productController
-                                              .sizeInventoryId.value,
-                                          1);
-                                      listClick(widgetKey);
-                                    }
-                                  }
-                                  await analytics.logEvent(
-                                    name: 'productDetails_btnaddtocart',
-                                    parameters: <String, Object>{
-                                      'page_name':
-                                          'productDetails_btnaddtocart',
-                                    },
-                                  );
-                                },
-                                borderColor: colorPrimary),
+                            productController.isDetails.value
+                                ? const SizedBox(
+                                    height: 0,
+                                  )
+                                : productController
+                                        .productDetails["added_to_cart"]
+                                    ? getSingleButton(
+                                        label: "Go to bag",
+                                        textColor: whiteBorderColor,
+                                        backgroundColor: colorPrimary,
+                                        controller: productController,
+                                        onPressed: () async {
+                                          Get.to(CartScreen());
+                                          await analytics.logEvent(
+                                            name: 'productDetails_btnGotocart',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'productDetails_btnGotocart',
+                                            },
+                                          );
+                                        },
+                                        borderColor: colorPrimary)
+                                    : getSingleButton(
+                                        label: widget.type == "add"
+                                            ? "Add to bag"
+                                            : "Move to bag",
+                                        textColor: whiteBorderColor,
+                                        backgroundColor: colorPrimary,
+                                        controller: productController,
+                                        onPressed: () async {
+                                          if (widget.type == "add") {
+                                            if (productController
+                                                .checkDetailsValidation()) {
+                                              productController
+                                                  .callAddtoCart(1);
+                                              listClick(widgetKey);
+                                            }
+                                          } else {
+                                            if (productController
+                                                .checkDetailsValidation()) {
+                                              wishlistController.callMovetoCart(
+                                                  widget.boardId,
+                                                  widget.wishlistProductId,
+                                                  productController
+                                                      .sizeInventoryId.value,
+                                                  1);
+                                              listClick(widgetKey);
+                                            }
+                                          }
+                                          await analytics.logEvent(
+                                            name: 'productDetails_btnaddtocart',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'productDetails_btnaddtocart',
+                                            },
+                                          );
+                                        },
+                                        borderColor: colorPrimary),
                           ],
                         ),
                       ),
