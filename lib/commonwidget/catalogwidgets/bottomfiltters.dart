@@ -34,24 +34,27 @@ class BottomFiltersState extends State<BottomFilters> {
   List<bool> brandSelected = List.generate(50, (i) => false);
   List<bool> colorSelected = List.generate(50, (i) => false);
   List<bool> sizeSelected = List.generate(50, (i) => false);
-  bool ischeck = false;
   String type = "";
+  String lowerValue = "100";
+  String UpperValue = "5000";
+  RangeValues values = RangeValues(100, 5000);
 
   @override
   void initState() {
     selected[0] = !selected[0];
+    productController.isPrice.value = true;
     productController.size_ids.clear();
     productController.color_ids.clear();
     productController.brand_ids.clear();
     productController.filterList.clear();
     setState(() {});
-    /*  WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getFilterData("brands")); */
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    RangeLabels labels =
+        RangeLabels(values.start.toString(), values.end.toString());
     return Container(
       height: MediaQuery.of(context).size.height,
       width: double.infinity,
@@ -114,136 +117,7 @@ class BottomFiltersState extends State<BottomFilters> {
                       color: backWhite,
                       width: 150,
                       height: MediaQuery.of(context).size.height - 120,
-                      child:
-                          /*  Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Price Range",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                colorChangeBack = btnTextColor;
-                                textColor = whiteBorderColor;
-                                setState(() {});
-                              },
-                              child: Container(
-                                color: colorChangeBack,
-                                width: 150,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 16),
-                                  child: Text(
-                                    "Brand",
-                                    style: TextStyle(
-                                      color: textColor,
-                                      decoration: TextDecoration.none,
-                                      fontSize: 14.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Size",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Color",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  fontSize: 14.sp,
-                                  decoration: TextDecoration.none,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Material",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  fontSize: 14.sp,
-                                  decoration: TextDecoration.none,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Style",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Occasion",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 16),
-                              child: Text(
-                                "Feature",
-                                style: TextStyle(
-                                  color: bottomnavBack,
-                                  fontSize: 14.sp,
-                                  decoration: TextDecoration.none,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ]
-                          ), */
-                          Padding(
+                      child: Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: SizedBox(
                           height: 150,
@@ -266,18 +140,26 @@ class BottomFiltersState extends State<BottomFilters> {
                                             productController
                                                 .getFilterData("brands");
                                             type = "brands";
+                                            productController.isPrice.value =
+                                                false;
                                           } else if (index == 2) {
                                             productController
                                                 .getFilterData("color");
                                             type = "color";
+                                            productController.isPrice.value =
+                                                false;
                                           } else if (index == 0) {
                                             productController.filterList
                                                 .clear();
                                             type = "";
+                                            productController.isPrice.value =
+                                                true;
                                           } else {
                                             productController
                                                 .getFilterData("size");
                                             type = "size";
+                                            productController.isPrice.value =
+                                                false;
                                           }
                                           setState(() {});
                                         },
@@ -323,290 +205,330 @@ class BottomFiltersState extends State<BottomFilters> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         child: Obx(
-                          () => productController.isFilter.value
+                          () => productController.isPrice.value
                               ? Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 10),
                                   child: SizedBox(
                                     height: MediaQuery.of(context).size.height -
                                         172,
-                                    child: ListView.builder(
-                                        physics: const ScrollPhysics(),
-                                        itemCount: 8,
-                                        padding: EdgeInsets.zero,
-                                        scrollDirection: Axis.vertical,
-                                        itemBuilder: (ctx, index) {
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10),
-                                                child: Row(
-                                                  children: [
-                                                    const Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10),
-                                                        child: DummyContainer(
-                                                            height: 14,
-                                                            width: 14)),
-                                                    DummyContainer(
-                                                        height: 16, width: 80)
-                                                  ],
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text(
+                                            "Selected Price Range",
+                                            style: TextStyle(
+                                              color: textColor,
+                                              fontSize: 14.sp,
+                                              decoration: TextDecoration.none,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: SizedBox(
+                                            width: double.maxFinite,
+                                            child: Material(
+                                              child: RangeSlider(
+                                                values: values,
+                                                min: 100,
+                                                max: 5000,
+                                                // divisions: 5,
+                                                inactiveColor: Colors.grey,
+                                                activeColor: btnTextColor,
+                                                labels: labels,
+                                                onChanged: (newValue) {
+                                                  productController.pricelist
+                                                      .clear();
+                                                  values = newValue;
+                                                  var l = newValue.start
+                                                      .toString()
+                                                      .split('.');
+                                                  var u = newValue.end
+                                                      .toString()
+                                                      .split('.');
+                                                  lowerValue = l[0];
+                                                  UpperValue = u[0];
+                                                  productController.pricelist =
+                                                      [lowerValue, UpperValue];
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              child: Text(
+                                                "\u{20B9} ${lowerValue} - \u{20B9} ${UpperValue}",
+                                                style: TextStyle(
+                                                  color: textColor,
+                                                  fontSize: 14.sp,
+                                                  decoration:
+                                                      TextDecoration.none,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
-                                            ],
-                                          );
-                                        }),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                      Text(
-                                        productController.filterList.isEmpty
-                                            ? ""
-                                            : "Select All",
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 11.sp,
-                                          decoration: TextDecoration.none,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                              : productController.isFilter.value
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height -
+                                                172,
+                                        child: ListView.builder(
+                                            physics: const ScrollPhysics(),
+                                            itemCount: 8,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (ctx, index) {
+                                              return Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 10),
+                                                    child: Row(
+                                                      children: [
+                                                        const Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                            child:
+                                                                DummyContainer(
+                                                                    height: 14,
+                                                                    width: 14)),
+                                                        DummyContainer(
+                                                            height: 16,
+                                                            width: 80)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            }),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        child: SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height -
-                                              172,
-                                          child: ListView.builder(
-                                              physics: const ScrollPhysics(),
-                                              itemCount: productController
-                                                  .filterList.length,
-                                              padding: EdgeInsets.zero,
-                                              scrollDirection: Axis.vertical,
-                                              itemBuilder: (ctx, index) {
-                                                return Column(
-                                                  children: [
-                                                    GestureDetector(
-                                                        onTap: () {},
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical: 10),
-                                                          child: Row(
-                                                            children: [
-                                                              /*  const Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            10),
-                                                                child:
-                                                                    ImageIcon(
-                                                                  AssetImage(
-                                                                      checkImage),
-                                                                  color:
-                                                                      textColor,
-                                                                  size: 14,
-                                                                ),
-                                                              ), */
-                                                              if (type ==
-                                                                  "brands") ...[
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                          Text(
+                                            productController.filterList.isEmpty
+                                                ? ""
+                                                : "Select All",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 11.sp,
+                                              decoration: TextDecoration.none,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height -
+                                                  172,
+                                              child: ListView.builder(
+                                                  physics:
+                                                      const ScrollPhysics(),
+                                                  itemCount: productController
+                                                      .filterList.length,
+                                                  padding: EdgeInsets.zero,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  itemBuilder: (ctx, index) {
+                                                    return Column(
+                                                      children: [
+                                                        GestureDetector(
+                                                            onTap: () {},
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .symmetric(
+                                                                      vertical:
+                                                                          10),
+                                                              child: Row(
+                                                                children: [
+                                                                  if (type ==
+                                                                      "brands") ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
                                                                               10),
-                                                                  child:
-                                                                      Material(
-                                                                    child: Container(
-                                                                        decoration: BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3),
-                                                                          border:
-                                                                              const Border(
-                                                                            top:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            left:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            right:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            bottom:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                          ),
-                                                                        ),
-                                                                        width: 20,
-                                                                        height: 20,
-                                                                        child: Checkbox(
-                                                                          value:
-                                                                              brandSelected[index],
-                                                                          checkColor:
-                                                                              btnTextColor,
-                                                                          activeColor:
-                                                                              whiteBorderColor,
-                                                                          side: const BorderSide(
-                                                                              color: btnTextColor,
-                                                                              width: 0),
-                                                                          onChanged:
-                                                                              (value) {
-                                                                            setState(() {
-                                                                              brandSelected[index] = !brandSelected[index];
-                                                                            });
-                                                                            if (brandSelected[index] ==
-                                                                                true) {
-                                                                              productController.brand_ids.add(productController.filterList[index]["id"]);
-                                                                            } else {
-                                                                              productController.brand_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
-                                                                            }
-                                                                            print(productController.brand_ids);
-                                                                          },
-                                                                        )),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                              if (type ==
-                                                                  "color") ...[
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
+                                                                      child:
+                                                                          Material(
+                                                                        child: Container(
+                                                                            decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(3),
+                                                                              border: const Border(
+                                                                                top: BorderSide(width: 2.0, color: greyBorder),
+                                                                                left: BorderSide(width: 2.0, color: greyBorder),
+                                                                                right: BorderSide(width: 2.0, color: greyBorder),
+                                                                                bottom: BorderSide(width: 2.0, color: greyBorder),
+                                                                              ),
+                                                                            ),
+                                                                            width: 20,
+                                                                            height: 20,
+                                                                            child: Checkbox(
+                                                                              value: brandSelected[index],
+                                                                              checkColor: btnTextColor,
+                                                                              activeColor: whiteBorderColor,
+                                                                              side: const BorderSide(color: btnTextColor, width: 0),
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  brandSelected[index] = !brandSelected[index];
+                                                                                });
+                                                                                if (brandSelected[index] == true) {
+                                                                                  productController.brand_ids.add(productController.filterList[index]["id"]);
+                                                                                } else {
+                                                                                  productController.brand_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
+                                                                                }
+                                                                                print(productController.brand_ids);
+                                                                              },
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                  if (type ==
+                                                                      "color") ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
                                                                               10),
-                                                                  child:
-                                                                      Material(
-                                                                    child: Container(
-                                                                        decoration: BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3),
-                                                                          border:
-                                                                              const Border(
-                                                                            top:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            left:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            right:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            bottom:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                          ),
-                                                                        ),
-                                                                        width: 20,
-                                                                        height: 20,
-                                                                        child: Checkbox(
-                                                                          value:
-                                                                              colorSelected[index],
-                                                                          checkColor:
-                                                                              btnTextColor,
-                                                                          activeColor:
-                                                                              whiteBorderColor,
-                                                                          side: const BorderSide(
-                                                                              color: btnTextColor,
-                                                                              width: 0),
-                                                                          onChanged:
-                                                                              (value) {
-                                                                            setState(() {
-                                                                              colorSelected[index] = !colorSelected[index];
-                                                                            });
-                                                                            if (colorSelected[index] ==
-                                                                                true) {
-                                                                              productController.color_ids.add(productController.filterList[index]["id"]);
-                                                                            } else {
-                                                                              productController.color_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
-                                                                            }
-                                                                            print(productController.color_ids);
-                                                                          },
-                                                                        )),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                              if (type ==
-                                                                  "size") ...[
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
+                                                                      child:
+                                                                          Material(
+                                                                        child: Container(
+                                                                            decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(3),
+                                                                              border: const Border(
+                                                                                top: BorderSide(width: 2.0, color: greyBorder),
+                                                                                left: BorderSide(width: 2.0, color: greyBorder),
+                                                                                right: BorderSide(width: 2.0, color: greyBorder),
+                                                                                bottom: BorderSide(width: 2.0, color: greyBorder),
+                                                                              ),
+                                                                            ),
+                                                                            width: 20,
+                                                                            height: 20,
+                                                                            child: Checkbox(
+                                                                              value: colorSelected[index],
+                                                                              checkColor: btnTextColor,
+                                                                              activeColor: whiteBorderColor,
+                                                                              side: const BorderSide(color: btnTextColor, width: 0),
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  colorSelected[index] = !colorSelected[index];
+                                                                                });
+                                                                                if (colorSelected[index] == true) {
+                                                                                  productController.color_ids.add(productController.filterList[index]["id"]);
+                                                                                } else {
+                                                                                  productController.color_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
+                                                                                }
+                                                                                print(productController.color_ids);
+                                                                              },
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                  if (type ==
+                                                                      "size") ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
                                                                               10),
-                                                                  child:
-                                                                      Material(
-                                                                    child: Container(
-                                                                        decoration: BoxDecoration(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(3),
-                                                                          border:
-                                                                              const Border(
-                                                                            top:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            left:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            right:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                            bottom:
-                                                                                BorderSide(width: 2.0, color: greyBorder),
-                                                                          ),
-                                                                        ),
-                                                                        width: 20,
-                                                                        height: 20,
-                                                                        child: Checkbox(
-                                                                          value:
-                                                                              sizeSelected[index],
-                                                                          checkColor:
-                                                                              btnTextColor,
-                                                                          activeColor:
-                                                                              whiteBorderColor,
-                                                                          side: const BorderSide(
-                                                                              color: btnTextColor,
-                                                                              width: 0),
-                                                                          onChanged:
-                                                                              (value) {
-                                                                            setState(() {
-                                                                              sizeSelected[index] = !sizeSelected[index];
-                                                                            });
-                                                                            if (sizeSelected[index] ==
-                                                                                true) {
-                                                                              productController.size_ids.add(productController.filterList[index]["id"]);
-                                                                            } else {
-                                                                              productController.size_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
-                                                                            }
-                                                                            print(productController.size_ids);
-                                                                          },
-                                                                        )),
+                                                                      child:
+                                                                          Material(
+                                                                        child: Container(
+                                                                            decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(3),
+                                                                              border: const Border(
+                                                                                top: BorderSide(width: 2.0, color: greyBorder),
+                                                                                left: BorderSide(width: 2.0, color: greyBorder),
+                                                                                right: BorderSide(width: 2.0, color: greyBorder),
+                                                                                bottom: BorderSide(width: 2.0, color: greyBorder),
+                                                                              ),
+                                                                            ),
+                                                                            width: 20,
+                                                                            height: 20,
+                                                                            child: Checkbox(
+                                                                              value: sizeSelected[index],
+                                                                              checkColor: btnTextColor,
+                                                                              activeColor: whiteBorderColor,
+                                                                              side: const BorderSide(color: btnTextColor, width: 0),
+                                                                              onChanged: (value) {
+                                                                                setState(() {
+                                                                                  sizeSelected[index] = !sizeSelected[index];
+                                                                                });
+                                                                                if (sizeSelected[index] == true) {
+                                                                                  productController.size_ids.add(productController.filterList[index]["id"]);
+                                                                                } else {
+                                                                                  productController.size_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
+                                                                                }
+                                                                                print(productController.size_ids);
+                                                                              },
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                  Text(
+                                                                    productController
+                                                                            .filterList[index]
+                                                                        [
+                                                                        "name"],
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          textColor,
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                      fontSize:
+                                                                          14.sp,
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                              Text(
-                                                                productController
-                                                                        .filterList[
-                                                                    index]["name"],
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      textColor,
-                                                                  decoration:
-                                                                      TextDecoration
-                                                                          .none,
-                                                                  fontSize:
-                                                                      14.sp,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
-                                                        )),
-                                                  ],
-                                                );
-                                              }),
-                                        ),
-                                      ),
-                                    ]),
+                                                            )),
+                                                      ],
+                                                    );
+                                                  }),
+                                            ),
+                                          ),
+                                        ]),
                         ),
                       ),
                     ),

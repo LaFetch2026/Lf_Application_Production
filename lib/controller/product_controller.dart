@@ -102,6 +102,8 @@ class ProductController extends BaseController {
   List brand_ids = [].obs;
   List color_ids = [].obs;
   List size_ids = [].obs;
+  List pricelist = [100, 5000].obs;
+  RxBool isPrice = true.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
