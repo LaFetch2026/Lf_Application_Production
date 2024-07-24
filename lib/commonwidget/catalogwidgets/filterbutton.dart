@@ -19,15 +19,21 @@ class FilterButton extends StatelessWidget {
             onTap: () {
               Get.back();
             },
-            child: Text(
-              "Close",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: btnTextColor,
-                decoration: TextDecoration.none,
-                fontSize: 14.sp,
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
+            child: Container(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                child: Text(
+                  "Close",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: btnTextColor,
+                    decoration: TextDecoration.none,
+                    fontSize: 14.sp,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
             ),
           ),
@@ -43,14 +49,20 @@ class FilterButton extends StatelessWidget {
             onTap: () {
               onPresedApply.call();
             },
-            child: Text(
-              "Apply",
-              style: TextStyle(
-                color: btnTextColor,
-                decoration: TextDecoration.none,
-                fontSize: 14.sp,
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
+            child: Container(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                child: Text(
+                  "Apply",
+                  style: TextStyle(
+                    color: btnTextColor,
+                    decoration: TextDecoration.none,
+                    fontSize: 14.sp,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
             ),
           ),
