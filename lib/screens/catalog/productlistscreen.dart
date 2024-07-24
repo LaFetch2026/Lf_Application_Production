@@ -30,6 +30,7 @@ class ProductListScreenState extends State<ProductListScreen> {
   void initState() {
     if (widget.idList.isNotEmpty) {
       categoryId = widget.idList[0];
+      productController.category_id.value = 0;
     }
     super.initState();
   }
@@ -83,6 +84,12 @@ class ProductListScreenState extends State<ProductListScreen> {
                     labelColor: btnTextColor,
                     onTap: (index) async {
                       categoryId = widget.idList[index];
+                      if (index == 0) {
+                        productController.category_id.value = 0;
+                      } else {
+                        productController.category_id.value =
+                            widget.idList[index - 1];
+                      }
                       setState(() {});
                       await analytics.logEvent(
                         name: "catalog_category_tabclick}",

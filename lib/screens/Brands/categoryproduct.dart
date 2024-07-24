@@ -41,13 +41,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     productController.productCategoryList.clear();
     wishlistController.getWishlistData();
     if (widget.categoryId != 0) {
+      productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
           productController.getProductByCategoryData(
               widget.categoryId, widget.brandId, "", [], ""));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
-          productController.fetchCategoryProductMoreData(
-              widget.categoryId, widget.brandId, "");
+          productController.fetchCategoryProductMoreData(widget.brandId, "");
           productController.update();
         });
       });

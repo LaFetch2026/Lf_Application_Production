@@ -104,6 +104,7 @@ class ProductController extends BaseController {
   List size_ids = [].obs;
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
+  RxInt category_id = 0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -888,8 +889,7 @@ class ProductController extends BaseController {
     isCategoryProduct.value = false;
   }
 
-  fetchCategoryProductMoreData(
-      int categoryId, int brandId, String sort_By) async {
+  fetchCategoryProductMoreData(int brandId, String sort_By) async {
     if (categoryProductHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         categoryProductLoadMore.value == false) {
@@ -898,19 +898,19 @@ class ProductController extends BaseController {
       print(categoryProductPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        print("abc $categoryId");
+        print("abc $category_id");
         print("abc $sort_By");
         dynamic response;
         if (brandId != 0) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&page=${categoryProductPage.value}"),
+                  "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&brand_id=$brandId&page=${categoryProductPage.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
               });
         } else {
-          if (categoryId == 0) {
+          if (category_id == 0) {
             if (sort_By.isEmpty) {
               response = await http.get(
                   Uri.parse(
@@ -932,7 +932,7 @@ class ProductController extends BaseController {
             if (sort_By.isEmpty) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}"),
+                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -940,7 +940,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&page=${categoryProductPage.value}&sort_by=$sort_By"),
+                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",

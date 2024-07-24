@@ -52,7 +52,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
         productController.fetchCategoryProductMoreData(
-            widget.categoryId, 0, productController.sortBy.value);
+            0, productController.sortBy.value);
         productController.update();
       });
     });
