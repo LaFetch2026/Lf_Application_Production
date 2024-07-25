@@ -19,6 +19,7 @@ class CatalogDetailsScreen extends StatefulWidget {
   final String catalogText;
   final String catalogImage;
   final int genderType;
+  final int catalogId;
 
   const CatalogDetailsScreen({
     Key? key,
@@ -26,6 +27,7 @@ class CatalogDetailsScreen extends StatefulWidget {
     required this.catalogText,
     required this.catalogImage,
     required this.genderType,
+    required this.catalogId,
   }) : super(key: key);
 
   @override
@@ -40,7 +42,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => controller.getCategoryData(widget.genderType));
+        (_) => controller.getCategoryData(widget.genderType, widget.catalogId));
     super.initState();
   }
 

@@ -83,6 +83,8 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                           title: controller.catalogList[index]
                                                   ["name"] ??
                                               "",
+                                          catalogId: controller
+                                              .catalogList[index]["id"],
                                           catalogImage:
                                               controller.catalogList[index]
                                                       ["thumbnail"] ??
@@ -127,15 +129,6 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                         imageUrl: controller
                                                                 .catalogList[
                                                             index]["thumbnail"],
-                                                        /*  progressIndicatorBuilder:
-                                                            (context, url,
-                                                                    downloadProgress) =>
-                                                                Center(
-                                                          child: CircularProgressIndicator(
-                                                              value:
-                                                                  downloadProgress
-                                                                      .progress),
-                                                        ), */
                                                         errorWidget: (context,
                                                                 url, error) =>
                                                             Image.asset(
@@ -193,6 +186,9 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                         index]
                                                                     ["name"] ??
                                                                 "",
+                                                            catalogId: controller
+                                                                    .catalogList[
+                                                                index]["id"],
                                                             catalogImage: controller
                                                                             .catalogList[
                                                                         index][
