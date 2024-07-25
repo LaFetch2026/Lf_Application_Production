@@ -169,8 +169,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                   ? Stack(
                       children: [
                         SingleChildScrollView(
-                          controller:
-                              productController.categoryProductController,
+                          /*    controller:
+                              productController.categoryProductController, */
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
