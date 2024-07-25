@@ -100,7 +100,7 @@ class ProductController extends BaseController {
   RxBool isVideoPlaying = true.obs;
   RxString sortBy = "".obs;
   List brand_ids = [].obs;
-  List color_ids = [].obs;
+  List color_ids = [2, 6].obs;
   List size_ids = [].obs;
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
@@ -818,6 +818,14 @@ class ProductController extends BaseController {
       } else {
         if (categoryId == 0) {
           if (sort_By.isEmpty) {
+            /*   .replace(queryParameters: {
+                  'type': 'relevant',
+                  'color_ids':[2,6],
+                }) */
+            /*  final Map<String, dynamic> queryParams = {
+              'type': 'relevant',
+              'color_ids': [2, 6],
+            }; */
             response = await http.get(
                 Uri.parse("${ApiConstants.baseUrl}/products?type=relevant"),
                 headers: <String, String>{
@@ -898,8 +906,6 @@ class ProductController extends BaseController {
       print(categoryProductPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        print("abc $category_id");
-        print("abc $sort_By");
         dynamic response;
         if (brandId != 0) {
           response = await http.get(
