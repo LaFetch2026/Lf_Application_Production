@@ -2056,7 +2056,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     0,
                                                     0,
                                                     [],
-                                                    widget.productId);
+                                                    widget.productId,
+                                                    0);
                                           } else {
                                             scaffoldKey.currentState
                                                 ?.showBottomSheet((context) =>
@@ -2075,7 +2076,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   0,
                                                                   [],
                                                                   widget
-                                                                      .productId);
+                                                                      .productId,
+                                                                  0);
                                                         },
                                                         wishlistList:
                                                             wishlistController
@@ -2146,7 +2148,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     0,
                                                     0,
                                                     [],
-                                                    widget.productId);
+                                                    widget.productId,
+                                                    0);
                                           } else {
                                             scaffoldKey.currentState
                                                 ?.showBottomSheet((context) =>
@@ -2165,7 +2168,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   0,
                                                                   [],
                                                                   widget
-                                                                      .productId);
+                                                                      .productId,
+                                                                  0);
                                                         },
                                                         wishlistList:
                                                             wishlistController

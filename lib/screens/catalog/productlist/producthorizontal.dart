@@ -20,7 +20,9 @@ import '../../../utils/constants.dart';
 
 class ProductHorizontalScreen extends StatefulWidget {
   final int categoryId;
-  const ProductHorizontalScreen({super.key, required this.categoryId});
+  final int genderType;
+  const ProductHorizontalScreen(
+      {super.key, required this.categoryId, required this.genderType});
 
   @override
   State<ProductHorizontalScreen> createState() =>
@@ -42,14 +44,15 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getProductByCategoryData(widget.categoryId, 0, "", [], ""));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getProductByCategoryData(
+            widget.categoryId, 0, "", [], "", widget.genderType));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
         productController.fetchCategoryProductMoreData(
-            0, productController.sortBy.value);
+            0, productController.sortBy.value, widget.genderType);
         productController.update();
       });
     });
@@ -124,8 +127,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                               "",
                                                               [],
                                                               productController
-                                                                  .sortBy
-                                                                  .value);
+                                                                  .sortBy.value,
+                                                              widget
+                                                                  .genderType);
                                                     },
                                                   ));
                                           await analytics.logEvent(
@@ -215,7 +219,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                               widget.categoryId,
                                                               0,
                                                               [],
-                                                              0);
+                                                              0,
+                                                              widget
+                                                                  .genderType);
                                                     } else {
                                                       scaffoldKey.currentState
                                                           ?.showBottomSheet((context) =>
@@ -234,7 +240,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                             .categoryId,
                                                                         0,
                                                                         [],
-                                                                        0);
+                                                                        0,
+                                                                        widget
+                                                                            .genderType);
                                                                   },
                                                                   wishlistList:
                                                                       wishlistController
@@ -499,7 +507,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                     0,
                                                     "",
                                                     [],
-                                                    p0);
+                                                    p0,
+                                                    widget.genderType);
                                           },
                                         ));
                               },

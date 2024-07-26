@@ -13,8 +13,12 @@ import '../../../utils/constants.dart';
 class ViewProductScreen extends StatefulWidget {
   final int categoryId;
   final String categoryName;
+  final int genderType;
   const ViewProductScreen(
-      {super.key, required this.categoryId, required this.categoryName});
+      {super.key,
+      required this.categoryId,
+      required this.categoryName,
+      required this.genderType});
 
   @override
   State<ViewProductScreen> createState() => ViewProductScreenState();
@@ -131,9 +135,11 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                   child: TabBarView(children: [
                     ProductVerticalScreen(
                       categoryId: widget.categoryId,
+                      genderType: widget.genderType,
                     ),
                     ProductHorizontalScreen(
                       categoryId: widget.categoryId,
+                      genderType: widget.genderType,
                     ),
                   ]),
                 ),

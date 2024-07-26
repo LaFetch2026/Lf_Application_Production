@@ -330,7 +330,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 alignment: Alignment.bottomLeft,
                                                 child: Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 18,
                                                       vertical: 10),
                                                   child: AppText(
@@ -404,6 +404,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         0,
                                         0,
                                         [],
+                                        0,
                                         0);
                                   } else {
                                     scaffoldKey.currentState?.showBottomSheet(
@@ -420,6 +421,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                       0,
                                                       0,
                                                       [],
+                                                      0,
                                                       0);
                                             },
                                             wishlistList: wishlistController
@@ -484,6 +486,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       0,
                                       0,
                                       [],
+                                      0,
                                       0);
                                 } else {
                                   scaffoldKey.currentState?.showBottomSheet(
@@ -500,6 +503,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     0,
                                                     0,
                                                     [],
+                                                    0,
                                                     0);
                                           },
                                           wishlistList:

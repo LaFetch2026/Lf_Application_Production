@@ -44,10 +44,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
           productController.getProductByCategoryData(
-              widget.categoryId, widget.brandId, "", [], ""));
+              widget.categoryId, widget.brandId, "", [], "", 0));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
-          productController.fetchCategoryProductMoreData(widget.brandId, "");
+          productController.fetchCategoryProductMoreData(widget.brandId, "", 0);
           productController.update();
         });
       });
@@ -220,6 +220,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               widget.categoryId,
                                                               widget.brandId,
                                                               [],
+                                                              0,
                                                               0);
                                                         } else {
                                                           scaffoldKey
@@ -237,6 +238,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             widget.categoryId,
                                                                             0,
                                                                             [],
+                                                                            0,
                                                                             0);
                                                                       },
                                                                       wishlistList:
@@ -259,6 +261,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               widget.categoryId,
                                                               widget.brandId,
                                                               widget.tagIds,
+                                                              0,
                                                               0);
                                                         } else {
                                                           scaffoldKey
@@ -276,6 +279,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             widget.categoryId,
                                                                             0,
                                                                             widget.tagIds,
+                                                                            0,
                                                                             0);
                                                                       },
                                                                       wishlistList:

@@ -20,7 +20,9 @@ import '../../../utils/constants.dart';
 
 class ProductVerticalScreen extends StatefulWidget {
   final int categoryId;
-  const ProductVerticalScreen({super.key, required this.categoryId});
+  final int genderType;
+  const ProductVerticalScreen(
+      {super.key, required this.categoryId, required this.genderType});
 
   @override
   State<ProductVerticalScreen> createState() => ProductVerticalScreenState();
@@ -45,14 +47,15 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getProductByCategoryData(widget.categoryId, 0, "", [], ""));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getProductByCategoryData(
+            widget.categoryId, 0, "", [], "", widget.genderType));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
         productController.fetchCategoryProductMoreData(
-            0, productController.sortBy.value);
+            0, productController.sortBy.value, widget.genderType);
         productController.update();
       });
     });
@@ -223,7 +226,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       productController
                                                           .getProductByCategoryData(
                                                               widget.categoryId,
-                                                              0);
+                                                              0,
+                                                              widget
+                                                                  .genderType);
                                                     },
                                                   ));
                                           await analytics.logEvent(
@@ -303,7 +308,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                               widget.categoryId,
                                                               0,
                                                               [],
-                                                              0);
+                                                              0,
+                                                              widget
+                                                                  .genderType);
                                                     } else {
                                                       scaffoldKey.currentState
                                                           ?.showBottomSheet((context) =>
@@ -322,7 +329,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                             .categoryId,
                                                                         0,
                                                                         [],
-                                                                        0);
+                                                                        0,
+                                                                        widget
+                                                                            .genderType);
                                                                   },
                                                                   wishlistList:
                                                                       wishlistController
@@ -683,7 +692,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     0,
                                                     "",
                                                     [],
-                                                    p0);
+                                                    p0,
+                                                    widget.genderType);
                                           },
                                         ));
                               },

@@ -802,7 +802,7 @@ class ProductController extends BaseController {
   }
 
   getProductByCategoryData(int categoryId, int brandId, String value,
-      List categoryList, String sort_By) async {
+      List categoryList, String sort_By, int gendertype) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -827,7 +827,8 @@ class ProductController extends BaseController {
               'color_ids': [2, 6],
             }; */
             response = await http.get(
-                Uri.parse("${ApiConstants.baseUrl}/products?type=relevant"),
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -835,7 +836,7 @@ class ProductController extends BaseController {
           } else {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By"),
+                    "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -845,7 +846,7 @@ class ProductController extends BaseController {
           if (sort_By.isEmpty) {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=$categoryId"),
+                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -853,7 +854,7 @@ class ProductController extends BaseController {
           } else {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By"),
+                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -876,6 +877,7 @@ class ProductController extends BaseController {
             Get.to(ProductListScreen(
               tabTextList: nameList,
               idList: idList,
+              genderType: gendertype,
             ));
           }
         }
@@ -897,7 +899,8 @@ class ProductController extends BaseController {
     isCategoryProduct.value = false;
   }
 
-  fetchCategoryProductMoreData(int brandId, String sort_By) async {
+  fetchCategoryProductMoreData(
+      int brandId, String sort_By, int gendertype) async {
     if (categoryProductHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         categoryProductLoadMore.value == false) {
@@ -920,7 +923,7 @@ class ProductController extends BaseController {
             if (sort_By.isEmpty) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}"),
+                      "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&gender_type=$gendertype"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -928,7 +931,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&sort_by=$sort_By"),
+                      "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -938,7 +941,7 @@ class ProductController extends BaseController {
             if (sort_By.isEmpty) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}"),
+                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&gender_type=$gendertype"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -946,7 +949,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By"),
+                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1316,7 +1319,7 @@ class ProductController extends BaseController {
   }
 
   callAddProductToWishlist(int wishlistId, String type, int id, int categoryId,
-      int brandId, List list, int existId) async {
+      int brandId, List list, int existId, int genderType) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -1338,7 +1341,8 @@ class ProductController extends BaseController {
         if (type == "product") {
           getProductData("relevant");
         } else if (type == "category") {
-          getProductByCategoryData(categoryId, brandId, "", [], sortBy.value);
+          getProductByCategoryData(
+              categoryId, brandId, "", [], sortBy.value, genderType);
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0);
         } else if (type == "brand") {

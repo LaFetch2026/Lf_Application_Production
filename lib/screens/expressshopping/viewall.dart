@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomfiltters.dart';
@@ -162,11 +163,17 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         100)),
                                                                 fit: BoxFit
                                                                     .cover,
-                                                                imageUrl: productController
-                                                                            .productExpressBrandList[index]
+                                                                imageUrl: isImage(productController.productExpressBrandList[index]
+                                                                            ["images"][0]
                                                                         [
-                                                                        "images"]
-                                                                    [0]["name"],
+                                                                        "name"])
+                                                                    ? productController.productExpressBrandList[index]
+                                                                            ["images"][0]
+                                                                        ["name"]
+                                                                    : productController.productExpressBrandList[index]
+                                                                            ["images"][1]
+                                                                        [
+                                                                        "name"],
                                                                 /*  progressIndicatorBuilder:
                                                                     (context,
                                                                             url,
@@ -212,6 +219,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                               0,
                                                               widget.brandId,
                                                               [],
+                                                              0,
                                                               0);
                                                         } else {
                                                           scaffoldKey
@@ -229,6 +237,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                             0,
                                                                             widget.brandId,
                                                                             [],
+                                                                            0,
                                                                             0);
                                                                       },
                                                                       wishlistList:

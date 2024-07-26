@@ -13,8 +13,12 @@ import '../cartscreen.dart';
 class ProductListScreen extends StatefulWidget {
   final List<String> tabTextList;
   final List<int> idList;
+  final int genderType;
   const ProductListScreen(
-      {super.key, required this.tabTextList, required this.idList});
+      {super.key,
+      required this.tabTextList,
+      required this.idList,
+      required this.genderType});
 
   @override
   State<ProductListScreen> createState() => ProductListScreenState();
@@ -114,6 +118,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                   widget.tabTextList.length + 1,
                   (index) => ViewProductScreen(
                       categoryId: index == 0 ? 0 : widget.idList[index - 1],
+                      genderType: widget.genderType,
                       categoryName:
                           index == 0 ? "" : widget.tabTextList[index - 1]),
                 ),
