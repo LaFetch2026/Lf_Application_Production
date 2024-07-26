@@ -556,7 +556,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
+                          /*      Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: Container(
                               decoration: BoxDecoration(
@@ -607,8 +607,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               ),
                             ),
                           ),
+                        */
                           Padding(
-                            padding: const EdgeInsets.only(top: 30),
+                            padding: const EdgeInsets.only(top: 10),
                             child: AppText(
                               text: "Price Details",
                               fontFamily: "Franklin Gothic Regular",

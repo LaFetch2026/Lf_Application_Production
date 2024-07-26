@@ -687,7 +687,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    IconButton(
+                                                    /*  IconButton(
                                                       icon: CircleAvatar(
                                                           backgroundColor:
                                                               whiteColor,
@@ -706,7 +706,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           },
                                                         );
                                                       },
-                                                    ),
+                                                    ), */
                                                   ],
                                                 )
                                               ],

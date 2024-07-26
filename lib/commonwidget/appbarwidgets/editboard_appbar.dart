@@ -67,7 +67,7 @@ class EditBoardAppbar extends StatelessWidget {
                   ),
                 ),
               ),
-              GestureDetector(
+              /*  GestureDetector(
                 onTap: () {
                   onPressedShare?.call();
                 },
@@ -76,7 +76,7 @@ class EditBoardAppbar extends StatelessWidget {
                   color: appbarText,
                   size: 20,
                 ),
-              ),
+              ), */
             ],
           ),
         ),

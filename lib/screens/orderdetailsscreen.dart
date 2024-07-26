@@ -261,7 +261,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         flex: 1,
                                         child: orderController.orderDetails[
                                                         "order_lines"][0]
-                                                    ["product"]["images"] !=
+                                                    ["product"] !=
                                                 null
                                             ? SizedBox(
                                                 height: 85,
@@ -1119,7 +1119,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                   children: [
                                                                     Expanded(
                                                                       flex: 1,
-                                                                      child: orderController.orderDetails["order_lines"][index]["product"]["images"] !=
+                                                                      child: orderController.orderDetails["order_lines"][index]["product"] !=
                                                                               null
                                                                           ? SizedBox(
                                                                               height: 85,
