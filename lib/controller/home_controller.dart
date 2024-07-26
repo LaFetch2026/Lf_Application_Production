@@ -21,6 +21,7 @@ class HomeController extends BaseController {
   RxString fcmToken = "".obs;
   String devicename = "";
   String platform = "";
+  RxInt gender_Type = 0.obs;
   List tagsList = [].obs;
   List banner2List = [].obs;
   List cityList = [].obs;
@@ -37,7 +38,7 @@ class HomeController extends BaseController {
   RxInt current = 0.obs;
   ScrollController tagsController = ScrollController();
 
-  @override
+  /* @override
   void onInit() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       tagsController.addListener(() {
@@ -50,9 +51,10 @@ class HomeController extends BaseController {
     istags.value = false;
     page.value = 1;
     update();
-    WidgetsBinding.instance.addPostFrameCallback((_) => getTagsData());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => getTagsData(gender_Type.value));
     super.onInit();
-  }
+  } */
 
   void getDeviceName() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -67,11 +69,12 @@ class HomeController extends BaseController {
     }
   }
 
-  getTagsData() async {
+  getTagsData(int genderType) async {
     istags.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/tags"),
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/tags?gender_type=$genderType"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

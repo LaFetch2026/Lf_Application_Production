@@ -36,6 +36,8 @@ class HomeScreenState extends State<HomeScreen> {
     getPrefrenceValue();
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getCitiesData());
+    /* WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getTagsData(3)); */
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getDeviceName();
     });
@@ -279,10 +281,13 @@ class HomeScreenState extends State<HomeScreen> {
                           String type;
                           if (value == 0) {
                             type = "Women";
+                            //  homeController.getTagsData(3);
                           } else if (value == 1) {
                             type = "Men";
+                            //  homeController.getTagsData(2);
                           } else {
                             type = "Kids";
+                            //  homeController.getTagsData(1);
                           }
                           await analytics.logEvent(
                             name: '$type home_page',

@@ -8,21 +8,43 @@ import '../../commonwidget/app_text.dart';
 import '../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../utils/constants.dart';
 
-class WomenScreen extends StatelessWidget {
+class WomenScreen extends StatefulWidget {
   final int genderType;
   const WomenScreen({super.key, required this.genderType});
 
   @override
+  State<WomenScreen> createState() => _WomenScreenState();
+}
+
+class _WomenScreenState extends State<WomenScreen> {
+  final homeController = Get.put(HomeController());
+  PageController pageController = PageController();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  callOnchanged(int index) {
+    homeController.current.value = index;
+    homeController.update();
+  }
+
+  @override
+  void initState() {
+    homeController.hasnextpage.value = true;
+    homeController.loadMore.value = false;
+    homeController.istags.value = false;
+    homeController.page.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => homeController.getTagsData(widget.genderType));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      homeController.tagsController.addListener(() {
+        homeController.fetchMoreTagsData();
+        homeController.update();
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final homeController = Get.put(HomeController());
-    PageController pageController = PageController();
-    final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
-    callOnchanged(int index) {
-      homeController.current.value = index;
-      homeController.update();
-    }
-
     return Container(
       width: MediaQuery.of(context).size.width,
       color: whiteColor,
@@ -181,7 +203,7 @@ class WomenScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return DiscountScreen(
                           tagId: homeController.tagId.value,
-                          genderType: genderType,
+                          genderType: widget.genderType,
                         );
                       },
                     ),
