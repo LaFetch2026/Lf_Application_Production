@@ -1283,7 +1283,7 @@ class CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 ),
-                                Container(
+                               /*  Container(
                                   color: backWhite,
                                   height: 34,
                                   child: Padding(
@@ -1300,8 +1300,8 @@ class CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                   ),
-                                ),
-                                Container(
+                                ), */
+                           /*      Container(
                                   color: whiteColor,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -1471,7 +1471,7 @@ class CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 )
-                              ],
+                            */   ],
                             ),
                 ),
               ),

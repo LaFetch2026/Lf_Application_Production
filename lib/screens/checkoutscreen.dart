@@ -874,7 +874,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  Container(
+                  /*   Container(
                     color: backWhite,
                     height: 34,
                     child: Padding(
@@ -891,7 +891,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ),
                     ),
-                  ),
+                  ), */
                 ],
               ),
             ),

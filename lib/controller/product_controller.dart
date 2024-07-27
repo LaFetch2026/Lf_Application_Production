@@ -301,7 +301,7 @@ class ProductController extends BaseController {
     }
   }
 
-  getTagsProductData(int tagId, int genderType) async {
+  getTagsProductData(int tagId, int genderType, int brandId) async {
     istagsProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -317,7 +317,8 @@ class ProductController extends BaseController {
         );
       } else {
         response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?tag_ids[]=$tagId"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&brand_id=$brandId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -348,7 +349,7 @@ class ProductController extends BaseController {
     istagsProduct.value = false;
   }
 
-  fetchMoreTagsProductData(int tagId, int genderType) async {
+  fetchMoreTagsProductData(int tagId, int genderType, int brandId) async {
     if (tagsHasnextpage.value == true &&
         istagsProduct.value == false &&
         tagsLoadMore.value == false) {
@@ -369,7 +370,7 @@ class ProductController extends BaseController {
         } else {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}"),
+                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&brand_id=$brandId"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -588,12 +589,13 @@ class ProductController extends BaseController {
     }
   }
 
-  getBestSellerProductData() async {
+  getBestSellerProductData(int brandId) async {
     isBestSeller.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products-best-seller"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products-best-seller?brand_id=$brandId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -632,7 +634,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/best-seller-products?page=${bestSellerPage.value}"),
+                "${ApiConstants.baseUrl}/best-seller-products?page=${bestSellerPage.value}&brand_id=$brandId"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1332,6 +1334,7 @@ class ProductController extends BaseController {
       );
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        print("abc$type");
         if (responseData["wishlisted"]) {
           Get.close(1);
           getSnackBar("product added to the wishlist");
@@ -1344,7 +1347,7 @@ class ProductController extends BaseController {
           getProductByCategoryData(
               categoryId, brandId, "", [], sortBy.value, genderType);
         } else if (type == "tags") {
-          getTagsProductData(prefs.getInt('tagId')!, 0);
+          getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else if (type == "brand") {
           getBrandExpressProductData(brandId);
         } else if (type == "bannerTag") {
@@ -1352,7 +1355,7 @@ class ProductController extends BaseController {
         } else if (type == "frequently") {
           getFrequentlyProductData("frequently-bought", existId);
         } else if (type == "seller") {
-          getBestSellerProductData();
+          getBestSellerProductData(brandId);
         } else {
           getProductRecommendations(existId);
         }

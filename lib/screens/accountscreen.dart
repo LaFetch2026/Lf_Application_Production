@@ -232,7 +232,8 @@ class AccountScreenState extends State<AccountScreen> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 5),
                                         child: AppText(
-                                          text: "100 Lafetch points",
+                                          text:
+                                              "${controller.profileDetails["reward_points"].toString()} Lafetch points",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: btnTextColor,

@@ -1534,7 +1534,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           color: colorSecondary,
                         ),
                       ),
-                      Align(
+                      /*  Align(
                         alignment: Alignment.center,
                         heightFactor: 2.0,
                         child: AppText(
@@ -1561,7 +1561,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           color: expressText,
                           fontSize: 12.sp,
                         ),
-                      ),
+                      ), */
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 30.0, horizontal: 12.0),

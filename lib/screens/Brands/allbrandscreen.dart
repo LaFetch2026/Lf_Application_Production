@@ -62,8 +62,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     wishlistController.getWishlistData();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getCategoryData(brandController.brandId.value));
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getBestSellerProductData());
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getBestSellerProductData(brandController.brandId.value));
     wishlistController.getWishlistData();
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.bestSellerController.addListener(() {
@@ -81,11 +81,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   getprefrenceData() async {
     final prefs = await SharedPreferences.getInstance();
     tagId = prefs.getInt('tagId')!;
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getTagsProductData(tagId, 0));
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getTagsProductData(tagId, 0, brandController.brandId.value));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
-        productController.fetchMoreTagsProductData(tagId, 0);
+        productController.fetchMoreTagsProductData(
+            tagId, 0, brandController.brandId.value);
         productController.update();
       });
     });
@@ -382,7 +383,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                               productController.tagsPage.value =
                                                   1;
                                               productController
-                                                  .getTagsProductData(tagId, 0);
+                                                  .getTagsProductData(
+                                                      tagId,
+                                                      0,
+                                                      brandController
+                                                          .brandId.value);
                                             },
                                           ));
                                   await analytics.logEvent(
@@ -402,7 +407,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         "tags",
                                         p0,
                                         0,
-                                        0,
+                                        brandController.brandId.value,
                                         [],
                                         0,
                                         0);
@@ -419,7 +424,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                               .tagProductList[
                                                           p1]["id"],
                                                       0,
-                                                      0,
+                                                      brandController
+                                                          .brandId.value,
                                                       [],
                                                       0,
                                                       0);
@@ -465,7 +471,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                             productController
                                                 .bestSellerPage.value = 1;
                                             productController
-                                                .getBestSellerProductData();
+                                                .getBestSellerProductData(
+                                                    brandController
+                                                        .brandId.value);
                                           },
                                         ));
                                 await analytics.logEvent(
@@ -484,7 +492,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       "seller",
                                       p0,
                                       0,
-                                      0,
+                                      brandController.brandId.value,
                                       [],
                                       0,
                                       0);
@@ -501,7 +509,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                             .bestSellerList[p1]
                                                         ["id"],
                                                     0,
-                                                    0,
+                                                    brandController
+                                                        .brandId.value,
                                                     [],
                                                     0,
                                                     0);
