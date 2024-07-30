@@ -178,160 +178,164 @@ class SearchScreenState extends State<SearchScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(
-                          () => controller.isRecentSearch.value
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 20, left: 16),
-                                      child: AppText(
-                                        text: "Recent Searches",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: bottomnavBack,
-                                        fontSize: 18.sp,
-                                      ),
+                        Obx(() => controller.isRecentSearch.value
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 20, left: 16),
+                                    child: AppText(
+                                      text: "Recent Searches",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: bottomnavBack,
+                                      fontSize: 18.sp,
                                     ),
-                                    Padding(
+                                  ),
+                                  Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 16,
+                                          bottom: 10,
+                                          right: 16,
+                                          top: 20),
+                                      child: SizedBox(
+                                        height: 30,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            itemCount: 5,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (ctx, index) {
+                                              return Container(
+                                                margin: const EdgeInsets.only(
+                                                    right: 5),
+                                                width: 100,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.04),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                              );
+                                            }),
+                                      )),
+                                ],
+                              )
+                            : controller.recentSearchList.isNotEmpty
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
                                         padding: const EdgeInsets.only(
-                                            left: 16,
-                                            bottom: 10,
-                                            right: 16,
-                                            top: 20),
-                                        child: SizedBox(
-                                          height: 30,
-                                          width: double.infinity,
-                                          child: ListView.builder(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              itemCount: 5,
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder: (ctx, index) {
-                                                return Container(
-                                                  margin: const EdgeInsets.only(
-                                                      right: 5),
-                                                  width: 100,
-                                                  height: 30,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withOpacity(0.04),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                );
-                                              }),
-                                        )),
-                                  ],
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 20, left: 16),
-                                      child: AppText(
-                                        text: "Recent Searches",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: bottomnavBack,
-                                        fontSize: 18.sp,
+                                            top: 20, left: 16),
+                                        child: AppText(
+                                          text: "Recent Searches",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: bottomnavBack,
+                                          fontSize: 18.sp,
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16, right: 16, top: 20),
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.vertical,
-                                        controller: ScrollController(),
-                                        child: Wrap(
-                                          direction: Axis.horizontal,
-                                          spacing: 5.0,
-                                          runSpacing: 9.0,
-                                          runAlignment:
-                                              WrapAlignment.spaceEvenly,
-                                          children: [
-                                            for (var product
-                                                in controller.recentSearchList)
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  if (isSearch) {
-                                                  } else {
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                ProductDetailsScreen(
-                                                                    productId:
-                                                                        product["product"]
-                                                                            [
-                                                                            "id"],
-                                                                    type:
-                                                                        "add")))
-                                                        .then(
-                                                            (value) => setState(
-                                                                  () {
-                                                                    controller
-                                                                        .isRecentSearch
-                                                                        .value = false;
-                                                                    productController;
-                                                                    controller
-                                                                        .getRecentSearchData();
-                                                                  },
-                                                                ));
-                                                  }
-                                                  await analytics.logEvent(
-                                                    name:
-                                                        "search_page_recentsearch_details",
-                                                    parameters: <String,
-                                                        Object>{
-                                                      'page_name':
-                                                          'search_page_recentsearch_details',
-                                                    },
-                                                  );
-                                                },
-                                                child: Container(
-                                                  height: 33,
-                                                  margin: const EdgeInsets.only(
-                                                      right: 5),
-                                                  decoration: BoxDecoration(
-                                                      color: whiteColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                      border: Border.all(
-                                                          color: btnTextColor,
-                                                          width: 1)),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 7),
-                                                    child: Text(
-                                                      product["search_string"],
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        color: blackColor,
-                                                        fontSize: 12.sp,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 16, top: 20),
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.vertical,
+                                          controller: ScrollController(),
+                                          child: Wrap(
+                                            direction: Axis.horizontal,
+                                            spacing: 5.0,
+                                            runSpacing: 9.0,
+                                            runAlignment:
+                                                WrapAlignment.spaceEvenly,
+                                            children: [
+                                              for (var product in controller
+                                                  .recentSearchList)
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    if (isSearch) {
+                                                    } else {
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ProductDetailsScreen(
+                                                                      productId:
+                                                                          product["product"]
+                                                                              [
+                                                                              "id"],
+                                                                      type:
+                                                                          "add")))
+                                                          .then((value) =>
+                                                              setState(
+                                                                () {
+                                                                  controller
+                                                                      .isRecentSearch
+                                                                      .value = false;
+                                                                  productController;
+                                                                  controller
+                                                                      .getRecentSearchData();
+                                                                },
+                                                              ));
+                                                    }
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          "search_page_recentsearch_details",
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'search_page_recentsearch_details',
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    height: 33,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            right: 5),
+                                                    decoration: BoxDecoration(
+                                                        color: whiteColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        border: Border.all(
+                                                            color: btnTextColor,
+                                                            width: 1)),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 7),
+                                                      child: Text(
+                                                        product[
+                                                            "search_string"],
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          color: blackColor,
+                                                          fontSize: 12.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                        ),
+                                    ],
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  )),
                         Obx(() => productController.isMostSearch.value
                             ? const DummyGridMostSearch()
                             : productController.mostSeachList.isNotEmpty
@@ -484,11 +488,13 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             .cover),
                                                                   ),
                                                             Padding(
-                                                              padding: const EdgeInsets
+                                                              padding:
+                                                                  const EdgeInsets
                                                                       .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 5),
+                                                                      horizontal:
+                                                                          10,
+                                                                      vertical:
+                                                                          5),
                                                               child: AppText(
                                                                 text: productController
                                                                         .mostSeachList[
@@ -646,7 +652,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10,
                                                                     vertical:
@@ -668,7 +674,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10,
                                                                     vertical:
@@ -1061,7 +1067,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         12),
                                                             child: AppText(
@@ -1084,7 +1090,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       8),
                                                           child: AppText(

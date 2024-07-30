@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -317,6 +318,8 @@ class ProfileController extends BaseController {
         print(responseData);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.clear();
+        GoogleSignIn googleSignIn = GoogleSignIn();
+        googleSignIn.signOut();
         Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
