@@ -11,6 +11,7 @@ import '../common_widgets.dart';
 class BottomQuantity extends StatefulWidget {
   final Function(int)? onPressed;
   final List qtyList;
+  final int stock;
   final String selectedQty;
   final GetxController controller;
 
@@ -19,6 +20,7 @@ class BottomQuantity extends StatefulWidget {
     this.onPressed,
     required this.qtyList,
     required this.selectedQty,
+    required this.stock,
     required this.controller,
   }) : super(key: key);
 
@@ -85,7 +87,7 @@ class _BottomQuantityState extends State<BottomQuantity> {
                 height: 50,
                 child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    itemCount: widget.qtyList.length,
+                    itemCount: widget.stock,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (ctx, index) {
                       return Column(

@@ -157,7 +157,7 @@ class CartScreenState extends State<CartScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10),
                                                             child: Container(
@@ -247,7 +247,7 @@ class CartScreenState extends State<CartScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       2),
                                                           child: AppText(
@@ -294,12 +294,12 @@ class CartScreenState extends State<CartScreen> {
                                                         return Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   vertical: 5),
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     top: 10,
                                                                     left: 16,
                                                                     right: 16),
@@ -496,6 +496,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 qtyList: qtyList,
                                                                                                 selectedQty: value.orderList[index]["quantity"].toString(),
                                                                                                 controller: controller,
+                                                                                                stock: value.orderList[index]["inventory"]["stocks"] > 10 ? qtyList.length : value.orderList[index]["inventory"]["stocks"],
                                                                                                 onPressed: (p0) {
                                                                                                   controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"]);
                                                                                                 },
@@ -625,7 +626,7 @@ class CartScreenState extends State<CartScreen> {
                                                                   ),
                                                                   Padding(
                                                                     padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        .symmetric(
                                                                         vertical:
                                                                             8),
                                                                     child:
@@ -727,7 +728,7 @@ class CartScreenState extends State<CartScreen> {
                                                                           milliseconds:
                                                                               300),
                                                                       margin: const EdgeInsets
-                                                                              .only(
+                                                                          .only(
                                                                           right:
                                                                               8),
                                                                       color:
@@ -906,7 +907,7 @@ class CartScreenState extends State<CartScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
+                                                                  .symmetric(
                                                                   horizontal:
                                                                       8),
                                                           child: AppText(
@@ -1283,7 +1284,7 @@ class CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 ),
-                               /*  Container(
+                                /*  Container(
                                   color: backWhite,
                                   height: 34,
                                   child: Padding(
@@ -1301,7 +1302,7 @@ class CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 ), */
-                           /*      Container(
+                                /*      Container(
                                   color: whiteColor,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -1471,7 +1472,8 @@ class CartScreenState extends State<CartScreen> {
                                     ),
                                   ),
                                 )
-                            */   ],
+                            */
+                              ],
                             ),
                 ),
               ),
