@@ -548,10 +548,9 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             },
                             onPressedSecond: () async {
                               Get.to(BottomFilters(
-                                onClick: () {
-                                  /* productController.getBrandExpressProductData(
+                                onClick: (p0, p1) {
+                                  /*  productController.getBrandExpressProductData(
                                       widget.brandId); */
-                                  print("object");
                                 },
                               ));
                               await analytics.logEvent(

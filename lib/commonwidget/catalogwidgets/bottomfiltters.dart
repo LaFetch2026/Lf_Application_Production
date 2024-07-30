@@ -8,7 +8,7 @@ import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 
 class BottomFilters extends StatefulWidget {
-  final Function onClick;
+  final Function(int, int) onClick;
   const BottomFilters({
     required this.onClick,
     Key? key,
@@ -539,7 +539,7 @@ class BottomFiltersState extends State<BottomFilters> {
           ),
           FilterButton(
             onPresedApply: () {
-              widget.onClick.call();
+              widget.onClick.call(int.parse(lowerValue), int.parse(UpperValue));
             },
           )
         ],

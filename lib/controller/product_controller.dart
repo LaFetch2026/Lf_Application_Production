@@ -57,7 +57,10 @@ class ProductController extends BaseController {
   final pincodeController = TextEditingController();
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
+  RxBool filterEnable = false.obs;
   RxInt page = 1.obs;
+  RxInt lowPrice = 100.obs;
+  RxInt highPrice = 5000.obs;
   ScrollController listController = ScrollController();
   ScrollController recentListController = ScrollController();
   RxBool expressLoadMore = false.obs;
@@ -845,9 +848,10 @@ class ProductController extends BaseController {
   }
 
   getProductByCategoryData(int categoryId, int brandId, String value,
-      List categoryList, String sort_By, int gendertype) async {
+      List categoryList, String sort_By, int gendertype, bool filter) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
+    print("abc $color_ids");
     try {
       dynamic response;
       if (brandId != 0) {
@@ -861,14 +865,15 @@ class ProductController extends BaseController {
       } else {
         if (categoryId == 0) {
           if (sort_By.isEmpty) {
-            /*   .replace(queryParameters: {
-                  'type': 'relevant',
-                  'color_ids':[2,6],
-                }) */
-            /*  final Map<String, dynamic> queryParams = {
-              'type': 'relevant',
-              'color_ids': [2, 6],
-            }; */
+            /*  if (filter) {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : color_ids}&size_ids[]=${size_ids.isEmpty ? "" : size_ids}&brand_ids[]=${brand_ids.isEmpty ? "" : brand_ids}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            } else { */
             response = await http.get(
                 Uri.parse(
                     "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype"),
@@ -876,6 +881,7 @@ class ProductController extends BaseController {
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
                 });
+            //  }
           } else {
             response = await http.get(
                 Uri.parse(
@@ -922,6 +928,9 @@ class ProductController extends BaseController {
               idList: idList,
               genderType: gendertype,
             ));
+          }
+          if (filter) {
+            Get.back();
           }
         }
       } else if (response.statusCode == 500) {
@@ -1385,8 +1394,8 @@ class ProductController extends BaseController {
         if (type == "product") {
           getProductData("relevant");
         } else if (type == "category") {
-          getProductByCategoryData(
-              categoryId, brandId, "", [], sortBy.value, genderType);
+          getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
+              genderType, filterEnable.value);
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else if (type == "brand") {

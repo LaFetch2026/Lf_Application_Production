@@ -49,7 +49,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductByCategoryData(
-            widget.categoryId, 0, "", [], "", widget.genderType));
+            widget.categoryId, 0, "", [], "", widget.genderType, false));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -207,30 +207,41 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       .productCategoryList[
                                                                   index]["id"],
                                                           type: "add")))
-                                              .then((productController) =>
-                                                  setState(
-                                                    () {
-                                                      productController
-                                                          .categoryProductHasnextpage
-                                                          .productController = true;
-                                                      productController
-                                                          .categoryProductLoadMore
-                                                          .productController = false;
-                                                      productController
+                                              .then(
+                                                  (productController) =>
+                                                      setState(
+                                                        () {
+                                                          productController
+                                                              .categoryProductHasnextpage
+                                                              .productController = true;
+                                                          productController
+                                                              .categoryProductLoadMore
+                                                              .productController = false;
+                                                          productController
                                                               .isCategoryProduct
-                                                              .productController =
-                                                          false;
-                                                      productController
-                                                          .categoryProductPage
-                                                          .productController = 1;
-                                                      productController
+                                                              .productController = false;
+                                                          productController
+                                                              .categoryProductPage
+                                                              .productController = 1;
+                                                          /*  productController
                                                           .getProductByCategoryData(
                                                               widget.categoryId,
                                                               0,
                                                               widget
-                                                                  .genderType);
-                                                    },
-                                                  ));
+                                                                  .genderType); */
+                                                          productController.getProductByCategoryData(
+                                                              widget.categoryId,
+                                                              0,
+                                                              "",
+                                                              [],
+                                                              productController
+                                                                  .soryBy.value,
+                                                              widget.genderType,
+                                                              productController
+                                                                  .filterEnable
+                                                                  .value);
+                                                        },
+                                                      ));
                                           await analytics.logEvent(
                                             name:
                                                 'catalog_product_linear_details',
@@ -693,13 +704,27 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     "",
                                                     [],
                                                     p0,
-                                                    widget.genderType);
+                                                    widget.genderType,
+                                                    productController
+                                                        .filterEnable.value);
                                           },
                                         ));
                               },
                               onPressedSecond: () {
                                 Get.to(BottomFilters(
-                                  onClick: () {},
+                                  onClick: (p0, p1) {
+                                    productController.filterEnable.value = true;
+                                    productController.lowPrice.value = p0;
+                                    productController.highPrice.value = p1;
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        0,
+                                        "",
+                                        [],
+                                        productController.sortBy.value,
+                                        widget.genderType,
+                                        productController.filterEnable.value);
+                                  },
                                 ));
                               },
                             ),

@@ -46,7 +46,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductByCategoryData(
-            widget.categoryId, 0, "", [], "", widget.genderType));
+            widget.categoryId, 0, "", [], "", widget.genderType, false));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -128,8 +128,10 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                               [],
                                                               productController
                                                                   .sortBy.value,
-                                                              widget
-                                                                  .genderType);
+                                                              widget.genderType,
+                                                              productController
+                                                                  .filterEnable
+                                                                  .value);
                                                     },
                                                   ));
                                           await analytics.logEvent(
@@ -260,7 +262,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: Align(
@@ -295,7 +297,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 16,
                                                       vertical: 10),
                                                   child: Align(
@@ -340,7 +342,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10),
                                                             child: Container(
@@ -450,7 +452,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 5),
                                                     child: AppText(
                                                       text: "Express",
@@ -508,13 +510,27 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                     "",
                                                     [],
                                                     p0,
-                                                    widget.genderType);
+                                                    widget.genderType,
+                                                    productController
+                                                        .filterEnable.value);
                                           },
                                         ));
                               },
                               onPressedSecond: () {
                                 Get.to(BottomFilters(
-                                  onClick: () {},
+                                  onClick: (p0, p1) {
+                                    productController.filterEnable.value = true;
+                                    productController.lowPrice.value = p0;
+                                    productController.highPrice.value = p1;
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        0,
+                                        "",
+                                        [],
+                                        productController.sortBy.value,
+                                        widget.genderType,
+                                        productController.filterEnable.value);
+                                  },
                                 ));
                               },
                             ),
