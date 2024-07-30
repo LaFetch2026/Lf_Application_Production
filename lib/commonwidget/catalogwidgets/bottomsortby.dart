@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../utils/constants.dart';
 
 class BottomSortBy extends StatefulWidget {
@@ -17,6 +18,14 @@ class BottomSortBy extends StatefulWidget {
 
 class _BottomSortByState extends State<BottomSortBy> {
   String? text1;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  closeSheet() {
+    Timer(Duration(seconds: 1), () {
+      Navigator.pop(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -51,15 +60,18 @@ class _BottomSortByState extends State<BottomSortBy> {
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
-                      text1 = value.toString();
-                      widget.onPressedButton.call(text1!);
-                      setState(() {});
+                      setState(() {
+                        text1 = value.toString();
+                        widget.onPressedButton.call(text1!);
+                      });
+                      closeSheet();
                     }),
                 GestureDetector(
                   onTap: () {
                     text1 = "";
                     widget.onPressedButton.call(text1!);
                     setState(() {});
+                    closeSheet();
                   },
                   child: Text(
                     "Recommended",
@@ -83,12 +95,14 @@ class _BottomSortByState extends State<BottomSortBy> {
                       text1 = value.toString();
                       setState(() {});
                       widget.onPressedButton.call(text1!);
+                      closeSheet();
                     }),
                 GestureDetector(
                   onTap: () {
                     text1 = "low-to-high";
                     setState(() {});
                     widget.onPressedButton.call(text1!);
+                    closeSheet();
                   },
                   child: Text(
                     "Price - low to high",
@@ -112,12 +126,14 @@ class _BottomSortByState extends State<BottomSortBy> {
                       text1 = value.toString();
                       setState(() {});
                       widget.onPressedButton.call(text1!);
+                      closeSheet();
                     }),
                 GestureDetector(
                   onTap: () {
                     text1 = "whats-new";
                     setState(() {});
                     widget.onPressedButton.call(text1!);
+                    closeSheet();
                   },
                   child: Text(
                     "What’s new",
@@ -141,12 +157,14 @@ class _BottomSortByState extends State<BottomSortBy> {
                       text1 = value.toString();
                       setState(() {});
                       widget.onPressedButton.call(text1!);
+                      closeSheet();
                     }),
                 GestureDetector(
                   onTap: () {
                     text1 = "high-to-low";
                     setState(() {});
                     widget.onPressedButton.call(text1!);
+                    closeSheet();
                   },
                   child: Text(
                     "Price - high to low",
@@ -170,12 +188,14 @@ class _BottomSortByState extends State<BottomSortBy> {
                       text1 = value.toString();
                       setState(() {});
                       widget.onPressedButton.call(text1!);
+                      closeSheet();
                     }),
                 GestureDetector(
                   onTap: () {
                     text1 = "customer-rating";
                     setState(() {});
                     widget.onPressedButton.call(text1!);
+                    closeSheet();
                   },
                   child: Text(
                     "Customer rating",

@@ -36,7 +36,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.brandExpressProductController.addListener(() {
-        productController.fetchBrandExpressMoreData(widget.brandId);
+        productController.fetchBrandExpressMoreData(widget.brandId, "");
         productController.update();
       });
     });
@@ -46,8 +46,9 @@ class ViewAllScreenState extends State<ViewAllScreen> {
           productController.isBrandExpressProduct.value = false;
           productController.brandExpressPage.value = 1;
         });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getBrandExpressProductData(widget.brandId));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getBrandExpressProductData(
+            widget.brandId, productController.expressSortBy.value));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
@@ -118,7 +119,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           productController
                                                               .getBrandExpressProductData(
                                                                   widget
-                                                                      .brandId);
+                                                                      .brandId,
+                                                                  productController
+                                                                      .expressSortBy
+                                                                      .value);
                                                         },
                                                       ));
                                               await analytics.logEvent(
@@ -258,7 +262,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 horizontal: 22,
                                                                 vertical: 10),
                                                         child: Align(
@@ -304,7 +308,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 22,
                                                           vertical: 10),
                                                       child: Align(
@@ -313,7 +317,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                         child: Container(
                                                           margin:
                                                               const EdgeInsets
-                                                                      .only(
+                                                                  .only(
                                                                   top: 140),
                                                           color: const Color(
                                                               0xB3F7F7F5),
@@ -351,7 +355,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                               ),
                                                               Padding(
                                                                 padding: const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         10),
                                                                 child:
@@ -382,7 +386,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -400,7 +404,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                          .symmetric(
+                                                      .symmetric(
                                                       horizontal: 10),
                                                   child: AppText(
                                                     text:
@@ -473,7 +477,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .symmetric(
+                                                                .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",
@@ -525,7 +529,15 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             onPressedFirst: () async {
                               scaffoldKey.currentState
                                   ?.showBottomSheet((context) => BottomSortBy(
-                                        onPressedButton: (p0) {},
+                                        onPressedButton: (p0) {
+                                          productController
+                                              .expressSortBy.value = p0;
+                                          productController
+                                              .getBrandExpressProductData(
+                                                  widget.brandId,
+                                                  productController
+                                                      .expressSortBy.value);
+                                        },
                                       ));
                               await analytics.logEvent(
                                 name: 'express_page_sortby',

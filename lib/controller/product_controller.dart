@@ -99,6 +99,7 @@ class ProductController extends BaseController {
   RxInt bestSellerPage = 1.obs;
   RxBool isVideoPlaying = true.obs;
   RxString sortBy = "".obs;
+  RxString expressSortBy = "".obs;
   List brand_ids = [].obs;
   List color_ids = [2, 6].obs;
   List size_ids = [].obs;
@@ -702,26 +703,46 @@ class ProductController extends BaseController {
     isFilter.value = false;
   }
 
-  getBrandExpressProductData(int brandId) async {
+  getBrandExpressProductData(int brandId, String expressSort) async {
     isBrandExpressProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic response;
       if (brandId != 0) {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        if (expressSort.isNotEmpty) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&sort_by=$expressSort"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
       } else {
-        response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        if (expressSort.isNotEmpty) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=express&sort_by=$expressSort"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -746,7 +767,7 @@ class ProductController extends BaseController {
     isBrandExpressProduct.value = false;
   }
 
-  fetchBrandExpressMoreData(int brandId) async {
+  fetchBrandExpressMoreData(int brandId, String expressSort) async {
     if (brandExpressHasnextpage.value == true &&
         isBrandExpressProduct.value == false &&
         brandExpressLoadMore.value == false) {
@@ -757,21 +778,41 @@ class ProductController extends BaseController {
       try {
         dynamic response;
         if (brandId != 0) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
+          if (expressSort.isNotEmpty) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}&sort_by=$expressSort"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
         } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
+          if (expressSort.isNotEmpty) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}&sort_by=$expressSort"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
         }
 
         var responseData = json.decode(response.body);
@@ -1349,7 +1390,7 @@ class ProductController extends BaseController {
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else if (type == "brand") {
-          getBrandExpressProductData(brandId);
+          getBrandExpressProductData(brandId, expressSortBy.value);
         } else if (type == "bannerTag") {
           getTagsBannerData(list);
         } else if (type == "frequently") {
