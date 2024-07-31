@@ -39,7 +39,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   @override
   void initState() {
     productController.curr.value = 0;
-    productController.sortBy.value = "";
+    //  productController.sortBy.value = "";
     productController.productCategoryList.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductHasnextpage.value = true;

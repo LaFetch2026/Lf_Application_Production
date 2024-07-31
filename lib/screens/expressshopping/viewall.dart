@@ -36,7 +36,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.brandExpressProductController.addListener(() {
-        productController.fetchBrandExpressMoreData(widget.brandId, "");
+        productController.fetchBrandExpressMoreData(
+            widget.brandId, "", productController.filterExpressEnable.value);
         productController.update();
       });
     });
@@ -48,7 +49,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
         });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getBrandExpressProductData(
-            widget.brandId, productController.expressSortBy.value));
+            widget.brandId, productController.expressSortBy.value, false));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
@@ -116,13 +117,14 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           productController
                                                               .brandExpressPage
                                                               .value = 1;
-                                                          productController
-                                                              .getBrandExpressProductData(
-                                                                  widget
-                                                                      .brandId,
-                                                                  productController
-                                                                      .expressSortBy
-                                                                      .value);
+                                                          productController.getBrandExpressProductData(
+                                                              widget.brandId,
+                                                              productController
+                                                                  .expressSortBy
+                                                                  .value,
+                                                              productController
+                                                                  .filterExpressEnable
+                                                                  .value);
                                                         },
                                                       ));
                                               await analytics.logEvent(
@@ -262,7 +264,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .symmetric(
+                                                                    .symmetric(
                                                                 horizontal: 22,
                                                                 vertical: 10),
                                                         child: Align(
@@ -308,7 +310,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 22,
                                                           vertical: 10),
                                                       child: Align(
@@ -317,7 +319,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                         child: Container(
                                                           margin:
                                                               const EdgeInsets
-                                                                  .only(
+                                                                      .only(
                                                                   top: 140),
                                                           color: const Color(
                                                               0xB3F7F7F5),
@@ -355,7 +357,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                               ),
                                                               Padding(
                                                                 padding: const EdgeInsets
-                                                                    .symmetric(
+                                                                        .symmetric(
                                                                     horizontal:
                                                                         10),
                                                                 child:
@@ -386,7 +388,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
@@ -404,7 +406,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 10),
                                                   child: AppText(
                                                     text:
@@ -477,7 +479,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       Padding(
                                                         padding:
                                                             const EdgeInsets
-                                                                .symmetric(
+                                                                    .symmetric(
                                                                 horizontal: 5),
                                                         child: AppText(
                                                           text: "Express",
@@ -536,7 +538,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                               .getBrandExpressProductData(
                                                   widget.brandId,
                                                   productController
-                                                      .expressSortBy.value);
+                                                      .expressSortBy.value,
+                                                  productController
+                                                      .filterExpressEnable
+                                                      .value);
                                         },
                                       ));
                               await analytics.logEvent(
@@ -549,8 +554,15 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             onPressedSecond: () async {
                               Get.to(BottomFilters(
                                 onClick: (p0, p1) {
-                                  /*  productController.getBrandExpressProductData(
-                                      widget.brandId); */
+                                  productController.filterExpressEnable.value =
+                                      true;
+                                  productController.lowPrice.value = p0;
+                                  productController.highPrice.value = p1;
+                                  productController.getBrandExpressProductData(
+                                      widget.brandId,
+                                      productController.expressSortBy.value,
+                                      productController
+                                          .filterExpressEnable.value);
                                 },
                               ));
                               await analytics.logEvent(
