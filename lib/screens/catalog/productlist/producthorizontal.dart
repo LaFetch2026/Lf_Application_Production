@@ -81,7 +81,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 16, right: 16, top: 20, bottom: 60),
+                                    left: 16, right: 16, top: 20, bottom: 80),
                                 child: GridView.count(
                                   shrinkWrap: true,
                                   crossAxisCount: 2,
