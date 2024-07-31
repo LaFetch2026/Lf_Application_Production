@@ -14,8 +14,6 @@ import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/singleiconbtn.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
-import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
-import 'package:lafetch/screens/orders/reviewproducts.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/common_widgets.dart';
@@ -1208,7 +1206,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                               ],
                                                             ),
                                                           ),
-                                                          value.orderList[index]
+                                                          /*   value.orderList[index]
                                                                       [
                                                                       "status"] ==
                                                                   6
@@ -1273,7 +1271,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                 )
                                                               : const SizedBox(
                                                                   height: 0,
-                                                                ),
+                                                                ), */
                                                           Column(
                                                             children: [
                                                               if (value.orderList[
@@ -1300,6 +1298,21 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       firstIcon: exchangeItemImage,
                                                                       onPressedFirst: () async {
                                                                         Get.to(
+                                                                            OrderDetailsScreen(
+                                                                          orderId:
+                                                                              value.orderList[index]["id"],
+                                                                        ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_details',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_details',
+                                                                          },
+                                                                        );
+                                                                        /*  Get.to(
                                                                             ExchangeProductScreen(
                                                                           productName: value.orderList[index]["order_lines"][0]["product"] != null
                                                                               ? value.orderList[index]["order_lines"][0]["product"]["name"]
@@ -1312,8 +1325,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           productDescription: value.orderList[index]["order_lines"][0]["product"] != null
                                                                               ? value.orderList[index]["order_lines"][0]["product"]["short_description"]
                                                                               : "",
-                                                                        ));
-                                                                        await analytics
+                                                                        )); */
+                                                                        /*  await analytics
                                                                             .logEvent(
                                                                           name:
                                                                               'order_exchangeClick',
@@ -1322,10 +1335,25 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             'page_name':
                                                                                 'order_exchangeClick',
                                                                           },
-                                                                        );
+                                                                        ); */
                                                                       },
                                                                       onPressedSecond: () async {
+                                                                        Get.to(
+                                                                            OrderDetailsScreen(
+                                                                          orderId:
+                                                                              value.orderList[index]["id"],
+                                                                        ));
                                                                         await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_details',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_details',
+                                                                          },
+                                                                        );
+                                                                        /*  await analytics
                                                                             .logEvent(
                                                                           name:
                                                                               'order_rateOrderClick',
@@ -1334,7 +1362,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             'page_name':
                                                                                 'order_rateOrderClick',
                                                                           },
-                                                                        );
+                                                                        ); */
                                                                       },
                                                                       secondIcon: rateOrderImage),
                                                                 )
@@ -1373,8 +1401,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                   Get.back();
                                                                                 },
                                                                                 click2: () async {
-                                                                                  orderController.callCancelOrder(value.orderList[
-                                                                          index]["id"]);
+                                                                                  orderController.callCancelOrder(value.orderList[index]["id"]);
                                                                                   await analytics.logEvent(
                                                                                     name: 'order_cancelOrderClick',
                                                                                     parameters: <String, Object>{

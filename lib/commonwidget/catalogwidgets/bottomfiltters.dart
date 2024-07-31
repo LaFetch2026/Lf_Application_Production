@@ -35,9 +35,9 @@ class BottomFiltersState extends State<BottomFilters> {
   List<bool> colorSelected = List.generate(50, (i) => false);
   List<bool> sizeSelected = List.generate(50, (i) => false);
   String type = "";
-  String lowerValue = "100";
-  String UpperValue = "5000";
-  RangeValues values = RangeValues(100, 5000);
+  String lowerValue = "500";
+  String UpperValue = "50000";
+  RangeValues values = RangeValues(500, 50000);
 
   @override
   void initState() {
@@ -240,8 +240,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                             child: Material(
                                               child: RangeSlider(
                                                 values: values,
-                                                min: 100,
-                                                max: 5000,
+                                                min: 500,
+                                                max: 50000,
                                                 // divisions: 5,
                                                 inactiveColor: Colors.grey,
                                                 activeColor: btnTextColor,
@@ -310,7 +310,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                                 children: [
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         vertical: 10),
                                                     child: Row(
                                                       children: [
@@ -374,7 +374,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .symmetric(
+                                                                          .symmetric(
                                                                       vertical:
                                                                           10),
                                                               child: Row(

@@ -47,7 +47,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               widget.categoryId, widget.brandId, "", [], "", 0, false));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
-          productController.fetchCategoryProductMoreData(widget.brandId, "", 0);
+          productController.fetchCategoryProductMoreData(
+              widget.brandId, "", 0, false);
           productController.update();
         });
       });
@@ -299,7 +300,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 16,
                                                           vertical: 10),
                                                       child: Align(
@@ -337,7 +338,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: Align(
@@ -382,11 +383,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                       .w400,
                                                             ),
                                                             Padding(
-                                                              padding:
-                                                                  const EdgeInsets
+                                                              padding: const EdgeInsets
                                                                       .symmetric(
-                                                                      horizontal:
-                                                                          10),
+                                                                  horizontal:
+                                                                      10),
                                                               child: Container(
                                                                 width: 1,
                                                                 color:
@@ -501,7 +501,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 5),
                                                       child: AppText(
                                                         text: "Express",

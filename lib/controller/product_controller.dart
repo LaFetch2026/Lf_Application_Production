@@ -59,8 +59,8 @@ class ProductController extends BaseController {
   RxBool hasnextpage = true.obs;
   RxBool filterEnable = false.obs;
   RxInt page = 1.obs;
-  RxInt lowPrice = 100.obs;
-  RxInt highPrice = 5000.obs;
+  RxInt lowPrice = 500.obs;
+  RxInt highPrice = 50000.obs;
   ScrollController listController = ScrollController();
   ScrollController recentListController = ScrollController();
   RxBool expressLoadMore = false.obs;
@@ -104,7 +104,7 @@ class ProductController extends BaseController {
   RxString sortBy = "".obs;
   RxString expressSortBy = "".obs;
   List brand_ids = [].obs;
-  List color_ids = [2, 6].obs;
+  List color_ids = [].obs;
   List size_ids = [].obs;
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
@@ -851,7 +851,6 @@ class ProductController extends BaseController {
       List categoryList, String sort_By, int gendertype, bool filter) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
-    print("abc $color_ids");
     try {
       dynamic response;
       if (brandId != 0) {
@@ -864,50 +863,85 @@ class ProductController extends BaseController {
             });
       } else {
         if (categoryId == 0) {
+          String colorString = color_ids.join(',');
+          String sizeString = size_ids.join(',');
+          String brandString = brand_ids.join(',');
           if (sort_By.isEmpty) {
-            /*  if (filter) {
+            if (filter) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : color_ids}&size_ids[]=${size_ids.isEmpty ? "" : size_ids}&brand_ids[]=${brand_ids.isEmpty ? "" : brand_ids}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                      "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
                   });
-            } else { */
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-            //  }
+            } else {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            }
           } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
+            if (filter) {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            } else {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            }
           }
         } else {
+          String colorString = color_ids.join(',');
+          String sizeString = size_ids.join(',');
+          String brandString = brand_ids.join(',');
           if (sort_By.isEmpty) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
+            if (filter) {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            } else {
+              var uri = Uri.parse(
+                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype");
+              response = await http.get(uri, headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+            }
           } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
+            if (filter) {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            } else {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            }
           }
         }
       }
@@ -952,7 +986,7 @@ class ProductController extends BaseController {
   }
 
   fetchCategoryProductMoreData(
-      int brandId, String sort_By, int gendertype) async {
+      int brandId, String sort_By, int gendertype, bool filter) async {
     if (categoryProductHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         categoryProductLoadMore.value == false) {
@@ -972,40 +1006,86 @@ class ProductController extends BaseController {
               });
         } else {
           if (category_id == 0) {
+            String colorString = color_ids.join(',');
+            String sizeString = size_ids.join(',');
+            String brandString = brand_ids.join(',');
             if (sort_By.isEmpty) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&gender_type=$gendertype"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
+              if (filter) {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              } else {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&gender_type=$gendertype"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              }
             } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
+              if (filter) {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              } else {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              }
             }
           } else {
+            String colorString = color_ids.join(',');
+            String sizeString = size_ids.join(',');
+            String brandString = brand_ids.join(',');
             if (sort_By.isEmpty) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&gender_type=$gendertype"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
+              if (filter) {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              } else {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&gender_type=$gendertype"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              }
             } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
+              if (filter) {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&sort_by=$sort_By&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              } else {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              }
             }
           }
         }

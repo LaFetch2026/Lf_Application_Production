@@ -52,7 +52,10 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
         productController.fetchCategoryProductMoreData(
-            0, productController.sortBy.value, widget.genderType);
+            0,
+            productController.sortBy.value,
+            widget.genderType,
+            productController.filterEnable.value);
         productController.update();
       });
     });
@@ -262,7 +265,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: Align(
@@ -297,7 +300,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
-                                                      .symmetric(
+                                                          .symmetric(
                                                       horizontal: 16,
                                                       vertical: 10),
                                                   child: Align(
@@ -342,7 +345,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .symmetric(
+                                                                        .symmetric(
                                                                     horizontal:
                                                                         10),
                                                             child: Container(
@@ -452,7 +455,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 5),
                                                     child: AppText(
                                                       text: "Express",

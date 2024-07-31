@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
+//import 'package:getwidget/getwidget.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
@@ -16,6 +16,7 @@ import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../controller/order_controller.dart';
 import '../utils/constants.dart';
+import 'orders/reviewproducts.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final int orderId;
@@ -28,7 +29,7 @@ class OrderDetailsScreen extends StatefulWidget {
 class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final orderController = Get.put(OrderController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  double _rating = 0;
+ // double _rating = 0;
   String email = "";
   List<String> items = [
     "1",
@@ -541,7 +542,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ],
                     ),
                   ),
-                  Padding(
+                 /*  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Container(
                       color: whiteColor,
@@ -595,7 +596,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ),
                       ),
                     ),
-                  ),
+                  ), */
                   Obx(() => orderController.isDetails.value
                       ? const DummyOrderTrack()
                       : orderController.deliveriesList.isNotEmpty
@@ -1215,6 +1216,39 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               ],
                                                                             ),
                                                                           ),
+                                                                          orderController.orderDetails["status_details"] == "DELIVERED"
+                                                                              ? GestureDetector(
+                                                                                  onTap: () async {
+                                                                                    Get.to(ReviewProductScreen(
+                                                                                      productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                      productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                      productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                          ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                              ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                              : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                          : "",
+                                                                                    ));
+                                                                                    await analytics.logEvent(
+                                                                                      name: 'order_reviewClick',
+                                                                                      parameters: <String, Object>{
+                                                                                        'page_name': 'order_reviewClick',
+                                                                                      },
+                                                                                    );
+                                                                                  },
+                                                                                  child: Padding(
+                                                                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                    child: AppText(
+                                                                                      text: "Write a Review",
+                                                                                      color: blue,
+                                                                                      fontSize: 11.sp,
+                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
+                                                                                  ),
+                                                                                )
+                                                                              : const SizedBox(
+                                                                                  height: 0,
+                                                                                ),
                                                                         ],
                                                                       ),
                                                                     )
