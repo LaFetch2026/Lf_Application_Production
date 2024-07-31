@@ -109,8 +109,8 @@ class BoardScreenState extends State<BoardScreen> {
                                           .clear();
                                       wishlistController.addList.clear();
                                       wishlistController.deleteidList.clear();
-                                      /*   wishlistController.getWishlistDetails(
-                                          widget.boardId, 1); */
+                                      wishlistController.getWishlistDetails(
+                                          widget.boardId, 1);
                                     },
                                   ));
                           await analytics.logEvent(
@@ -168,8 +168,8 @@ class BoardScreenState extends State<BoardScreen> {
                                           .clear();
                                       wishlistController.addList.clear();
                                       wishlistController.deleteidList.clear();
-                                      /*  wishlistController.getWishlistDetails(
-                                          widget.boardId, 1); */
+                                      wishlistController.getWishlistDetails(
+                                          widget.boardId, 1);
                                     },
                                   ));
                           await analytics.logEvent(

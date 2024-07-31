@@ -197,40 +197,44 @@ class HorizontalBrandList extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 10,
-                                        right: 10,
-                                        bottom: 5),
-                                    child: Row(
-                                      children: [
-                                        const ImageIcon(
-                                          AssetImage(truckImage),
-                                          color: expressText,
-                                          size: 14,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            onPressedExpress!.call();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 5),
-                                            child: AppText(
-                                              text: "Express",
-                                              color: expressText,
-                                              maxLines: 2,
-                                              fontSize: 11.sp,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                            ),
+                                  list[index]["express_delivery"]
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 10,
+                                              right: 10,
+                                              bottom: 5),
+                                          child: Row(
+                                            children: [
+                                              const ImageIcon(
+                                                AssetImage(truckImage),
+                                                color: expressText,
+                                                size: 14,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  onPressedExpress!.call();
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 5),
+                                                  child: AppText(
+                                                    text: "Express",
+                                                    color: expressText,
+                                                    maxLines: 2,
+                                                    fontSize: 11.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                        )
+                                      : SizedBox(
+                                          height: 0,
+                                        )
                                 ],
                               ),
                             ),

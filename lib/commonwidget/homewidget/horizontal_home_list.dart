@@ -188,37 +188,45 @@ class HorizontalHomeList extends StatelessWidget {
                                     Visibility(
                                       visible: visibleExpress,
                                       child: GestureDetector(
-                                        onTap: () {
-                                          onPressedExpress?.call();
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10, left: 10, right: 10),
-                                          child: Row(
-                                            children: [
-                                              const ImageIcon(
-                                                AssetImage(truckImage),
-                                                color: expressText,
-                                                size: 14,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
-                                                child: AppText(
-                                                  text: "Express",
-                                                  color: expressText,
-                                                  maxLines: 2,
-                                                  fontSize: 11.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                          onTap: () {
+                                            onPressedExpress?.call();
+                                          },
+                                          child: list[index]["express_delivery"]
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      const ImageIcon(
+                                                        AssetImage(truckImage),
+                                                        color: expressText,
+                                                        size: 14,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 5),
+                                                        child: AppText(
+                                                          text: "Express",
+                                                          color: expressText,
+                                                          maxLines: 2,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : SizedBox(
+                                                  height: 0,
+                                                )),
                                     )
                                   ],
                                 ),

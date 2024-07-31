@@ -634,37 +634,47 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                 ],
                                               ),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5,
-                                                  left: 10,
-                                                  right: 10,
-                                                  bottom: 30),
-                                              child: Row(
-                                                children: [
-                                                  const ImageIcon(
-                                                    AssetImage(truckImage),
-                                                    color: expressText,
-                                                    size: 14,
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 5),
-                                                    child: AppText(
-                                                      text: "Express",
-                                                      color: expressText,
-                                                      maxLines: 2,
-                                                      fontSize: 11.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                            productController
+                                                        .productCategoryList[
+                                                    index]["express_delivery"]
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 5,
+                                                            left: 10,
+                                                            right: 10,
+                                                            bottom: 30),
+                                                    child: Row(
+                                                      children: [
+                                                        const ImageIcon(
+                                                          AssetImage(
+                                                              truckImage),
+                                                          color: expressText,
+                                                          size: 14,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      5),
+                                                          child: AppText(
+                                                            text: "Express",
+                                                            color: expressText,
+                                                            maxLines: 2,
+                                                            fontSize: 11.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
+                                                  )
+                                                : SizedBox(
+                                                    height: 0,
+                                                  )
                                           ],
                                         ),
                                       );
