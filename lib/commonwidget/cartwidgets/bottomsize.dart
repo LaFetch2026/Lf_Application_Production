@@ -36,7 +36,7 @@ class _BottomQuantityState extends State<BottomSize> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 200,
+        height: 220,
         width: double.infinity,
         decoration: const BoxDecoration(
           color: whiteTextColor,
