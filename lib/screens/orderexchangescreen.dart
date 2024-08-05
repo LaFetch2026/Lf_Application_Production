@@ -151,6 +151,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                       onKey: (value) {
                                         print(value);
                                         if (value is RawKeyDownEvent) {
+                                          orderController.queryText.value = "";
                                           orderController.getOrderData();
                                         }
                                       },

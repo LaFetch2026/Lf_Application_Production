@@ -338,7 +338,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                          Text(
+                                          /*  Text(
                                             productController.filterList.isEmpty
                                                 ? ""
                                                 : "Select All",
@@ -349,7 +349,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
                                             ),
-                                          ),
+                                          ), */
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 10),

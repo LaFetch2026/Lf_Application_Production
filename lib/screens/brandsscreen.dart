@@ -151,6 +151,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                           print(value);
                           if (value is RawKeyDownEvent) {
                             brandController.text.value = "Expand All";
+                            brandController.queryText.value = "";
                             brandController.getBrandData();
                           }
                         },
