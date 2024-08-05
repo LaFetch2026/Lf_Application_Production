@@ -57,13 +57,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   var cartQuantityItems = 0;
   final GlobalKey widgetKey = GlobalKey();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  final List<Map<String, String>> reviewsCount = [
+  /* final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
     {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
     {'id': '3', 'title': '3', 'count': '250', 'total': '2015'},
     {'id': '4', 'title': '2', 'count': '87', 'total': '2015'},
     {'id': '5', 'title': '1', 'count': '151', 'total': '2015'},
-  ];
+  ]; */
 
   Color getColorForReview(reviewTitle) {
     switch (reviewTitle) {
@@ -605,6 +605,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   scrollDirection:
                                                       Axis.horizontal,
                                                   onPageChanged: (number) {
+                                                    setState(() {
+                                                      _curr = number;
+                                                      print(_curr);
+                                                    });
                                                     if (videoController
                                                         .value.isPlaying) {
                                                       videoController.pause();
@@ -612,9 +616,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           .isVideoPlaying
                                                           .value = true;
                                                     }
-                                                    setState(() {
-                                                      _curr = number;
-                                                    });
                                                   },
                                                   children:
                                                       getListForPageView()),
@@ -1621,7 +1622,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               ),
                                             ],
                                           ),
-                                          Column(
+                                          /*    Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             crossAxisAlignment:
@@ -1691,6 +1692,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       ))
                                             ],
                                           )
+                                        */
                                         ],
                                       ),
                                     ),
