@@ -263,6 +263,10 @@ class LoginScreenState extends State<LoginScreen> {
                             text3: " and",
                             visible: true,
                             text4: " Privacy Policy",
+                            onPressedTerm: () {
+                              launchUrl(Uri.parse(
+                                  "https://la-fetch.com/terms-and-conditions/"));
+                            },
                             onPressedPolicy: () async {
                               launchUrl(Uri.parse(
                                   "https://la-fetch.com/privacy-policy/"));
@@ -375,6 +379,10 @@ class LoginScreenState extends State<LoginScreen> {
                           text2: " Terms of Use",
                           text3: " and",
                           visible: false,
+                          onPressedTerm: () {
+                            launchUrl(Uri.parse(
+                                "https://la-fetch.com/terms-and-conditions/"));
+                          },
                           text4: "",
                           fontSize: 12.sp,
                         ),
