@@ -29,12 +29,14 @@ class ProductDetailsScreen extends StatefulWidget {
   final int wishlistProductId;
   final int boardId;
   final bool color;
+  final String Slug;
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
       required this.type,
       this.boardId = 0,
       this.color = false,
+      this.Slug = "",
       this.wishlistProductId = 0});
 
   @override
@@ -497,8 +499,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
     productController.colorInventoryId.value = 0;
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductDetails(widget.productId));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getProductDetails(widget.productId, widget.Slug));
     if (widget.color) {
       getPrefrenceValue();
     }
@@ -688,7 +690,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    /*  IconButton(
+                                                    IconButton(
                                                       icon: CircleAvatar(
                                                           backgroundColor:
                                                               whiteColor,
@@ -696,7 +698,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               shareImage)),
                                                       onPressed: () async {
                                                         Share.share(
-                                                            'https://la-fetch.com/privacy-policy/');
+                                                            productController
+                                                                    .productDetails[
+                                                                "share_link"]);
                                                         await analytics
                                                             .logEvent(
                                                           name: 'share_product',
@@ -707,7 +711,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           },
                                                         );
                                                       },
-                                                    ), */
+                                                    ),
                                                   ],
                                                 )
                                               ],

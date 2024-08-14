@@ -1294,17 +1294,28 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductDetails(int productId) async {
+  getProductDetails(int productId, String slug) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products/$productId?type=relevant"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (productId != 0) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products/$productId?type=relevant"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/products/$slug?type=relevant"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
