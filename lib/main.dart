@@ -18,12 +18,11 @@ Future main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -40,6 +39,17 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.grey,
             textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
           ),
+          /*  getPages: [
+            GetPage(name: '/', page: () => SplashScreen()),
+            GetPage(
+              name: '/products',
+              page: () => ProductDetailsScreen(
+                productId: 0,
+                type: "add",
+                Slug: "womens-salwar-suit-set",
+              ),
+            ),
+          ], */
           home: const SplashScreen(),
         );
       },
