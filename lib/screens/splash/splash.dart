@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/splash/splashtwo.dart';
 import 'package:lafetch/utils/constants.dart';
+import 'package:app_links/app_links.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,9 +26,22 @@ class _SplashScreenState extends State<SplashScreen>
     parent: _controller,
     curve: Curves.fastOutSlowIn,
   );
+  final AppLinks appLinks = AppLinks();
   @override
   void initState() {
     super.initState();
+    appLinks.uriLinkStream.listen((uri) {
+      // ignore: unnecessary_null_comparison
+      if (uri != null) {
+        // Navigate to the specific screen based on the URI
+        print('Received URI: $uri');
+        Get.to(ProductDetailsScreen(
+          productId: 0,
+          type: "add",
+          Slug: "womens-salwar-suit-set",
+        ));
+      }
+    });
     Timer(const Duration(milliseconds: 500), () => nextScreen());
   }
 
