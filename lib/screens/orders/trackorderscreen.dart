@@ -27,56 +27,10 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => orderController.getOrderDetails(widget.orderId));
+    /*   WidgetsBinding.instance.addPostFrameCallback(
+        (_) => orderController.getTrackorder(widget.orderId)); */
     super.initState();
   }
-  /*  late GoogleMapController googleMapController;
-  static const CameraPosition initialCameraPosition = CameraPosition(
-      target: LatLng(37.42796133580664, -122.085749655962), zoom: 10);
-  Set<Marker> markers = {};
-  double lat = 0.0;
-  double lng = 0.0; */
-
-  /* Future<Position> determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Turn on Location")));
-      return Future.error('Location services are disabled');
-    }
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
-        return Future.error("Location permission denied");
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied');
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-
-    return position;
-  }
-
-  void apiPosition() {
-    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat, lng), zoom: 14)));
-    markers.clear();
-    markers.add(Marker(
-        markerId: const MarkerId('newLocation'), position: LatLng(lat, lng)));
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -176,9 +130,9 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                     ],
                   ),
                 */
-                  Obx(() => orderController.isDetails.value
+                  Obx(() => orderController.isTrack.value
                       ? const DummyOrderTrack()
-                      : orderController.deliveriesList.isNotEmpty
+                      : orderController.trackList.isNotEmpty
                           ? Container(
                               color: whiteColor,
                               width: double.infinity,
@@ -212,8 +166,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                         CrossAxisAlignment
                                                             .center,
                                                     children: [
-                                                      orderController
-                                                              .deliveriesList
+                                                      orderController.trackList
                                                               .any((map) =>
                                                                   map['status_details'] ==
                                                                   orderItem[
@@ -252,7 +205,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                       children: [
                                                         AppText(
                                                           text: orderController
-                                                                  .deliveriesList
+                                                                  .trackList
                                                                   .any((map) =>
                                                                       map['status_details'] ==
                                                                       orderItem[
@@ -274,13 +227,13 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                                   .only(top: 8),
                                                           child: AppText(
                                                             text: orderController
-                                                                    .deliveriesList
+                                                                    .trackList
                                                                     .any((map) =>
                                                                         map['status_details'] ==
                                                                         orderItem[
                                                                             index])
                                                                 ? orderController
-                                                                            .deliveriesList[
+                                                                            .trackList[
                                                                         index]
                                                                     ["created"]
                                                                 : "",

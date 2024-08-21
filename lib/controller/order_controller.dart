@@ -14,9 +14,11 @@ import '../utils/constants.dart';
 class OrderController extends BaseController {
   RxBool isOrder = false.obs;
   RxBool isDetails = false.obs;
+  RxBool isTrack = false.obs;
   dynamic orderDetails = "".obs;
   RxString queryText = "".obs;
   List orderList = [].obs;
+  List trackList = [].obs;
   List deliveriesList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
@@ -189,6 +191,43 @@ class OrderController extends BaseController {
       print("error$e");
     }
     isDetails.value = false;
+  }
+
+  getTrackorder(int orderId) async {
+    isTrack.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/order/$orderId/tracking"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        if (responseData != null) {
+          orderDetails = responseData;
+          if (responseData != null) {
+            trackList = responseData;
+          }
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get order track failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isTrack.value = false;
   }
 
   void callCancelOrder(int orderId) async {

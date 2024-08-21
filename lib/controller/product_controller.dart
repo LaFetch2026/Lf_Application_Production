@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
+import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +24,7 @@ class ProductController extends BaseController {
   RxBool isDetails = false.obs;
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
+  RxBool isReorder = false.obs;
   RxBool isBestSeller = false.obs;
   RxBool isFrequentlyBought = false.obs;
   RxInt currentpage = 0.obs;
@@ -1522,8 +1524,9 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(int quantity) async {
+  callAddtoCart(int quantity, String type) async {
     showLoading();
+    isReorder.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -1539,11 +1542,10 @@ class ProductController extends BaseController {
               },
               body: json.encode(sendData));
       if (response.statusCode == 200) {
-        //  getSnackBar("Product added to bag");
-        // Get.close(1);
+        if (type == "reorder") {
+          Get.to(CartScreen());
+        }
       } else if (response.statusCode == 201) {
-        // getSnackBar("Product added to bag");
-        //Get.close(1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -1557,6 +1559,7 @@ class ProductController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+    isReorder.value = false;
   }
 
   callAddProductToWishlist(int wishlistId, String type, int id, int categoryId,

@@ -2358,8 +2358,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           if (widget.type == "add") {
                                             if (productController
                                                 .checkDetailsValidation()) {
-                                              productController
-                                                  .callAddtoCart(1);
+                                              productController.callAddtoCart(
+                                                  1, "");
                                               listClick(widgetKey);
                                             }
                                           } else {

@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../controller/order_controller.dart';
+import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 import 'orders/reviewproducts.dart';
 
@@ -28,8 +29,9 @@ class OrderDetailsScreen extends StatefulWidget {
 
 class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final orderController = Get.put(OrderController());
+  final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
- // double _rating = 0;
+  // double _rating = 0;
   String email = "";
   List<String> items = [
     "1",
@@ -542,7 +544,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ],
                     ),
                   ),
-                 /*  Padding(
+                  /*  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Container(
                       color: whiteColor,
@@ -1217,34 +1219,70 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                             ),
                                                                           ),
                                                                           orderController.orderDetails["status_details"] == "DELIVERED"
-                                                                              ? GestureDetector(
-                                                                                  onTap: () async {
-                                                                                    Get.to(ReviewProductScreen(
-                                                                                      productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
-                                                                                      productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                                      productimage: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                          ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
-                                                                                              ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
-                                                                                              : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
-                                                                                          : "",
-                                                                                    ));
-                                                                                    await analytics.logEvent(
-                                                                                      name: 'order_reviewClick',
-                                                                                      parameters: <String, Object>{
-                                                                                        'page_name': 'order_reviewClick',
+                                                                              ? Row(
+                                                                                  children: [
+                                                                                    GestureDetector(
+                                                                                      onTap: () async {
+                                                                                        Get.to(ReviewProductScreen(
+                                                                                          productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                          productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                          productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                              ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                  ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                  : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                              : "",
+                                                                                        ));
+                                                                                        await analytics.logEvent(
+                                                                                          name: 'order_reviewClick',
+                                                                                          parameters: <String, Object>{
+                                                                                            'page_name': 'order_reviewClick',
+                                                                                          },
+                                                                                        );
                                                                                       },
-                                                                                    );
-                                                                                  },
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                                                                    child: AppText(
-                                                                                      text: "Write a Review",
-                                                                                      color: blue,
-                                                                                      fontSize: 11.sp,
-                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                      fontWeight: FontWeight.w400,
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                        child: AppText(
+                                                                                          text: "Write a Review",
+                                                                                          color: blue,
+                                                                                          fontSize: 11.sp,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ),
+                                                                                      ),
                                                                                     ),
-                                                                                  ),
+                                                                                    Expanded(
+                                                                                      flex: 1,
+                                                                                      child: AppText(
+                                                                                        text: "",
+                                                                                        color: blue,
+                                                                                        fontSize: 11.sp,
+                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    ),
+                                                                                    GestureDetector(
+                                                                                      onTap: () {
+                                                                                        productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][0]["inventory"]["id"];
+                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][0]["quantity"], "reorder");
+                                                                                      },
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                        child: productController.isReorder.value
+                                                                                            ? const SizedBox(
+                                                                                                height: 10,
+                                                                                                width: 10,
+                                                                                                child: Center(child: CircularProgressIndicator()),
+                                                                                              )
+                                                                                            : AppText(
+                                                                                                text: "Reorder",
+                                                                                                color: blue,
+                                                                                                fontSize: 11.sp,
+                                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                                                fontWeight: FontWeight.w400,
+                                                                                              ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
                                                                                 )
                                                                               : const SizedBox(
                                                                                   height: 0,
