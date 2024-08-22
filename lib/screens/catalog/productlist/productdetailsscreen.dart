@@ -2099,7 +2099,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           );
                                         },
                                         onPressed: (p0) async {
-                                          Navigator.of(context).push(
+                                          Navigator.of(context).pushReplacement(
                                               MaterialPageRoute(
                                                   builder:
                                                       (BuildContext context) =>
@@ -2190,7 +2190,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           );
                                         },
                                         onPressed: (p0) async {
-                                          Navigator.of(context).push(
+                                          Navigator.of(context).pushReplacement(
                                               MaterialPageRoute(
                                                   builder:
                                                       (BuildContext context) =>
