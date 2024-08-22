@@ -27,8 +27,8 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
 
   @override
   void initState() {
-    /*   WidgetsBinding.instance.addPostFrameCallback(
-        (_) => orderController.getTrackorder(widget.orderId)); */
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => orderController.getTrackorder(widget.orderId));
     super.initState();
   }
 
