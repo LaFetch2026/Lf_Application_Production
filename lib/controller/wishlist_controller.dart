@@ -529,7 +529,7 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         addList.clear();
         getWishlistData();
-        getSnackBar("item added");
+        getSnackBar("Item added");
         if (type == "add") {
           Get.close(1);
         } else {

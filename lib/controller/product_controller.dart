@@ -1590,6 +1590,7 @@ class ProductController extends BaseController {
               genderType, filterEnable.value);
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
+          getBestSellerProductData(brandId);
         } else if (type == "brand") {
           getBrandExpressProductData(
               brandId, expressSortBy.value, filterExpressEnable.value);
@@ -1599,6 +1600,7 @@ class ProductController extends BaseController {
           getFrequentlyProductData("frequently-bought", existId);
         } else if (type == "seller") {
           getBestSellerProductData(brandId);
+          getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else {
           getProductRecommendations(existId);
         }
