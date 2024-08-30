@@ -15,6 +15,7 @@ import '../utils/constants.dart';
 class CartController extends BaseController {
   RxBool isOrder = false.obs;
   RxBool isCoupan = false.obs;
+  RxBool isRemoveCoupan = false.obs;
   List orderList = [].obs;
   RxInt cartId = 0.obs;
   dynamic cartDetails = "".obs;
@@ -50,6 +51,9 @@ class CartController extends BaseController {
           orderList = responseData["order_lines"];
           print(orderList);
           cartId.value = responseData["id"];
+          if (responseData["discount"] != null) {
+            couponText.value = responseData["discount"]["code"];
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -295,6 +299,40 @@ class CartController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  }
+
+  callRemoveCoupon() async {
+    isRemoveCoupan.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "code": "",
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/discounts/apply"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        getSnackBar("Coupan removed");
+        couponText.value = "Apply Coupon";
+        getCartData();
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    isRemoveCoupan.value = false;
   }
 
   callProcessPayment(

@@ -942,27 +942,56 @@ class CartScreenState extends State<CartScreen> {
                                                               'cart_page_applycouponclick',
                                                         },
                                                       );
-                                                      Get.to(BottomCoupon(
-                                                        list: controller
-                                                            .couponList,
-                                                        onPressed: (p0) {
-                                                          controller.couponText
-                                                              .value = p0;
-                                                          controller
-                                                              .callAddCoupon(
-                                                                  p0);
-                                                        },
-                                                      ));
+                                                      if (controller
+                                                                  .cartDetails[
+                                                              "discount"] !=
+                                                          null) {
+                                                        controller
+                                                            .callRemoveCoupon();
+                                                      } else {
+                                                        Get.to(BottomCoupon(
+                                                          list: controller
+                                                              .couponList,
+                                                          onPressed: (p0) {
+                                                            controller
+                                                                .couponText
+                                                                .value = p0;
+                                                            controller
+                                                                .callAddCoupon(
+                                                                    p0);
+                                                          },
+                                                        ));
+                                                      }
                                                     },
-                                                    child: AppText(
-                                                      text: "Select",
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: textColor,
-                                                      fontSize: 12.sp,
-                                                    ),
+                                                    child:
+                                                        controller
+                                                                .isRemoveCoupan
+                                                                .value
+                                                            ? const SizedBox(
+                                                                height: 10,
+                                                                width: 10,
+                                                                child: Center(
+                                                                    child:
+                                                                        CircularProgressIndicator()),
+                                                              )
+                                                            : AppText(
+                                                                text: controller
+                                                                            .cartDetails["discount"] !=
+                                                                        null
+                                                                    ? "Remove"
+                                                                    : "Select",
+                                                                fontFamily:
+                                                                    "Franklin Gothic",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: controller
+                                                                            .cartDetails["discount"] !=
+                                                                        null
+                                                                    ? redColor
+                                                                    : textColor,
+                                                                fontSize: 12.sp,
+                                                              ),
                                                   ),
                                                 ],
                                               ),
