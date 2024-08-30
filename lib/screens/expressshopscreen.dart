@@ -87,7 +87,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
               );
             },
           ),
-          Container(
+          /*  Container(
             height: 40,
             color: greyBack,
             child: Row(
@@ -110,7 +110,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                 ),
               ],
             ),
-          ),
+          ), */
           Padding(
             padding:
                 const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 5),

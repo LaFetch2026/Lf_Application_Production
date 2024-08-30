@@ -505,6 +505,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                     Get.to(CategoryProductScreen(
                                                                                       categoryId: value.brandList[index]["categories"][i]["id"],
                                                                                       brandId: value.brandList[index]["id"],
+                                                                                      genderType: 0,
                                                                                       tagIds: const [],
                                                                                     ));
                                                                                     await analytics.logEvent(

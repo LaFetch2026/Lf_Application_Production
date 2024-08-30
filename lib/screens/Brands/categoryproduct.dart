@@ -19,11 +19,13 @@ import '../../commonwidget/homewidget/dummy_grid_list.dart';
 class CategoryProductScreen extends StatefulWidget {
   final int categoryId;
   final int brandId;
+  final int genderType;
   final List tagIds;
   const CategoryProductScreen(
       {super.key,
       required this.categoryId,
       required this.brandId,
+      required this.genderType,
       required this.tagIds});
 
   @override
@@ -43,12 +45,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     if (widget.categoryId != 0) {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
-          productController.getProductByCategoryData(
-              widget.categoryId, widget.brandId, "", [], "", 0, false));
+          productController.getProductByCategoryData(widget.categoryId,
+              widget.brandId, "", [], "", widget.genderType, false));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
           productController.fetchCategoryProductMoreData(
-              widget.brandId, "", 0, false);
+              widget.brandId, "", widget.genderType, false);
           productController.update();
         });
       });

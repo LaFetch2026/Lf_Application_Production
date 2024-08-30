@@ -210,6 +210,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 Get.to(CategoryProductScreen(
                                   categoryId: 0,
                                   brandId: 0,
+                                  genderType: widget.genderType,
                                   tagIds: homeController.bannerTag1Id,
                                 ));
                                 await analytics.logEvent(
@@ -359,6 +360,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             categoryId: homeController
                                                 .categoryList[0]["id"],
                                             brandId: 0,
+                                            genderType: widget.genderType,
                                             tagIds: const []));
                                         await analytics.logEvent(
                                           name: 'categories_home_page',
@@ -453,6 +455,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             categoryId: homeController
                                                 .categoryList[1]["id"],
                                             brandId: 0,
+                                            genderType: widget.genderType,
                                             tagIds: const []));
                                         await analytics.logEvent(
                                           name: 'categories_home_page',
@@ -563,6 +566,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                             .categoryList[
                                                         index + 2]["id"],
                                                     brandId: 0,
+                                                    genderType:
+                                                        widget.genderType,
                                                     tagIds: const []));
                                                 await analytics.logEvent(
                                                   name: 'categories_home_page',
@@ -732,6 +737,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                       Get.to(CategoryProductScreen(
                                         categoryId: 0,
                                         brandId: 0,
+                                        genderType: widget.genderType,
                                         tagIds: homeController.bannerTag2Id,
                                       ));
                                       await analytics.logEvent(

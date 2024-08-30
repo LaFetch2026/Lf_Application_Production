@@ -265,7 +265,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         categoryId: brandController
                                             .categoryList[index]["id"],
                                         tagIds: const [],
-                                        brandId: 0,
+                                        genderType: 0,
+                                        brandId: brandController.brandId.value,
                                       ));
                                       await analytics.logEvent(
                                         name: 'allbrand_categoryList_page',
