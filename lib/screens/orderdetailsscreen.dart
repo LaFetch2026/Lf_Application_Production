@@ -11,6 +11,7 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
+import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
@@ -1188,12 +1189,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                             child:
                                                                                 Row(
                                                                               children: [
-                                                                                orderController.orderDetails["order_lines"][0]["inventory"] != null
+                                                                                orderController.orderDetails["order_lines"][index]["inventory"] != null
                                                                                     ? Padding(
                                                                                         padding: const EdgeInsets.only(right: 10),
                                                                                         child: AppText(
                                                                                           // text: "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
-                                                                                          text: "Size : ${orderController.orderDetails["order_lines"][0]["inventory"]["product_matrix_name_size"] ?? ""}",
+                                                                                          text: "Size : ${orderController.orderDetails["order_lines"][index]["inventory"]["product_matrix_name_size"] ?? ""}",
                                                                                           color: greyTextColor,
                                                                                           maxLines: 2,
                                                                                           fontSize: 12.sp,
@@ -1220,6 +1221,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                           ),
                                                                           orderController.orderDetails["status_details"] == "DELIVERED"
                                                                               ? Row(
+                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                  mainAxisSize: MainAxisSize.max,
                                                                                   children: [
                                                                                     GestureDetector(
                                                                                       onTap: () async {
@@ -1250,14 +1253,34 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         ),
                                                                                       ),
                                                                                     ),
-                                                                                    Expanded(
-                                                                                      flex: 1,
-                                                                                      child: AppText(
-                                                                                        text: "",
-                                                                                        color: blue,
-                                                                                        fontSize: 11.sp,
-                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                        fontWeight: FontWeight.w400,
+                                                                                    GestureDetector(
+                                                                                      onTap: () async {
+                                                                                        Get.to(ExchangeProductScreen(
+                                                                                            productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                            productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                            productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                    ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                    : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                : "",
+                                                                                            sizeId: orderController.orderDetails["order_lines"][index]["inventory"]["id"] ?? 0,
+                                                                                            productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : ""));
+                                                                                        await analytics.logEvent(
+                                                                                          name: 'order_exchangeClick',
+                                                                                          parameters: <String, Object>{
+                                                                                            'page_name': 'order_exchangeClick',
+                                                                                          },
+                                                                                        );
+                                                                                      },
+                                                                                      child: Padding(
+                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                        child: AppText(
+                                                                                          text: "Exchange",
+                                                                                          color: blue,
+                                                                                          fontSize: 11.sp,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ),
                                                                                       ),
                                                                                     ),
                                                                                     GestureDetector(

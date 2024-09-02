@@ -9,16 +9,18 @@ import '../common_widgets.dart';
 
 class BottomSize extends StatefulWidget {
   final Function(int)? onPressed;
+  final Function onPressedCross;
   final List sizeList;
-  final String selectedSize;
+  final int selectedSizeId;
   final GetxController controller;
 
   const BottomSize({
     Key? key,
     this.onPressed,
     required this.sizeList,
-    required this.selectedSize,
+    required this.selectedSizeId,
     required this.controller,
+    required this.onPressedCross,
   }) : super(key: key);
 
   @override
@@ -30,6 +32,8 @@ class _BottomQuantityState extends State<BottomSize> {
   int inventoryId = 0;
   @override
   void initState() {
+    selectedProductSize["id"] = widget.selectedSizeId;
+    inventoryId = widget.selectedSizeId;
     super.initState();
   }
 
@@ -64,7 +68,7 @@ class _BottomQuantityState extends State<BottomSize> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Get.back();
+                      widget.onPressedCross.call();
                     },
                     child: Container(
                       color: Colors.transparent,

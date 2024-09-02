@@ -448,12 +448,15 @@ class CartScreenState extends State<CartScreen> {
                                                                                           ? GestureDetector(
                                                                                               onTap: () async {
                                                                                                 scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
+                                                                                                      onPressedCross: () {
+                                                                                                        Get.back();
+                                                                                                      },
                                                                                                       sizeList: value.orderList[index]["product"]["new_inventories"],
                                                                                                       controller: controller,
                                                                                                       onPressed: (p0) {
                                                                                                         controller.callAddtoCart(1, "size", p0, value.orderList[index]["product"]["id"]);
                                                                                                       },
-                                                                                                      selectedSize: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : "",
+                                                                                                      selectedSizeId: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["id"] : 0,
                                                                                                     ));
                                                                                                 await analytics.logEvent(
                                                                                                   name: 'cart_product_updatesizeClick',
