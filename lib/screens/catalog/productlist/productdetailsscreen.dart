@@ -51,6 +51,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   late VideoPlayerController videoController;
   late Future<void> _initializeVideoPlayerFuture;
   int _curr = 0;
+  int commentId = 0;
+  int reviewHelpfulId = 0;
   Map<String, dynamic> selectedProductSize = {};
   Map<String, dynamic> selectedProductColor = {};
   Map<String, dynamic> selectedProductFabric = {};
@@ -1769,7 +1771,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   child: AppText(
                                                     text:
                                                         '${productController.reviewList[index]['comment'] ?? ""}',
-                                                    maxLines: 4,
+                                                    maxLines: commentId ==
+                                                            productController
+                                                                    .reviewList[
+                                                                index]['id']
+                                                        ? 4
+                                                        : 1,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,
@@ -1777,27 +1784,214 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     fontSize: 14.sp,
                                                   ),
                                                 ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    AppText(
-                                                      text: 'Read more  ',
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: bottomnavBack,
-                                                      fontSize: 12.sp,
-                                                    ),
-                                                    const ImageIcon(
-                                                      AssetImage(dropdownImage),
-                                                      color: nameText,
-                                                      size: 16,
-                                                    ),
-                                                  ],
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    if (commentId ==
+                                                        productController
+                                                                .reviewList[
+                                                            index]['id']) {
+                                                      commentId = 0;
+                                                    } else {
+                                                      commentId =
+                                                          productController
+                                                                  .reviewList[
+                                                              index]['id'];
+                                                    }
+                                                    setState(() {});
+                                                  },
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      AppText(
+                                                        text: commentId ==
+                                                                productController
+                                                                        .reviewList[
+                                                                    index]['id']
+                                                            ? "Show less"
+                                                            : 'Read more  ',
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: bottomnavBack,
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                      const ImageIcon(
+                                                        AssetImage(
+                                                            dropdownImage),
+                                                        color: nameText,
+                                                        size: 16,
+                                                      ),
+                                                      /*     Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 20,
+                                                        ),
+                                                        child:
+                                                            AnimatedContainer(
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  right: 5),
+                                                          width: 80,
+                                                          height: 25,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: whiteColor,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                            border: Border.all(
+                                                                color:
+                                                                    btnTextColor,
+                                                                width: 1),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap:
+                                                                  () async {},
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            2),
+                                                                    child:
+                                                                        const ImageIcon(
+                                                                      AssetImage(
+                                                                          likeImage),
+                                                                      color:
+                                                                          nameText,
+                                                                      size: 16,
+                                                                    ),
+                                                                  ),
+                                                                  AppText(
+                                                                    text:
+                                                                        "helpful",
+                                                                    color:
+                                                                        btnTextColor,
+                                                                    fontSize:
+                                                                        12.sp,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    */
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 20,
+                                                        ),
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            reviewHelpfulId =
+                                                                productController
+                                                                        .reviewList[
+                                                                    index]['id'];
+                                                            setState(() {});
+                                                          },
+                                                          child:
+                                                              AnimatedContainer(
+                                                            duration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 5),
+                                                            width: 80,
+                                                            height: 25,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: whiteColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                              border: Border.all(
+                                                                  color: reviewHelpfulId ==
+                                                                          productController.reviewList[index]
+                                                                              [
+                                                                              'id']
+                                                                      ? btnTextColor
+                                                                      : greyTextColor,
+                                                                  width: 1),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      5),
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                        horizontal:
+                                                                            2),
+                                                                    child:
+                                                                        ImageIcon(
+                                                                      AssetImage(reviewHelpfulId ==
+                                                                              productController.reviewList[index]['id']
+                                                                          ? likeImage
+                                                                          : dislikeImage),
+                                                                      color: reviewHelpfulId ==
+                                                                              productController.reviewList[index]['id']
+                                                                          ? btnTextColor
+                                                                          : greyTextColor,
+                                                                      size: 16,
+                                                                    ),
+                                                                  ),
+                                                                  AppText(
+                                                                    text:
+                                                                        "helpful",
+                                                                    color: reviewHelpfulId ==
+                                                                            productController.reviewList[index]['id']
+                                                                        ? btnTextColor
+                                                                        : greyTextColor,
+                                                                    fontSize:
+                                                                        12.sp,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
                                                 Padding(
                                                   padding: const EdgeInsets
