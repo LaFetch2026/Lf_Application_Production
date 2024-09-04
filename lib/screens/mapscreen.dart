@@ -193,11 +193,12 @@ class MapScreenState extends State<MapScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 if (shipController.checkLocationValidation()) {
-                  Get.to(ShippingAddressScreen(
-                      addressId: widget.addressId,
-                      cartId: widget.cartId,
-                      latitude: shipController.lat.value,
-                      longitude: shipController.lng.value));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => ShippingAddressScreen(
+                          addressId: widget.addressId,
+                          cartId: widget.cartId,
+                          latitude: shipController.lat.value,
+                          longitude: shipController.lng.value)));
                   await analytics.logEvent(
                     name: 'shipAddress_page',
                     parameters: <String, Object>{

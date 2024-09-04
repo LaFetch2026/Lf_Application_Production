@@ -192,7 +192,7 @@ class ShipAddressController extends BaseController {
     hideLoading();
   }
 
-  callUpdateAddress(int id, double lat, double lng) async {
+  callUpdateAddress(int id, double lat, double lng, int value) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -222,18 +222,26 @@ class ShipAddressController extends BaseController {
         print(responseData);
         addressId.value = responseData["id"];
         getSnackBar("Address updated");
-        if (cartId.value != 0) {
-          callCartAddressUpdate("create");
+        if (value == 1) {
+          if (cartId.value != 0) {
+            callCartAddressUpdate("create");
+          }
+          Get.close(2);
+        } else {
+          Get.close(1);
         }
-        Get.close(2);
       } else if (response.statusCode == 201) {
         print(responseData);
         addressId.value = responseData["id"];
         getSnackBar("Address updated");
-        if (cartId.value != 0) {
-          callCartAddressUpdate("create");
+        if (value == 1) {
+          if (cartId.value != 0) {
+            callCartAddressUpdate("create");
+          }
+          Get.close(2);
+        } else {
+          Get.close(1);
         }
-        Get.close(1);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

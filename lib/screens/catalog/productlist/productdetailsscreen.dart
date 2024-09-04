@@ -18,8 +18,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
+import '../../../controller/profile_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
+import '../../account/saved_address.dart';
 import '../../brandsscreen.dart';
 import '../../cartscreen.dart';
 
@@ -47,6 +49,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final PageController controller = PageController();
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
+  final profileController = Get.put(ProfileController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   late Future<void> _initializeVideoPlayerFuture;
@@ -542,6 +545,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         (_) => productController.getProductRecommendations(widget.productId));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => profileController.getAddressData());
+    });
     super.initState();
   }
 
@@ -1126,7 +1133,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           fontSize: 16.sp,
                         ),
                       ),
-                      Obx(
+                      /*     Obx(
                         () => Padding(
                           padding: const EdgeInsets.only(
                               top: 12, left: 12, right: 12),
@@ -1205,77 +1212,251 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 18.0, bottom: 40.0, left: 12, right: 12),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12.0),
-                                  child: Image.asset(getItByIcon),
-                                ),
-                                AppText(
-                                  text: 'Get it by Fri, 21 Jul',
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w500,
-                                  color: blackColor,
-                                  fontSize: 14.sp,
+                     */
+                      Obx(() => profileController.isAddress.value
+                          ? const Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : profileController.defaultAddress != ""
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 10,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Divider(
+                                        color: colorSecondary,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 5),
+                                              child: AppText(
+                                                text: profileController
+                                                            .defaultAddress[
+                                                        "address"] ??
+                                                    "",
+                                                color: loginText,
+                                                fontSize: 14.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 14,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            const SavedAddressScreen(
+                                                              type:
+                                                                  "product details",
+                                                            )))
+                                                    .then((value) => setState(
+                                                          () {
+                                                            profileController
+                                                                .getAddressData();
+                                                          },
+                                                        ));
+
+                                                await analytics.logEvent(
+                                                  name: 'addresslist_page',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'addresslist_page',
+                                                  },
+                                                );
+                                              },
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                margin: const EdgeInsets.only(
+                                                    right: 5),
+                                                width: 80,
+                                                height: 20,
+                                                decoration: BoxDecoration(
+                                                  color: whiteBorderColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                      color: btnTextColor,
+                                                      width: 1),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 5),
+                                                  child: Center(
+                                                    child: AppText(
+                                                      text: "Change",
+                                                      color: btnTextColor,
+                                                      fontSize: 12.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 2),
+                                        child: AppText(
+                                          text:
+                                              "${profileController.defaultAddress["locality"] ?? ""} ,${profileController.defaultAddress["city"] != null ? profileController.defaultAddress["city"]["name"] : ""}",
+                                          color: greyTextColor,
+                                          fontSize: 12.sp,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 2),
+                                        child: AppText(
+                                          text: profileController
+                                              .defaultAddress["zip"]
+                                              .toString(),
+                                          color: loginText,
+                                          fontSize: 12.sp,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: colorSecondary,
+                                      ),
+                                    ],
+                                  ),
                                 )
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: Image.asset(walletBlack),
-                                  ),
-                                  AppText(
-                                    text: 'Pay on delivery available',
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w500,
-                                    color: blackColor,
-                                    fontSize: 14.sp,
-                                  )
-                                ],
+                              : SizedBox(
+                                  height: 0,
+                                )),
+                      Obx(
+                        () => productController.isDetails.value
+                            ? SizedBox(
+                                height: 0,
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18.0,
+                                    bottom: 40.0,
+                                    left: 12,
+                                    right: 12),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 12.0),
+                                          child: Image.asset(getItByIcon),
+                                        ),
+                                        AppText(
+                                          text: 'Get it by Fri, 21 Jul',
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w500,
+                                          color: blackColor,
+                                          fontSize: 14.sp,
+                                        )
+                                      ],
+                                    ),
+                                    productController.productDetails["has_cod"]
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 18.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 12.0),
+                                                  child:
+                                                      Image.asset(walletBlack),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      'Pay on delivery available',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: blackColor,
+                                                  fontSize: 14.sp,
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 0,
+                                          ),
+                                    productController
+                                            .productDetails["has_exchange"]
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 18.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 12.0),
+                                                  child: Image.asset(
+                                                      exchangeItemImage),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      'Easy ${productController.productDetails["exchange_days"]} day return & exchange available',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: blackColor,
+                                                  fontSize: 14.sp,
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 0,
+                                          ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: Image.asset(exchangeItemImage),
-                                  ),
-                                  AppText(
-                                    text:
-                                        'Easy 10 day return & exchange available',
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w500,
-                                    color: blackColor,
-                                    fontSize: 14.sp,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                       Obx(
                         () => productController.isDetails.value

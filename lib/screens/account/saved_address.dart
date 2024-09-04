@@ -9,11 +9,14 @@ import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../commonwidget/common_widgets.dart';
 import '../../commonwidget/doubleiconbtn.dart';
+import '../../controller/shipaddress_controller.dart';
 import '../../utils/constants.dart';
 
 class SavedAddressScreen extends StatefulWidget {
-  const SavedAddressScreen({super.key});
+  final String type;
+  const SavedAddressScreen({required this.type, super.key});
 
   @override
   State<SavedAddressScreen> createState() => SavedAddressScreenState();
@@ -21,6 +24,7 @@ class SavedAddressScreen extends StatefulWidget {
 
 class SavedAddressScreenState extends State<SavedAddressScreen> {
   final controller = Get.put(ProfileController());
+  final shipController = Get.put(ShipAddressController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -284,67 +288,156 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 14,
-                                                  right: 14,
-                                                  bottom: 10),
-                                              child: DoubleIconButton(
-                                                  firstText: "Remove",
-                                                  secondText: "Edit",
-                                                  firstTextColor: btnTextColor,
-                                                  secondTextColor: btnTextColor,
-                                                  firstBackgroundColor:
-                                                      whiteColor,
-                                                  secondBackgroundColor:
-                                                      whiteColor,
-                                                  firstBorderColor:
-                                                      btnTextColor,
-                                                  secondBorderColor:
-                                                      btnTextColor,
-                                                  firstIcon: blackCrossImage,
-                                                  onPressedFirst: () async {
-                                                    controller.callRemoveAddress(
-                                                        controller.addressList[
-                                                            index]["id"]);
-                                                    await analytics.logEvent(
-                                                      name:
-                                                          'remove_addressClick',
-                                                      parameters: <String,
-                                                          Object>{
-                                                        'page_name':
-                                                            'remove_addressClick',
-                                                      },
-                                                    );
-                                                  },
-                                                  onPressedSecond: () async {
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                MapScreen(
-                                                                  addressId: controller
+                                            widget.type == 'address'
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 14,
+                                                            right: 14,
+                                                            bottom: 10),
+                                                    child: DoubleIconButton(
+                                                        firstText: "Remove",
+                                                        secondText: "Edit",
+                                                        firstTextColor:
+                                                            btnTextColor,
+                                                        secondTextColor:
+                                                            btnTextColor,
+                                                        firstBackgroundColor:
+                                                            whiteColor,
+                                                        secondBackgroundColor:
+                                                            whiteColor,
+                                                        firstBorderColor:
+                                                            btnTextColor,
+                                                        secondBorderColor:
+                                                            btnTextColor,
+                                                        firstIcon:
+                                                            blackCrossImage,
+                                                        onPressedFirst:
+                                                            () async {
+                                                          controller.callRemoveAddress(
+                                                              controller
+                                                                      .addressList[
+                                                                  index]["id"]);
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'remove_addressClick',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'remove_addressClick',
+                                                            },
+                                                          );
+                                                        },
+                                                        onPressedSecond:
+                                                            () async {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                                  MaterialPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          MapScreen(
+                                                                            addressId:
+                                                                                controller.addressList[index]["id"],
+                                                                            cartId:
+                                                                                0,
+                                                                          )))
+                                                              .then((value) =>
+                                                                  setState(
+                                                                    () {
+                                                                      controller
+                                                                          .getAddressData();
+                                                                    },
+                                                                  ));
+                                                          await analytics
+                                                              .logEvent(
+                                                            name: 'map_page',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'map_page',
+                                                            },
+                                                          );
+                                                        },
+                                                        secondIcon: editImage))
+                                                : Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        vertical: 10),
+                                                    child: getSingleButton(
+                                                        label: "Select Address",
+                                                        textColor: btnTextColor,
+                                                        backgroundColor:
+                                                            whiteColor,
+                                                        controller:
+                                                            shipController,
+                                                        onPressed: () async {
+                                                          shipController
+                                                              .nameController
+                                                              .text = controller
+                                                                  .addressList[
+                                                              index]["name"];
+                                                          shipController
+                                                              .phoneController
+                                                              .text = controller
+                                                                  .addressList[
+                                                              index]["phone"];
+                                                          shipController
+                                                              .addressController
+                                                              .text = controller
+                                                                  .addressList[
+                                                              index]["address"];
+                                                          shipController
+                                                                  .pincodeController
+                                                                  .text =
+                                                              controller
+                                                                  .addressList[
+                                                                      index]
+                                                                      ["zip"]
+                                                                  .toString();
+                                                          shipController
+                                                              .localityController
+                                                              .text = controller
+                                                                  .addressList[
+                                                              index]["locality"];
+                                                          shipController.cityId
+                                                              .value = controller
+                                                                  .addressList[
+                                                              index]["city"]["id"];
+                                                          shipController.type
+                                                              .value = controller
+                                                                  .addressList[
+                                                              index]["type"];
+                                                          shipController
+                                                              .defaultBilling
+                                                              .value = controller
+                                                                              .addressList[
+                                                                          index]
+                                                                      [
+                                                                      "default_billing"] ==
+                                                                  true
+                                                              ? 1
+                                                              : 0;
+                                                          shipController
+                                                              .defaultShipping
+                                                              .value = 1;
+                                                          shipController.callUpdateAddress(
+                                                              controller
+                                                                      .addressList[
+                                                                  index]["id"],
+                                                              double.parse(controller
                                                                           .addressList[
-                                                                      index]["id"],
-                                                                  cartId: 0,
-                                                                )))
-                                                        .then(
-                                                            (value) => setState(
-                                                                  () {
-                                                                    controller
-                                                                        .getAddressData();
-                                                                  },
-                                                                ));
-                                                    await analytics.logEvent(
-                                                      name: 'map_page',
-                                                      parameters: <String,
-                                                          Object>{
-                                                        'page_name': 'map_page',
-                                                      },
-                                                    );
-                                                  },
-                                                  secondIcon: editImage),
-                                            )
+                                                                      index]
+                                                                  ["latitude"]),
+                                                              double.parse(controller
+                                                                          .addressList[
+                                                                      index][
+                                                                  "longitude"]),
+                                                              2);
+                                                        },
+                                                        borderColor:
+                                                            btnTextColor),
+                                                  )
                                           ],
                                         ),
                                       ),

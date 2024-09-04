@@ -744,7 +744,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   shipController.callUpdateAddress(
                                       widget.addressId,
                                       widget.latitude,
-                                      widget.longitude);
+                                      widget.longitude,
+                                      1);
                                 }
                               } else {
                                 if (shipController.checkvalidation()) {

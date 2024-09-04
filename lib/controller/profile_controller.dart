@@ -21,6 +21,7 @@ class ProfileController extends BaseController {
   RxBool isAddress = false.obs;
   RxBool isPhoneNumber = false.obs;
   RxInt genderId = 0.obs;
+  dynamic defaultAddress = "".obs;
   List addressList = [].obs;
   dynamic profileDetails = "".obs;
   final nameController = TextEditingController();
@@ -257,6 +258,13 @@ class ProfileController extends BaseController {
         if (responseData != null) {
           addressList = responseData;
           print(addressList);
+          if (addressList.isNotEmpty) {
+            for (var i = 0; i < addressList.length; i++) {
+              if (addressList[i]["default_shipping"]) {
+                defaultAddress = addressList[i];
+              }
+            }
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

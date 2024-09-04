@@ -406,7 +406,9 @@ class AccountScreenState extends State<AccountScreen> {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  Get.to(const SavedAddressScreen());
+                                  Get.to(const SavedAddressScreen(
+                                    type: "address",
+                                  ));
                                   await analytics.logEvent(
                                     name: 'addresslist_page',
                                     parameters: <String, Object>{
