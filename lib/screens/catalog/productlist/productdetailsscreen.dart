@@ -1357,40 +1357,51 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               )
                             : Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 18.0,
-                                    bottom: 40.0,
-                                    left: 12,
-                                    right: 12),
+                                    top: 18.0, left: 12, right: 12),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 12.0),
-                                          child: Image.asset(getItByIcon),
-                                        ),
-                                        AppText(
-                                          text: 'Get it by Fri, 21 Jul',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w500,
-                                          color: blackColor,
-                                          fontSize: 14.sp,
-                                        )
-                                      ],
-                                    ),
+                                    productController.productDetails[
+                                                "estimated_delivery_by"] !=
+                                            null
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 18),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 12.0),
+                                                  child:
+                                                      Image.asset(getItByIcon),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      'Get it by ${productController.productDetails["estimated_delivery_by"]}',
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: blackColor,
+                                                  fontSize: 14.sp,
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 0,
+                                          ),
                                     productController.productDetails["has_cod"]
                                         ? Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 18.0),
+                                                bottom: 18.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1424,7 +1435,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             .productDetails["has_exchange"]
                                         ? Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 18.0),
+                                                bottom: 40),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
