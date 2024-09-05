@@ -335,7 +335,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     horizontal:
                                                                         16),
                                                             child: Row(
@@ -386,7 +386,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             .start,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: const EdgeInsets.only(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
                                                                             right:
                                                                                 5,
                                                                             left:
@@ -409,7 +410,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: const EdgeInsets.only(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
                                                                             right:
                                                                                 5,
                                                                             left:
@@ -436,7 +438,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: const EdgeInsets.only(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
                                                                             right:
                                                                                 5,
                                                                             left:
@@ -499,7 +502,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
+                                                                    .symmetric(
                                                                     vertical:
                                                                         10,
                                                                     horizontal:
@@ -513,7 +516,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -533,7 +536,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -566,7 +569,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -586,7 +589,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -619,7 +622,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -639,7 +642,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -672,7 +675,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -692,7 +695,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -725,7 +728,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -745,7 +748,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -779,7 +782,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -799,7 +802,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -833,7 +836,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -853,7 +856,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -888,7 +891,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -908,7 +911,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -943,7 +946,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -963,7 +966,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -998,7 +1001,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         milliseconds:
                                                                             300),
                                                                     margin: const EdgeInsets
-                                                                            .only(
+                                                                        .only(
                                                                         right:
                                                                             5),
                                                                     height: 30,
@@ -1018,7 +1021,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: const EdgeInsets
-                                                                              .symmetric(
+                                                                          .symmetric(
                                                                           horizontal:
                                                                               5),
                                                                       child: Row(
@@ -1061,7 +1064,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "delivered_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets.symmetric(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
                                                                             horizontal:
                                                                                 5,
                                                                             vertical:
@@ -1085,7 +1089,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "estimated_delivery_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets.symmetric(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
                                                                             horizontal:
                                                                                 5,
                                                                             vertical:
@@ -1109,7 +1114,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "cancelled_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets.symmetric(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
                                                                             horizontal:
                                                                                 5,
                                                                             vertical:
@@ -1134,7 +1140,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "delivered_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets.symmetric(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
                                                                             horizontal:
                                                                                 5,
                                                                             vertical:
@@ -1158,7 +1165,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "estimated_delivery_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets.symmetric(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
                                                                             horizontal:
                                                                                 5,
                                                                             vertical:
@@ -1182,7 +1190,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "cancelled_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets.symmetric(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
                                                                             horizontal:
                                                                                 5,
                                                                             vertical:
@@ -1282,7 +1291,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   6) ...[
                                                                 Padding(
                                                                   padding: const EdgeInsets
-                                                                          .only(
+                                                                      .only(
                                                                       left: 16,
                                                                       right: 16,
                                                                       bottom:
@@ -1298,11 +1307,16 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       secondBorderColor: btnTextColor,
                                                                       firstIcon: exchangeItemImage,
                                                                       onPressedFirst: () async {
-                                                                        Get.to(
-                                                                            OrderDetailsScreen(
-                                                                          orderId:
-                                                                              value.orderList[index]["id"],
-                                                                        ));
+                                                                        Navigator.of(context)
+                                                                            .push(MaterialPageRoute(
+                                                                                builder: (BuildContext context) => OrderDetailsScreen(
+                                                                                      orderId: value.orderList[index]["id"],
+                                                                                    )))
+                                                                            .then((value) => setState(
+                                                                                  () {
+                                                                                    orderController.getOrderData();
+                                                                                  },
+                                                                                ));
                                                                         await analytics
                                                                             .logEvent(
                                                                           name:
@@ -1313,37 +1327,18 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 'order_details',
                                                                           },
                                                                         );
-                                                                        /*  Get.to(
-                                                                            ExchangeProductScreen(
-                                                                          productName: value.orderList[index]["order_lines"][0]["product"] != null
-                                                                              ? value.orderList[index]["order_lines"][0]["product"]["name"]
-                                                                              : "",
-                                                                          productimage: value.orderList[index]["order_lines"][0]["product"] != null
-                                                                              ? isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"])
-                                                                                  ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]
-                                                                                  : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"]
-                                                                              : "",
-                                                                          productDescription: value.orderList[index]["order_lines"][0]["product"] != null
-                                                                              ? value.orderList[index]["order_lines"][0]["product"]["short_description"]
-                                                                              : "",
-                                                                        )); */
-                                                                        /*  await analytics
-                                                                            .logEvent(
-                                                                          name:
-                                                                              'order_exchangeClick',
-                                                                          parameters: <String,
-                                                                              Object>{
-                                                                            'page_name':
-                                                                                'order_exchangeClick',
-                                                                          },
-                                                                        ); */
                                                                       },
                                                                       onPressedSecond: () async {
-                                                                        Get.to(
-                                                                            OrderDetailsScreen(
-                                                                          orderId:
-                                                                              value.orderList[index]["id"],
-                                                                        ));
+                                                                        Navigator.of(context)
+                                                                            .push(MaterialPageRoute(
+                                                                                builder: (BuildContext context) => OrderDetailsScreen(
+                                                                                      orderId: value.orderList[index]["id"],
+                                                                                    )))
+                                                                            .then((value) => setState(
+                                                                                  () {
+                                                                                    orderController.getOrderData();
+                                                                                  },
+                                                                                ));
                                                                         await analytics
                                                                             .logEvent(
                                                                           name:
@@ -1374,7 +1369,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   3) ...[
                                                                 Padding(
                                                                   padding: const EdgeInsets
-                                                                          .only(
+                                                                      .only(
                                                                       left: 16,
                                                                       right: 16,
                                                                       bottom:
@@ -1443,7 +1438,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   5) ...[
                                                                 Padding(
                                                                   padding: const EdgeInsets
-                                                                          .only(
+                                                                      .only(
                                                                       left: 16,
                                                                       right: 16,
                                                                       top: 10,
@@ -1479,11 +1474,13 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       "status"] ==
                                                                   7) ...[
                                                                 Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      top: 10,
-                                                                      bottom:
-                                                                          30),
+                                                                          top:
+                                                                              10,
+                                                                          bottom:
+                                                                              30),
                                                                   child: SingleButton(
                                                                       label: "View details",
                                                                       height: 40,
@@ -1510,11 +1507,13 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                 )
                                                               ] else ...[
                                                                 Padding(
-                                                                  padding: const EdgeInsets
+                                                                  padding:
+                                                                      const EdgeInsets
                                                                           .only(
-                                                                      top: 10,
-                                                                      bottom:
-                                                                          30),
+                                                                          top:
+                                                                              10,
+                                                                          bottom:
+                                                                              30),
                                                                   child: SingleButton(
                                                                       label: "View details",
                                                                       height: 40,

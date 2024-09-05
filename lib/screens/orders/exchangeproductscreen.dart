@@ -21,12 +21,14 @@ class ExchangeProductScreen extends StatefulWidget {
   final String productDescription;
   final String productimage;
   final int sizeId;
+  final int orderId;
   const ExchangeProductScreen(
       {super.key,
       required this.productId,
       required this.productName,
       required this.productimage,
       required this.sizeId,
+      required this.orderId,
       required this.productDescription});
 
   @override
@@ -48,126 +50,194 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: whiteColor,
-      body: Column(
-        children: [
-          const BackButtonAppbar(
-            text: "Exchange Product",
-            threeDot: false,
-            backgroundColor: whiteColor,
-            icon: threeDotImage,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    color: whiteColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: SizedBox(
-                                  height: 85,
-                                  width: 70,
-                                  child: CachedNetworkImage(
-                                    cacheManager: CacheManager(Config(
-                                        "customCacheKey",
-                                        stalePeriod: const Duration(days: 15),
-                                        maxNrOfCacheObjects: 100)),
-                                    fit: BoxFit.cover,
-                                    imageUrl: widget.productimage,
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
-                                      downloadImage,
+    return WillPopScope(
+      onWillPop: () async {
+        text1 = "";
+        setState(() {});
+        return true;
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: whiteColor,
+        body: Column(
+          children: [
+            const BackButtonAppbar(
+              text: "Exchange Product",
+              threeDot: false,
+              backgroundColor: whiteColor,
+              icon: threeDotImage,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      color: whiteColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 20),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: SizedBox(
+                                    height: 85,
+                                    width: 70,
+                                    child: CachedNetworkImage(
+                                      cacheManager: CacheManager(Config(
+                                          "customCacheKey",
+                                          stalePeriod: const Duration(days: 15),
+                                          maxNrOfCacheObjects: 100)),
                                       fit: BoxFit.cover,
-                                      height: 85,
-                                      width: 70,
+                                      imageUrl: widget.productimage,
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                        downloadImage,
+                                        fit: BoxFit.cover,
+                                        height: 85,
+                                        width: 70,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                      ),
-                                      child: AppText(
-                                        text: widget.productName,
-                                        maxLines: 2,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14.sp,
-                                        color: nameText,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                      child: AppText(
-                                        text: Bidi.stripHtmlIfNeeded(
-                                            widget.productDescription),
-                                        maxLines: 2,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12.sp,
-                                        color: nameText,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          child: AppText(
-                            text: "Choose why you exchanging this?",
-                            maxLines: 2,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
-                            color: loginText,
-                          ),
-                        ),
-                        Obx(
-                          () => exchangeController.isDetails.value
-                              ? Center(
-                                  child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: const CircularProgressIndicator(),
-                                ))
-                              : Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 10),
+                                Expanded(
+                                  flex: 3,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        children: [
-                                          Radio(
-                                              value: "Ordered wrong size",
-                                              activeColor: colorPrimary,
-                                              groupValue: text1,
-                                              onChanged: (value) async {
-                                                text1 = value.toString();
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                        ),
+                                        child: AppText(
+                                          text: widget.productName,
+                                          maxLines: 2,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14.sp,
+                                          color: nameText,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child: AppText(
+                                          text: Bidi.stripHtmlIfNeeded(
+                                              widget.productDescription),
+                                          maxLines: 2,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12.sp,
+                                          color: nameText,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            child: AppText(
+                              text: "Choose why you exchanging this?",
+                              maxLines: 2,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14.sp,
+                              color: loginText,
+                            ),
+                          ),
+                          Obx(
+                            () => exchangeController.isDetails.value
+                                ? Center(
+                                    child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: const CircularProgressIndicator(),
+                                  ))
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Radio(
+                                                value: "Ordered wrong size",
+                                                activeColor: colorPrimary,
+                                                groupValue: text1,
+                                                onChanged: (value) async {
+                                                  text1 = value.toString();
+                                                  scaffoldKey.currentState
+                                                      ?.showBottomSheet(
+                                                          (context) =>
+                                                              BottomSize(
+                                                                sizeList: exchangeController
+                                                                        .productDetails[
+                                                                    "new_inventories"],
+                                                                controller:
+                                                                    controller,
+                                                                onPressedCross:
+                                                                    () {
+                                                                  Get.back();
+                                                                  text1 = "";
+                                                                  setState(
+                                                                      () {});
+                                                                },
+                                                                onPressed:
+                                                                    (p0) {
+                                                                  text1 = "";
+                                                                  setState(
+                                                                      () {});
+                                                                  Get.back();
+                                                                  Get.to(ExchangeConfirmScreen(
+                                                                      sizeId: widget
+                                                                          .sizeId,
+                                                                      orderId:
+                                                                          widget
+                                                                              .orderId,
+                                                                      newInventoryId:
+                                                                          p0,
+                                                                      productId:
+                                                                          widget
+                                                                              .productId,
+                                                                      productName:
+                                                                          widget
+                                                                              .productName,
+                                                                      productimage:
+                                                                          widget
+                                                                              .productimage,
+                                                                      productDescription:
+                                                                          widget
+                                                                              .productDescription));
+                                                                },
+                                                                selectedSizeId:
+                                                                    widget
+                                                                        .sizeId,
+                                                              ));
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        'exchange_product_updatesizeClick',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'exchange_product_updatesizeClick',
+                                                    },
+                                                  );
+                                                  setState(() {});
+                                                }),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                text1 = "Ordered wrong size";
                                                 scaffoldKey.currentState
                                                     ?.showBottomSheet(
                                                         (context) => BottomSize(
@@ -189,6 +259,10 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                                 Get.to(ExchangeConfirmScreen(
                                                                     sizeId: widget
                                                                         .sizeId,
+                                                                    orderId: widget
+                                                                        .orderId,
+                                                                    newInventoryId:
+                                                                        p0,
                                                                     productId:
                                                                         widget
                                                                             .productId,
@@ -214,80 +288,84 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                   },
                                                 );
                                                 setState(() {});
-                                              }),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              text1 = "Ordered wrong size";
-                                              scaffoldKey.currentState
-                                                  ?.showBottomSheet((context) =>
-                                                      BottomSize(
-                                                        sizeList: exchangeController
-                                                                .productDetails[
-                                                            "new_inventories"],
-                                                        controller: controller,
-                                                        onPressedCross: () {
-                                                          Get.back();
-                                                          text1 = "";
-                                                          setState(() {});
-                                                        },
-                                                        onPressed: (p0) {
-                                                          text1 = "";
-                                                          setState(() {});
-                                                          Get.back();
-                                                          Get.to(ExchangeConfirmScreen(
-                                                              sizeId:
-                                                                  widget.sizeId,
-                                                              productId: widget
-                                                                  .productId,
-                                                              productName: widget
-                                                                  .productName,
-                                                              productimage: widget
-                                                                  .productimage,
-                                                              productDescription:
-                                                                  widget
-                                                                      .productDescription));
-                                                        },
-                                                        selectedSizeId:
-                                                            widget.sizeId,
-                                                      ));
-                                              await analytics.logEvent(
-                                                name:
-                                                    'exchange_product_updatesizeClick',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'exchange_product_updatesizeClick',
-                                                },
-                                              );
-                                              setState(() {});
-                                            },
-                                            child: Text(
-                                              "Ordered wrong size",
-                                              style: TextStyle(
-                                                color: colorPrimary,
-                                                fontSize: 14.sp,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
+                                              },
+                                              child: Text(
+                                                "Ordered wrong size",
+                                                style: TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: 14.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Radio(
-                                              value: "Others",
-                                              activeColor: colorPrimary,
-                                              groupValue: text1,
-                                              onChanged: (value) async {
-                                                text1 = value.toString();
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Radio(
+                                                value: "Others",
+                                                activeColor: colorPrimary,
+                                                groupValue: text1,
+                                                onChanged: (value) async {
+                                                  text1 = value.toString();
+                                                  setState(() {});
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              ExchangeConfirmScreen(
+                                                                  sizeId: widget
+                                                                      .sizeId,
+                                                                  orderId: widget
+                                                                      .orderId,
+                                                                  newInventoryId:
+                                                                      widget
+                                                                          .sizeId,
+                                                                  productId: widget
+                                                                      .productId,
+                                                                  productName:
+                                                                      widget
+                                                                          .productName,
+                                                                  productimage:
+                                                                      widget
+                                                                          .productimage,
+                                                                  productDescription:
+                                                                      widget
+                                                                          .productDescription)))
+                                                      .then((value) => setState(
+                                                            () {
+                                                              text1 = "";
+                                                            },
+                                                          ));
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        'submit_productExchangeOtherClick',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'submit_productExchangeOtherClick',
+                                                    },
+                                                  );
+                                                }),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                text1 = "Others";
                                                 setState(() {});
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
                                                         builder: (BuildContext
                                                                 context) =>
                                                             ExchangeConfirmScreen(
-                                                                sizeId: 0,
+                                                                sizeId: widget
+                                                                    .sizeId,
+                                                                orderId:
+                                                                    widget
+                                                                        .orderId,
+                                                                newInventoryId:
+                                                                    widget
+                                                                        .sizeId,
                                                                 productId:
                                                                     widget
                                                                         .productId,
@@ -311,65 +389,33 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                         'submit_productExchangeOtherClick',
                                                   },
                                                 );
-                                              }),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              text1 = "Others";
-                                              setState(() {});
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          ExchangeConfirmScreen(
-                                                              sizeId: 0,
-                                                              productId: widget
-                                                                  .productId,
-                                                              productName: widget
-                                                                  .productName,
-                                                              productimage: widget
-                                                                  .productimage,
-                                                              productDescription:
-                                                                  widget
-                                                                      .productDescription)))
-                                                  .then((value) => setState(
-                                                        () {
-                                                          text1 = "";
-                                                        },
-                                                      ));
-                                              await analytics.logEvent(
-                                                name:
-                                                    'submit_productExchangeOtherClick',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'submit_productExchangeOtherClick',
-                                                },
-                                              );
-                                            },
-                                            child: Text(
-                                              "Others",
-                                              style: TextStyle(
-                                                color: colorPrimary,
-                                                fontSize: 14.sp,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
+                                              },
+                                              child: Text(
+                                                "Others",
+                                                style: TextStyle(
+                                                  color: colorPrimary,
+                                                  fontSize: 14.sp,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -143,7 +143,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),
                         child: TextField(
-                          textCapitalization: TextCapitalization.words,
+                          textCapitalization: TextCapitalization.sentences,
                           style: const TextStyle(
                             color: textColor,
                             fontFamily: "Franklin Gothic Regular",

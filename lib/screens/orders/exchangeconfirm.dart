@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/controller/review_controller.dart';
+import 'package:lafetch/controller/order_controller.dart';
 import 'package:lafetch/utils/constants.dart';
 import '../../commonwidget/app_text.dart';
 
@@ -19,12 +19,16 @@ class ExchangeConfirmScreen extends StatefulWidget {
   final String productDescription;
   final String productimage;
   final int sizeId;
+  final int orderId;
+  final int newInventoryId;
   const ExchangeConfirmScreen(
       {super.key,
       required this.productId,
       required this.productName,
       required this.productimage,
       required this.sizeId,
+      required this.orderId,
+      required this.newInventoryId,
       required this.productDescription});
 
   @override
@@ -32,15 +36,9 @@ class ExchangeConfirmScreen extends StatefulWidget {
 }
 
 class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
-  final controller = Get.put(ReviewController());
+  final controller = Get.put(OrderController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? text1;
-
-  @override
-  void initState() {
-    controller.rating.value = 0.0;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,12 +143,12 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
                           child: TextField(
-                            textCapitalization: TextCapitalization.words,
+                            textCapitalization: TextCapitalization.sentences,
                             style: const TextStyle(
                               color: textColor,
                               fontFamily: "Franklin Gothic Regular",
                             ),
-                            controller: controller.comment,
+                            controller: controller.exchangeComment,
                             maxLines: 5,
                             keyboardType: TextInputType.multiline,
                             decoration: InputDecoration(
@@ -183,6 +181,12 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                                   controller: controller,
                                   backgroundColor: whiteColor,
                                   onPressed: () async {
+                                    if (controller.checkExchangeValidation()) {
+                                      controller.callExchangeProduct(
+                                          widget.orderId,
+                                          widget.sizeId,
+                                          widget.newInventoryId);
+                                    }
                                     await analytics.logEvent(
                                       name: 'submit_productExchangeItemClick',
                                       parameters: <String, Object>{

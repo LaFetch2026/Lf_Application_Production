@@ -26,6 +26,7 @@ class OrderController extends BaseController {
   RxInt status = 0.obs;
   ScrollController orderListController = ScrollController();
   final searchController = TextEditingController();
+  final exchangeComment = TextEditingController();
   final List filterList = [
     'All',
     'Pending',
@@ -53,6 +54,16 @@ class OrderController extends BaseController {
     10,
     11,
   ].obs;
+
+  bool checkExchangeValidation() {
+    if (exchangeComment.text.toString().trim().isEmpty) {
+      getSnackBar(
+        "Enter Reason",
+      );
+      return false;
+    }
+    return true;
+  }
 
   getOrderData() async {
     isOrder.value = true;
@@ -255,5 +266,45 @@ class OrderController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  void callExchangeProduct(int orderId, int sizeId, int newId) async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "order_inventory_id": newId,
+        "reason": exchangeComment.text.toString().trim(),
+        "exchange_inventory_id": sizeId,
+      };
+      var response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/orders/$orderId/exchange"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
+      if (response.statusCode == 201) {
+        getSnackBar("Request send");
+        Get.close(2);
+        getOrderDetails(orderId);
+        getOrderData();
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else {
+        print("exchange product failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
   }
 }
