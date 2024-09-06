@@ -1615,4 +1615,45 @@ class ProductController extends BaseController {
       print(e.toString());
     }
   }
+
+  void callReviewVote(int reviewId, int vote, int productId) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "vote": vote,
+      };
+      var response = await http.put(
+          Uri.parse("${ApiConstants.baseUrl}/products/$reviewId/vote"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
+      if (response.statusCode == 200) {
+        if (vote == 1) {
+          getSnackBar("Thanks for voting");
+        }
+        getProductReview(productId);
+      } else if (response.statusCode == 201) {
+        if (vote == 1) {
+          getSnackBar("Thanks for voting");
+        }
+        getProductReview(productId);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else {
+        print("vote review failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

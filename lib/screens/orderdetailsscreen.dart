@@ -851,7 +851,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             fontSize: 14.sp,
                                           ),
                                         ),
-                                        Padding(
+                                        /* Padding(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 5),
                                           child: Text(
@@ -865,7 +865,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               fontSize: 14.sp,
                                             ),
                                           ),
-                                        ),
+                                        ), */
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(top: 20),
