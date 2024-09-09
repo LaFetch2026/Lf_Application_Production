@@ -1619,17 +1619,14 @@ class ProductController extends BaseController {
   void callReviewVote(int reviewId, int vote, int productId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      final Map<String, dynamic> sendData = {
-        "vote": vote,
-      };
       var response = await http.put(
-          Uri.parse("${ApiConstants.baseUrl}/products/$reviewId/vote"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+        Uri.parse("${ApiConstants.baseUrl}/products/$reviewId/vote"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
       if (response.statusCode == 200) {
         if (vote == 1) {
           getSnackBar("Thanks for voting");

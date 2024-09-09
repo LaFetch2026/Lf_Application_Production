@@ -2036,18 +2036,21 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     ),
                                                     productController.reviewList[
                                                                     index]
-                                                                ["upvotes"] >
-                                                            0
+                                                                ["upvotes"] ==
+                                                            1
                                                         ? GestureDetector(
                                                             onTap: () {
-                                                              /*  productController.callReviewVote(
+                                                              reviewHelpfulId =
+                                                                  0;
+                                                              setState(() {});
+                                                              productController.callReviewVote(
                                                                   productController
                                                                               .reviewList[
                                                                           index]
                                                                       ['id'],
                                                                   0,
                                                                   widget
-                                                                      .productId); */
+                                                                      .productId);
                                                             },
                                                             child: Padding(
                                                               padding:
