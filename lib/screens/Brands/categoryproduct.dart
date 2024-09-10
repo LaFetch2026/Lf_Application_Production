@@ -224,7 +224,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               widget.brandId,
                                                               [],
                                                               0,
-                                                              0);
+                                                              widget
+                                                                  .genderType);
                                                         } else {
                                                           scaffoldKey
                                                               .currentState
@@ -239,10 +240,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             "category",
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
-                                                                            0,
+                                                                            widget.brandId,
                                                                             [],
                                                                             0,
-                                                                            0);
+                                                                            widget.genderType);
                                                                       },
                                                                       wishlistList:
                                                                           wishlistController

@@ -915,7 +915,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         color: blackColor,
                         fontSize: 16.sp,
                       ),
-                      const SizedBox(
+                      /* const SizedBox(
                         height: 2,
                       ),
                       AppText(
@@ -925,7 +925,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         fontWeight: FontWeight.w500,
                         color: textColor,
                         fontSize: 12.sp,
-                      ),
+                      ), */
                     ],
                   ),
                 ),

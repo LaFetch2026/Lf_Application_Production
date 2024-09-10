@@ -9,13 +9,13 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
 import 'package:lafetch/commonwidget/brandwidgits/dummy_brandall.dart';
-import 'package:lafetch/commonwidget/brandwidgits/dummy_product_brand.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_list.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomwishlist.dart';
+import '../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../controller/brand_controller.dart';
 import '../../controller/product_controller.dart';
 import '../../controller/wishlist_controller.dart';
@@ -360,7 +360,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ),
                     Obx(
                       () => productController.istagsProduct.value
-                          ? const DummyProductBrand(text: "New Arrivals")
+                          ? const DummyProductList(text: "New Arrivals")
+                          // const DummyProductBrand(text: "New Arrivals")
                           : Padding(
                               padding: const EdgeInsets.only(top: 40),
                               child: HorizontalBrandList(
@@ -447,7 +448,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             ),
                     ),
                     Obx(() => productController.isBestSeller.value
-                        ? const DummyProductBrand(text: "Bestsellers")
+                        ? const DummyProductList(text: "Bestsellers")
+                        //const DummyProductBrand(text: "Bestsellers")
                         : Padding(
                             padding: const EdgeInsets.only(top: 25),
                             child: HorizontalBrandList(
