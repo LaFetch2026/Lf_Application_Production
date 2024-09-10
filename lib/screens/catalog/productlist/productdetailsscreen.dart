@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/mapscreen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
@@ -501,6 +502,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     productController.brandDetails = "";
+    profileController.defaultAddress = "";
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
     productController.colorInventoryId.value = 0;
@@ -1347,8 +1349,73 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ],
                                   ),
                                 )
-                              : SizedBox(
-                                  height: 0,
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: SizedBox(
+                                          height: 0,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          const MapScreen(
+                                                            addressId: 0,
+                                                            cartId: 0,
+                                                          )))
+                                              .then((value) => setState(
+                                                    () {
+                                                      profileController
+                                                          .getAddressData();
+                                                    },
+                                                  ));
+
+                                          await analytics.logEvent(
+                                            name: 'mapscreen_page',
+                                            parameters: <String, Object>{
+                                              'page_name': 'mapscreen_page',
+                                            },
+                                          );
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          margin:
+                                              const EdgeInsets.only(right: 5),
+                                          width: 100,
+                                          height: 24,
+                                          decoration: BoxDecoration(
+                                            color: whiteBorderColor,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            border: Border.all(
+                                                color: btnTextColor, width: 1),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5),
+                                            child: Center(
+                                              child: AppText(
+                                                text: "Add Address",
+                                                color: btnTextColor,
+                                                fontSize: 12.sp,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 )),
                       Obx(
                         () => productController.isDetails.value

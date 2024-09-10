@@ -259,9 +259,9 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
             Obx(() => productController.isExpress.value
-                ? const DummyProductList(text: "6 hour Express Delivery")
+                ? const DummyProductList(text: "Express Delivery")
                 : HorizontalHomeList(
-                    text: "6 hour Express Delivery",
+                    text: "Express Delivery",
                     height: 250,
                     controller: productController.expressListController,
                     list: productController.expressProductList,

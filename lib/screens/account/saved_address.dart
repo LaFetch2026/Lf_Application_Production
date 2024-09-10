@@ -54,63 +54,67 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 16, right: 16),
-                    child: GestureDetector(
-                      onTap: () async {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const MapScreen(
-                                      addressId: 0,
-                                      cartId: 0,
-                                    )))
-                            .then((value) => setState(
-                                  () {
-                                    controller.getAddressData();
-                                  },
-                                ));
-                        await analytics.logEvent(
-                          name: 'map_page',
-                          parameters: <String, Object>{
-                            'page_name': 'map_page',
-                          },
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          AppText(
-                            text: "",
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: textHintColor,
-                            fontSize: 12.sp,
-                          ),
-                          const Expanded(
-                            child: SizedBox(
-                              width: 0,
+                  widget.type == "product details"
+                      ? SizedBox(
+                          height: 0,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, left: 16, right: 16),
+                          child: GestureDetector(
+                            onTap: () async {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          const MapScreen(
+                                            addressId: 0,
+                                            cartId: 0,
+                                          )))
+                                  .then((value) => setState(
+                                        () {
+                                          controller.getAddressData();
+                                        },
+                                      ));
+                              await analytics.logEvent(
+                                name: 'map_page',
+                                parameters: <String, Object>{
+                                  'page_name': 'map_page',
+                                },
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                AppText(
+                                  text: "",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: textHintColor,
+                                  fontSize: 12.sp,
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    width: 0,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.add,
+                                  color: blackColor,
+                                  size: 16,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: AppText(
+                                    text: "New Address",
+                                    color: blackColor,
+                                    fontSize: 12.sp,
+                                    fontFamily: "Franklin Gothic Bold",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const Icon(
-                            Icons.add,
-                            color: blackColor,
-                            size: 16,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: AppText(
-                              text: "New Address",
-                              color: blackColor,
-                              fontSize: 12.sp,
-                              fontFamily: "Franklin Gothic Bold",
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
                   Obx(() => controller.isAddress.value
                       ? const DummySaveAddress()
                       : controller.addressList.isNotEmpty

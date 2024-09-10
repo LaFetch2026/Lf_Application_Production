@@ -188,8 +188,7 @@ class _WomenScreenState extends State<WomenScreen> {
                                       );
                                     }),
                               )),
-                          const DummyProductList(
-                              text: "6 hour Express Delivery")
+                          const DummyProductList(text: "Express Delivery")
                         ],
                       ),
                     ),
