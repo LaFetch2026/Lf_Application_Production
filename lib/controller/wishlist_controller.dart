@@ -262,9 +262,12 @@ class WishlistController extends BaseController {
               }
               print("object delete $deleteidList");
               print("object add $deleteidList");
+              print("object remain $addList");
             }
             selected.clear();
             selected = List.generate(wishListProduct.length, (i) => false);
+          } else {
+            addList.clear();
           }
         }
       } else if (response.statusCode == 500) {
