@@ -67,13 +67,12 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: whiteColor,
-        body: Obx(
-          () => productController.isCategoryProduct.value
-              ? const DummyGridList()
-              : productController.productCategoryList.isNotEmpty
-                  ? Stack(
-                      children: [
-                        SingleChildScrollView(
+        body: Obx(() => productController.isCategoryProduct.value
+            ? const DummyGridList()
+            : Stack(
+                children: [
+                  productController.productCategoryList.isNotEmpty
+                      ? SingleChildScrollView(
                           controller:
                               productController.categoryProductController,
                           child: Column(
@@ -496,74 +495,70 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                       height: 0,
                                     ),
                             ],
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
+                          ))
+                      : SizedBox(
+                          height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 16, top: 20, left: 4, right: 12),
-                            child: DoubleButton(
-                              firstText: "Sort By",
-                              secondText: "Filters",
-                              firstTextColor: deepGreytextColor,
-                              secondTextColor: deepGreytextColor,
-                              firstBackgroundColor: backWhite,
-                              secondBackgroundColor: backWhite,
-                              firstBorderColor: deepGreytextColor,
-                              secondBorderColor: deepGreytextColor,
-                              onPressedFirst: () {
-                                scaffoldKey.currentState
-                                    ?.showBottomSheet((context) => BottomSortBy(
-                                          onPressedButton: (p0) {
-                                            productController.sortBy.value = p0;
-                                            productController
-                                                .getProductByCategoryData(
-                                                    widget.categoryId,
-                                                    0,
-                                                    "",
-                                                    [],
-                                                    p0,
-                                                    widget.genderType,
-                                                    productController
-                                                        .filterEnable.value);
-                                          },
-                                        ));
-                              },
-                              onPressedSecond: () {
-                                Get.to(BottomFilters(
-                                  onClick: (p0, p1) {
-                                    productController.filterEnable.value = true;
-                                    productController.lowPrice.value = p0;
-                                    productController.highPrice.value = p1;
-                                    productController.getProductByCategoryData(
-                                        widget.categoryId,
-                                        0,
-                                        "",
-                                        [],
-                                        productController.sortBy.value,
-                                        widget.genderType,
-                                        productController.filterEnable.value);
-                                  },
-                                ));
-                              },
-                            ),
+                          child: const Center(
+                            child: Text("No Product Found",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontFamily: "Franklin Gothic Regular")),
                           ),
                         ),
-                      ],
-                    )
-                  : SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      child: const Center(
-                        child: Text("No Product Found",
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                                fontFamily: "Franklin Gothic Regular")),
+                  Positioned(
+                    bottom: 0,
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 16, top: 20, left: 4, right: 12),
+                      child: DoubleButton(
+                        firstText: "Sort By",
+                        secondText: "Filters",
+                        firstTextColor: deepGreytextColor,
+                        secondTextColor: deepGreytextColor,
+                        firstBackgroundColor: backWhite,
+                        secondBackgroundColor: backWhite,
+                        firstBorderColor: deepGreytextColor,
+                        secondBorderColor: deepGreytextColor,
+                        onPressedFirst: () {
+                          scaffoldKey.currentState?.showBottomSheet((context) =>
+                              BottomSortBy(
+                                onPressedButton: (p0) {
+                                  productController.sortBy.value = p0;
+                                  productController.getProductByCategoryData(
+                                      widget.categoryId,
+                                      0,
+                                      "",
+                                      [],
+                                      p0,
+                                      widget.genderType,
+                                      productController.filterEnable.value);
+                                },
+                              ));
+                        },
+                        onPressedSecond: () {
+                          Get.to(BottomFilters(
+                            onClick: (p0, p1) {
+                              productController.filterEnable.value = true;
+                              productController.lowPrice.value = p0;
+                              productController.highPrice.value = p1;
+                              productController.getProductByCategoryData(
+                                  widget.categoryId,
+                                  0,
+                                  "",
+                                  [],
+                                  productController.sortBy.value,
+                                  widget.genderType,
+                                  productController.filterEnable.value);
+                            },
+                          ));
+                        },
                       ),
                     ),
-        ));
+                  ),
+                ],
+              )));
   }
 }

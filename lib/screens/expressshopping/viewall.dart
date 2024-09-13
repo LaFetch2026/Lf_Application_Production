@@ -62,125 +62,123 @@ class ViewAllScreenState extends State<ViewAllScreen> {
         backgroundColor: whiteTextColor,
         body: Obx(() => productController.isBrandExpressProduct.value
             ? const DummyGridList()
-            : productController.productExpressBrandList.isNotEmpty
-                ? Stack(
-                    children: [
-                      Positioned.fill(
-                        child: SingleChildScrollView(
-                          controller:
-                              productController.brandExpressProductController,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16, right: 16, top: 10, bottom: 90),
-                                child: GridView.count(
-                                  shrinkWrap: true,
-                                  crossAxisCount: 2,
-                                  controller: productController
-                                      .brandExpressProductController,
-                                  scrollDirection: Axis.vertical,
-                                  padding: EdgeInsets.zero,
-                                  childAspectRatio: 0.5,
-                                  physics: const ScrollPhysics(),
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 0,
-                                  children: List.generate(
-                                    productController
-                                        .productExpressBrandList.length,
-                                    (index) {
-                                      return Column(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () async {
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          ProductDetailsScreen(
-                                                              productId: productController
-                                                                      .productExpressBrandList[
-                                                                  index]["id"],
-                                                              type: "add")))
-                                                  .then((value) => setState(
-                                                        () {
-                                                          productController
-                                                              .brandExpressHasnextpage
-                                                              .value = true;
-                                                          productController
-                                                              .brandExpressLoadMore
-                                                              .value = false;
-                                                          productController
-                                                              .isBrandExpressProduct
-                                                              .value = false;
-                                                          productController
-                                                              .brandExpressPage
-                                                              .value = 1;
-                                                          productController.getBrandExpressProductData(
-                                                              widget.brandId,
-                                                              productController
-                                                                  .expressSortBy
-                                                                  .value,
-                                                              productController
-                                                                  .filterExpressEnable
-                                                                  .value);
-                                                        },
-                                                      ));
-                                              await analytics.logEvent(
-                                                name:
-                                                    'express_page_brandproduct',
-                                                parameters: <String, Object>{
-                                                  'page_name':
+            : Stack(
+                children: [
+                  Positioned.fill(
+                    child: productController.productExpressBrandList.isNotEmpty
+                        ? SingleChildScrollView(
+                            controller:
+                                productController.brandExpressProductController,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 10, bottom: 90),
+                                  child: GridView.count(
+                                    shrinkWrap: true,
+                                    crossAxisCount: 2,
+                                    controller: productController
+                                        .brandExpressProductController,
+                                    scrollDirection: Axis.vertical,
+                                    padding: EdgeInsets.zero,
+                                    childAspectRatio: 0.5,
+                                    physics: const ScrollPhysics(),
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 0,
+                                    children: List.generate(
+                                      productController
+                                          .productExpressBrandList.length,
+                                      (index) {
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () async {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            ProductDetailsScreen(
+                                                                productId: productController
+                                                                        .productExpressBrandList[
+                                                                    index]["id"],
+                                                                type: "add")))
+                                                    .then((value) => setState(
+                                                          () {
+                                                            productController
+                                                                .brandExpressHasnextpage
+                                                                .value = true;
+                                                            productController
+                                                                .brandExpressLoadMore
+                                                                .value = false;
+                                                            productController
+                                                                .isBrandExpressProduct
+                                                                .value = false;
+                                                            productController
+                                                                .brandExpressPage
+                                                                .value = 1;
+                                                            productController.getBrandExpressProductData(
+                                                                widget.brandId,
+                                                                productController
+                                                                    .expressSortBy
+                                                                    .value,
+                                                                productController
+                                                                    .filterExpressEnable
+                                                                    .value);
+                                                          },
+                                                        ));
+                                                await analytics.logEvent(
+                                                  name:
                                                       'express_page_brandproduct',
-                                                },
-                                              );
-                                            },
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Stack(
-                                                  children: [
-                                                    Center(
-                                                      child: productController
-                                                                  .productExpressBrandList[
-                                                                      index]
-                                                                      ["images"]
-                                                                  .isNotEmpty &&
-                                                              productController
-                                                                              .productExpressBrandList[
-                                                                          index]
-                                                                      [
-                                                                      "images"] !=
-                                                                  null
-                                                          ? SizedBox(
-                                                              height: 190,
-                                                              width: 152,
-                                                              child:
-                                                                  CachedNetworkImage(
-                                                                cacheManager: CacheManager(Config(
-                                                                    "customCacheKey",
-                                                                    stalePeriod:
-                                                                        const Duration(
-                                                                            days:
-                                                                                15),
-                                                                    maxNrOfCacheObjects:
-                                                                        100)),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                imageUrl: isImage(productController.productExpressBrandList[index]
-                                                                            ["images"][0]
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'express_page_brandproduct',
+                                                  },
+                                                );
+                                              },
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      Center(
+                                                        child: productController
+                                                                    .productExpressBrandList[
+                                                                        index][
+                                                                        "images"]
+                                                                    .isNotEmpty &&
+                                                                productController
+                                                                            .productExpressBrandList[index]
                                                                         [
-                                                                        "name"])
-                                                                    ? productController.productExpressBrandList[index]
-                                                                            ["images"][0]
-                                                                        ["name"]
-                                                                    : productController.productExpressBrandList[index]
-                                                                            ["images"][1]
-                                                                        [
-                                                                        "name"],
-                                                                /*  progressIndicatorBuilder:
+                                                                        "images"] !=
+                                                                    null
+                                                            ? SizedBox(
+                                                                height: 190,
+                                                                width: 152,
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  imageUrl: isImage(productController.productExpressBrandList[index]["images"]
+                                                                              [0]
+                                                                          [
+                                                                          "name"])
+                                                                      ? productController.productExpressBrandList[index]
+                                                                              ["images"][0]
+                                                                          [
+                                                                          "name"]
+                                                                      : productController
+                                                                              .productExpressBrandList[index]["images"][1]
+                                                                          ["name"],
+                                                                  /*  progressIndicatorBuilder:
                                                                     (context,
                                                                             url,
                                                                             downloadProgress) =>
@@ -189,79 +187,130 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                       value: downloadProgress
                                                                           .progress),
                                                                 ), */
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                                  downloadImage,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  height: 190,
-                                                                  width: 152,
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    downloadImage,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    height: 190,
+                                                                    width: 152,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Image.asset(
+                                                                dummyWishlistImage,
+                                                                height: 190,
+                                                                width: 152,
+                                                                fit: BoxFit
+                                                                    .cover),
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          if (productController
+                                                                      .productExpressBrandList[
+                                                                  index]
+                                                              ["wishlisted"]) {
+                                                            productController.callAddProductToWishlist(
+                                                                productController
+                                                                            .productExpressBrandList[
+                                                                        index][
+                                                                    "wishlist_id"],
+                                                                "brand",
+                                                                productController
+                                                                        .productExpressBrandList[
+                                                                    index]["id"],
+                                                                0,
+                                                                widget.brandId,
+                                                                [],
+                                                                0,
+                                                                0);
+                                                          } else {
+                                                            scaffoldKey.currentState?.showBottomSheet((context) =>
+                                                                BottomWishlist(
+                                                                    controller:
+                                                                        wishlistController,
+                                                                    onPressed:
+                                                                        (p0) {
+                                                                      productController.callAddProductToWishlist(
+                                                                          p0,
+                                                                          "brand",
+                                                                          productController.productExpressBrandList[index]
+                                                                              [
+                                                                              "id"],
+                                                                          0,
+                                                                          widget
+                                                                              .brandId,
+                                                                          [],
+                                                                          0,
+                                                                          0);
+                                                                    },
+                                                                    wishlistList:
+                                                                        wishlistController
+                                                                            .wishlistList));
+                                                            await analytics
+                                                                .logEvent(
+                                                              name:
+                                                                  'express_page_brandproduct_wishlist',
+                                                              parameters: <String,
+                                                                  Object>{
+                                                                'page_name':
+                                                                    'express_page_brandproduct_wishlist',
+                                                              },
+                                                            );
+                                                          }
+                                                        },
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      22,
+                                                                  vertical: 10),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            child: InkWell(
+                                                              child: SizedBox(
+                                                                height: 24,
+                                                                width: 24,
+                                                                child:
+                                                                    CircleAvatar(
+                                                                  backgroundColor:
+                                                                      whiteColor,
+                                                                  child: productController
+                                                                              .productExpressBrandList[index]
+                                                                          [
+                                                                          "wishlisted"]
+                                                                      ? Image
+                                                                          .asset(
+                                                                          wishlistSelectImage,
+                                                                          height:
+                                                                              16,
+                                                                          color:
+                                                                              bottomnavBack,
+                                                                          width:
+                                                                              16,
+                                                                        )
+                                                                      : Image
+                                                                          .asset(
+                                                                          heartImage,
+                                                                          height:
+                                                                              16,
+                                                                          color:
+                                                                              bottomnavBack,
+                                                                          width:
+                                                                              16,
+                                                                        ),
                                                                 ),
                                                               ),
-                                                            )
-                                                          : Image.asset(
-                                                              dummyWishlistImage,
-                                                              height: 190,
-                                                              width: 152,
-                                                              fit:
-                                                                  BoxFit.cover),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () async {
-                                                        if (productController
-                                                                .productExpressBrandList[
-                                                            index]["wishlisted"]) {
-                                                          productController.callAddProductToWishlist(
-                                                              productController
-                                                                          .productExpressBrandList[
-                                                                      index][
-                                                                  "wishlist_id"],
-                                                              "brand",
-                                                              productController
-                                                                      .productExpressBrandList[
-                                                                  index]["id"],
-                                                              0,
-                                                              widget.brandId,
-                                                              [],
-                                                              0,
-                                                              0);
-                                                        } else {
-                                                          scaffoldKey
-                                                              .currentState
-                                                              ?.showBottomSheet((context) =>
-                                                                  BottomWishlist(
-                                                                      controller:
-                                                                          wishlistController,
-                                                                      onPressed:
-                                                                          (p0) {
-                                                                        productController.callAddProductToWishlist(
-                                                                            p0,
-                                                                            "brand",
-                                                                            productController.productExpressBrandList[index]["id"],
-                                                                            0,
-                                                                            widget.brandId,
-                                                                            [],
-                                                                            0,
-                                                                            0);
-                                                                      },
-                                                                      wishlistList:
-                                                                          wishlistController
-                                                                              .wishlistList));
-                                                          await analytics
-                                                              .logEvent(
-                                                            name:
-                                                                'express_page_brandproduct_wishlist',
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'express_page_brandproduct_wishlist',
-                                                            },
-                                                          );
-                                                        }
-                                                      },
-                                                      child: Padding(
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
                                                         padding:
                                                             const EdgeInsets
                                                                     .symmetric(
@@ -269,306 +318,254 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 vertical: 10),
                                                         child: Align(
                                                           alignment: Alignment
-                                                              .topRight,
-                                                          child: InkWell(
-                                                            child: SizedBox(
-                                                              height: 24,
-                                                              width: 24,
-                                                              child:
-                                                                  CircleAvatar(
-                                                                backgroundColor:
-                                                                    whiteColor,
-                                                                child: productController
-                                                                            .productExpressBrandList[index]
-                                                                        [
-                                                                        "wishlisted"]
-                                                                    ? Image
-                                                                        .asset(
-                                                                        wishlistSelectImage,
-                                                                        height:
-                                                                            16,
-                                                                        color:
-                                                                            bottomnavBack,
-                                                                        width:
-                                                                            16,
-                                                                      )
-                                                                    : Image
-                                                                        .asset(
-                                                                        heartImage,
-                                                                        height:
-                                                                            16,
-                                                                        color:
-                                                                            bottomnavBack,
-                                                                        width:
-                                                                            16,
-                                                                      ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 22,
-                                                          vertical: 10),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .bottomLeft,
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 140),
-                                                          color: const Color(
-                                                              0xB3F7F7F5),
-                                                          height: 26,
-                                                          width: 80,
-                                                          child: Row(
-                                                            children: [
-                                                              Image.asset(
-                                                                starImage,
-                                                                height: 24,
-                                                                color:
-                                                                    bottomnavBack,
-                                                                width: 24,
-                                                              ),
-                                                              AppText(
-                                                                text: productController.productExpressBrandList[index]
-                                                                            [
-                                                                            "aggregated_rating"] !=
-                                                                        null
-                                                                    ? productController
-                                                                        .productExpressBrandList[
-                                                                            index]
-                                                                            [
-                                                                            "aggregated_rating"]
-                                                                        .toString()
-                                                                    : "aggregated_rating",
-                                                                color:
-                                                                    colorPrimary,
-                                                                fontSize: 12.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                              Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        10),
-                                                                child:
-                                                                    Container(
-                                                                  width: 1,
+                                                              .bottomLeft,
+                                                          child: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 140),
+                                                            color: const Color(
+                                                                0xB3F7F7F5),
+                                                            height: 26,
+                                                            width: 80,
+                                                            child: Row(
+                                                              children: [
+                                                                Image.asset(
+                                                                  starImage,
+                                                                  height: 24,
                                                                   color:
-                                                                      textHintColor,
-                                                                  height: 16,
+                                                                      bottomnavBack,
+                                                                  width: 24,
                                                                 ),
-                                                              ),
-                                                              AppText(
-                                                                text: "8",
-                                                                color:
-                                                                    colorPrimary,
-                                                                fontSize: 12.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
-                                                  child: AppText(
-                                                    text: productController
-                                                                .productExpressBrandList[
-                                                            index]["name"] ??
-                                                        "",
-                                                    color: nameText,
-                                                    maxLines: 1,
-                                                    fontSize: 12.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10),
-                                                  child: AppText(
-                                                    text:
-                                                        "${productController.productExpressBrandList[index]["short_description"]} \n"
-                                                        "",
-                                                    color: nameText,
-                                                    maxLines: 2,
-                                                    fontSize: 11.sp,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10,
-                                                          left: 10,
-                                                          right: 1),
-                                                  child: Row(
-                                                    children: [
-                                                      AppText(
-                                                        text:
-                                                            "\u{20B9} ${productController.productExpressBrandList[index]["price"] ?? ""}",
-                                                        color:
-                                                            deepGreytextColor,
-                                                        maxLines: 2,
-                                                        fontSize: 11.sp,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 5),
-                                                        child: Text(
-                                                          "\u{20B9} ${productController.productExpressBrandList[index]["mrp"] ?? ""}",
-                                                          style: TextStyle(
-                                                            color:
-                                                                textHintColor,
-                                                            fontSize: 11.sp,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
+                                                                AppText(
+                                                                  text: productController.productExpressBrandList[index]
+                                                                              [
+                                                                              "aggregated_rating"] !=
+                                                                          null
+                                                                      ? productController
+                                                                          .productExpressBrandList[
+                                                                              index]
+                                                                              [
+                                                                              "aggregated_rating"]
+                                                                          .toString()
+                                                                      : "aggregated_rating",
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          10),
+                                                                  child:
+                                                                      Container(
+                                                                    width: 1,
+                                                                    color:
+                                                                        textHintColor,
+                                                                    height: 16,
+                                                                  ),
+                                                                ),
+                                                                AppText(
+                                                                  text: "8",
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                ),
-                                                productController
-                                                            .productExpressBrandList[
-                                                        index]["express_delivery"]
-                                                    ? Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                top: 10,
-                                                                left: 10,
-                                                                right: 10),
-                                                        child: Row(
-                                                          children: [
-                                                            const ImageIcon(
-                                                              AssetImage(
-                                                                  truckImage),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                    child: AppText(
+                                                      text: productController
+                                                                  .productExpressBrandList[
+                                                              index]["name"] ??
+                                                          "",
+                                                      color: nameText,
+                                                      maxLines: 1,
+                                                      fontSize: 12.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10),
+                                                    child: AppText(
+                                                      text:
+                                                          "${productController.productExpressBrandList[index]["short_description"]} \n"
+                                                          "",
+                                                      color: nameText,
+                                                      maxLines: 2,
+                                                      fontSize: 11.sp,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10,
+                                                            left: 10,
+                                                            right: 1),
+                                                    child: Row(
+                                                      children: [
+                                                        AppText(
+                                                          text:
+                                                              "\u{20B9} ${productController.productExpressBrandList[index]["price"] ?? ""}",
+                                                          color:
+                                                              deepGreytextColor,
+                                                          maxLines: 2,
+                                                          fontSize: 11.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 5),
+                                                          child: Text(
+                                                            "\u{20B9} ${productController.productExpressBrandList[index]["mrp"] ?? ""}",
+                                                            style: TextStyle(
                                                               color:
-                                                                  expressText,
-                                                              size: 14,
+                                                                  textHintColor,
+                                                              fontSize: 11.sp,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .lineThrough,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                             ),
-                                                            Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      5),
-                                                              child: AppText(
-                                                                text: "Express",
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  productController
+                                                              .productExpressBrandList[
+                                                          index]["express_delivery"]
+                                                      ? Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 10,
+                                                                  left: 10,
+                                                                  right: 10),
+                                                          child: Row(
+                                                            children: [
+                                                              const ImageIcon(
+                                                                AssetImage(
+                                                                    truckImage),
                                                                 color:
                                                                     expressText,
-                                                                maxLines: 2,
-                                                                fontSize: 11.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                                size: 14,
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    : SizedBox(
-                                                        height: 0,
-                                                      )
-                                              ],
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5),
+                                                                child: AppText(
+                                                                  text:
+                                                                      "Express",
+                                                                  color:
+                                                                      expressText,
+                                                                  maxLines: 2,
+                                                                  fontSize:
+                                                                      11.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      : SizedBox(
+                                                          height: 0,
+                                                        )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                          ],
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                              productController.brandExpressLoadMore.value
-                                  ? const DummyGridList()
-                                  : const SizedBox(
-                                      height: 0,
-                                    ),
-                            ],
+                                productController.brandExpressLoadMore.value
+                                    ? const DummyGridList()
+                                    : const SizedBox(
+                                        height: 0,
+                                      ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            width: MediaQuery.of(context).size.width,
+                            child: const Center(
+                              child: Text("No Product Found",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontFamily: "Franklin Gothic Regular")),
+                            ),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        width: MediaQuery.of(context).size.width,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 30, top: 20, left: 4, right: 12),
-                          child: DoubleButton(
-                            firstText: "Sort By",
-                            secondText: "Filters",
-                            firstTextColor: deepGreytextColor,
-                            secondTextColor: deepGreytextColor,
-                            firstBackgroundColor: backWhite,
-                            secondBackgroundColor: backWhite,
-                            firstBorderColor: deepGreytextColor,
-                            secondBorderColor: deepGreytextColor,
-                            onPressedFirst: () async {
-                              scaffoldKey.currentState
-                                  ?.showBottomSheet((context) => BottomSortBy(
-                                        onPressedButton: (p0) {
-                                          productController
-                                              .expressSortBy.value = p0;
-                                          productController
-                                              .getBrandExpressProductData(
-                                                  widget.brandId,
-                                                  productController
-                                                      .expressSortBy.value,
-                                                  productController
-                                                      .filterExpressEnable
-                                                      .value);
-                                        },
-                                      ));
-                              await analytics.logEvent(
-                                name: 'express_page_sortby',
-                                parameters: <String, Object>{
-                                  'page_name': 'express_page_sortby',
-                                },
-                              );
-                            },
-                            onPressedSecond: () async {
-                              Get.to(BottomFilters(
-                                onClick: (p0, p1) {
-                                  productController.filterExpressEnable.value =
-                                      true;
-                                  productController.lowPrice.value = p0;
-                                  productController.highPrice.value = p1;
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 30, top: 20, left: 4, right: 12),
+                      child: DoubleButton(
+                        firstText: "Sort By",
+                        secondText: "Filters",
+                        firstTextColor: deepGreytextColor,
+                        secondTextColor: deepGreytextColor,
+                        firstBackgroundColor: backWhite,
+                        secondBackgroundColor: backWhite,
+                        firstBorderColor: deepGreytextColor,
+                        secondBorderColor: deepGreytextColor,
+                        onPressedFirst: () async {
+                          scaffoldKey.currentState?.showBottomSheet((context) =>
+                              BottomSortBy(
+                                onPressedButton: (p0) {
+                                  productController.expressSortBy.value = p0;
                                   productController.getBrandExpressProductData(
                                       widget.brandId,
                                       productController.expressSortBy.value,
@@ -576,28 +573,37 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                           .filterExpressEnable.value);
                                 },
                               ));
-                              await analytics.logEvent(
-                                name: 'express_page_filter',
-                                parameters: <String, Object>{
-                                  'page_name': 'express_page_filter',
-                                },
-                              );
+                          await analytics.logEvent(
+                            name: 'express_page_sortby',
+                            parameters: <String, Object>{
+                              'page_name': 'express_page_sortby',
                             },
-                          ),
-                        ),
+                          );
+                        },
+                        onPressedSecond: () async {
+                          Get.to(BottomFilters(
+                            onClick: (p0, p1) {
+                              productController.filterExpressEnable.value =
+                                  true;
+                              productController.lowPrice.value = p0;
+                              productController.highPrice.value = p1;
+                              productController.getBrandExpressProductData(
+                                  widget.brandId,
+                                  productController.expressSortBy.value,
+                                  productController.filterExpressEnable.value);
+                            },
+                          ));
+                          await analytics.logEvent(
+                            name: 'express_page_filter',
+                            parameters: <String, Object>{
+                              'page_name': 'express_page_filter',
+                            },
+                          );
+                        },
                       ),
-                    ],
-                  )
-                : SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: const Center(
-                      child: Text("No Product Found",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontFamily: "Franklin Gothic Regular")),
                     ),
-                  )));
+                  ),
+                ],
+              )));
   }
 }
