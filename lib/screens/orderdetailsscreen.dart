@@ -52,6 +52,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     getPrefrenceValue();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => orderController.getOrderDetails(widget.orderId));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => orderController.getTrackorder(widget.orderId));
     super.initState();
   }
 
@@ -84,18 +86,17 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(() => orderController.isDetails.value
+                        Obx(() => orderController.isTrack.value
                             ? DummyContainer(
                                 height: 250,
                                 width: MediaQuery.of(context).size.width)
-                            : orderController.deliveriesList.isNotEmpty
+                            : orderController.trackList.isNotEmpty
                                 ? Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      if (orderController.deliveriesList[
-                                              orderController
-                                                      .deliveriesList.length -
+                                      if (orderController.trackList[
+                                              orderController.trackList.length -
                                                   1]["status"] ==
                                           4) ...[
                                         Padding(
@@ -106,9 +107,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 height: 250, fit: BoxFit.cover),
                                           ),
                                         )
-                                      ] else if (orderController.deliveriesList[
-                                              orderController
-                                                      .deliveriesList.length -
+                                      ] else if (orderController.trackList[
+                                              orderController.trackList.length -
                                                   1]["status"] ==
                                           3) ...[
                                         Padding(
@@ -119,9 +119,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 height: 250, fit: BoxFit.cover),
                                           ),
                                         )
-                                      ] else if (orderController.deliveriesList[
-                                              orderController
-                                                      .deliveriesList.length -
+                                      ] else if (orderController.trackList[
+                                              orderController.trackList.length -
                                                   1]["status"] ==
                                           2) ...[
                                         Padding(
@@ -162,10 +161,10 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   children: [
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 2),
                                                       child: orderController
-                                                              .deliveriesList
+                                                              .trackList
                                                               .any((map) =>
                                                                   map['status_details'] ==
                                                                   orderItem[
@@ -185,11 +184,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 4),
                                                       child: AppText(
                                                         text: orderController
-                                                                .deliveriesList
+                                                                .trackList
                                                                 .any((map) =>
                                                                     map['status_details'] ==
                                                                     orderItem[
@@ -204,7 +203,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             FontWeight.w400,
                                                         fontSize: 10.sp,
                                                         color: orderController
-                                                                .deliveriesList
+                                                                .trackList
                                                                 .any((map) =>
                                                                     map['status_details'] ==
                                                                     orderItem[
@@ -220,7 +219,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         : Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .symmetric(
+                                                                        .symmetric(
                                                                     horizontal:
                                                                         2),
                                                             child: Container(
@@ -377,7 +376,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       ? Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .only(
+                                                                      .only(
                                                                   right: 10),
                                                           child: AppText(
                                                             text:
@@ -434,18 +433,18 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   ),
                                 ),
                         ),
-                        Obx(() => orderController.isDetails.value
+                        Obx(() => orderController.isTrack.value
                             ? const SizedBox(
                                 height: 0,
                               )
-                            : orderController.deliveriesList.isNotEmpty
+                            : orderController.trackList.isNotEmpty
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 10),
                                     child: Container(
-                                      color: orderController.deliveriesList[
-                                                  orderController.deliveriesList
-                                                          .length -
+                                      color: orderController.trackList[
+                                                  orderController
+                                                          .trackList.length -
                                                       1]["status"] ==
                                               4
                                           ? lightGreen
@@ -458,10 +457,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             bottom: 16),
                                         child: Row(
                                           children: [
-                                            if (orderController.deliveriesList[
-                                                    orderController
-                                                            .deliveriesList
-                                                            .length -
+                                            if (orderController.trackList[
+                                                    orderController.trackList.length -
                                                         1]["status"] ==
                                                 4) ...[
                                               Expanded(
@@ -474,9 +471,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontSize: 14.sp,
                                                 ),
                                               ),
-                                            ] else if (orderController
-                                                        .deliveriesList[orderController.deliveriesList.length - 1]
-                                                    ["status"] ==
+                                            ] else if (orderController.trackList[
+                                                    orderController.trackList.length -
+                                                        1]["status"] ==
                                                 3) ...[
                                               Expanded(
                                                 flex: 1,
@@ -489,7 +486,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                               ),
                                             ] else if (orderController
-                                                        .deliveriesList[orderController.deliveriesList.length - 1]
+                                                        .trackList[orderController.trackList.length - 1]
                                                     ["status"] ==
                                                 2) ...[
                                               Expanded(
@@ -503,7 +500,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                               ),
                                             ] else if (orderController
-                                                        .deliveriesList[orderController.deliveriesList.length - 1]
+                                                        .trackList[orderController.trackList.length - 1]
                                                     ["status"] ==
                                                 1) ...[
                                               Expanded(
@@ -518,10 +515,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               ),
                                             ],
                                             AppText(
-                                              text: orderController
-                                                  .deliveriesList[
-                                                      orderController
-                                                              .deliveriesList
+                                              text: orderController.trackList[
+                                                      orderController.trackList
                                                               .length -
                                                           1]["created"]
                                                   .split(",")
@@ -600,9 +595,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ),
                     ),
                   ), */
-                  Obx(() => orderController.isDetails.value
+                  Obx(() => orderController.isTrack.value
                       ? const DummyOrderTrack()
-                      : orderController.deliveriesList.isNotEmpty
+                      : orderController.trackList.isNotEmpty
                           ? Container(
                               color: whiteColor,
                               width: double.infinity,
@@ -660,8 +655,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         CrossAxisAlignment
                                                             .center,
                                                     children: [
-                                                      orderController
-                                                              .deliveriesList
+                                                      orderController.trackList
                                                               .any((map) =>
                                                                   map['status_details'] ==
                                                                   orderItem[
@@ -688,7 +682,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets
-                                                        .symmetric(
+                                                            .symmetric(
                                                         horizontal: 12),
                                                     child: Column(
                                                       mainAxisAlignment:
@@ -700,7 +694,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       children: [
                                                         AppText(
                                                           text: orderController
-                                                                  .deliveriesList
+                                                                  .trackList
                                                                   .any((map) =>
                                                                       map['status_details'] ==
                                                                       orderItem[
@@ -722,13 +716,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                   .only(top: 8),
                                                           child: AppText(
                                                             text: orderController
-                                                                    .deliveriesList
+                                                                    .trackList
                                                                     .any((map) =>
                                                                         map['status_details'] ==
                                                                         orderItem[
                                                                             index])
                                                                 ? orderController
-                                                                            .deliveriesList[
+                                                                            .trackList[
                                                                         index]
                                                                     ["created"]
                                                                 : "",
@@ -1109,7 +1103,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .only(
+                                                                      .only(
                                                                   top: 10),
                                                           child: Column(
                                                               crossAxisAlignment:

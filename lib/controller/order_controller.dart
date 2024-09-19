@@ -19,7 +19,7 @@ class OrderController extends BaseController {
   RxString queryText = "".obs;
   List orderList = [].obs;
   List trackList = [].obs;
-  List deliveriesList = [].obs;
+  // List deliveriesList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
@@ -182,9 +182,9 @@ class OrderController extends BaseController {
         print(responseData);
         if (responseData != null) {
           orderDetails = responseData;
-          if (responseData["deliveries"] != null) {
+          /*  if (responseData["deliveries"] != null) {
             deliveriesList = responseData["deliveries"];
-          }
+          } */
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
