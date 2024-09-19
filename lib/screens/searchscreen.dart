@@ -307,7 +307,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                             width: 1)),
                                                     child: Padding(
                                                       padding: const EdgeInsets
-                                                          .symmetric(
+                                                              .symmetric(
                                                           horizontal: 10,
                                                           vertical: 7),
                                                       child: Text(
@@ -488,13 +488,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             .cover),
                                                                   ),
                                                             Padding(
-                                                              padding:
-                                                                  const EdgeInsets
+                                                              padding: const EdgeInsets
                                                                       .symmetric(
-                                                                      horizontal:
-                                                                          10,
-                                                                      vertical:
-                                                                          5),
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5),
                                                               child: AppText(
                                                                 text: productController
                                                                         .mostSeachList[
@@ -652,7 +650,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .symmetric(
+                                                                        .symmetric(
                                                                     horizontal:
                                                                         10,
                                                                     vertical:
@@ -674,7 +672,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .symmetric(
+                                                                        .symmetric(
                                                                     horizontal:
                                                                         10,
                                                                     vertical:
@@ -1067,7 +1065,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .symmetric(
+                                                                        .symmetric(
                                                                     horizontal:
                                                                         12),
                                                             child: AppText(
@@ -1090,11 +1088,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                         Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .symmetric(
+                                                                      .symmetric(
                                                                   horizontal:
                                                                       8),
                                                           child: AppText(
-                                                            text: "41",
+                                                            text: controller
+                                                                .searchList[
+                                                                    index]
+                                                                    ["hits"]
+                                                                .toString(),
                                                             maxLines: 1,
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",

@@ -18,6 +18,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
+import '../../../commonwidget/bottomsizechart.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/profile_controller.dart';
 import '../../../controller/wishlist_controller.dart';
@@ -1009,14 +1010,30 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       color: colorPrimary,
                                                       fontSize: 16.sp,
                                                     ),
-                                                    AppText(
-                                                      text: 'View Size chart',
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        scaffoldKey.currentState
+                                                            ?.showBottomSheet(
+                                                                (context) =>
+                                                                    BottomSizeChart(
+                                                                      productSizeChart:
+                                                                          productController.productDetails["productSizeChart"]
+                                                                              [
+                                                                              "image"],
+                                                                      productName:
+                                                                          productController
+                                                                              .productDetails["name"],
+                                                                    ));
+                                                      },
+                                                      child: AppText(
+                                                        text: 'View Size chart',
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: colorPrimary,
+                                                        fontSize: 12.sp,
+                                                      ),
                                                     ),
                                                   ],
                                                 )),
