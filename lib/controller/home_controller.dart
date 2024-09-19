@@ -136,7 +136,7 @@ class HomeController extends BaseController {
     }
   }
 
-  fetchMoreTagsData() async {
+  fetchMoreTagsData(int genderType) async {
     if (hasnextpage.value == true &&
         istags.value == false &&
         loadMore.value == false) {
@@ -146,7 +146,8 @@ class HomeController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       try {
         var response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/tags?page=${page.value}"),
+            Uri.parse(
+                "${ApiConstants.baseUrl}/tags?page=${page.value}&gender_type=$genderType"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",

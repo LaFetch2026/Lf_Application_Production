@@ -36,7 +36,7 @@ class _WomenScreenState extends State<WomenScreen> {
         (_) => homeController.getTagsData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.tagsController.addListener(() {
-        homeController.fetchMoreTagsData();
+        homeController.fetchMoreTagsData(widget.genderType);
         homeController.update();
       });
     });
