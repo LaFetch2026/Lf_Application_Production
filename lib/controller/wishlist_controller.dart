@@ -648,6 +648,7 @@ class WishlistController extends BaseController {
       final Map<String, dynamic> sendData = {
         "wishlist_id": wishlistId,
         "inventory_id": inventoryId,
+        "quantity": qty
       };
       var response = await http.put(
           Uri.parse("${ApiConstants.baseUrl}/products/$productId/move-to-cart"),
