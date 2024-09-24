@@ -226,9 +226,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   "customCacheKey",
                                   stalePeriod: const Duration(days: 15),
                                   maxNrOfCacheObjects: 100)),
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                               imageUrl: homeController.banner1List[itemIndex]
                                   ["image"],
+                              height: 210,
+                              width: MediaQuery.of(context).size.width,
                               progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
                                 child: Container(
@@ -753,7 +755,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         "customCacheKey",
                                         stalePeriod: const Duration(days: 15),
                                         maxNrOfCacheObjects: 100)),
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
+                                    height: 210,
+                                    width: MediaQuery.of(context).size.width,
                                     imageUrl: homeController
                                         .banner2List[itemIndex]["image"],
                                     progressIndicatorBuilder:
@@ -782,33 +786,42 @@ class DiscountScreenState extends State<DiscountScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: SizedBox(
-                            width: 50 *
-                                homeController.banner2List.length.toDouble(),
-                            height: 6,
-                            child: GetBuilder<HomeController>(
-                                builder: (value) => ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: value.banner2List.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (ctx, index) {
-                                      return AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 400),
-                                          height: 6,
-                                          width: 40,
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          decoration: BoxDecoration(
-                                              color: index ==
-                                                      value.currentPage.value
-                                                  ? colorPrimary
-                                                  : colorSecondary));
-                                    })),
-                          ),
-                        ),
+                        homeController.banner2List.length == 1
+                            ? SizedBox(
+                                height: 0,
+                              )
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: SizedBox(
+                                  width: 50 *
+                                      homeController.banner2List.length
+                                          .toDouble(),
+                                  height: 6,
+                                  child: GetBuilder<HomeController>(
+                                      builder: (value) => ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount: value.banner2List.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (ctx, index) {
+                                            return AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 400),
+                                                height: 6,
+                                                width: 40,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                decoration: BoxDecoration(
+                                                    color: index ==
+                                                            value.currentPage
+                                                                .value
+                                                        ? colorPrimary
+                                                        : colorSecondary));
+                                          })),
+                                ),
+                              ),
                         /*  Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: SizedBox(
