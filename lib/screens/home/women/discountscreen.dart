@@ -863,6 +863,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             QuestionCardWidget(
                 text1: "FAQs",
                 text2: "Your questions answered",
+                size: 26,
                 onPressed: () async {
                   await analytics.logEvent(
                     name: 'FAQ_home_page',
@@ -875,6 +876,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             QuestionCardWidget(
                 text1: "Need Help?",
                 text2: "Contact customer service",
+                size: 32,
                 onPressed: () async {
                   await analytics.logEvent(
                     name: 'needhelp_home_page',

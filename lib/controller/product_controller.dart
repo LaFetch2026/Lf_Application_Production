@@ -112,6 +112,7 @@ class ProductController extends BaseController {
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
   RxInt category_id = 0.obs;
+  RxInt totalReview = 0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -1322,7 +1323,9 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productDetails = responseData;
-
+          if (responseData["reviews"] != null) {
+            totalReview.value = responseData["reviews"].length;
+          }
           if (responseData["brand"] != null) {
             brandDetails = responseData["brand"];
           }

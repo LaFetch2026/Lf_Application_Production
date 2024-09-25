@@ -8,6 +8,7 @@ class QuestionCardWidget extends StatelessWidget {
   final String text1;
   final String text2;
   final String icon;
+  final double size;
   final Function? onPressed;
 
   const QuestionCardWidget({
@@ -15,6 +16,7 @@ class QuestionCardWidget extends StatelessWidget {
     required this.text1,
     required this.text2,
     required this.icon,
+    required this.size,
     this.onPressed,
   }) : super(key: key);
 
@@ -41,7 +43,7 @@ class QuestionCardWidget extends StatelessWidget {
                 ImageIcon(
                   AssetImage(icon),
                   color: expressText,
-                  size: 36,
+                  size: size,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

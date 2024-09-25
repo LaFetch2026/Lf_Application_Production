@@ -250,6 +250,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     icon: ImageIcon(
                                       AssetImage(whiteDropDown),
                                       color: colorSecondary,
+                                      size: 8,
                                     ),
                                     iconSize: 16,
                                   ),

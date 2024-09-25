@@ -766,7 +766,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   const VerticalDivider(
                                                       color: colorSecondary),
                                                   AppText(
-                                                    text: '8',
+                                                    text: productController
+                                                        .totalReview.value
+                                                        .toString(),
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,
