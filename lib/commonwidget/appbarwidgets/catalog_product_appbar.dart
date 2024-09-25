@@ -32,6 +32,8 @@ class CatalogProductAppbar extends StatelessWidget {
                 },
                 child: Image.asset(
                   arrowBack,
+                  height: 20,
+                  width: 20,
                   color: whiteColor,
                 ),
               ),

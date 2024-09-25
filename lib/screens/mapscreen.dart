@@ -80,8 +80,8 @@ class MapScreenState extends State<MapScreen> {
                                 },
                                 child: Image.asset(
                                   backWhiteArrow,
-                                  height: 20,
-                                  width: 30,
+                                  height: 16,
+                                  width: 16,
                                   color: colorPrimary,
                                 )),
                           ),

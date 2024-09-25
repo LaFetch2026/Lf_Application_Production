@@ -111,7 +111,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                                     child: Tab(
                                       child: ImageIcon(
                                         AssetImage(outlineImage),
-                                        size: 20,
+                                        size: 16,
                                       ),
                                     ),
                                   ),
@@ -120,7 +120,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                                     child: Tab(
                                       child: ImageIcon(
                                         AssetImage(menuImage),
-                                        size: 20,
+                                        size: 16,
                                       ),
                                     ),
                                   ),

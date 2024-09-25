@@ -105,17 +105,17 @@ class SearchScreenState extends State<SearchScreen> {
                         left: 16, right: 16, top: 40, bottom: 20),
                     child: Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: ImageIcon(
-                              AssetImage(backWhiteArrow),
-                              color: whiteBorderColor,
-                              size: 24,
+                        Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: IconButton(
+                            icon: Image.asset(
+                              backWhiteArrow,
+                              height: 16,
+                              width: 16,
                             ),
+                            onPressed: () {
+                              Get.back();
+                            },
                           ),
                         ),
                         Expanded(
@@ -896,7 +896,7 @@ class SearchScreenState extends State<SearchScreen> {
                                 child: const ImageIcon(
                                   AssetImage(backWhiteArrow),
                                   color: colorPrimary,
-                                  size: 24,
+                                  size: 16,
                                 ),
                               ),
                               Expanded(
@@ -937,10 +937,9 @@ class SearchScreenState extends State<SearchScreen> {
                                               controller.searchController
                                                   .clear();
                                             },
-                                            child: Image.asset(
-                                              greyCrossImage,
-                                              height: 18,
-                                              width: 18,
+                                            child: ImageIcon(
+                                              AssetImage(greyCrossImage),
+                                              size: 14,
                                             ),
                                           ),
                                           prefixIcon: const Icon(Icons.search,
@@ -1109,8 +1108,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                         ),
                                                         Image.asset(
                                                             curveArrowImage,
-                                                            height: 12,
-                                                            width: 12,
+                                                            height: 14,
+                                                            width: 14,
                                                             fit: BoxFit.cover),
                                                       ],
                                                     ),

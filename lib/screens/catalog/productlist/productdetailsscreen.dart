@@ -655,7 +655,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 IconButton(
-                                                  icon: Image.asset(arrowBack),
+                                                  icon: Image.asset(
+                                                    arrowBack,
+                                                    height: 24,
+                                                    width: 24,
+                                                  ),
                                                   onPressed: () {
                                                     Get.back();
                                                   },

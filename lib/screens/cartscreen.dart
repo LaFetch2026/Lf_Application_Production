@@ -69,7 +69,7 @@ class CartScreenState extends State<CartScreen> {
           CartAppbar(
             text: "Shopping Bag",
             threeDot: true,
-            icon: bigHeartImage,
+            icon: heartImage,
             onPressedHeart: () {
               Get.offAll(const BottomNavScreen(
                 index: 2,

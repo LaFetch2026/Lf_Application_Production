@@ -990,7 +990,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 15),
+                                              vertical: 10),
                                           child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -1007,9 +1007,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16),
+                                                padding: const EdgeInsets.only(
+                                                    left: 16),
                                                 child: AppText(
                                                   text: orderController
                                                                   .orderDetails[
@@ -1023,8 +1022,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontSize: 14.sp,
                                                 ),
                                               ),
-                                              Image.asset(razorpayImage,
-                                                  fit: BoxFit.cover),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 4, left: 4),
+                                                child: Image.asset(
+                                                    razorpayImage,
+                                                    height: 40,
+                                                    width: 55,
+                                                    fit: BoxFit.cover),
+                                              ),
                                             ],
                                           ),
                                         ),
