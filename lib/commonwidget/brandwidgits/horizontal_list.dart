@@ -135,14 +135,14 @@ class HorizontalBrandList extends StatelessWidget {
                                                           ["wishlisted"]
                                                       ? Image.asset(
                                                           wishlistSelectImage,
-                                                          height: 16,
-                                                          width: 16,
+                                                          height: 18,
+                                                          width: 18,
                                                         )
                                                       : Image.asset(
                                                           heartImage,
-                                                          height: 16,
+                                                          height: 18,
                                                           color: bottomnavBack,
-                                                          width: 16,
+                                                          width: 18,
                                                         ),
                                                 ),
                                               ),

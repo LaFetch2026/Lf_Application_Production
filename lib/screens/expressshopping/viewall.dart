@@ -288,21 +288,21 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           .asset(
                                                                           wishlistSelectImage,
                                                                           height:
-                                                                              16,
+                                                                              18,
                                                                           color:
                                                                               bottomnavBack,
                                                                           width:
-                                                                              16,
+                                                                              18,
                                                                         )
                                                                       : Image
                                                                           .asset(
                                                                           heartImage,
                                                                           height:
-                                                                              16,
+                                                                              18,
                                                                           color:
                                                                               bottomnavBack,
                                                                           width:
-                                                                              16,
+                                                                              18,
                                                                         ),
                                                                 ),
                                                               ),

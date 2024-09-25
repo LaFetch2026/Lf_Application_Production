@@ -330,8 +330,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                   : Image.asset(
                                                                       heartImage,
                                                                       height:
-                                                                          24,
-                                                                      width: 24,
+                                                                          18,
+                                                                      width: 18,
                                                                     ),
                                                             ),
                                                           ),

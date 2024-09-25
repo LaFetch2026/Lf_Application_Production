@@ -288,8 +288,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                   )
                                                                 : Image.asset(
                                                                     heartImage,
-                                                                    height: 24,
-                                                                    width: 24,
+                                                                    height: 18,
+                                                                    width: 18,
                                                                   ),
                                                           ),
                                                         ),

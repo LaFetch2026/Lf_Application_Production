@@ -620,7 +620,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             child:
                                                                                 Padding(
                                                                               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                                                                              child: Image.asset(blackCrossImage, height: 10, width: 10, fit: BoxFit.cover),
+                                                                              child: Image.asset(blackCrossImage, height: 14, width: 14, fit: BoxFit.cover),
                                                                             ),
                                                                           ),
                                                                         ),

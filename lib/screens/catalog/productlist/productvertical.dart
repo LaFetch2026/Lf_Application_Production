@@ -391,8 +391,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                   : Image.asset(
                                                                       heartImage,
                                                                       height:
-                                                                          30,
-                                                                      width: 30,
+                                                                          22,
+                                                                      width: 22,
                                                                     ),
                                                             ),
                                                           ),

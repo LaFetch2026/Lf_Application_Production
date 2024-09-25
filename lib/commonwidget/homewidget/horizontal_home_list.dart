@@ -128,10 +128,14 @@ class HorizontalHomeList extends StatelessWidget {
                                                 child: list[index]["wishlisted"]
                                                     ? Image.asset(
                                                         wishlistSelectImage,
-                                                        height: 16,
-                                                        width: 16,
+                                                        height: 18,
+                                                        width: 18,
                                                       )
-                                                    : Image.asset(heartImage)),
+                                                    : Image.asset(
+                                                        heartImage,
+                                                        height: 18,
+                                                        width: 18,
+                                                      )),
                                             onPressed: () {
                                               onPressedHeart?.call(
                                                   list[index]["id"], index);

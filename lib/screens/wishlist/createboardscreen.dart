@@ -423,12 +423,19 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                             width: 80,
                                                             child: Row(
                                                               children: [
-                                                                Image.asset(
-                                                                  heartImage,
-                                                                  height: 24,
-                                                                  color:
-                                                                      bottomnavBack,
-                                                                  width: 24,
+                                                                Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          2),
+                                                                  child: Image
+                                                                      .asset(
+                                                                    heartImage,
+                                                                    height: 16,
+                                                                    color:
+                                                                        bottomnavBack,
+                                                                    width: 16,
+                                                                  ),
                                                                 ),
                                                                 AppText(
                                                                   text: wishlistController.wishListProduct[index]

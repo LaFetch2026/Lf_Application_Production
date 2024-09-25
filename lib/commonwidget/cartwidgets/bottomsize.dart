@@ -73,7 +73,7 @@ class _BottomQuantityState extends State<BottomSize> {
                     child: Container(
                       color: Colors.transparent,
                       child: Image.asset(blackCrossImage,
-                          height: 12, width: 12, fit: BoxFit.cover),
+                          height: 18, width: 18, fit: BoxFit.cover),
                     ),
                   ),
                 ],

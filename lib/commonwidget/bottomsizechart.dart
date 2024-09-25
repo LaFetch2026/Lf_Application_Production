@@ -40,8 +40,8 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                       Get.back();
                     },
                     child: Container(
-                      height: 12,
-                      width: 12,
+                      height: 20,
+                      width: 20,
                       margin: EdgeInsets.only(top: 50, right: 20),
                       decoration: BoxDecoration(
                         color: Colors.transparent,

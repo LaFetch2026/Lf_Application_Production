@@ -693,7 +693,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             backgroundColor:
                                                                 colorPrimary,
                                                             child: Image.asset(
-                                                                cartIconWhite)),
+                                                              cartIconWhite,
+                                                              height: 22,
+                                                              width: 22,
+                                                            )),
                                                         badgeOptions:
                                                             const BadgeOptions(
                                                           active: false,
@@ -1466,8 +1469,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           right: 12.0),
-                                                  child:
-                                                      Image.asset(getItByIcon),
+                                                  child: Image.asset(
+                                                    getItByIcon,
+                                                    height: 18,
+                                                    width: 18,
+                                                  ),
                                                 ),
                                                 AppText(
                                                   text:
@@ -1499,8 +1505,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   padding:
                                                       const EdgeInsets.only(
                                                           right: 12.0),
-                                                  child:
-                                                      Image.asset(walletBlack),
+                                                  child: Image.asset(
+                                                    walletBlack,
+                                                    height: 18,
+                                                    width: 18,
+                                                  ),
                                                 ),
                                                 AppText(
                                                   text:
@@ -1534,7 +1543,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       const EdgeInsets.only(
                                                           right: 12.0),
                                                   child: Image.asset(
-                                                      exchangeItemImage),
+                                                    exchangeItemImage,
+                                                    height: 16,
+                                                    width: 16,
+                                                  ),
                                                 ),
                                                 AppText(
                                                   text:

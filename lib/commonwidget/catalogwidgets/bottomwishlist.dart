@@ -64,7 +64,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                     child: Container(
                       color: Colors.transparent,
                       child: Image.asset(blackCrossImage,
-                          height: 12, width: 12, fit: BoxFit.cover),
+                          height: 20, width: 20, fit: BoxFit.cover),
                     ),
                   ),
                 ],

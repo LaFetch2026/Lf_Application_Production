@@ -70,14 +70,15 @@ class AccountScreenState extends State<AccountScreen> {
                       },
                     );
                   },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      color: blackColor,
-                      child: const ImageIcon(
+                  child: SizedBox(
+                    height: 28,
+                    width: 28,
+                    child: CircleAvatar(
+                      backgroundColor: blackColor,
+                      child: ImageIcon(
                         AssetImage(cartImage),
                         color: whiteBorderColor,
-                        size: 30,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -130,7 +131,7 @@ class AccountScreenState extends State<AccountScreen> {
                                               const ImageIcon(
                                                 AssetImage(phoneImage),
                                                 color: greyTextColor,
-                                                size: 24,
+                                                size: 18,
                                               ),
                                               Padding(
                                                 padding:
