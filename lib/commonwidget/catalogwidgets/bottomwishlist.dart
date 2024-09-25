@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../screens/bottomnavscreen.dart';
 import '../../utils/constants.dart';
 import '../common_widgets.dart';
+import '../smallbtn.dart';
 
 class BottomWishlist extends StatefulWidget {
   final Function(int)? onPressed;
@@ -72,11 +74,11 @@ class _BottomWishlistState extends State<BottomWishlist> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-              child: SizedBox(
-                  width: double.infinity,
-                  height: 250,
-                  child: widget.wishlistList.isNotEmpty
-                      ? ListView.builder(
+              child: widget.wishlistList.isNotEmpty
+                  ? SizedBox(
+                      width: double.infinity,
+                      height: 250,
+                      child: ListView.builder(
                           physics: const ScrollPhysics(),
                           itemCount: widget.wishlistList.length,
                           scrollDirection: Axis.vertical,
@@ -141,7 +143,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                               ],
                             );
                           })
-                      : const Padding(
+                      /* const Padding(
                           padding: EdgeInsets.all(40.0),
                           child: Center(
                             child: Text("No Wishlist Found",
@@ -150,7 +152,26 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                     color: Colors.black,
                                     fontFamily: "Franklin Gothic Regular")),
                           ),
-                        )),
+                        ) */
+                      )
+                  : Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 150),
+                        child: SmallButton(
+                            width: 160,
+                            label: "Create Wishlisit",
+                            textColor: whiteBorderColor,
+                            backgroundColor: colorPrimary,
+                            onPressed: () {
+                              Get.offAll(
+                                () => const BottomNavScreen(
+                                  index: 2,
+                                ),
+                              );
+                            },
+                            borderColor: colorPrimary),
+                      ),
+                    ),
             ),
             widget.wishlistList.isNotEmpty
                 ? Obx(() => Padding(

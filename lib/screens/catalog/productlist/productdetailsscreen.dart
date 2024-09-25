@@ -644,8 +644,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           // height: 80,
                                           alignment: Alignment.center,
                                           child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 8),
+                                            padding: const EdgeInsets.only(
+                                                right: 8, top: 20),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -878,23 +878,26 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         .addPostFrameCallback(
                                                             (_) {
                                                       setState(() {
-                                                        Navigator.of(context)
-                                                            .pushReplacement(
-                                                                MaterialPageRoute(
-                                                                    builder: (BuildContext
-                                                                            context) =>
-                                                                        BrandsScreen(
-                                                                          screen:
-                                                                              "search",
-                                                                          logo:
-                                                                              productController.brandDetails["logo"],
-                                                                          backImage:
-                                                                              productController.brandDetails["background_image"] ?? "",
-                                                                          name:
-                                                                              productController.brandDetails["name"],
-                                                                          brandId:
-                                                                              productController.brandDetails["id"],
-                                                                        )));
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                        context) =>
+                                                                    BrandsScreen(
+                                                                      screen:
+                                                                          "search",
+                                                                      logo: productController
+                                                                              .brandDetails[
+                                                                          "logo"],
+                                                                      backImage:
+                                                                          productController.brandDetails["background_image"] ??
+                                                                              "",
+                                                                      name: productController
+                                                                              .brandDetails[
+                                                                          "name"],
+                                                                      brandId: productController
+                                                                              .brandDetails[
+                                                                          "id"],
+                                                                    )));
                                                       });
                                                     });
                                                   },

@@ -317,7 +317,7 @@ class CartController extends BaseController {
               },
               body: json.encode(sendData));
       if (response.statusCode == 200) {
-        getSnackBar("Coupan removed");
+        getSnackBar("Coupon removed");
         couponText.value = "Apply Coupon";
         getCartData();
       } else if (response.statusCode == 400) {

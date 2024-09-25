@@ -713,6 +713,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                   productController.page.value = 1;
                                                                                   productController.getProductData("relevant");
                                                                                   controller.getCartData();
+                                                                                  controller.update();
                                                                                 },
                                                                               ));
                                                                       await analytics
