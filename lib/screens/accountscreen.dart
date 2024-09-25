@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/accountwidgets/profilebottom.dart';
 import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
 import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_account.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
@@ -88,10 +89,7 @@ class AccountScreenState extends State<AccountScreen> {
           ),
           Obx(
             () => controller.isProfile.value
-                ? const Padding(
-                    padding: EdgeInsets.all(40.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                ? DummyAccount()
                 : Expanded(
                     child: SingleChildScrollView(
                       child: Column(

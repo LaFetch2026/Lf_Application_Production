@@ -9,12 +9,15 @@ import 'package:get/get.dart';
 //import 'package:getwidget/getwidget.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_order_address.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_orderpayment.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
 import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../commonwidget/homewidget/dummy_estimatedelivery.dart';
 import '../controller/order_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -750,10 +753,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             )),
                   Obx(
                     () => orderController.isDetails.value
-                        ? const Padding(
-                            padding: EdgeInsets.all(40.0),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
+                        ? DummyOrderAddress()
                         : orderController.orderDetails["address"] != null
                             ? Padding(
                                 padding:
@@ -895,10 +895,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   ),
                   Obx(
                     () => orderController.isDetails.value
-                        ? const Padding(
-                            padding: EdgeInsets.all(40.0),
-                            child: Center(child: CircularProgressIndicator()),
-                          )
+                        ? DummyOrderPayment()
                         : orderController.orderDetails["payment"] != null
                             ? Padding(
                                 padding:
@@ -1052,11 +1049,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               vertical: 10, horizontal: 16),
                           child: Obx(
                             () => orderController.isDetails.value
-                                ? const Padding(
-                                    padding: EdgeInsets.all(40.0),
-                                    child: Center(
-                                        child: CircularProgressIndicator()),
-                                  )
+                                ? const DummyEstimateDelivery()
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:

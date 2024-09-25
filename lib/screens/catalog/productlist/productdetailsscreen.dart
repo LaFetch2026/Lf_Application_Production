@@ -19,6 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/bottomsizechart.dart';
+import '../../../commonwidget/homewidget/dummy_product_list.dart';
+import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/profile_controller.dart';
 import '../../../controller/wishlist_controller.dart';
@@ -1245,9 +1247,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                      */
                       Obx(() => profileController.isAddress.value
-                          ? const Padding(
-                              padding: EdgeInsets.all(40.0),
-                              child: Center(child: CircularProgressIndicator()),
+                          ? const DummySaveAddress(
+                              size: 1,
                             )
                           : profileController.defaultAddress != ""
                               ? Padding(
@@ -1619,19 +1620,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               .symmetric(
                                                           vertical: 4.0),
                                                   children: [
-                                                    AppText(
-                                                      text: Bidi.stripHtmlIfNeeded(
-                                                          productController
-                                                                      .productDetails[
-                                                                  'description'] ??
-                                                              ""),
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      maxLines: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: AppText(
+                                                        text: Bidi.stripHtmlIfNeeded(
+                                                            productController
+                                                                        .productDetails[
+                                                                    'description'] ??
+                                                                ""),
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        maxLines: 20,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: colorPrimary,
+                                                        fontSize: 12.sp,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -1681,19 +1686,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               .symmetric(
                                                           vertical: 4.0),
                                                   children: [
-                                                    AppText(
-                                                      text: Bidi.stripHtmlIfNeeded(
-                                                          productController
-                                                                      .compositionDetails[
-                                                                  "description"] ??
-                                                              ""),
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      maxLines: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: AppText(
+                                                        text: Bidi.stripHtmlIfNeeded(
+                                                            productController
+                                                                        .compositionDetails[
+                                                                    "description"] ??
+                                                                ""),
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        maxLines: 20,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: colorPrimary,
+                                                        fontSize: 12.sp,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -1745,19 +1754,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               .symmetric(
                                                           vertical: 4.0),
                                                   children: [
-                                                    AppText(
-                                                      text: Bidi.stripHtmlIfNeeded(
-                                                          productController
-                                                                      .returnPolicyDetails[
-                                                                  "description"] ??
-                                                              ""),
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      maxLines: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: AppText(
+                                                        text: Bidi.stripHtmlIfNeeded(
+                                                            productController
+                                                                        .returnPolicyDetails[
+                                                                    "description"] ??
+                                                                ""),
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        maxLines: 20,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: colorPrimary,
+                                                        fontSize: 12.sp,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -1806,19 +1819,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               .symmetric(
                                                           vertical: 4.0),
                                                   children: [
-                                                    AppText(
-                                                      text: Bidi.stripHtmlIfNeeded(
-                                                          productController
-                                                                      .brandDetails[
-                                                                  "description"] ??
-                                                              ""),
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      maxLines: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: colorPrimary,
-                                                      fontSize: 12.sp,
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: AppText(
+                                                        text: Bidi.stripHtmlIfNeeded(
+                                                            productController
+                                                                        .brandDetails[
+                                                                    "description"] ??
+                                                                ""),
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        maxLines: 20,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: colorPrimary,
+                                                        fontSize: 12.sp,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -2365,11 +2382,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ),
                             ),
                             Obx(() => productController.isRecommendations.value
-                                ? const Padding(
-                                    padding: EdgeInsets.all(40.0),
-                                    child: Center(
-                                        child: CircularProgressIndicator()),
-                                  )
+                                ? const DummyProductList(
+                                    text: "Recommended for you")
                                 : Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -2643,11 +2657,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ],
                                   )),
                             Obx(() => productController.isFrequentlyBought.value
-                                ? const Padding(
-                                    padding: EdgeInsets.all(40.0),
-                                    child: Center(
-                                        child: CircularProgressIndicator()),
-                                  )
+                                ? const DummyProductList(
+                                    text: "Frequently bought with")
                                 : Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
