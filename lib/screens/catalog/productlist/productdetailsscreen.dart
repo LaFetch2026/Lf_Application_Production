@@ -12,6 +12,7 @@ import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -2027,11 +2028,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                             Obx(
                               () => productController.isReview.value
-                                  ? const Padding(
-                                      padding: EdgeInsets.all(40.0),
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    )
+                                  ? DummyReview()
                                   : SizedBox(
                                       width: double.infinity,
                                       //  height: MediaQuery.of(context).size.height * 0.7,

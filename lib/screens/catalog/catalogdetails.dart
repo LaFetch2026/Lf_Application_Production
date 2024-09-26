@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/catalog_appbar.dart';
 import '../../controller/catalog_controller.dart';
@@ -130,9 +131,31 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                     ),
                   ),
                   Obx(() => controller.isCategory.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(child: CircularProgressIndicator()),
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, top: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              DummyContainer(height: 14, width: 80),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: DummyContainer(height: 14, width: 80),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: DummyContainer(height: 14, width: 80),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: DummyContainer(height: 14, width: 80),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: DummyContainer(height: 14, width: 80),
+                              ),
+                            ],
+                          ),
                         )
                       : controller.categoryList.isNotEmpty
                           ? Padding(

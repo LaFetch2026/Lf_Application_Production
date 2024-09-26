@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import '../../commonwidget/app_text.dart';
@@ -974,10 +975,60 @@ class SearchScreenState extends State<SearchScreen> {
                             ],
                           ),
                           Obx(() => controller.isSearchItem.value
-                              ? const Padding(
-                                  padding: EdgeInsets.all(40.0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.only(bottom: 4, top: 8),
+                                  child: SizedBox(
+                                    height: 187,
+                                    child: ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        physics: const ScrollPhysics(),
+                                        itemCount: 5,
+                                        padding: EdgeInsets.zero,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder: (ctx, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 4),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  DummyContainer(
+                                                      height: 16, width: 16),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 12),
+                                                      child: DummyContainer(
+                                                          height: 16,
+                                                          width: 100),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 8),
+                                                    child: DummyContainer(
+                                                        height: 14, width: 14),
+                                                  ),
+                                                  DummyContainer(
+                                                      height: 14, width: 14),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                  ),
                                 )
                               : controller.searchList.isNotEmpty
                                   ? Padding(
