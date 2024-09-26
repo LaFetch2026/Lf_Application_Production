@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:telephony/telephony.dart';
 
 import '../commonwidget/common_widgets.dart';
 import '../controller/login_controller.dart';
@@ -24,6 +25,7 @@ class OTPVerficationScreen extends StatefulWidget {
 class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   final otpController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  Telephony telephony = Telephony.instance;
   Timer? timer;
   @override
   void initState() {
@@ -42,6 +44,34 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   dispose() {
     timer!.cancel();
     super.dispose();
+  }
+
+  callReceiveMsg(List<TextEditingController?> controller) {
+    telephony.listenIncomingSms(
+      onNewMessage: (SmsMessage message) {
+        print(message.address);
+        print(message.body);
+
+        String sms = message.body.toString();
+
+        if (message.body!.contains('La Fetch')) {
+          String otpcode = sms.replaceAll(new RegExp(r'[^0-9]'), '');
+          String string = '$otpcode';
+          print(string.split(''));
+          otpController.otp.value = otpcode;
+          print("abc $otpcode");
+          controller[0]!.text = string[0];
+          controller[1]!.text = string[1];
+          controller[2]!.text = string[2];
+          controller[3]!.text = string[3];
+
+          setState(() {});
+        } else {
+          print("error");
+        }
+      },
+      listenInBackground: false,
+    );
   }
 
   @override
@@ -129,6 +159,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               otpController.otpClear.value = false;
                               otpController.otp.value = code;
                             },
+                            handleControllers: (controllers) {
+                              callReceiveMsg(controllers);
+                            },
                             onSubmit: (String verificationCode) {
                               otpController.otpClear.value = false;
                               otpController.otp.value = verificationCode;
@@ -155,6 +188,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                       ? otpController
                                           .callResendOtp(widget.phoneMunber)
                                       : null;
+                                  //  callReceiveMsg(controllers);
                                 },
                                 child: AppText(
                                   text: "Resend Code",
