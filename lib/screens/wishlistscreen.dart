@@ -417,10 +417,9 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                       horizontal: 10,
                                                       vertical: 5),
                                                   child: AppText(
-                                                    text: wishlistController
-                                                                .wishlistList[
-                                                            index]["name"] ??
-                                                        "",
+                                                    text:
+                                                        "${wishlistController.wishlistList[index]["name"]}"
+                                                            .capitalize!,
                                                     color: blackColor,
                                                     fontSize: 16.sp,
                                                     fontFamily:

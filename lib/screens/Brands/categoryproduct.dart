@@ -382,7 +382,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                           [
                                                                           "aggregated_rating"]
                                                                       .toString()
-                                                                  : "",
+                                                                  : "0",
                                                               color:
                                                                   colorPrimary,
                                                               fontSize: 12.sp,
@@ -405,7 +405,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               ),
                                                             ),
                                                             AppText(
-                                                              text: "8",
+                                                              text: productController
+                                                                  .productCategoryList[
+                                                                      index][
+                                                                      "reviews_count"]
+                                                                  .toString(),
                                                               color:
                                                                   colorPrimary,
                                                               fontSize: 12.sp,

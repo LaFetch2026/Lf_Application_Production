@@ -355,7 +355,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                               [
                                                                               "aggregated_rating"]
                                                                           .toString()
-                                                                      : "aggregated_rating",
+                                                                      : "0",
                                                                   color:
                                                                       colorPrimary,
                                                                   fontSize:
@@ -380,7 +380,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                   ),
                                                                 ),
                                                                 AppText(
-                                                                  text: "8",
+                                                                  text: productController
+                                                                      .productExpressBrandList[
+                                                                          index]
+                                                                          [
+                                                                          "reviews_count"]
+                                                                      .toString(),
                                                                   color:
                                                                       colorPrimary,
                                                                   fontSize:

@@ -10,6 +10,7 @@ import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_account.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
@@ -442,7 +443,11 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                               ), */
-                              const SettingWidgets(),
+                              SettingWidgets(
+                                onPressedNotification: () {
+                                  Get.to(NotificationSettingScreen());
+                                },
+                              ),
                             ],
                           ),
                           SupportWidgets(

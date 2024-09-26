@@ -473,7 +473,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                   ),
                                                                 ),
                                                                 AppText(
-                                                                  text: "8",
+                                                                  text: wishlistController
+                                                                      .wishListProduct[
+                                                                          index]
+                                                                          [
+                                                                          "reviews_count"]
+                                                                      .toString(),
                                                                   color:
                                                                       colorPrimary,
                                                                   fontSize:

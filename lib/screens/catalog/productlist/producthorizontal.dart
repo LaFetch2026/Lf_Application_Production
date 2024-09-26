@@ -362,7 +362,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                             ),
                                                           ),
                                                           AppText(
-                                                            text: "8",
+                                                            text: productController
+                                                                .productCategoryList[
+                                                                    index][
+                                                                    "reviews_count"]
+                                                                .toString(),
                                                             color: colorPrimary,
                                                             fontSize: 12.sp,
                                                             fontFamily:

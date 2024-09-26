@@ -485,7 +485,12 @@ class BoardScreenState extends State<BoardScreen> {
                                                                       ),
                                                                     ),
                                                                     AppText(
-                                                                      text: "8",
+                                                                      text: value
+                                                                          .wishListProduct[
+                                                                              index]
+                                                                              [
+                                                                              "reviews_count"]
+                                                                          .toString(),
                                                                       color:
                                                                           colorPrimary,
                                                                       fontSize:
