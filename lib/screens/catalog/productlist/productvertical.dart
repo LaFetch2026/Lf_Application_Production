@@ -21,8 +21,12 @@ import '../../../utils/constants.dart';
 class ProductVerticalScreen extends StatefulWidget {
   final int categoryId;
   final int genderType;
+  final int catalogId;
   const ProductVerticalScreen(
-      {super.key, required this.categoryId, required this.genderType});
+      {super.key,
+      required this.categoryId,
+      required this.genderType,
+      required this.catalogId});
 
   @override
   State<ProductVerticalScreen> createState() => ProductVerticalScreenState();
@@ -48,8 +52,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       productController.categoryProductPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductByCategoryData(
-            widget.categoryId, 0, "", [], "", widget.genderType, false));
+        productController.getProductByCategoryData(widget.categoryId, 0, "", [],
+            "", widget.genderType, false, widget.catalogId));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -325,7 +329,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                             0,
                                                             [],
                                                             0,
-                                                            widget.genderType);
+                                                            widget.genderType,
+                                                            widget.catalogId);
                                                       } else {
                                                         scaffoldKey.currentState
                                                             ?.showBottomSheet((context) =>
@@ -346,7 +351,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                           [],
                                                                           0,
                                                                           widget
-                                                                              .genderType);
+                                                                              .genderType,
+                                                                          widget
+                                                                              .catalogId);
                                                                     },
                                                                     wishlistList:
                                                                         wishlistController
@@ -755,7 +762,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                 p0,
                                                 widget.genderType,
                                                 productController
-                                                    .filterEnable.value);
+                                                    .filterEnable.value,
+                                                widget.catalogId);
                                       },
                                     ));
                           },
@@ -772,7 +780,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                     [],
                                     productController.sortBy.value,
                                     widget.genderType,
-                                    productController.filterEnable.value);
+                                    productController.filterEnable.value,
+                                    widget.catalogId);
                               },
                             ));
                           },

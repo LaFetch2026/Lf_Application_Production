@@ -226,6 +226,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 widget.brandId,
                                                                 [],
                                                                 0,
+                                                                0,
                                                                 0);
                                                           } else {
                                                             scaffoldKey.currentState?.showBottomSheet((context) =>
@@ -244,6 +245,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           widget
                                                                               .brandId,
                                                                           [],
+                                                                          0,
                                                                           0,
                                                                           0);
                                                                     },

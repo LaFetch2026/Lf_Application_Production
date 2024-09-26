@@ -159,7 +159,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                       controller.categoryList,
                                                       "",
                                                       widget.genderType,
-                                                      false);
+                                                      false,
+                                                      widget.catalogId);
                                               await analytics.logEvent(
                                                 name:
                                                     "catalog_details_${widget.genderType}",

@@ -21,8 +21,12 @@ import '../../../utils/constants.dart';
 class ProductHorizontalScreen extends StatefulWidget {
   final int categoryId;
   final int genderType;
+  final int catalogId;
   const ProductHorizontalScreen(
-      {super.key, required this.categoryId, required this.genderType});
+      {super.key,
+      required this.categoryId,
+      required this.genderType,
+      required this.catalogId});
 
   @override
   State<ProductHorizontalScreen> createState() =>
@@ -45,8 +49,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.categoryProductPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductByCategoryData(
-            widget.categoryId, 0, "", [], "", widget.genderType, false));
+        productController.getProductByCategoryData(widget.categoryId, 0, "", [],
+            "", widget.genderType, false, widget.catalogId));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -133,7 +137,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                               widget.genderType,
                                                               productController
                                                                   .filterEnable
-                                                                  .value);
+                                                                  .value,
+                                                              widget.catalogId);
                                                     },
                                                   ));
                                           await analytics.logEvent(
@@ -224,8 +229,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                               0,
                                                               [],
                                                               0,
-                                                              widget
-                                                                  .genderType);
+                                                              widget.genderType,
+                                                              widget.catalogId);
                                                     } else {
                                                       scaffoldKey.currentState
                                                           ?.showBottomSheet((context) =>
@@ -246,7 +251,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                         [],
                                                                         0,
                                                                         widget
-                                                                            .genderType);
+                                                                            .genderType,
+                                                                        widget
+                                                                            .catalogId);
                                                                   },
                                                                   wishlistList:
                                                                       wishlistController
@@ -545,7 +552,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                       [],
                                       p0,
                                       widget.genderType,
-                                      productController.filterEnable.value);
+                                      productController.filterEnable.value,
+                                      widget.catalogId);
                                 },
                               ));
                         },
@@ -562,7 +570,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                   [],
                                   productController.sortBy.value,
                                   widget.genderType,
-                                  productController.filterEnable.value);
+                                  productController.filterEnable.value,
+                                  widget.catalogId);
                             },
                           ));
                         },

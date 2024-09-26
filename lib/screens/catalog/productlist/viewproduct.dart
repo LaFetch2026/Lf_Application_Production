@@ -14,10 +14,12 @@ class ViewProductScreen extends StatefulWidget {
   final int categoryId;
   final String categoryName;
   final int genderType;
+  final int catalogId;
   const ViewProductScreen(
       {super.key,
       required this.categoryId,
       required this.categoryName,
+      required this.catalogId,
       required this.genderType});
 
   @override
@@ -136,10 +138,12 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                     ProductVerticalScreen(
                       categoryId: widget.categoryId,
                       genderType: widget.genderType,
+                      catalogId: widget.catalogId,
                     ),
                     ProductHorizontalScreen(
                       categoryId: widget.categoryId,
                       genderType: widget.genderType,
+                      catalogId: widget.catalogId,
                     ),
                   ]),
                 ),

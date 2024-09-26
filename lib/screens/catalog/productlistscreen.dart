@@ -14,10 +14,12 @@ class ProductListScreen extends StatefulWidget {
   final List<String> tabTextList;
   final List<int> idList;
   final int genderType;
+  final int catalogId;
   const ProductListScreen(
       {super.key,
       required this.tabTextList,
       required this.idList,
+      required this.catalogId,
       required this.genderType});
 
   @override
@@ -119,6 +121,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                   (index) => ViewProductScreen(
                       categoryId: index == 0 ? 0 : widget.idList[index - 1],
                       genderType: widget.genderType,
+                      catalogId: widget.catalogId,
                       categoryName:
                           index == 0 ? "" : widget.tabTextList[index - 1]),
                 ),

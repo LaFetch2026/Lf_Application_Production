@@ -412,6 +412,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         brandController.brandId.value,
                                         [],
                                         0,
+                                        0,
                                         0);
                                   } else {
                                     scaffoldKey.currentState?.showBottomSheet(
@@ -429,6 +430,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                       brandController
                                                           .brandId.value,
                                                       [],
+                                                      0,
                                                       0,
                                                       0);
                                             },
@@ -498,6 +500,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       brandController.brandId.value,
                                       [],
                                       0,
+                                      0,
                                       0);
                                 } else {
                                   scaffoldKey.currentState?.showBottomSheet(
@@ -515,6 +518,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     brandController
                                                         .brandId.value,
                                                     [],
+                                                    0,
                                                     0,
                                                     0);
                                           },

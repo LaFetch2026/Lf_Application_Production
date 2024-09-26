@@ -948,8 +948,15 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductByCategoryData(int categoryId, int brandId, String value,
-      List categoryList, String sort_By, int gendertype, bool filter) async {
+  getProductByCategoryData(
+      int categoryId,
+      int brandId,
+      String value,
+      List categoryList,
+      String sort_By,
+      int gendertype,
+      bool filter,
+      int catalogId) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -971,7 +978,7 @@ class ProductController extends BaseController {
             if (filter) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                      "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -979,7 +986,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype"),
+                      "${ApiConstants.baseUrl}/products?catalog_id=$catalogId"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -989,7 +996,7 @@ class ProductController extends BaseController {
             if (filter) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                      "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&sort_by=$sort_By&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -997,7 +1004,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype"),
+                      "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&sort_by=$sort_By"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1062,6 +1069,7 @@ class ProductController extends BaseController {
               tabTextList: nameList,
               idList: idList,
               genderType: gendertype,
+              catalogId: catalogId,
             ));
           }
           if (filter) {
@@ -1565,8 +1573,16 @@ class ProductController extends BaseController {
     isReorder.value = false;
   }
 
-  callAddProductToWishlist(int wishlistId, String type, int id, int categoryId,
-      int brandId, List list, int existId, int genderType) async {
+  callAddProductToWishlist(
+      int wishlistId,
+      String type,
+      int id,
+      int categoryId,
+      int brandId,
+      List list,
+      int existId,
+      int genderType,
+      int catalogId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -1590,7 +1606,7 @@ class ProductController extends BaseController {
           getProductData("relevant");
         } else if (type == "category") {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
-              genderType, filterEnable.value);
+              genderType, filterEnable.value, catalogId);
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
           getBestSellerProductData(brandId);

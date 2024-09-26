@@ -2607,6 +2607,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     0,
                                                     [],
                                                     widget.productId,
+                                                    0,
                                                     0);
                                           } else {
                                             scaffoldKey.currentState
@@ -2627,6 +2628,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   [],
                                                                   widget
                                                                       .productId,
+                                                                  0,
                                                                   0);
                                                         },
                                                         wishlistList:
@@ -2696,6 +2698,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     0,
                                                     [],
                                                     widget.productId,
+                                                    0,
                                                     0);
                                           } else {
                                             scaffoldKey.currentState
@@ -2716,6 +2719,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   [],
                                                                   widget
                                                                       .productId,
+                                                                  0,
                                                                   0);
                                                         },
                                                         wishlistList:
