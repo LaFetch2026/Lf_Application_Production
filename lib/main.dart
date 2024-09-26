@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'First Method',
+          title: 'Lafetch',
           theme: ThemeData(
             fontFamily: 'Franklin Gothic',
             primarySwatch: Colors.grey,

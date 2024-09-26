@@ -315,12 +315,19 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                       width: 80,
                                                       child: Row(
                                                         children: [
-                                                          Image.asset(
-                                                            starImage,
-                                                            height: 24,
-                                                            color:
-                                                                bottomnavBack,
-                                                            width: 24,
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        2),
+                                                            child: Image.asset(
+                                                              starImage,
+                                                              height: 16,
+                                                              color:
+                                                                  bottomnavBack,
+                                                              width: 16,
+                                                            ),
                                                           ),
                                                           AppText(
                                                             text: productController

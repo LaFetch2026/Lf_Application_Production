@@ -212,7 +212,7 @@ class AccountScreenState extends State<AccountScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(
+                              /*  const SizedBox(
                                 height: 12,
                               ),
                               Container(
@@ -324,6 +324,7 @@ class AccountScreenState extends State<AccountScreen> {
                                   ],
                                 ),
                               ),
+                            */
                             ],
                           ),
                           Padding(
@@ -389,7 +390,7 @@ class AccountScreenState extends State<AccountScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              GestureDetector(
+                              /*  GestureDetector(
                                 onTap: () {},
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -402,7 +403,7 @@ class AccountScreenState extends State<AccountScreen> {
                                     fontSize: 14.sp,
                                   ),
                                 ),
-                              ),
+                              ), */
                               GestureDetector(
                                 onTap: () async {
                                   Get.to(const SavedAddressScreen(
@@ -427,7 +428,7 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                               ),
-                              GestureDetector(
+                              /* GestureDetector(
                                 onTap: () {},
                                 child: Padding(
                                   padding: const EdgeInsets.only(
@@ -440,7 +441,7 @@ class AccountScreenState extends State<AccountScreen> {
                                     fontSize: 14.sp,
                                   ),
                                 ),
-                              ),
+                              ), */
                               const SettingWidgets(),
                             ],
                           ),

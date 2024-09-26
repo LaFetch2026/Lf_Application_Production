@@ -50,12 +50,23 @@ class SupportWidgets extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-            child: AppText(
-              text: "About Us",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: nameText,
-              fontSize: 14.sp,
+            child: Row(
+              children: [
+                AppText(
+                  text: "About Us",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: const ImageIcon(
+                    AssetImage(linkArrowImage),
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -65,12 +76,23 @@ class SupportWidgets extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-            child: AppText(
-              text: "Terms & Conditions",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: nameText,
-              fontSize: 14.sp,
+            child: Row(
+              children: [
+                AppText(
+                  text: "Terms & Conditions",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: const ImageIcon(
+                    AssetImage(linkArrowImage),
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -80,12 +102,23 @@ class SupportWidgets extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
-            child: AppText(
-              text: "Privacy Policy",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: nameText,
-              fontSize: 14.sp,
+            child: Row(
+              children: [
+                AppText(
+                  text: "Privacy Policy",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14.sp,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: const ImageIcon(
+                    AssetImage(linkArrowImage),
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

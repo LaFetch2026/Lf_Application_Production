@@ -716,7 +716,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           backgroundColor:
                                                               whiteColor,
                                                           child: Image.asset(
-                                                              shareImage)),
+                                                            shareImage,
+                                                            height: 24,
+                                                            width: 24,
+                                                          )),
                                                       onPressed: () async {
                                                         Share.share(
                                                             productController
@@ -755,11 +758,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
-                                                  Image.asset(
-                                                    starImage,
-                                                    height: 24,
-                                                    color: bottomnavBack,
-                                                    width: 24,
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 2),
+                                                    child: Image.asset(
+                                                      starImage,
+                                                      height: 16,
+                                                      color: bottomnavBack,
+                                                      width: 16,
+                                                    ),
                                                   ),
                                                   AppText(
                                                     text: productController

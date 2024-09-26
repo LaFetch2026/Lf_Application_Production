@@ -47,7 +47,7 @@ class DummyAccount extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
+          /*  const SizedBox(
             height: 12,
           ),
           DummyContainer(height: 50, width: double.infinity),
@@ -78,10 +78,11 @@ class DummyAccount extends StatelessWidget {
               ],
             ),
           ),
+          */
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+            padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
             child: DummyContainer(
-              height: 10,
+              height: 20,
               width: 100,
             ),
           ),
@@ -107,9 +108,9 @@ class DummyAccount extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
             child: DummyContainer(
-              height: 14,
+              height: 20,
               width: 100,
             ),
           ),
