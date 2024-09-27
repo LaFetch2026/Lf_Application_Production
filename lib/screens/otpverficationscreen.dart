@@ -8,7 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/utils/constants.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+//import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:otp_text_field_v2/otp_field_style_v2.dart';
+import 'package:otp_text_field_v2/otp_field_v2.dart';
 import 'package:telephony/telephony.dart';
 
 import '../commonwidget/common_widgets.dart';
@@ -30,6 +32,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   @override
   void initState() {
     otpController.showButton.value = false;
+    callReceiveMsg();
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (otpController.secondsRemaining.value != 0) {
         otpController.secondsRemaining.value--;
@@ -46,7 +49,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
     super.dispose();
   }
 
-  callReceiveMsg(List<TextEditingController?> controller) {
+  /* callReceiveMsg(List<TextEditingController?> controller) {
     telephony.listenIncomingSms(
       onNewMessage: (SmsMessage message) {
         print(message.address);
@@ -65,6 +68,30 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
           controller[2]!.text = string[2];
           controller[3]!.text = string[3];
 
+          setState(() {});
+        } else {
+          print("error");
+        }
+      },
+      listenInBackground: false,
+    );
+  } */
+
+  callReceiveMsg() {
+    telephony.listenIncomingSms(
+      onNewMessage: (SmsMessage message) {
+        print(message.address);
+        print(message.body);
+
+        String sms = message.body.toString();
+
+        if (message.body!.contains('La Fetch')) {
+          String otpcode = sms.replaceAll(new RegExp(r'[^0-9]'), '');
+          String string = '$otpcode';
+          print(string.split(''));
+          otpController.otp.value = otpcode;
+          print("abc $otpcode");
+          otpController.controller.value.set(otpcode.split(""));
           setState(() {});
         } else {
           print("error");
@@ -139,7 +166,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Obx(
+                    /* Obx(
                       () => Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Center(
@@ -172,6 +199,39 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           ),
                         ),
                       ),
+                    ), */
+                    Obx(
+                      () => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Center(
+                          child: OTPTextFieldV2(
+                              controller: otpController.controller.value,
+                              length: 4,
+                              autoFocus: false,
+                              width: MediaQuery.of(context).size.width,
+                              textFieldAlignment: MainAxisAlignment.spaceAround,
+                              fieldWidth:
+                                  (MediaQuery.of(context).size.width - 65) / 4,
+                              fieldStyle: FieldStyle.box,
+                              outlineBorderRadius: 1,
+                              otpFieldStyle: OtpFieldStyle(
+                                  focusBorderColor: borderColor,
+                                  enabledBorderColor: borderColor),
+                              style: const TextStyle(
+                                  color: loginText, fontSize: 16, height: 2.5),
+                              onChanged: (code) {
+                                otpController.otp.value = code;
+                                print("Changed: " + code);
+                              },
+                              cursorColor: borderColor,
+                              onCompleted: (pin) {
+                                otpController.otp.value = pin;
+                                if (otpController.otp.value.length == 4) {
+                                  otpController.showButton.value = true;
+                                }
+                              }),
+                        ),
+                      ),
                     ),
                     Padding(
                       padding:
@@ -183,12 +243,15 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               flex: 1,
                               child: GestureDetector(
                                 onTap: () {
-                                  otpController.otpClear.value = true;
+                                  //  otpController.otpClear.value = true;
                                   otpController.enableResend.value
                                       ? otpController
                                           .callResendOtp(widget.phoneMunber)
                                       : null;
-                                  //  callReceiveMsg(controllers);
+                                  otpController.controller.value.clear();
+                                  otpController.showButton.value = true;
+                                  setState(() {});
+                                  callReceiveMsg();
                                 },
                                 child: AppText(
                                   text: "Resend Code",

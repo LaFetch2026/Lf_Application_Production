@@ -10,6 +10,7 @@ import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/otpverficationscreen.dart';
 import 'package:lafetch/utils/constants.dart';
+import 'package:otp_text_field_v2/otp_field_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../screens/userdetails.dart';
@@ -23,6 +24,7 @@ class LoginController extends BaseController {
   RxBool otpClear = false.obs;
   RxBool showButton = false.obs;
   RxBool enableResend = false.obs;
+  final Rx<OtpFieldControllerV2> controller = OtpFieldControllerV2().obs;
 
   bool checkOtpvalidation(String otpnumber) {
     if (otpnumber.isEmpty) {
@@ -84,6 +86,9 @@ class LoginController extends BaseController {
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
         }
+        if (responseData['errors']['otp'] != null) {
+          getSnackBar(responseData['errors']['otp']);
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -115,6 +120,9 @@ class LoginController extends BaseController {
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
+        }
+        if (responseData['errors']['otp'] != null) {
+          getSnackBar(responseData['errors']['otp']);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -228,6 +236,9 @@ class LoginController extends BaseController {
         }
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
+        }
+        if (responseData['errors']['otp'] != null) {
+          getSnackBar(responseData['errors']['otp']);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
