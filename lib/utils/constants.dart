@@ -149,6 +149,7 @@ const appLogoImage = 'assets/images/logo_image.png';
 const likeImage = 'assets/images/like.png';
 const dislikeImage = 'assets/images/dislike.png';
 const linkArrowImage = 'assets/images/link_icon.png';
+const dummyProductImage = 'assets/images/image.jpg';
 
 class ApiConstants {
   ApiConstants._();

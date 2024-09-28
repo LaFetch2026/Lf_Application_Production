@@ -16,7 +16,6 @@ import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/bottomsizechart.dart';
@@ -35,14 +34,12 @@ class ProductDetailsScreen extends StatefulWidget {
   final String type;
   final int wishlistProductId;
   final int boardId;
-  final bool color;
   final String Slug;
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
       required this.type,
       this.boardId = 0,
-      this.color = false,
       this.Slug = "",
       this.wishlistProductId = 0});
 
@@ -94,7 +91,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
   }
 
-  Future getPrefrenceValue() async {
+  /* Future getPrefrenceValue() async {
     final prefs = await SharedPreferences.getInstance();
 
     if (prefs.getInt('inventorySizeId') != null) {
@@ -106,7 +103,124 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       selectedProductColor["id"] = prefs.getInt('inventoryColorId')!;
     }
     print("prefrences call ${productController.sizeInventoryId.value}");
+  } */
+
+  /*  List<Widget> getListForPageView() {
+    List<Widget> list = [];
+    if (productController
+            .productDetails["matrix_images"]
+                [productController.productImageindex.value]
+            .length >
+        0) {
+      for (var i = 0;
+          i <
+              productController
+                  .productDetails["matrix_images"]
+                      [productController.productImageindex.value]
+                  .length;
+          i++) {
+        if (isImage(productController.productDetails["matrix_images"]
+            [productController.productImageindex.value][i])) {
+          print(
+              "show video=========${isImage(productController.productDetails["matrix_images"][productController.productImageindex.value][i])}");
+
+          list.add(Container(
+            color: colorSecondary,
+            child: CachedNetworkImage(
+              cacheManager: CacheManager(Config("customCacheKey",
+                  stalePeriod: const Duration(days: 15),
+                  maxNrOfCacheObjects: 100)),
+              fit: BoxFit.cover,
+              imageUrl: productController.productDetails["matrix_images"]
+                  [productController.productImageindex.value][i],
+              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                  DummyContainer(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      width: MediaQuery.of(context).size.width),
+              errorWidget: (context, url, error) =>
+                  Image.asset(downloadImage, fit: BoxFit.fitHeight),
+            ),
+          ));
+        } else {
+          productController.isVideoPlaying.value = true;
+          videoController = VideoPlayerController.networkUrl(
+            Uri.parse(
+              productController.productDetails["matrix_images"]
+                  [productController.productImageindex.value][i],
+            ),
+          );
+
+          _initializeVideoPlayerFuture = videoController.initialize();
+
+          // Use the controller to loop the video.
+          videoController.setLooping(true);
+          // videoController.play();
+          // videoController.setVolume(0);
+
+          list.add(
+            FutureBuilder(
+              future: _initializeVideoPlayerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // If the VideoPlayerController has finished initialization, use
+                  // the data it provides to limit the aspect ratio of the video.
+                  return Obx(() => Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          AspectRatio(
+                            aspectRatio: videoController.value.aspectRatio,
+                            // Use the VideoPlayer widget to display the video.
+                            child: VideoPlayer(videoController),
+                          ),
+                          IconButton(
+                            icon: CircleAvatar(
+                              backgroundColor: blue,
+                              child: Icon(
+                                !productController.isVideoPlaying.value
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                              ),
+                            ),
+                            onPressed: () {
+                              if (videoController.value.isPlaying) {
+                                videoController.pause();
+                                productController.isVideoPlaying.value = true;
+                              } else {
+                                // If the video is paused, play it.
+                                productController.isVideoPlaying.value = false;
+                                videoController.play();
+                              }
+                              // setState(() {
+                              //   // If the video is playing, pause it.
+                              //   if (videoController.value.isPlaying) {
+                              //     videoController.pause();
+                              //   } else {
+                              //     // If the video is paused, play it.
+                              //     videoController.play();
+                              //   }
+                              // });
+                            },
+                          ),
+                        ],
+                      ));
+                } else {
+                  // If the VideoPlayerController is still initializing, show a
+                  // loading spinner.
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          );
+        }
+      }
+    } else {
+      list.add(Image.asset(dummyProductImage, fit: BoxFit.fitHeight));
+    }
+    return list;
   }
+ */
 
   List<Widget> getListForPageView() {
     List<Widget> list = [];
@@ -241,19 +355,21 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
+                                /*  final prefs =
+                                    await SharedPreferences.getInstance(); */
                                 selectedProductSize = i;
                                 productController.sizeInventoryId.value =
                                     selectedProductSize["id"];
+                                productController.colorInventoryId.value = 0;
                                 print(productController.sizeInventoryId.value);
                                 productController.colorInventoryList =
                                     i["product_matrix_available_colors"];
-                                prefs.setInt("inventorySizeId",
-                                    selectedProductSize["id"]);
+
+                                /*   prefs.setInt("inventorySizeId",
+                                    selectedProductSize["id"]); */
                                 print(selectedProductSize["id"]);
                                 print(i['product_matrix_size_name']);
-                                prefs.remove("inventoryColorId");
+                                // prefs.remove("inventoryColorId");
                                 setState(() {});
                                 await analytics.logEvent(
                                   name: 'productDetails_sizeSelect',
@@ -316,18 +432,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ));
   }
 
-  movetoNextScreen(int id) {
+  /* movetoNextScreen(int id) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => ProductDetailsScreen(
                   productId: id,
                   type: "add",
-                  color: true,
                 )));
       });
     });
-  }
+  } */
 
   SizedBox getListForProductColor() {
     return SizedBox(
@@ -352,16 +467,24 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
+                                /*  final prefs =
+                                    await SharedPreferences.getInstance(); */
                                 selectedProductColor = i;
                                 productController.colorInventoryId.value =
                                     selectedProductColor["id"];
                                 productController.sizeInventoryId.value =
                                     selectedProductColor["id"];
-                                prefs.setInt("inventoryColorId",
-                                    selectedProductColor["id"]);
+                                productController.productImageindex.value =
+                                    productController.sizeInventoryList
+                                        .indexWhere((item) =>
+                                            item["id"] ==
+                                            selectedProductSize["id"]);
+                                _curr = 0;
+                                /*   prefs.setInt("inventoryColorId",
+                                    selectedProductColor["id"]); */
                                 print(selectedProductColor["id"]);
+                                print(
+                                    productController.productImageindex.value);
                                 print(i['name']);
                                 await analytics.logEvent(
                                   name: 'productDetails_colorSelect',
@@ -509,12 +632,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     profileController.defaultAddress = "";
     productController.pincodeController.clear();
     productController.sizeInventoryId.value = 0;
+    productController.productImageindex.value = 0;
     productController.colorInventoryId.value = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));
-    if (widget.color) {
-      getPrefrenceValue();
-    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.frequentlyBoughtController.addListener(() {
         productController.fetchFrequentlyMoreData(
@@ -622,10 +743,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   scrollDirection:
                                                       Axis.horizontal,
                                                   onPageChanged: (number) {
-                                                    setState(() {
-                                                      _curr = number;
-                                                      print(_curr);
-                                                    });
+                                                    _curr = number;
+                                                    print(_curr);
+                                                    setState(() {});
                                                     if (videoController
                                                         .value.isPlaying) {
                                                       videoController.pause();
@@ -799,6 +919,44 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ],
                                     ),
                                   ),
+                                  /*  productController
+                                              .productDetails["matrix_images"][
+                                                  productController
+                                                      .productImageindex.value]
+                                              .length ==
+                                          1
+                                      ? const SizedBox(
+                                          height: 0,
+                                        )
+                                      : Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 22.0, vertical: 18.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: List<Widget>.generate(
+                                                productController
+                                                    .productDetails[
+                                                        "matrix_images"][
+                                                        productController
+                                                            .productImageindex
+                                                            .value]
+                                                    .length,
+                                                (index) => Container(
+                                                      height: 6,
+                                                      width: 40,
+                                                      margin: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 5),
+                                                      decoration: BoxDecoration(
+                                                          color: (index ==
+                                                                  _curr)
+                                                              ? colorPrimary
+                                                              : colorSecondary),
+                                                    )),
+                                          ),
+                                        ), */
                                   productController.productDetails["images"]
                                               .length ==
                                           1

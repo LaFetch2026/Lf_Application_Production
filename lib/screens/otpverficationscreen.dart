@@ -12,7 +12,6 @@ import 'package:lafetch/utils/constants.dart';
 import 'package:otp_text_field_v2/otp_field_style_v2.dart';
 import 'package:otp_text_field_v2/otp_field_v2.dart';
 import 'package:telephony/telephony.dart';
-
 import '../commonwidget/common_widgets.dart';
 import '../controller/login_controller.dart';
 
@@ -252,6 +251,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                     otpController
                                         .callResendOtp(widget.phoneMunber);
                                     otpController.controller.value.clear();
+                                    FocusScope.of(context).unfocus();
                                     otpController.showButton.value = true;
                                     setState(() {});
                                     otpController.update();

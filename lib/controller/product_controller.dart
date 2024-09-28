@@ -113,6 +113,7 @@ class ProductController extends BaseController {
   RxBool isPrice = true.obs;
   RxInt category_id = 0.obs;
   RxInt totalReview = 0.obs;
+  RxInt productImageindex = 0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {

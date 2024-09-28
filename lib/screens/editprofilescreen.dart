@@ -1,17 +1,20 @@
 // ignore_for_file: avoid_print
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+//import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import 'package:otp_text_field_v2/otp_field_style_v2.dart';
+import 'package:otp_text_field_v2/otp_field_v2.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/loginwidgets/number_widget.dart';
 import '../controller/login_controller.dart';
 import '../utils/constants.dart';
+import 'package:telephony/telephony.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String name;
@@ -31,6 +34,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
+  Telephony telephony = Telephony.instance;
   final profileController = Get.put(ProfileController());
   final otpController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -38,6 +42,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     otpController.otp.value = "";
+    callReceiveMsg();
     profileController.isEditNumber.value = true;
     profileController.isPhoneNumber.value = false;
     profileController.nameController.text = widget.name;
@@ -59,6 +64,30 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       profileController.gerderController.text = "Non-Binary";
     }
     super.initState();
+  }
+
+  callReceiveMsg() {
+    telephony.listenIncomingSms(
+      onNewMessage: (SmsMessage message) {
+        print(message.address);
+        print(message.body);
+
+        String sms = message.body.toString();
+
+        if (message.body!.contains('La Fetch')) {
+          String otpcode = sms.replaceAll(new RegExp(r'[^0-9]'), '');
+          String string = '$otpcode';
+          print(string.split(''));
+          otpController.otp.value = otpcode;
+          print("abc $otpcode");
+          otpController.controller.value.set(otpcode.split(""));
+          setState(() {});
+        } else {
+          print("error");
+        }
+      },
+      listenInBackground: false,
+    );
   }
 
   @override
@@ -151,7 +180,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     color: colorPrimary,
                                   ),
                                 ),
-                                Padding(
+                                /*     Padding(
                                   padding: const EdgeInsets.only(
                                       left: 16, right: 16, top: 10, bottom: 10),
                                   child: Center(
@@ -184,6 +213,55 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                           otpController.showButton.value = true;
                                         }
                                       },
+                                    ),
+                                  ),
+                                ),
+                              */
+                                Obx(
+                                  () => Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16,
+                                        right: 16,
+                                        top: 10,
+                                        bottom: 10),
+                                    child: Center(
+                                      child: OTPTextFieldV2(
+                                          controller:
+                                              otpController.controller.value,
+                                          length: 4,
+                                          autoFocus: false,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldWidth: (MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  65) /
+                                              4,
+                                          fieldStyle: FieldStyle.box,
+                                          outlineBorderRadius: 1,
+                                          otpFieldStyle: OtpFieldStyle(
+                                              focusBorderColor: borderColor,
+                                              enabledBorderColor: borderColor),
+                                          style: const TextStyle(
+                                              color: loginText,
+                                              fontSize: 16,
+                                              height: 2.5),
+                                          onChanged: (code) {
+                                            otpController.otp.value = code;
+                                            print("Changed: " + code);
+                                          },
+                                          cursorColor: borderColor,
+                                          onCompleted: (pin) {
+                                            otpController.otp.value = pin;
+                                            if (otpController
+                                                    .otp.value.length ==
+                                                4) {
+                                              otpController.showButton.value =
+                                                  true;
+                                            }
+                                          }),
                                     ),
                                   ),
                                 ),
@@ -365,6 +443,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               .toString()
                               .trim(),
                           profileController.genderId.value)) {
+                        FocusScope.of(context).unfocus();
                         if (profileController.isPhoneNumber.value) {
                           if (otpController
                               .checkOtpvalidation(otpController.otp.value)) {

@@ -21,7 +21,7 @@ class LoginController extends BaseController {
   RxInt secondsRemaining = 30.obs;
   RxString number = "".obs;
   RxString otp = "".obs;
-  RxBool otpClear = false.obs;
+  // RxBool otpClear = false.obs;
   RxBool showButton = false.obs;
   RxBool enableResend = false.obs;
   final Rx<OtpFieldControllerV2> controller = OtpFieldControllerV2().obs;
