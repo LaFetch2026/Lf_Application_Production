@@ -244,14 +244,19 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   //  otpController.otpClear.value = true;
-                                  otpController.enableResend.value
+                                  /*   otpController.enableResend.value
                                       ? otpController
                                           .callResendOtp(widget.phoneMunber)
-                                      : null;
-                                  otpController.controller.value.clear();
-                                  otpController.showButton.value = true;
-                                  setState(() {});
-                                  callReceiveMsg();
+                                      : null; */
+                                  if (otpController.enableResend.value) {
+                                    otpController
+                                        .callResendOtp(widget.phoneMunber);
+                                    otpController.controller.value.clear();
+                                    otpController.showButton.value = true;
+                                    setState(() {});
+                                    otpController.update();
+                                    callReceiveMsg();
+                                  }
                                 },
                                 child: AppText(
                                   text: "Resend Code",
