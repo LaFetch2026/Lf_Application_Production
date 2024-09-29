@@ -34,6 +34,13 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             Get.offAll(
               () => const BottomNavScreen(),
             );
+            /*  Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => const BottomNavScreen(),
+              ),
+              (route) => false,
+            ); */
             // Get.close(3);
           },
           visible: true,
