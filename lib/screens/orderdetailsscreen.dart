@@ -1278,8 +1278,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                               ),
                                                                                             ),
                                                                                           )
-                                                                                        : SizedBox(
-                                                                                            height: 0,
+                                                                                        : Padding(
+                                                                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                            child: AppText(
+                                                                                              text: "No Exchange",
+                                                                                              color: greyTextColor,
+                                                                                              fontSize: 11.sp,
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                            ),
                                                                                           ),
                                                                                     GestureDetector(
                                                                                       onTap: () {

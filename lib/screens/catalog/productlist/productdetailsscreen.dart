@@ -1701,43 +1701,40 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         : SizedBox(
                                             height: 0,
                                           ),
-                                    productController
-                                            .productDetails["has_exchange"]
-                                        ? Padding(
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 40),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Padding(
                                             padding: const EdgeInsets.only(
-                                                bottom: 40),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 12.0),
-                                                  child: Image.asset(
-                                                    exchangeItemImage,
-                                                    height: 16,
-                                                    width: 16,
-                                                  ),
-                                                ),
-                                                AppText(
-                                                  text:
-                                                      'Easy ${productController.productDetails["exchange_days"]} day return & exchange available',
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: blackColor,
-                                                  fontSize: 14.sp,
-                                                )
-                                              ],
+                                                right: 12.0),
+                                            child: Image.asset(
+                                              exchangeItemImage,
+                                              height: 16,
+                                              width: 16,
                                             ),
-                                          )
-                                        : SizedBox(
-                                            height: 0,
                                           ),
+                                          AppText(
+                                            text: productController
+                                                        .productDetails[
+                                                    "has_exchange"]
+                                                ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
+                                                : 'Exchange not available',
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w500,
+                                            color: blackColor,
+                                            fontSize: 14.sp,
+                                          )
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
