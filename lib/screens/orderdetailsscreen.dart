@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_order_address.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderpayment.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
+import 'package:lafetch/screens/orders/delivery_track.dart';
 import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
@@ -845,21 +846,37 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             fontSize: 14.sp,
                                           ),
                                         ),
-                                        /* Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
-                                          child: Text(
-                                            "View on Maps",
-                                            style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                              color: underlineColor,
-                                              fontSize: 14.sp,
+                                        GestureDetector(
+                                          onTap: () {
+                                            Get.to(DeliverTrackScreen(   //change delivery partner lat lng
+                                                dropLat: double.parse(
+                                                    orderController
+                                                            .orderDetails[
+                                                        "address"]["latitude"]),
+                                                dropLng: double.parse(
+                                                    orderController
+                                                                .orderDetails[
+                                                            "address"]
+                                                        ["longitude"]),
+                                                deliverPartnerLat: 28.6263,
+                                                deliverPartnerLng: 77.2185));
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 5),
+                                            child: Text(
+                                              "View on Maps",
+                                              style: TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                                color: underlineColor,
+                                                fontSize: 14.sp,
+                                              ),
                                             ),
                                           ),
-                                        ), */
+                                        ),
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(top: 20),

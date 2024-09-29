@@ -16,6 +16,7 @@ class SearchScreenController extends BaseController {
   List searchList = [].obs;
   RxBool isRecentSearch = false.obs;
   List recentSearchList = [].obs;
+  RxString searchText = "Search for products".obs;
 
   getSearchData() async {
     isSearchItem.value = true;
@@ -30,8 +31,12 @@ class SearchScreenController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["products"] != null) {
+        if (responseData["products"] != null &&
+            responseData["products"].isNotEmpty) {
           searchList = responseData["products"];
+        } else {
+          searchText.value = "No product found";
+          searchList.clear();
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

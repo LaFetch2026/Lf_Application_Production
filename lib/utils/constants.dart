@@ -150,6 +150,7 @@ const likeImage = 'assets/images/like.png';
 const dislikeImage = 'assets/images/dislike.png';
 const linkArrowImage = 'assets/images/link_icon.png';
 const dummyProductImage = 'assets/images/image.jpg';
+const deliveryImage = 'assets/images/delivery.png';
 
 class ApiConstants {
   ApiConstants._();

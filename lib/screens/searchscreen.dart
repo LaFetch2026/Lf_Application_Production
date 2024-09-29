@@ -89,6 +89,7 @@ class SearchScreenState extends State<SearchScreen> {
     return GestureDetector(
       onTap: () {
         isSearch = false;
+        controller.searchText.value = "Search for products";
         FocusScope.of(context).requestFocus(FocusNode());
         setState(() {});
       },
@@ -125,6 +126,8 @@ class SearchScreenState extends State<SearchScreen> {
                             onTap: () async {
                               if (isSearch) {
                                 isSearch = false;
+                                controller.searchText.value =
+                                    "Search for products";
                               } else {
                                 isSearch = true;
                               }
@@ -913,6 +916,8 @@ class SearchScreenState extends State<SearchScreen> {
                                         if (value is RawKeyDownEvent) {
                                           setState(() {
                                             isSearch = false;
+                                            controller.searchText.value =
+                                                "Search for products";
                                           });
                                         }
                                       },
@@ -937,6 +942,8 @@ class SearchScreenState extends State<SearchScreen> {
                                             onTap: () {
                                               controller.searchController
                                                   .clear();
+                                              controller.searchText.value =
+                                                  "Search for products";
                                             },
                                             child: ImageIcon(
                                               AssetImage(greyCrossImage),
@@ -1058,6 +1065,9 @@ class SearchScreenState extends State<SearchScreen> {
                                                             index]["name"]);
                                                     setState(() {
                                                       isSearch = false;
+                                                      controller.searchText
+                                                              .value =
+                                                          "Search for products";
                                                     });
 
                                                     Navigator.of(context)
@@ -1172,8 +1182,8 @@ class SearchScreenState extends State<SearchScreen> {
                                     )
                                   : Container(
                                       margin: const EdgeInsets.only(top: 100),
-                                      child: const Center(
-                                        child: Text("No Item Found",
+                                      child: Center(
+                                        child: Text(controller.searchText.value,
                                             style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.black,
