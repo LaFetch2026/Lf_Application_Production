@@ -1558,14 +1558,14 @@ class CartScreenState extends State<CartScreen> {
                                               "express_delivery_charges"] ??
                                           "";
                                   controller.discount.value = controller
-                                          .cartDetails["discount_on_mrp"] ??
-                                      "";
+                                      .cartDetails["discount_on_mrp"]
+                                      .toString();
                                   controller.coupanDiscount.value = controller
                                           .cartDetails["coupon_discount"] ??
                                       "";
                                   controller.convenienceFee.value = controller
-                                          .cartDetails["convenience_fee"] ??
-                                      "";
+                                      .cartDetails["convenience_fee"]
+                                      .toString();
                                   controller.tax.value = controller
                                       .cartDetails["total_tax"]
                                       .toString();
