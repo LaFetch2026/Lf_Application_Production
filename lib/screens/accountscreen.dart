@@ -10,6 +10,7 @@ import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_account.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/profile_controller.dart';
+import 'package:lafetch/screens/account/customercare.dart';
 import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -391,8 +392,10 @@ class AccountScreenState extends State<AccountScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /*  GestureDetector(
-                                onTap: () {},
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(CustomerCareScreen());
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.only(
                                       top: 20, left: 16, right: 16),
@@ -404,7 +407,7 @@ class AccountScreenState extends State<AccountScreen> {
                                     fontSize: 14.sp,
                                   ),
                                 ),
-                              ), */
+                              ),
                               GestureDetector(
                                 onTap: () async {
                                   Get.to(const SavedAddressScreen(

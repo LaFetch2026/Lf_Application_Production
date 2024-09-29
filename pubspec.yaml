@@ -78,6 +78,7 @@ dependencies:
   app_links: ^3.5.0
   telephony: ^0.2.0
   otp_text_field_v2: ^1.0.3
+  flutter_tawk: ^0.1.0
 
 dev_dependencies:
   flutter_test:
