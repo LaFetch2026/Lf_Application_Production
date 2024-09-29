@@ -28,6 +28,8 @@ class CartController extends BaseController {
   RxString total = "".obs;
   RxString couponText = "Apply Coupon".obs;
   List couponList = [].obs;
+  RxBool isExpress = false.obs;
+  RxInt expressValue = 0.obs;
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},
     {'id': '73', "coupan": 'AXIS20'},

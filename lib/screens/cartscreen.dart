@@ -1002,7 +1002,99 @@ class CartScreenState extends State<CartScreen> {
                                             ),
                                           ),
                                         ),
-                                        Padding(
+                                     /*    Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  if (controller
+                                                      .isExpress.value) {
+                                                    controller.isExpress.value =
+                                                        false;
+                                                    controller
+                                                        .expressValue.value = 0;
+                                                  } else {
+                                                    controller.isExpress.value =
+                                                        true;
+                                                    controller
+                                                        .expressValue.value = 1;
+                                                  }
+                                                },
+                                                child: AppText(
+                                                  text:
+                                                      "Express Delivery Price",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: loginText,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: const SizedBox(
+                                                  width: 0,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16),
+                                                child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              3),
+                                                      border: const Border(
+                                                        top: BorderSide(
+                                                            width: 2.0,
+                                                            color: greyBorder),
+                                                        left: BorderSide(
+                                                            width: 2.0,
+                                                            color: greyBorder),
+                                                        right: BorderSide(
+                                                            width: 2.0,
+                                                            color: greyBorder),
+                                                        bottom: BorderSide(
+                                                            width: 2.0,
+                                                            color: greyBorder),
+                                                      ),
+                                                    ),
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: Checkbox(
+                                                      value: controller
+                                                          .isExpress.value,
+                                                      checkColor: btnTextColor,
+                                                      activeColor:
+                                                          whiteBorderColor,
+                                                      side: const BorderSide(
+                                                          color: btnTextColor,
+                                                          width: 0),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          controller.isExpress
+                                                              .value = value!;
+                                                          if (controller
+                                                              .isExpress
+                                                              .value) {
+                                                            controller
+                                                                .expressValue
+                                                                .value = 1;
+                                                          } else {
+                                                            controller
+                                                                .expressValue
+                                                                .value = 0;
+                                                          }
+                                                        });
+                                                      },
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        */ Padding(
                                           padding:
                                               const EdgeInsets.only(top: 20),
                                           child: AppText(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/paymentwidgets/paymentfailwidget.dart';
 import '../utils/constants.dart';
+import 'bottomnavscreen.dart';
 
 class PaymentSuccessScreen extends StatefulWidget {
   final String text1;
@@ -30,7 +31,10 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
           btntext: "Back Home",
           image: widget.image,
           onPressed: () {
-            Get.close(3);
+            Get.offAll(
+              () => const BottomNavScreen(),
+            );
+            // Get.close(3);
           },
           visible: true,
         ));
