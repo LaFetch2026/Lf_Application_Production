@@ -848,7 +848,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            Get.to(DeliverTrackScreen(   //change delivery partner lat lng
+                                            Get.to(DeliverTrackScreen(
+                                                //change delivery partner lat lng
                                                 dropLat: double.parse(
                                                     orderController
                                                             .orderDetails[
@@ -992,13 +993,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontSize: 12.sp,
                                                 ),
                                               ),
-                                              AppText(
+                                              /*  AppText(
                                                 text: "View Breakup",
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
                                                 color: blackColor,
                                                 fontSize: 12.sp,
-                                              ),
+                                              ), */
                                             ],
                                           ),
                                         ),
@@ -1307,24 +1308,25 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                           ),
                                                                                     GestureDetector(
                                                                                       onTap: () {
-                                                                                        productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][0]["inventory"]["id"];
-                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][0]["quantity"], "reorder");
+                                                                                        productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
+                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
                                                                                       },
                                                                                       child: Padding(
                                                                                         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                                                                        child: productController.isReorder.value
+                                                                                        child: /*  productController.isReorder.value
                                                                                             ? const SizedBox(
                                                                                                 height: 10,
                                                                                                 width: 10,
                                                                                                 child: Center(child: CircularProgressIndicator()),
                                                                                               )
-                                                                                            : AppText(
-                                                                                                text: "Reorder",
-                                                                                                color: blue,
-                                                                                                fontSize: 11.sp,
-                                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                                fontWeight: FontWeight.w400,
-                                                                                              ),
+                                                                                            :  */
+                                                                                            AppText(
+                                                                                          text: "Reorder",
+                                                                                          color: blue,
+                                                                                          fontSize: 11.sp,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ),
                                                                                       ),
                                                                                     ),
                                                                                   ],
@@ -1409,13 +1411,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 fontSize: 12.sp,
                                               ),
                                             ),
-                                            AppText(
+                                            /*  AppText(
                                               text: "View Breakup",
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
                                               color: blackColor,
                                               fontSize: 12.sp,
-                                            ),
+                                            ), */
                                           ],
                                         ),
                                       ),
