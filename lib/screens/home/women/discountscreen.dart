@@ -352,7 +352,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // ignore: prefer_is_empty
                               homeController.categoryList.length >= 1
@@ -377,8 +377,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                           duration:
                                               const Duration(milliseconds: 300),
                                           margin:
-                                              const EdgeInsets.only(right: 10),
-                                          //  width: 150,
+                                              const EdgeInsets.only(right: 8),
                                           height: 180,
                                           child: Column(
                                             crossAxisAlignment:
@@ -389,7 +388,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                       null
                                                   ? SizedBox(
                                                       height: 144,
-                                                      width: 150,
+                                                      width: (MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width /
+                                                              2) -
+                                                          20,
                                                       child: CachedNetworkImage(
                                                         cacheManager:
                                                             CacheManager(Config(
@@ -410,14 +413,22 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                           downloadImage,
                                                           fit: BoxFit.cover,
                                                           height: 144,
-                                                          width: 150,
+                                                          width: (MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .width /
+                                                                  2) -
+                                                              20,
                                                         ),
                                                       ),
                                                     )
                                                   : Image.asset(
                                                       dummyWishlistImage,
                                                       height: 144,
-                                                      width: 150,
+                                                      width: (MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width /
+                                                              2) -
+                                                          20,
                                                       fit: BoxFit.cover),
                                               Padding(
                                                 padding:
@@ -444,12 +455,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   : const SizedBox(
                                       width: 0,
                                     ),
-                              const Expanded(
-                                flex: 1,
-                                child: SizedBox(
-                                  width: 10,
-                                ),
-                              ),
                               homeController.categoryList.length >= 2
                                   ? GestureDetector(
                                       onTap: () async {
@@ -471,9 +476,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         child: AnimatedContainer(
                                           duration:
                                               const Duration(milliseconds: 300),
-                                          margin:
-                                              const EdgeInsets.only(right: 10),
-                                          // width: 150,
                                           height: 180,
                                           child: Column(
                                             crossAxisAlignment:
@@ -484,7 +486,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                       null
                                                   ? SizedBox(
                                                       height: 144,
-                                                      width: 150,
+                                                      width: (MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width /
+                                                              2) -
+                                                          20,
                                                       child: CachedNetworkImage(
                                                         cacheManager:
                                                             CacheManager(Config(
@@ -505,14 +511,22 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                           downloadImage,
                                                           fit: BoxFit.cover,
                                                           height: 144,
-                                                          width: 150,
+                                                          width: (MediaQuery.sizeOf(
+                                                                          context)
+                                                                      .width /
+                                                                  2) -
+                                                              20,
                                                         ),
                                                       ),
                                                     )
                                                   : Image.asset(
                                                       dummyWishlistImage,
                                                       height: 144,
-                                                      width: 150,
+                                                      width: (MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width /
+                                                              2) -
+                                                          20,
                                                       fit: BoxFit.cover),
                                               Padding(
                                                 padding:
