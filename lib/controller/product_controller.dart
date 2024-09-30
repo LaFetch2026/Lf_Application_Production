@@ -1618,11 +1618,13 @@ class ProductController extends BaseController {
           getTagsBannerData(list);
         } else if (type == "frequently") {
           getFrequentlyProductData("frequently-bought", existId);
+          getProductRecommendations(existId);
         } else if (type == "seller") {
           getBestSellerProductData(brandId);
           getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else {
           getProductRecommendations(existId);
+          getFrequentlyProductData("frequently-bought", existId);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
