@@ -47,6 +47,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   int tagId = 0;
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
+  double ht = 100;
 
   @override
   void initState() {
@@ -254,11 +255,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 primary: false,
                                 shrinkWrap: true,
                                 crossAxisCount: 2,
-                                crossAxisSpacing: 2,
+                                crossAxisSpacing: 7,
                                 mainAxisSpacing: 7,
                                 itemCount: brandController.categoryList.length,
                                 itemBuilder: (context, index) {
-                                  double ht = index % 2 == 0 ? 100 : 180;
+                                  if (brandController.categoryList.length > 2) {
+                                    ht = index % 2 == 0 ? 100 : 180;
+                                  } else {
+                                    ht = 100;
+                                  }
                                   return GestureDetector(
                                     onTap: () async {
                                       videoController.pause();
@@ -298,7 +303,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     null
                                                 ? SizedBox(
                                                     height: ht,
-                                                    width: 156,
+                                                    width:
+                                                        (MediaQuery.of(context)
+                                                                    .size
+                                                                    .width /
+                                                                2) -
+                                                            16,
                                                     child: CachedNetworkImage(
                                                       cacheManager:
                                                           CacheManager(Config(
@@ -327,7 +337,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                         downloadImage,
                                                         fit: BoxFit.cover,
                                                         height: ht,
-                                                        width: 156,
+                                                        width: (MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                2) -
+                                                            16,
                                                       ),
                                                     ),
                                                   )
@@ -335,7 +350,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     child: Image.asset(
                                                         dummyWishlistImage,
                                                         height: ht,
-                                                        width: 156,
+                                                        width: (MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                2) -
+                                                            16,
                                                         fit: BoxFit.cover),
                                                   ),
                                             Positioned.fill(
