@@ -66,7 +66,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               ); */
                             },
                             child: AppText(
-                              text: "Order Notification ",
+                              text: "Order notification ",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
@@ -139,7 +139,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               ); */
                             },
                             child: AppText(
-                              text: "Offers Notification ",
+                              text: "Offers notification ",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
@@ -212,7 +212,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               ); */
                             },
                             child: AppText(
-                              text: "Permotional Notification ",
+                              text: "Promotional notification ",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,

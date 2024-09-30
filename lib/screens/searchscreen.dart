@@ -550,7 +550,7 @@ class SearchScreenState extends State<SearchScreen> {
                                           horizontal: 16, vertical: 20),
                                       child: SizedBox(
                                         width: double.infinity,
-                                        height: 230,
+                                        height: 235,
                                         child: ListView.builder(
                                             shrinkWrap: true,
                                             primary: false,
@@ -654,18 +654,20 @@ class SearchScreenState extends State<SearchScreen> {
                                                           Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical:
-                                                                        5),
+                                                                    .symmetric(
+                                                              horizontal: 10,
+                                                            ),
                                                             child: AppText(
                                                               text: brandController
                                                                       .brandList[
                                                                   index]["name"],
+                                                              maxLines: 2,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                               color:
                                                                   greyTextColor,
-                                                              fontSize: 14.sp,
+                                                              fontSize: 12.sp,
                                                               fontFamily:
                                                                   "Franklin Gothic",
                                                               fontWeight:
