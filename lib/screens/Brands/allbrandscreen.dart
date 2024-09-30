@@ -261,13 +261,24 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   double ht = index % 2 == 0 ? 100 : 180;
                                   return GestureDetector(
                                     onTap: () async {
-                                      Get.to(CategoryProductScreen(
-                                        categoryId: brandController
-                                            .categoryList[index]["id"],
-                                        tagIds: const [],
-                                        genderType: 0,
-                                        brandId: brandController.brandId.value,
-                                      ));
+                                      videoController.pause();
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  CategoryProductScreen(
+                                                    categoryId: brandController
+                                                            .categoryList[index]
+                                                        ["id"],
+                                                    tagIds: const [],
+                                                    genderType: 0,
+                                                    brandId: brandController
+                                                        .brandId.value,
+                                                  )))
+                                          .then((value) => setState(
+                                                () {
+                                                  videoController.play();
+                                                },
+                                              ));
                                       await analytics.logEvent(
                                         name: 'allbrand_categoryList_page',
                                         parameters: <String, Object>{
@@ -369,6 +380,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 controller:
                                     productController.tagsProductController,
                                 onPressed: (p0) async {
+                                  videoController.pause();
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (BuildContext context) =>
@@ -376,6 +388,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                   productId: p0, type: "add")))
                                       .then((value) => setState(
                                             () {
+                                              videoController.play();
                                               productController
                                                   .tagsHasnextpage.value = true;
                                               productController
@@ -459,6 +472,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               controller:
                                   productController.bestSellerController,
                               onPressed: (p0) async {
+                                videoController.pause();
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (BuildContext context) =>
@@ -466,6 +480,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 productId: p0, type: "add")))
                                     .then((value) => setState(
                                           () {
+                                            videoController.play();
                                             productController
                                                 .bestSellerHasnextpage
                                                 .value = true;
