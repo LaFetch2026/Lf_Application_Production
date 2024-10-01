@@ -16,9 +16,9 @@ class DummybrandAll extends StatelessWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 2,
         mainAxisSpacing: 7,
-        itemCount: 4,
+        itemCount: 2,
         itemBuilder: (context, index) {
-          double ht = index % 2 == 0 ? 100 : 180;
+          double ht = 100;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -26,7 +26,7 @@ class DummybrandAll extends StatelessWidget {
                 children: [
                   Container(
                     height: ht,
-                    width: 156,
+                    width: (MediaQuery.of(context).size.width / 2) - 16,
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.08),
                     ),
