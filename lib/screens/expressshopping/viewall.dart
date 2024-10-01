@@ -34,13 +34,6 @@ class ViewAllScreenState extends State<ViewAllScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.brandExpressProductController.addListener(() {
-        productController.fetchBrandExpressMoreData(
-            widget.brandId, "", productController.filterExpressEnable.value);
-        productController.update();
-      });
-    });
     WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
           productController.brandExpressHasnextpage.value = true;
           productController.brandExpressLoadMore.value = false;
@@ -52,6 +45,13 @@ class ViewAllScreenState extends State<ViewAllScreen> {
             widget.brandId, productController.expressSortBy.value, false));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.brandExpressProductController.addListener(() {
+        productController.fetchBrandExpressMoreData(
+            "", productController.filterExpressEnable.value);
+        productController.update();
+      });
+    });
     super.initState();
   }
 
@@ -209,6 +209,18 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                       ),
                                                       GestureDetector(
                                                         onTap: () async {
+                                                          productController
+                                                              .brandExpressHasnextpage
+                                                              .value = true;
+                                                          productController
+                                                              .brandExpressLoadMore
+                                                              .value = false;
+                                                          productController
+                                                              .isBrandExpressProduct
+                                                              .value = false;
+                                                          productController
+                                                              .brandExpressPage
+                                                              .value = 1;
                                                           if (productController
                                                                       .productExpressBrandList[
                                                                   index]

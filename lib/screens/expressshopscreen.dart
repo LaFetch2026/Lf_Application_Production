@@ -10,6 +10,7 @@ import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../controller/brand_controller.dart';
+import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 import 'cartscreen.dart';
 import 'catalogscreen.dart';
@@ -23,8 +24,8 @@ class ExpressShoppingScreen extends StatefulWidget {
 
 class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   final brandController = Get.put(BrandController());
+  final productController = Get.put(ProductController());
   int current = 0;
-  int brandId = 0;
   PageController pageController = PageController();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -40,6 +41,11 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     brandController.loadMore.value = false;
     brandController.isBrand.value = false;
     brandController.page.value = 1;
+    productController.brand_id.value = 0;
+    productController.brandExpressHasnextpage.value = true;
+    productController.brandExpressLoadMore.value = false;
+    productController.isBrandExpressProduct.value = false;
+    productController.brandExpressPage.value = 1;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();
@@ -169,13 +175,28 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                       children: [
                                         GestureDetector(
                                           onTap: () async {
-                                            setState(() {
-                                              current = index;
-                                              brandId = index == 0
-                                                  ? 0
-                                                  : value.brandList[index - 1]
+                                            current = index;
+                                            if (index == 0) {
+                                              productController.brand_id.value =
+                                                  0;
+                                            } else {
+                                              productController.brand_id.value =
+                                                  value.brandList[index - 1]
                                                       ["id"];
-                                            });
+                                            }
+                                            productController
+                                                .brandExpressHasnextpage
+                                                .value = true;
+                                            productController
+                                                .brandExpressLoadMore
+                                                .value = false;
+                                            productController
+                                                .isBrandExpressProduct
+                                                .value = false;
+                                            productController
+                                                .brandExpressPage.value = 1;
+                                            productController.update();
+                                            setState(() {});
                                             pageController.animateToPage(
                                               current,
                                               duration: const Duration(
@@ -253,7 +274,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return ViewAllScreen(
-                          brandId: brandId,
+                          brandId: productController.brand_id.value,
                         );
                       },
                     ),

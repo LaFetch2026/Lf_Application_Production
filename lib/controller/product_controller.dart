@@ -115,6 +115,7 @@ class ProductController extends BaseController {
   RxInt totalReview = 0.obs;
   RxInt productImageindex = 0.obs;
   RxInt catalogIndex = 0.obs;
+  RxInt brand_id = 0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -826,8 +827,7 @@ class ProductController extends BaseController {
     isBrandExpressProduct.value = false;
   }
 
-  fetchBrandExpressMoreData(
-      int brandId, String expressSort, bool filter) async {
+  fetchBrandExpressMoreData(String expressSort, bool filter) async {
     if (brandExpressHasnextpage.value == true &&
         isBrandExpressProduct.value == false &&
         brandExpressLoadMore.value == false) {
@@ -837,7 +837,7 @@ class ProductController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       try {
         dynamic response;
-        if (brandId != 0) {
+        if (brand_id.value != 0) {
           String colorString = color_ids.join(',');
           String sizeString = size_ids.join(',');
           String brandString = brand_ids.join(',');
@@ -845,7 +845,7 @@ class ProductController extends BaseController {
             if (filter) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}&sort_by=$expressSort&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&sort_by=$expressSort&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -853,7 +853,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}&sort_by=$expressSort"),
+                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&sort_by=$expressSort"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -863,7 +863,7 @@ class ProductController extends BaseController {
             if (filter) {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -871,7 +871,7 @@ class ProductController extends BaseController {
             } else {
               response = await http.get(
                   Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&page=${brandExpressPage.value}"),
+                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}"),
                   headers: <String, String>{
                     'Accept': 'application/json; charset=UTF-8',
                     "Authorization": "Bearer ${prefs.getString('token')} ",
