@@ -133,25 +133,25 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                   Obx(() => controller.isCategory.value
                       ? Padding(
                           padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 12),
+                              left: 16, right: 16, top: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DummyContainer(height: 14, width: 80),
                               Padding(
-                                padding: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.only(top: 20),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.only(top: 20),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.only(top: 20),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.only(top: 20),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                             ],
@@ -160,7 +160,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                       : controller.categoryList.isNotEmpty
                           ? Padding(
                               padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 12),
+                                  left: 16, right: 16, top: 22),
                               child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
@@ -198,30 +198,25 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.only(
-                                                  bottom: 10),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    AppText(
-                                                      text: controller
-                                                                  .categoryList[
-                                                              index]["name"] ??
-                                                          "",
-                                                      color: greyTextColor,
-                                                      fontSize: 14.sp,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ],
-                                                ),
+                                                  bottom: 25),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  AppText(
+                                                    text: controller
+                                                                .categoryList[
+                                                            index]["name"] ??
+                                                        "",
+                                                    color: greyTextColor,
+                                                    fontSize: 14.sp,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ],
                                               ),
                                             )),
                                       ],

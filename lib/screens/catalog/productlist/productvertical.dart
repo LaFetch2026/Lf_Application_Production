@@ -185,7 +185,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(
-                                  height: 20,
+                                  height: 10,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -273,8 +273,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       ? Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical: 0),
+                                                                      .only(
+                                                                  top: 16),
                                                           child: SizedBox(
                                                             height: 400,
                                                             width:
@@ -373,7 +373,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       padding: const EdgeInsets
                                                               .symmetric(
                                                           horizontal: 16,
-                                                          vertical: 10),
+                                                          vertical: 30),
                                                       child: Align(
                                                         alignment:
                                                             Alignment.topRight,
