@@ -173,17 +173,20 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                       children: [
                                         GestureDetector(
                                             onTap: () async {
+                                              productController.catalogIndex
+                                                  .value = index + 1;
                                               productController
                                                   .getProductByCategoryData(
-                                                      controller.categoryList[
-                                                          index]["id"],
-                                                      0,
-                                                      "Product Vertical",
-                                                      controller.categoryList,
-                                                      "",
-                                                      widget.genderType,
-                                                      false,
-                                                      widget.catalogId);
+                                                controller.categoryList[index]
+                                                    ["id"],
+                                                0,
+                                                "Product Vertical",
+                                                controller.categoryList,
+                                                "",
+                                                widget.genderType,
+                                                false,
+                                                widget.catalogId,
+                                              );
                                               await analytics.logEvent(
                                                 name:
                                                     "catalog_details_${widget.genderType}",

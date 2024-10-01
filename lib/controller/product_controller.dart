@@ -114,6 +114,7 @@ class ProductController extends BaseController {
   RxInt category_id = 0.obs;
   RxInt totalReview = 0.obs;
   RxInt productImageindex = 0.obs;
+  RxInt catalogIndex = 0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -950,14 +951,15 @@ class ProductController extends BaseController {
   }
 
   getProductByCategoryData(
-      int categoryId,
-      int brandId,
-      String value,
-      List categoryList,
-      String sort_By,
-      int gendertype,
-      bool filter,
-      int catalogId) async {
+    int categoryId,
+    int brandId,
+    String value,
+    List categoryList,
+    String sort_By,
+    int gendertype,
+    bool filter,
+    int catalogId,
+  ) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -1071,6 +1073,7 @@ class ProductController extends BaseController {
               idList: idList,
               genderType: gendertype,
               catalogId: catalogId,
+              initailIndex: catalogIndex.value,
             ));
           }
           if (filter) {

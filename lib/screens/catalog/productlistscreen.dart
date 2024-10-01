@@ -15,11 +15,13 @@ class ProductListScreen extends StatefulWidget {
   final List<int> idList;
   final int genderType;
   final int catalogId;
+  final int initailIndex;
   const ProductListScreen(
       {super.key,
       required this.tabTextList,
       required this.idList,
       required this.catalogId,
+      required this.initailIndex,
       required this.genderType});
 
   @override
@@ -65,7 +67,7 @@ class ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: widget.tabTextList.length + 1,
-      initialIndex: 0,
+      initialIndex: widget.initailIndex,
       child: Scaffold(
         backgroundColor: whiteColor,
         body: Column(
