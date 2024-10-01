@@ -4,6 +4,7 @@ import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -22,7 +23,6 @@ import '../../../commonwidget/bottomsizechart.dart';
 import '../../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
-import '../../../controller/profile_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 import '../../account/saved_address.dart';
@@ -51,7 +51,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final PageController controller = PageController();
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
-  final profileController = Get.put(ProfileController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   late Future<void> _initializeVideoPlayerFuture;
@@ -629,8 +628,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     productController.brandDetails = "";
-    profileController.defaultAddress = "";
+    productController.defaultAddress = "";
     productController.pincodeController.clear();
+    productController.getItBy.value = "";
     productController.sizeInventoryId.value = 0;
     productController.productImageindex.value = 0;
     productController.colorInventoryId.value = 0;
@@ -673,8 +673,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => profileController.getAddressData());
+      WidgetsBinding.instance.addPostFrameCallback(
+          (_) => productController.getAddressData(widget.productId));
     });
     super.initState();
   }
@@ -1333,91 +1333,112 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           fontSize: 16.sp,
                         ),
                       ),
-                      /*     Obx(
+                      Obx(
                         () => Padding(
                           padding: const EdgeInsets.only(
                               top: 12, left: 12, right: 12),
                           child: SizedBox(
                             width: double.infinity,
                             height: 44,
-                            child: TextField(
-                              controller: productController.pincodeController,
-                              keyboardType: TextInputType.number,
-                              maxLength: 6,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: whiteColor,
-                                suffixIcon: TextButton(
-                                  onPressed: () async {
-                                    if (productController.checkPinvalidation(
-                                        productController.pincodeController.text
-                                            .toString()
-                                            .trim())) {
-                                      productController.getCheckPincode(
+                            child: RawKeyboardListener(
+                              focusNode: FocusNode(),
+                              onKey: (value) {
+                                print(value);
+                                if (value is RawKeyDownEvent) {
+                                  productController.getItBy.value =
+                                      productController.productDetails[
+                                          "estimated_delivery_by"];
+                                }
+                              },
+                              child: TextField(
+                                controller: productController.pincodeController,
+                                keyboardType: TextInputType.number,
+                                maxLength: 6,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: whiteColor,
+                                  suffixIcon: TextButton(
+                                    onPressed: () async {
+                                      if (productController.checkPinvalidation(
                                           productController
                                               .pincodeController.text
                                               .toString()
-                                              .trim());
-                                      await analytics.logEvent(
-                                        name: 'check_pincode_productdetails',
-                                        parameters: <String, Object>{
-                                          'page_name':
-                                              'check_pincode_productdetails',
-                                        },
-                                      );
-                                    }
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        right: 6, bottom: 0),
-                                    child: productController.isPincode.value
-                                        ? const SizedBox(
-                                            height: 10,
-                                            width: 10,
-                                            child: Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                          )
-                                        : const AppText(
-                                            text: 'Check',
-                                            textAlign: TextAlign.center,
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
-                                            color: blackColor,
-                                            fontSize: 14,
-                                          ),
+                                              .trim())) {
+                                        /* productController.getCheckPincode(
+                                            productController
+                                                .pincodeController.text
+                                                .toString()
+                                                .trim()); */
+                                        productController.getEstimateDate(
+                                            widget.productId,
+                                            productController
+                                                .pincodeController.text
+                                                .toString()
+                                                .trim());
+                                        FocusScope.of(context).unfocus();
+                                        await analytics.logEvent(
+                                          name: 'check_pincode_productdetails',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'check_pincode_productdetails',
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 6, bottom: 0),
+                                      child:
+                                          productController.isEstimateDate.value
+                                              ? const SizedBox(
+                                                  height: 10,
+                                                  width: 10,
+                                                  child: Center(
+                                                      child:
+                                                          CircularProgressIndicator()),
+                                                )
+                                              : const AppText(
+                                                  text: 'Check',
+                                                  textAlign: TextAlign.center,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: blackColor,
+                                                  fontSize: 14,
+                                                ),
+                                    ),
                                   ),
+                                  focusedBorder: const OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: borderColor)),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(1),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(1),
+                                    borderSide:
+                                        const BorderSide(color: borderColor),
+                                  ),
+                                  counterText: "",
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 10),
+                                  hintText: 'Enter pincode',
+                                  hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                      color: textHintColor,
+                                      fontFamily: "Franklin Gothic Regular"),
                                 ),
-                                focusedBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: borderColor)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(1),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(1),
-                                  borderSide:
-                                      const BorderSide(color: borderColor),
-                                ),
-                                counterText: "",
-                                contentPadding: const EdgeInsets.only(left: 10),
-                                hintText: 'Enter pincode',
-                                hintStyle: const TextStyle(
-                                    fontSize: 14,
-                                    color: textHintColor,
-                                    fontFamily: "Franklin Gothic Regular"),
+                                style: const TextStyle(
+                                    color: colorPrimary, fontSize: 14),
                               ),
-                              style: const TextStyle(
-                                  color: colorPrimary, fontSize: 14),
                             ),
                           ),
                         ),
                       ),
-                     */
-                      Obx(() => profileController.isAddress.value
+                      Obx(() => productController.isAddress.value
                           ? const DummySaveAddress(
                               size: 1,
                             )
-                          : profileController.defaultAddress != ""
+                          : productController.defaultAddress != ""
                               ? Padding(
                                   padding: const EdgeInsets.only(
                                     top: 10,
@@ -1439,7 +1460,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       horizontal: 14,
                                                       vertical: 5),
                                               child: AppText(
-                                                text: profileController
+                                                text: productController
                                                             .defaultAddress[
                                                         "address"] ??
                                                     "",
@@ -1467,8 +1488,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             )))
                                                     .then((value) => setState(
                                                           () {
-                                                            profileController
-                                                                .getAddressData();
+                                                            productController
+                                                                .getAddressData(
+                                                                    widget
+                                                                        .productId);
                                                           },
                                                         ));
 
@@ -1520,7 +1543,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             horizontal: 14, vertical: 2),
                                         child: AppText(
                                           text:
-                                              "${profileController.defaultAddress["locality"] ?? ""} ,${profileController.defaultAddress["city"] != null ? profileController.defaultAddress["city"]["name"] : ""}",
+                                              "${productController.defaultAddress["locality"] ?? ""} ,${productController.defaultAddress["city"] != null ? productController.defaultAddress["city"]["name"] : ""}",
                                           color: greyTextColor,
                                           fontSize: 12.sp,
                                           fontFamily: "Franklin Gothic Regular",
@@ -1531,7 +1554,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 14, vertical: 2),
                                         child: AppText(
-                                          text: profileController
+                                          text: productController
                                               .defaultAddress["zip"]
                                               .toString(),
                                           color: loginText,
@@ -1570,8 +1593,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           )))
                                               .then((value) => setState(
                                                     () {
-                                                      profileController
-                                                          .getAddressData();
+                                                      productController
+                                                          .getAddressData(
+                                                              widget.productId);
                                                     },
                                                   ));
 
@@ -1615,6 +1639,49 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 )),
                       Obx(
+                        () => productController.isEstimateDate.value
+                            ? SizedBox(
+                                height: 0,
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18.0, left: 12, right: 12),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 12.0),
+                                          child: Image.asset(
+                                            getItByIcon,
+                                            height: 18,
+                                            width: 18,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              'Get it by ${productController.getItBy.value}',
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w500,
+                                          color: blackColor,
+                                          fontSize: 14.sp,
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                      ),
+                      Obx(
                         () => productController.isDetails.value
                             ? SizedBox(
                                 height: 0,
@@ -1627,44 +1694,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    productController.productDetails[
-                                                "estimated_delivery_by"] !=
-                                            null
-                                        ? Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 18),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 12.0),
-                                                  child: Image.asset(
-                                                    getItByIcon,
-                                                    height: 18,
-                                                    width: 18,
-                                                  ),
-                                                ),
-                                                AppText(
-                                                  text:
-                                                      'Get it by ${productController.productDetails["estimated_delivery_by"]}',
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: blackColor,
-                                                  fontSize: 14.sp,
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            height: 0,
-                                          ),
                                     productController.productDetails["has_cod"]
                                         ? Padding(
                                             padding: const EdgeInsets.only(

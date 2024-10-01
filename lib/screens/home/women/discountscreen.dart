@@ -20,6 +20,8 @@ import '../../../commonwidget/app_text.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../account/customercare.dart';
+
 class DiscountScreen extends StatefulWidget {
   final int tagId;
   final int genderType;
@@ -296,38 +298,41 @@ class DiscountScreenState extends State<DiscountScreen> {
             Obx(() => productController.istagsProduct.value
                 ? const DummyProductList(text: "We think you might also like")
                 : productController.tagProductList.isNotEmpty
-                    ? HorizontalHomeList(
-                        text: "We think you might also like",
-                        controller: productController.tagsProductController,
-                        height: 250,
-                        visibleExpress: false,
-                        onPressed: (p0) async {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      ProductDetailsScreen(
-                                          productId: p0, type: "add")))
-                              .then((value) => setState(
-                                    () {
-                                      productController.tagsHasnextpage.value =
-                                          true;
-                                      productController.tagsLoadMore.value =
-                                          false;
-                                      productController.istagsProduct.value =
-                                          false;
-                                      productController.tagsPage.value = 1;
-                                      /*  productController
-                                      .getTagsProductData(widget.tagId); */
-                                    },
-                                  ));
-                          await analytics.logEvent(
-                            name: 'product_tabid_details_home_page',
-                            parameters: <String, Object>{
-                              'page_name': 'product_tabid_details_home_page',
-                            },
-                          );
-                        },
-                        list: productController.tagProductList,
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: HorizontalHomeList(
+                          text: "We think you might also like",
+                          controller: productController.tagsProductController,
+                          height: 250,
+                          visibleExpress: false,
+                          onPressed: (p0) async {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ProductDetailsScreen(
+                                            productId: p0, type: "add")))
+                                .then((value) => setState(
+                                      () {
+                                        productController
+                                            .tagsHasnextpage.value = true;
+                                        productController.tagsLoadMore.value =
+                                            false;
+                                        productController.istagsProduct.value =
+                                            false;
+                                        productController.tagsPage.value = 1;
+                                        /*  productController
+                                        .getTagsProductData(widget.tagId); */
+                                      },
+                                    ));
+                            await analytics.logEvent(
+                              name: 'product_tabid_details_home_page',
+                              parameters: <String, Object>{
+                                'page_name': 'product_tabid_details_home_page',
+                              },
+                            );
+                          },
+                          list: productController.tagProductList,
+                        ),
                       )
                     : const SizedBox(
                         height: 0,
@@ -339,7 +344,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 0, left: 16),
+                          padding: const EdgeInsets.only(top: 10, left: 16),
                           child: AppText(
                             text: "Popular Categories",
                             fontFamily: "Franklin Gothic Regular",
@@ -349,8 +354,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.only(
+                              left: 16, right: 16, top: 15, bottom: 10),
                           child: Row(
                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -892,6 +897,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                 text2: "Contact customer service",
                 size: 32,
                 onPressed: () async {
+                  Get.to(CustomerCareScreen());
                   await analytics.logEvent(
                     name: 'needhelp_home_page',
                     parameters: <String, Object>{

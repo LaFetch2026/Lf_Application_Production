@@ -116,6 +116,10 @@ class ProductController extends BaseController {
   RxInt productImageindex = 0.obs;
   RxInt catalogIndex = 0.obs;
   RxInt brand_id = 0.obs;
+  RxBool isEstimateDate = false.obs;
+  RxString getItBy = "".obs;
+  RxBool isAddress = false.obs;
+  dynamic defaultAddress = "".obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -1335,6 +1339,9 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           productDetails = responseData;
+          if (productDetails["estimated_delivery_by"] != null) {
+            getItBy.value = productDetails["estimated_delivery_by"];
+          }
           if (responseData["reviews"] != null) {
             totalReview.value = responseData["reviews"].length;
           }
@@ -1385,6 +1392,78 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isDetails.value = false;
+  }
+
+  getEstimateDate(int id, String zip) async {
+    isEstimateDate.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products/$id/estimated-delivery?zip=$zip"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        getItBy.value = responseData["message"];
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isEstimateDate.value = false;
+  }
+
+  getAddressData(int id) async {
+    isAddress.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/addresses"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          if (responseData.isNotEmpty) {
+            for (var i = 0; i < responseData.length; i++) {
+              if (responseData[i]["default_shipping"]) {
+                defaultAddress = responseData[i];
+              }
+            }
+            getEstimateDate(id, defaultAddress["zip"]);
+          }
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isAddress.value = false;
   }
 
   getProductReview(int productId) async {
