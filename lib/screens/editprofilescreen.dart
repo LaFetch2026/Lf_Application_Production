@@ -245,9 +245,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                               focusBorderColor: borderColor,
                                               enabledBorderColor: borderColor),
                                           style: const TextStyle(
-                                              color: loginText,
-                                              fontSize: 16,
-                                              height: 2.5),
+                                            color: loginText,
+                                            fontSize: 16,
+                                          ),
                                           onChanged: (code) {
                                             otpController.otp.value = code;
                                             print("Changed: " + code);

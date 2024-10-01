@@ -163,7 +163,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     /* Obx(
                       () => Padding(
@@ -217,7 +217,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                   focusBorderColor: borderColor,
                                   enabledBorderColor: borderColor),
                               style: const TextStyle(
-                                  color: loginText, fontSize: 16, height: 2.5),
+                                color: loginText,
+                                fontSize: 16,
+                              ),
                               onChanged: (code) {
                                 otpController.otp.value = code;
                                 print("Changed: " + code);
