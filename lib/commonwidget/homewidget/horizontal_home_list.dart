@@ -53,7 +53,7 @@ class HorizontalHomeList extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: leftPadding, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: leftPadding, vertical: 16),
           child: SizedBox(
             width: double.infinity,
             height: height,

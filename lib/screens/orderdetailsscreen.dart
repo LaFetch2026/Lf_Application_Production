@@ -1230,7 +1230,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               ],
                                                                             ),
                                                                           ),
-                                                                          orderController.orderDetails["status_details"] == "DELIVERED"
+                                                                          orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED"
                                                                               ? Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   mainAxisSize: MainAxisSize.max,
