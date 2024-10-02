@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
+import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:fl_downloader/fl_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/homewidget/dummy_estimatedelivery.dart';
+import '../commonwidget/singlebtn.dart';
 import '../controller/order_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -50,6 +53,17 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   ];
   List<String> trackOrderItem = ["Confirmed", "Packed", "Shipped", "Delivered"];
   List<String> orderItem = ["CONFIRMED", "PACKED", "SHIPPED", "DELIVERED"];
+  final TextEditingController fileNameController = TextEditingController(
+    text: 'test.pdf',
+  );
+  final TextEditingController urlController = TextEditingController(
+    text:
+        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+  );
+  int progress = 0;
+  dynamic downloadId;
+  String? status;
+  late StreamSubscription progressStream;
 
   @override
   void initState() {
@@ -58,7 +72,58 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
         (_) => orderController.getOrderDetails(widget.orderId));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => orderController.getTrackorder(widget.orderId));
+    FlDownloader.initialize();
+    progressStream = FlDownloader.progressStream.listen((event) {
+      if (event.status == DownloadStatus.successful) {
+        debugPrint('event.progress: ${event.progress}');
+        setState(() {
+          progress = event.progress;
+          downloadId = event.downloadId;
+          status = event.status.name;
+        });
+        getSnackBar("Invoice downloaded");
+        //  FlDownloader.openFile(filePath: event.filePath);
+      } else if (event.status == DownloadStatus.running) {
+        debugPrint('event.progress: ${event.progress}');
+        setState(() {
+          progress = event.progress;
+          downloadId = event.downloadId;
+          status = event.status.name;
+        });
+      } else if (event.status == DownloadStatus.failed) {
+        debugPrint('event: $event');
+        setState(() {
+          progress = event.progress;
+          downloadId = event.downloadId;
+          status = event.status.name;
+        });
+      } else if (event.status == DownloadStatus.paused) {
+        debugPrint('Download paused');
+        setState(() {
+          progress = event.progress;
+          downloadId = event.downloadId;
+          status = event.status.name;
+        });
+        Future.delayed(
+          const Duration(milliseconds: 250),
+          () => FlDownloader.attachDownloadProgress(event.downloadId),
+        );
+      } else if (event.status == DownloadStatus.pending) {
+        debugPrint('Download pending');
+        setState(() {
+          progress = event.progress;
+          downloadId = event.downloadId;
+          status = event.status.name;
+        });
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    progressStream.cancel();
+    super.dispose();
   }
 
   Future getPrefrenceValue() async {
@@ -1421,6 +1486,41 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           ],
                                         ),
                                       ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 20, bottom: 10),
+                                        child: SingleButton(
+                                            label: "Download Invoice",
+                                            height: 40,
+                                            horizontal: 0.0,
+                                            textColor: whiteTextColor,
+                                            backgroundColor: btnTextColor,
+                                            onPressed: () async {
+                                              final permission =
+                                                  await FlDownloader
+                                                      .requestPermission();
+                                              if (permission ==
+                                                  StoragePermissionStatus
+                                                      .granted) {
+                                                await FlDownloader.download(
+                                                  urlController.text,
+                                                  fileName:
+                                                      fileNameController.text,
+                                                );
+                                              } else {
+                                                debugPrint(
+                                                    'Permission denied =(');
+                                              }
+                                              await analytics.logEvent(
+                                                name: 'download_invoice',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'download_invoice',
+                                                },
+                                              );
+                                            },
+                                            borderColor: btnTextColor),
+                                      )
                                     ],
                                   ),
                           ),

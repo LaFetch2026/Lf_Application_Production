@@ -12,26 +12,28 @@ class SingleButton extends StatelessWidget {
   final Color backgroundColor;
   final Widget? trailingWidget;
   final Function? onPressed;
+  final double horizontal;
 
-  const SingleButton({
-    Key? key,
-    required this.label,
-    required this.textColor,
-    required this.backgroundColor,
-    required this.borderColor,
-    this.height = 50,
-    this.fontSize = 14,
-    this.roundness = 1,
-    this.fontWeight = FontWeight.bold,
-    this.fontFamily = "Franklin Gothic",
-    this.trailingWidget,
-    this.onPressed,
-  }) : super(key: key);
+  const SingleButton(
+      {Key? key,
+      required this.label,
+      required this.textColor,
+      required this.backgroundColor,
+      required this.borderColor,
+      this.height = 50,
+      this.fontSize = 14,
+      this.roundness = 1,
+      this.fontWeight = FontWeight.bold,
+      this.fontFamily = "Franklin Gothic",
+      this.trailingWidget,
+      this.onPressed,
+      this.horizontal = 16})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: horizontal),
       child: SizedBox(
           width: double.infinity,
           height: height,
