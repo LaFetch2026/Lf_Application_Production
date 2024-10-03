@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../screens/bottomnavscreen.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
-
 import '../screens/loginscreen.dart';
 
 class ProfileController extends BaseController {
@@ -24,6 +23,12 @@ class ProfileController extends BaseController {
   dynamic defaultAddress = "".obs;
   List addressList = [].obs;
   dynamic profileDetails = "".obs;
+  RxBool isOrder = false.obs;
+  RxBool isOffer = false.obs;
+  RxBool isPermotion = true.obs;
+  RxInt orderValue = 0.obs;
+  RxInt offerValue = 0.obs;
+  RxInt permotionValue = 0.obs;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final gerderController = TextEditingController();
@@ -310,6 +315,44 @@ class ProfileController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  callNotificationSetting() async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      dynamic sendData = {
+        "order_notification_enabled": orderValue.value,
+        "offer_notification_enabled": offerValue.value,
+        "promotional_notification_enabled": permotionValue.value,
+      };
+
+      var response =
+          await http.put(Uri.parse("${ApiConstants.baseUrl}/profile"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        getProfileData();
+        Get.back();
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("notification failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    hideLoading();
   }
 
   void callLogout() async {

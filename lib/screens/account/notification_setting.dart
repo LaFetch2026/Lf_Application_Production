@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/controller/notification_controller.dart';
 import 'package:lafetch/utils/constants.dart';
-
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/common_widgets.dart';
+import '../../controller/profile_controller.dart';
 
 class NotificationSettingScreen extends StatefulWidget {
   const NotificationSettingScreen({
@@ -23,7 +22,7 @@ class NotificationSettingScreen extends StatefulWidget {
 
 class NotificationSettingScreenState extends State<NotificationSettingScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  final controller = Get.put(NotificationController());
+  final controller = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -266,16 +265,18 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: getSingleButton(
-                label: "Submit",
-                textColor: whiteBorderColor,
-                backgroundColor: btnTextColor,
-                //  controller: otpController,
-                onPressed: () {},
-                borderColor: btnTextColor),
-          )
+          Obx(() => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: getSingleButton(
+                    label: "Submit",
+                    textColor: whiteBorderColor,
+                    backgroundColor: btnTextColor,
+                    controller: controller,
+                    onPressed: () {
+                      controller.callNotificationSetting();
+                    },
+                    borderColor: btnTextColor),
+              )),
         ],
       ),
     );

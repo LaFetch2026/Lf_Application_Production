@@ -448,6 +448,33 @@ class AccountScreenState extends State<AccountScreen> {
                               ), */
                               SettingWidgets(
                                 onPressedNotification: () {
+                                  if (controller.profileDetails[
+                                          "order_notification_enabled"] ==
+                                      0) {
+                                    controller.isOrder.value = false;
+                                    controller.orderValue.value = 0;
+                                  } else {
+                                    controller.isOrder.value = true;
+                                    controller.orderValue.value = 1;
+                                  }
+                                  if (controller.profileDetails[
+                                          "offer_notification_enabled"] ==
+                                      0) {
+                                    controller.isOffer.value = false;
+                                    controller.offerValue.value = 0;
+                                  } else {
+                                    controller.isOffer.value = true;
+                                    controller.offerValue.value = 1;
+                                  }
+                                  if (controller.profileDetails[
+                                          "promotional_notification_enabled"] ==
+                                      0) {
+                                    controller.isPermotion.value = false;
+                                    controller.permotionValue.value = 0;
+                                  } else {
+                                    controller.isPermotion.value = true;
+                                    controller.permotionValue.value = 1;
+                                  }
                                   Get.to(NotificationSettingScreen());
                                 },
                               ),
