@@ -40,6 +40,7 @@ class ProductListScreenState extends State<ProductListScreen> {
       categoryId = widget.idList[0];
       productController.category_id.value = 0;
     }
+    productController.filterEnable.value = false;
     super.initState();
   }
 

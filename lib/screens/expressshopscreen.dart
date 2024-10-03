@@ -46,6 +46,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     productController.brandExpressLoadMore.value = false;
     productController.isBrandExpressProduct.value = false;
     productController.brandExpressPage.value = 1;
+    productController.filterExpressEnable.value = false;
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData());
     super.initState();

@@ -177,16 +177,16 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                   .value = index + 1;
                                               productController
                                                   .getProductByCategoryData(
-                                                controller.categoryList[index]
-                                                    ["id"],
-                                                0,
-                                                "Product Vertical",
-                                                controller.categoryList,
-                                                "",
-                                                widget.genderType,
-                                                false,
-                                                widget.catalogId,
-                                              );
+                                                      controller.categoryList[
+                                                          index]["id"],
+                                                      0,
+                                                      "Product Vertical",
+                                                      controller.categoryList,
+                                                      "",
+                                                      widget.genderType,
+                                                      false,
+                                                      widget.catalogId,
+                                                      false);
                                               await analytics.logEvent(
                                                 name:
                                                     "catalog_details_${widget.genderType}",

@@ -9,8 +9,10 @@ import '../../utils/constants.dart';
 
 class BottomFilters extends StatefulWidget {
   final Function(int, int) onClick;
+  final Function btnclearAll;
   const BottomFilters({
     required this.onClick,
+    required this.btnclearAll,
     Key? key,
   }) : super(key: key);
 
@@ -89,13 +91,11 @@ class BottomFiltersState extends State<BottomFilters> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          productController.brand_ids.clear();
-                          productController.color_ids.clear();
-                          productController.size_ids.clear();
                           brandSelected = List.generate(50, (i) => false);
                           sizeSelected = List.generate(50, (i) => false);
                           colorSelected = List.generate(50, (i) => false);
                           setState(() {});
+                          widget.btnclearAll.call();
                         },
                         child: Text(
                           "Clear All",
@@ -384,7 +384,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     Padding(
                                                                       padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              10),
+                                                                              5),
                                                                       child:
                                                                           Material(
                                                                         child: Container(
@@ -424,7 +424,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     Padding(
                                                                       padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              10),
+                                                                              5),
                                                                       child:
                                                                           Material(
                                                                         child: Container(
@@ -464,7 +464,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     Padding(
                                                                       padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              10),
+                                                                              5),
                                                                       child:
                                                                           Material(
                                                                         child: Container(
@@ -512,7 +512,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                           TextDecoration
                                                                               .none,
                                                                       fontSize:
-                                                                          14.sp,
+                                                                          12.sp,
                                                                       fontFamily:
                                                                           "Franklin Gothic Regular",
                                                                       fontWeight:

@@ -46,7 +46,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
           productController.getProductByCategoryData(widget.categoryId,
-              widget.brandId, "", [], "", widget.genderType, false, 0));
+              widget.brandId, "", [], "", widget.genderType, false, 0, false));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
           productController.fetchCategoryProductMoreData(

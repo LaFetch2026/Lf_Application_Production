@@ -963,6 +963,7 @@ class ProductController extends BaseController {
     int gendertype,
     bool filter,
     int catalogId,
+    bool filterButton,
   ) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -1080,7 +1081,7 @@ class ProductController extends BaseController {
               initailIndex: catalogIndex.value,
             ));
           }
-          if (filter) {
+          if (filterButton) {
             Get.back();
           }
         }
@@ -1689,7 +1690,7 @@ class ProductController extends BaseController {
           getProductData("relevant");
         } else if (type == "category") {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
-              genderType, filterEnable.value, catalogId);
+              genderType, filterEnable.value, catalogId, false);
         } else if (type == "tags") {
           getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
           getBestSellerProductData(brandId);

@@ -42,7 +42,9 @@ class ViewAllScreenState extends State<ViewAllScreen> {
         });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getBrandExpressProductData(
-            widget.brandId, productController.expressSortBy.value, false));
+            widget.brandId,
+            productController.expressSortBy.value,
+            productController.filterExpressEnable.value));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -608,6 +610,19 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                         },
                         onPressedSecond: () async {
                           Get.to(BottomFilters(
+                            btnclearAll: () {
+                              productController.brand_ids.clear();
+                              productController.color_ids.clear();
+                              productController.size_ids.clear();
+                              productController.expressSortBy.value = "";
+                              productController.filterExpressEnable.value =
+                                  false;
+                              Get.back();
+                              productController.getBrandExpressProductData(
+                                  widget.brandId,
+                                  productController.expressSortBy.value,
+                                  productController.filterExpressEnable.value);
+                            },
                             onClick: (p0, p1) {
                               productController.filterExpressEnable.value =
                                   true;

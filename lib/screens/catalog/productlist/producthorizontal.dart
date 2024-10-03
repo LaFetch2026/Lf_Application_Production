@@ -49,8 +49,16 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.categoryProductPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductByCategoryData(widget.categoryId, 0, "", [],
-            "", widget.genderType, false, widget.catalogId));
+        productController.getProductByCategoryData(
+            widget.categoryId,
+            0,
+            "",
+            [],
+            productController.sortBy.value,
+            widget.genderType,
+            productController.filterEnable.value,
+            widget.catalogId,
+            false));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -143,7 +151,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                     .filterEnable
                                                                     .value,
                                                                 widget
-                                                                    .catalogId);
+                                                                    .catalogId,
+                                                                false);
                                                       },
                                                     ));
                                             await analytics.logEvent(
@@ -571,12 +580,31 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                       p0,
                                       widget.genderType,
                                       productController.filterEnable.value,
-                                      widget.catalogId);
+                                      widget.catalogId,
+                                      false);
                                 },
                               ));
                         },
                         onPressedSecond: () {
                           Get.to(BottomFilters(
+                            btnclearAll: () {
+                              productController.brand_ids.clear();
+                              productController.color_ids.clear();
+                              productController.size_ids.clear();
+                              productController.sortBy.value = "";
+                              productController.filterEnable.value = false;
+                              Get.back();
+                              productController.getProductByCategoryData(
+                                  widget.categoryId,
+                                  0,
+                                  "",
+                                  [],
+                                  productController.sortBy.value,
+                                  widget.genderType,
+                                  productController.filterEnable.value,
+                                  widget.catalogId,
+                                  false);
+                            },
                             onClick: (p0, p1) {
                               productController.filterEnable.value = true;
                               productController.lowPrice.value = p0;
@@ -589,7 +617,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                   productController.sortBy.value,
                                   widget.genderType,
                                   productController.filterEnable.value,
-                                  widget.catalogId);
+                                  widget.catalogId,
+                                  true);
                             },
                           ));
                         },
