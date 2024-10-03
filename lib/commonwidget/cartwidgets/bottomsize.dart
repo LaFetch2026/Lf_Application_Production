@@ -24,10 +24,10 @@ class BottomSize extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<BottomSize> createState() => _BottomQuantityState();
+  State<BottomSize> createState() => BottomSizeState();
 }
 
-class _BottomQuantityState extends State<BottomSize> {
+class BottomSizeState extends State<BottomSize> {
   Map<String, dynamic> selectedProductSize = {};
   int inventoryId = 0;
   @override

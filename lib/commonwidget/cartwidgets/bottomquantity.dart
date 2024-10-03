@@ -25,10 +25,10 @@ class BottomQuantity extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<BottomQuantity> createState() => _BottomQuantityState();
+  State<BottomQuantity> createState() => BottomQuantityState();
 }
 
-class _BottomQuantityState extends State<BottomQuantity> {
+class BottomQuantityState extends State<BottomQuantity> {
   String text = "0";
   @override
   void initState() {

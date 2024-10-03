@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
+import 'package:lafetch/commonwidget/cartwidgets/bottomCharges.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomCoupon.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
@@ -1315,10 +1316,24 @@ class CartScreenState extends State<CartScreen> {
                                                       fontSize: 12.sp,
                                                     ),
                                                   ),
-                                                  Image.asset(questionIcon,
-                                                      height: 16,
-                                                      width: 16,
-                                                      fit: BoxFit.cover)
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      scaffoldKey.currentState
+                                                          ?.showBottomSheet(
+                                                              (context) =>
+                                                                  BottomCharges(
+                                                                    text:
+                                                                        "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
+                                                                    title:
+                                                                        "Convenience Fee",
+                                                                  ));
+                                                    },
+                                                    child: Image.asset(
+                                                        questionIcon,
+                                                        height: 16,
+                                                        width: 16,
+                                                        fit: BoxFit.cover),
+                                                  )
                                                 ],
                                               ),
                                               const Expanded(
@@ -1362,10 +1377,24 @@ class CartScreenState extends State<CartScreen> {
                                                       fontSize: 12.sp,
                                                     ),
                                                   ),
-                                                  Image.asset(questionIcon,
-                                                      height: 16,
-                                                      width: 16,
-                                                      fit: BoxFit.cover)
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      scaffoldKey.currentState
+                                                          ?.showBottomSheet(
+                                                              (context) =>
+                                                                  BottomCharges(
+                                                                    text:
+                                                                        "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
+                                                                    title:
+                                                                        "Tax & Charges",
+                                                                  ));
+                                                    },
+                                                    child: Image.asset(
+                                                        questionIcon,
+                                                        height: 16,
+                                                        width: 16,
+                                                        fit: BoxFit.cover),
+                                                  )
                                                 ],
                                               ),
                                               const Expanded(
