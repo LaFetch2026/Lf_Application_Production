@@ -49,7 +49,7 @@ class DoubleButton extends StatelessWidget {
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(1))),
+                                    borderRadius: BorderRadius.circular(2))),
                             side: MaterialStateProperty.all(
                               BorderSide(width: 1, color: firstBorderColor),
                             ),
@@ -87,7 +87,7 @@ class DoubleButton extends StatelessWidget {
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(1))),
+                                    borderRadius: BorderRadius.circular(2))),
                             side: MaterialStateProperty.all(BorderSide(
                                 color: secondBorderColor,
                                 width: 1.0,
