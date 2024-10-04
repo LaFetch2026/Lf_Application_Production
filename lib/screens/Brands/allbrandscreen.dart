@@ -47,7 +47,52 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   int tagId = 0;
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
-  double ht = 100;
+  List heightList = [
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+    100.00,
+    180.00,
+    180.00,
+    100.00,
+  ];
 
   @override
   void initState() {
@@ -259,11 +304,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 mainAxisSpacing: 7,
                                 itemCount: brandController.categoryList.length,
                                 itemBuilder: (context, index) {
-                                  if (brandController.categoryList.length > 2) {
-                                    ht = index % 2 == 0 ? 100 : 180;
-                                  } else {
-                                    ht = 100;
-                                  }
                                   return GestureDetector(
                                     onTap: () async {
                                       videoController.pause();
@@ -302,7 +342,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                         ["thumbnail"] !=
                                                     null
                                                 ? SizedBox(
-                                                    height: ht,
+                                                    height: heightList[index],
                                                     width:
                                                         (MediaQuery.of(context)
                                                                     .size
@@ -336,7 +376,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                           Image.asset(
                                                         downloadImage,
                                                         fit: BoxFit.cover,
-                                                        height: ht,
+                                                        height:
+                                                            heightList[index],
                                                         width: (MediaQuery.of(
                                                                         context)
                                                                     .size
@@ -349,7 +390,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 : Center(
                                                     child: Image.asset(
                                                         dummyWishlistImage,
-                                                        height: ht,
+                                                        height:
+                                                            heightList[index],
                                                         width: (MediaQuery.of(
                                                                         context)
                                                                     .size
