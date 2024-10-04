@@ -1190,31 +1190,39 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       color: colorPrimary,
                                                       fontSize: 16.sp,
                                                     ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        scaffoldKey.currentState
-                                                            ?.showBottomSheet(
-                                                                (context) =>
-                                                                    BottomSizeChart(
-                                                                      productSizeChart:
-                                                                          productController.productDetails["productSizeChart"]
-                                                                              [
-                                                                              "image"],
-                                                                      productName:
-                                                                          productController
-                                                                              .productDetails["name"],
-                                                                    ));
-                                                      },
-                                                      child: AppText(
-                                                        text: 'View Size chart',
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: colorPrimary,
-                                                        fontSize: 12.sp,
-                                                      ),
-                                                    ),
+                                                    productController
+                                                                    .productDetails[
+                                                                "productSizeChart"] !=
+                                                            null
+                                                        ? GestureDetector(
+                                                            onTap: () {
+                                                              scaffoldKey
+                                                                  .currentState
+                                                                  ?.showBottomSheet(
+                                                                      (context) =>
+                                                                          BottomSizeChart(
+                                                                            productSizeChart:
+                                                                                productController.productDetails["productSizeChart"]["image"],
+                                                                            productName:
+                                                                                productController.productDetails["name"],
+                                                                          ));
+                                                            },
+                                                            child: AppText(
+                                                              text:
+                                                                  'View Size chart',
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize: 12.sp,
+                                                            ),
+                                                          )
+                                                        : SizedBox(
+                                                            height: 0,
+                                                          )
                                                   ],
                                                 )),
                                             getListForProductSize(),
@@ -2550,7 +2558,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       ),
                                                       AppText(
                                                         text:
-                                                            '${productController.reviewList[index]["upvotes"]} found this helpful',
+                                                            '${productController.reviewList[index]["upvotes"].toString()} found this helpful',
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         fontWeight:
