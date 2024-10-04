@@ -60,22 +60,22 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     videoController.play();
     videoController.setLooping(true);
     getprefrenceData();
-    wishlistController.getWishlistData();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getCategoryData(brandController.brandId.value));
     WidgetsBinding.instance.addPostFrameCallback((_) => productController
         .getBestSellerProductData(brandController.brandId.value));
-    wishlistController.getWishlistData();
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.bestSellerController.addListener(() {
         productController.fetchBestSellerData();
         productController.update();
       });
     }); */
-    productController.bestSellerHasnextpage.value = true;
+    /*  productController.bestSellerHasnextpage.value = true;
     productController.bestSellerLoadMore.value = false;
     productController.isBestSeller.value = false;
-    productController.bestSellerPage.value = 1;
+    productController.bestSellerPage.value = 1; */
     super.initState();
   }
 
