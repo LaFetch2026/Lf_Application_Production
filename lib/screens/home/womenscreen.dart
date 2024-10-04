@@ -28,10 +28,12 @@ class _WomenScreenState extends State<WomenScreen> {
 
   @override
   void initState() {
-    homeController.hasnextpage.value = true;
-    homeController.loadMore.value = false;
-    homeController.istags.value = false;
-    homeController.page.value = 1;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.hasnextpage.value = true;
+      homeController.loadMore.value = false;
+      homeController.istags.value = false;
+      homeController.page.value = 1;
+    });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => homeController.getTagsData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

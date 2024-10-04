@@ -32,8 +32,10 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    homeController.cityList.clear();
-    getPrefrenceValue();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.cityList.clear();
+      getPrefrenceValue();
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getCitiesData());
     /* WidgetsBinding.instance
