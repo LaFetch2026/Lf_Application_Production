@@ -40,36 +40,36 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding:
-                          const EdgeInsets.only(top: 70, left: 16, right: 16),
+                      padding: EdgeInsets.only(
+                          top: 70.sp, left: 16.sp, right: 16.sp),
                       child: AppText(
                         text: "Let’s get to know you\na bit more",
                         fontFamily: "Franklin Gothic",
                         maxLines: 2,
                         fontWeight: FontWeight.w500,
                         color: blackColor,
-                        fontSize: 28.sp,
+                        fontSize: 28,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 40),
+                      padding: EdgeInsets.only(top: 40.sp),
                       child: TextFieldWidget(
                         hint: "First Name and Last Name",
                         controller: userController.nameController,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 20),
+                      padding: EdgeInsets.only(top: 20.sp),
                       child: TextFieldWidget(
                         hint: "Email Address",
                         controller: userController.emailController,
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16, top: 20, right: 16),
+                      padding: EdgeInsets.only(
+                          left: 16.sp, top: 20.sp, right: 16.sp),
                       child: SizedBox(
-                        height: 44,
+                        height: 44.sp,
                         child: TextField(
                           textCapitalization: TextCapitalization.words,
                           readOnly: true,
@@ -80,18 +80,19 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                               userController.showList.value = true;
                             }
                           },
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: textColor,
+                            fontSize: 14.sp,
                             fontFamily: "Franklin Gothic Regular",
                           ),
                           controller: userController.gerderController,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
-                            suffixIcon: const ImageIcon(
+                            suffixIcon: ImageIcon(
                               AssetImage(dropdownImage),
                               color: nameText,
-                              size: 30,
+                              size: 30.sp,
                             ),
                             fillColor: whiteTextColor,
                             focusedBorder: const OutlineInputBorder(
@@ -105,7 +106,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                             ),
                             counterText: "",
                             hintText: "Gender",
-                            hintStyle: const TextStyle(fontSize: 14),
+                            hintStyle: TextStyle(fontSize: 14.sp),
                           ),
                         ),
                       ),
@@ -114,7 +115,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       () => userController.showList.value
                           ? Padding(
                               padding:
-                                  const EdgeInsets.only(left: 16, right: 16),
+                                  EdgeInsets.only(left: 16.sp, right: 16.sp),
                               child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
@@ -162,14 +163,14 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                   color: whiteTextColor,
                                                   alignment: Alignment.center,
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 10),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10.sp),
                                                     child: Text(
                                                       userController
                                                           .genderList[index],
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
+                                                      style: TextStyle(
+                                                        fontSize: 14.sp,
                                                         color: nameText,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
@@ -179,9 +180,9 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                 ),
                                               ),
                                               index == 2
-                                                  ? const SizedBox(
+                                                  ? SizedBox(
                                                       width: double.infinity,
-                                                      height: 5,
+                                                      height: 5.sp,
                                                     )
                                                   : Padding(
                                                       padding: const EdgeInsets
@@ -191,7 +192,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                       child: Container(
                                                         width: double.infinity,
                                                         color: colorSecondary,
-                                                        height: 1,
+                                                        height: 1.sp,
                                                       ),
                                                     ),
                                             ],

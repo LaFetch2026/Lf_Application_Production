@@ -17,9 +17,9 @@ class NumberWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
       child: SizedBox(
-        height: 44,
+        height: 44.sp,
         width: double.infinity,
         child: TextField(
           controller: controller,
@@ -29,20 +29,21 @@ class NumberWidget extends StatelessWidget {
           style: const TextStyle(color: textColor),
           decoration: InputDecoration(
             filled: true,
+            isDense: true,
             fillColor: whiteTextColor,
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: borderColor)),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(1),
+              borderRadius: BorderRadius.circular(1.sp),
               borderSide: const BorderSide(color: borderColor),
             ),
             /*   errorText: isValidate
                                                       ? 'Please enter number'
                                                       : null, */
             prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 8),
+              padding: EdgeInsets.only(left: 8.sp),
               child: SizedBox(
-                width: 50,
+                width: 50.sp,
                 child: Row(
                   children: [
                     AppText(
@@ -50,14 +51,14 @@ class NumberWidget extends StatelessWidget {
                       fontFamily: "Franklin Gothic",
                       fontWeight: FontWeight.w500,
                       color: greyTextColor,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: 10.sp),
                       child: Container(
-                        width: 1,
+                        width: 1.sp,
                         color: textHintColor,
-                        height: 20,
+                        height: 20.sp,
                       ),
                     ),
                   ],
@@ -65,10 +66,10 @@ class NumberWidget extends StatelessWidget {
               ),
             ),
             counterText: "",
-            contentPadding: EdgeInsets.zero,
+            //  contentPadding: EdgeInsets.zero,
             hintText: "Mobile Number",
-            hintStyle: const TextStyle(
-              fontSize: 14,
+            hintStyle: TextStyle(
+              fontSize: 14.sp,
               color: textHintColor,
               fontFamily: "Franklin Gothic Regular",
             ),

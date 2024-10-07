@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utils/constants.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -16,9 +17,9 @@ class TextFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp),
       child: SizedBox(
-        height: 44,
+        height: 44.sp,
         child: TextField(
           textCapitalization: TextCapitalization.words,
           style: const TextStyle(
@@ -42,9 +43,9 @@ class TextFieldWidget extends StatelessWidget {
               borderSide: const BorderSide(color: borderColor),
             ),
             counterText: "",
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10.sp),
             hintText: hint,
-            hintStyle: const TextStyle(fontSize: 14),
+            hintStyle: TextStyle(fontSize: 14.sp),
           ),
         ),
       ),

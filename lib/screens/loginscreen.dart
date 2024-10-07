@@ -125,7 +125,7 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
               ), */
               bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(40),
+                  preferredSize: Size.fromHeight(40.sp),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: TabBar(
@@ -164,256 +164,250 @@ class LoginScreenState extends State<LoginScreen> {
                   )),
             ),
             body: TabBarView(children: [
-              Padding(
-                padding: const EdgeInsets.all(0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: whiteTextColor,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const LoginWidget(
-                            text1: "Welcome Back!",
-                            fontfamily: "Franklin Gothic",
-                            text2: "We are so glad to have you back here"),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: AppButton(
-                              label: "Continue with Facebook",
-                              fontFamily: "Franklin Gothic Regular",
-                              image: facebookImage,
-                              textColor: whiteColor,
-                              borderColor: blue,
-                              onPressed: () {
-                                facebooklogin("SignIn");
-                              },
-                              fontSize: 14.sp,
-                              backgroundColor: blue),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: AppButton(
-                              label: "Continue with Gmail",
-                              fontFamily: "Franklin Gothic Regular",
-                              image: googleImage,
-                              textColor: greyTextColor,
-                              onPressed: () {
-                                //  signup(context);
-                                googleSignInProcess(context, "SignIn");
-                              },
-                              borderColor: colorSecondary,
-                              fontSize: 14.sp,
-                              backgroundColor: whiteTextColor),
-                        ),
-                        const ORWidget(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 16),
-                          child: AppText(
-                            text: "Let’s quickly verify it’s you",
+              Container(
+                width: MediaQuery.of(context).size.width,
+                color: whiteTextColor,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 20.sp,
+                      ),
+                      const LoginWidget(
+                          text1: "Welcome Back!",
+                          fontfamily: "Franklin Gothic",
+                          text2: "We are so glad to have you back here"),
+                      Padding(
+                        padding: EdgeInsets.only(top: 50.sp),
+                        child: AppButton(
+                            label: "Continue with Facebook",
                             fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: loginText,
+                            image: facebookImage,
+                            textColor: whiteColor,
+                            borderColor: blue,
+                            onPressed: () {
+                              facebooklogin("SignIn");
+                            },
                             fontSize: 14.sp,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: NumberWidget(
-                              readonly: false,
-                              controller: loginController.phoneNumberLogin),
-                        ),
-                        Obx(
-                          () => Padding(
-                            padding: const EdgeInsets.only(top: 40, bottom: 10),
-                            child: getSingleButton(
-                                label: "Continue",
-                                textColor: whiteTextColor,
-                                borderColor: colorPrimary,
-                                controller: loginController,
-                                onPressed: () async {
-                                  if (loginController.checkNumbervalidation(
-                                      loginController.phoneNumberLogin.text
-                                          .toString()
-                                          .trim())) {
-                                    loginController.number.value =
-                                        "+91${loginController.phoneNumberLogin.text.toString().trim()}";
-                                    loginController.callRegisterAccount();
-                                    await analytics.logEvent(
-                                      name: 'signin_phonelogin',
-                                      parameters: <String, Object>{
-                                        'page_name': 'signin_phonelogin',
-                                      },
-                                    );
-                                  }
-                                },
-                                fontSize: 14.sp,
-                                backgroundColor: colorPrimary),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: MultipleTextWidget(
-                            fontSize: 11.sp,
-                            text1: "By continuing, I agree to the",
-                            text2: " Terms of Use",
-                            text3: " and",
-                            visible: true,
-                            text4: " Privacy Policy",
-                            onPressedTerm: () {
-                              launchUrl(Uri.parse(
-                                  "https://la-fetch.com/terms-and-conditions/"));
-                            },
-                            onPressedPolicy: () async {
-                              launchUrl(Uri.parse(
-                                  "https://la-fetch.com/privacy-policy/"));
-                              await analytics.logEvent(
-                                name: 'signin_privacypolicy',
-                                parameters: <String, Object>{
-                                  'page_name': 'signin_privacypolicy',
-                                },
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: whiteTextColor,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        const LoginWidget(
-                            fontfamily: "Franklin Gothic Regular",
-                            text1: "Hey there,",
-                            text2:
-                                "Lets set you up around, for a tailored shopping experience"),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: AppButton(
-                              label: "Continue with Facebook",
-                              image: facebookImage,
-                              fontFamily: "Franklin Gothic Regular",
-                              textColor: whiteColor,
-                              borderColor: blue,
-                              onPressed: () {
-                                facebooklogin("SignUp");
-                              },
-                              fontSize: 14.sp,
-                              backgroundColor: blue),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: AppButton(
-                              label: "Continue with Gmail",
-                              fontFamily: "Franklin Gothic Regular",
-                              image: googleImage,
-                              textColor: greyTextColor,
-                              borderColor: colorSecondary,
-                              fontSize: 14.sp,
-                              onPressed: () {
-                                googleSignInProcess(context, "SignUp");
-                              },
-                              backgroundColor: whiteTextColor),
-                        ),
-                        const ORWidget(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 16),
-                          child: AppText(
-                            text: "Let’s quickly verify it’s you",
+                            backgroundColor: blue),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.sp),
+                        child: AppButton(
+                            label: "Continue with Gmail",
                             fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: loginText,
+                            image: googleImage,
+                            textColor: greyTextColor,
+                            onPressed: () {
+                              //  signup(context);
+                              googleSignInProcess(context, "SignIn");
+                            },
+                            borderColor: colorSecondary,
                             fontSize: 14.sp,
-                          ),
+                            backgroundColor: whiteTextColor),
+                      ),
+                      const ORWidget(),
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
+                        child: AppText(
+                          text: "Let’s quickly verify it’s you",
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                          color: loginText,
+                          fontSize: 14,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: NumberWidget(
-                              readonly: false,
-                              controller: loginController.phoneNumberRegister),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.sp),
+                        child: NumberWidget(
+                            readonly: false,
+                            controller: loginController.phoneNumberLogin),
+                      ),
+                      Obx(
+                        () => Padding(
+                          padding: EdgeInsets.only(top: 40.sp, bottom: 10.sp),
+                          child: getSingleButton(
+                              label: "Continue",
+                              textColor: whiteTextColor,
+                              borderColor: colorPrimary,
+                              controller: loginController,
+                              onPressed: () async {
+                                if (loginController.checkNumbervalidation(
+                                    loginController.phoneNumberLogin.text
+                                        .toString()
+                                        .trim())) {
+                                  loginController.number.value =
+                                      "+91${loginController.phoneNumberLogin.text.toString().trim()}";
+                                  loginController.callRegisterAccount();
+                                  await analytics.logEvent(
+                                    name: 'signin_phonelogin',
+                                    parameters: <String, Object>{
+                                      'page_name': 'signin_phonelogin',
+                                    },
+                                  );
+                                }
+                              },
+                              fontSize: 14,
+                              backgroundColor: colorPrimary),
                         ),
-                        Obx(
-                          () => Padding(
-                            padding: const EdgeInsets.only(top: 40, bottom: 10),
-                            child: getSingleButton(
-                                label: "Continue",
-                                textColor: whiteTextColor,
-                                borderColor: colorPrimary,
-                                controller: loginController,
-                                onPressed: () async {
-                                  if (loginController.checkNumbervalidation(
-                                      loginController.phoneNumberRegister.text
-                                          .toString()
-                                          .trim())) {
-                                    loginController.number.value =
-                                        "+91${loginController.phoneNumberRegister.text.toString().trim()}";
-                                    loginController.callRegisterAccount();
-                                    await analytics.logEvent(
-                                      name: 'signup_phonelogin',
-                                      parameters: <String, Object>{
-                                        'page_name': 'signup_phonelogin',
-                                      },
-                                    );
-                                  }
-                                },
-                                fontSize: 14.sp,
-                                backgroundColor: colorPrimary),
-                          ),
-                        ),
-                        MultipleTextWidget(
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 40.sp),
+                        child: MultipleTextWidget(
+                          fontSize: 11.sp,
                           text1: "By continuing, I agree to the",
                           text2: " Terms of Use",
                           text3: " and",
-                          visible: false,
+                          visible: true,
+                          text4: " Privacy Policy",
                           onPressedTerm: () {
                             launchUrl(Uri.parse(
                                 "https://la-fetch.com/terms-and-conditions/"));
                           },
-                          text4: "",
-                          fontSize: 12.sp,
+                          onPressedPolicy: () async {
+                            launchUrl(Uri.parse(
+                                "https://la-fetch.com/privacy-policy/"));
+                            await analytics.logEvent(
+                              name: 'signin_privacypolicy',
+                              parameters: <String, Object>{
+                                'page_name': 'signin_privacypolicy',
+                              },
+                            );
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 40),
-                          child: GestureDetector(
-                            onTap: () async {
-                              launchUrl(Uri.parse(
-                                  "https://la-fetch.com/privacy-policy/"));
-                              await analytics.logEvent(
-                                name: 'signin_privacypolicy',
-                                parameters: <String, Object>{
-                                  'page_name': 'signin_privacypolicy',
-                                },
-                              );
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                color: whiteTextColor,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 20.sp,
+                      ),
+                      const LoginWidget(
+                          fontfamily: "Franklin Gothic Regular",
+                          text1: "Hey there,",
+                          text2:
+                              "Lets set you up around, for a tailored shopping experience"),
+                      Padding(
+                        padding: EdgeInsets.only(top: 50.sp),
+                        child: AppButton(
+                            label: "Continue with Facebook",
+                            image: facebookImage,
+                            fontFamily: "Franklin Gothic Regular",
+                            textColor: whiteColor,
+                            borderColor: blue,
+                            onPressed: () {
+                              facebooklogin("SignUp");
                             },
-                            child: Center(
-                              child: Text(
-                                "Privacy Policy",
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w400,
-                                  color: deepGreytextColor,
-                                ),
+                            fontSize: 14.sp,
+                            backgroundColor: blue),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.sp),
+                        child: AppButton(
+                            label: "Continue with Gmail",
+                            fontFamily: "Franklin Gothic Regular",
+                            image: googleImage,
+                            textColor: greyTextColor,
+                            borderColor: colorSecondary,
+                            fontSize: 14.sp,
+                            onPressed: () {
+                              googleSignInProcess(context, "SignUp");
+                            },
+                            backgroundColor: whiteTextColor),
+                      ),
+                      const ORWidget(),
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
+                        child: AppText(
+                          text: "Let’s quickly verify it’s you",
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                          color: loginText,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.sp),
+                        child: NumberWidget(
+                            readonly: false,
+                            controller: loginController.phoneNumberRegister),
+                      ),
+                      Obx(
+                        () => Padding(
+                          padding: EdgeInsets.only(top: 40.sp, bottom: 10.sp),
+                          child: getSingleButton(
+                              label: "Continue",
+                              textColor: whiteTextColor,
+                              borderColor: colorPrimary,
+                              controller: loginController,
+                              onPressed: () async {
+                                if (loginController.checkNumbervalidation(
+                                    loginController.phoneNumberRegister.text
+                                        .toString()
+                                        .trim())) {
+                                  loginController.number.value =
+                                      "+91${loginController.phoneNumberRegister.text.toString().trim()}";
+                                  loginController.callRegisterAccount();
+                                  await analytics.logEvent(
+                                    name: 'signup_phonelogin',
+                                    parameters: <String, Object>{
+                                      'page_name': 'signup_phonelogin',
+                                    },
+                                  );
+                                }
+                              },
+                              fontSize: 14,
+                              backgroundColor: colorPrimary),
+                        ),
+                      ),
+                      MultipleTextWidget(
+                        text1: "By continuing, I agree to the",
+                        text2: " Terms of Use",
+                        text3: " and",
+                        visible: false,
+                        onPressedTerm: () {
+                          launchUrl(Uri.parse(
+                              "https://la-fetch.com/terms-and-conditions/"));
+                        },
+                        text4: "",
+                        fontSize: 12.sp,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 40.sp),
+                        child: GestureDetector(
+                          onTap: () async {
+                            launchUrl(Uri.parse(
+                                "https://la-fetch.com/privacy-policy/"));
+                            await analytics.logEvent(
+                              name: 'signin_privacypolicy',
+                              parameters: <String, Object>{
+                                'page_name': 'signin_privacypolicy',
+                              },
+                            );
+                          },
+                          child: Center(
+                            child: Text(
+                              "Privacy Policy",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w400,
+                                color: deepGreytextColor,
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

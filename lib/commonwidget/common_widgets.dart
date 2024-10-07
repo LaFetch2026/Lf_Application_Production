@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../controller/base_controller.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/utils/constants.dart';
@@ -33,15 +34,15 @@ Widget getSingleButton(
     Widget? trailingWidget,
     Function? onPressed}) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 16.sp),
     child: Container(
         width: width,
-        height: 50,
+        height: 50.sp,
         color: backgroundColor,
         child: (controller != null && controller.pageState == PageState.LOADING)
             ? Center(
                 child: Transform.scale(
-                  scale: 0.5,
+                  scale: 0.5.sp,
                   child: const CircularProgressIndicator(
                     color: Colors.white,
                   ),
@@ -50,15 +51,15 @@ Widget getSingleButton(
             : ElevatedButton(
                 style: ButtonStyle(
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(1))),
+                        borderRadius: BorderRadius.circular(1.sp))),
                     side: MaterialStateProperty.all(
-                      BorderSide(width: 1, color: borderColor),
+                      BorderSide(width: 1.sp, color: borderColor),
                     ),
                     elevation: MaterialStateProperty.all(0.0),
                     backgroundColor: MaterialStateProperty.all(backgroundColor),
                     textStyle: MaterialStateProperty.all(TextStyle(
                       color: textColor,
-                      fontSize: fontSize,
+                      fontSize: fontSize.sp,
                     ))),
                 onPressed: () {
                   onPressed?.call();
@@ -68,7 +69,7 @@ Widget getSingleButton(
                   style: TextStyle(
                       color: textColor,
                       fontFamily: fontFamily,
-                      fontSize: fontSize),
+                      fontSize: fontSize.sp),
                 ))),
   );
 }
@@ -88,7 +89,7 @@ Widget getSmallButton(
     Function? onPressed}) {
   return Container(
       width: width,
-      height: 44,
+      height: 44.sp,
       color: backgroundColor,
       child: (controller != null && controller.pageState == PageState.LOADING)
           ? Center(
@@ -102,15 +103,15 @@ Widget getSmallButton(
           : ElevatedButton(
               style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(1))),
+                      borderRadius: BorderRadius.circular(1.sp))),
                   side: MaterialStateProperty.all(
-                    BorderSide(width: 1, color: borderColor),
+                    BorderSide(width: 1.sp, color: borderColor),
                   ),
                   elevation: MaterialStateProperty.all(0.0),
                   backgroundColor: MaterialStateProperty.all(backgroundColor),
                   textStyle: MaterialStateProperty.all(TextStyle(
                     color: textColor,
-                    fontSize: fontSize,
+                    fontSize: fontSize.sp,
                   ))),
               onPressed: () {
                 onPressed?.call();
@@ -120,7 +121,7 @@ Widget getSmallButton(
                 style: TextStyle(
                     color: textColor,
                     fontFamily: fontFamily,
-                    fontSize: fontSize),
+                    fontSize: fontSize.sp),
               )));
 }
 
@@ -140,11 +141,11 @@ Widget showDoubleBtnDailog(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 15),
+        SizedBox(height: 15.sp),
         Align(
           alignment: Alignment.topRight,
           child: Padding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: EdgeInsets.only(right: 10.sp),
             child: InkWell(
               onTap: () {
                 Get.back();
@@ -153,89 +154,87 @@ Widget showDoubleBtnDailog(
             ),
           ),
         ),
-        const SizedBox(height: 25),
+        SizedBox(height: 25.sp),
         Text(
           text,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 14.0,
+          style: TextStyle(
+            fontSize: 14.0.sp,
             color: colorPrimary,
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.sp),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: 16.sp),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
                   child: Center(
                     child: SizedBox(
-                        width: 80,
-                        height: 30,
+                        width: 80.sp,
+                        height: 30.sp,
                         child: ElevatedButton(
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(100))),
+                                            BorderRadius.circular(100.sp))),
                                 side: MaterialStateProperty.all(
-                                  BorderSide(width: 1, color: btncolor),
+                                  BorderSide(width: 1.sp, color: btncolor),
                                 ),
                                 backgroundColor:
                                     MaterialStateProperty.all(btncolor),
-                                textStyle:
-                                    MaterialStateProperty.all(const TextStyle(
+                                textStyle: MaterialStateProperty.all(TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                 ))),
                             onPressed: () async {
                               click1!.call();
                             },
                             child: Text(
                               btn1Text,
-                              style: const TextStyle(
-                                  color: colorSecondary, fontSize: 12),
+                              style: TextStyle(
+                                  color: colorSecondary, fontSize: 12.sp),
                             ))),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
                   child: Center(
                     child: SizedBox(
-                        width: 80,
-                        height: 30,
+                        width: 80.sp,
+                        height: 30.sp,
                         child: ElevatedButton(
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(100))),
+                                            BorderRadius.circular(100.sp))),
                                 side: MaterialStateProperty.all(
-                                  BorderSide(width: 1, color: btncolor),
+                                  BorderSide(width: 1.sp, color: btncolor),
                                 ),
                                 backgroundColor:
                                     MaterialStateProperty.all(btncolor),
-                                textStyle:
-                                    MaterialStateProperty.all(const TextStyle(
+                                textStyle: MaterialStateProperty.all(TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                 ))),
                             onPressed: () {
                               click2!.call();
                             },
                             child: Text(
                               btn2Text,
-                              style: const TextStyle(
-                                  color: colorSecondary, fontSize: 12),
+                              style: TextStyle(
+                                  color: colorSecondary, fontSize: 12.sp),
                             ))),
                   ),
                 ),
@@ -243,8 +242,8 @@ Widget showDoubleBtnDailog(
             ],
           ),
         ),
-        const SizedBox(
-          height: 20,
+        SizedBox(
+          height: 20.sp,
         ),
       ],
     ),

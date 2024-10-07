@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppButton extends StatelessWidget {
   final String label;
@@ -7,7 +8,6 @@ class AppButton extends StatelessWidget {
   final double fontSize;
   final String fontFamily;
   final String image;
-  final EdgeInsets padding;
   final Color textColor;
   final Color borderColor;
   final Color backgroundColor;
@@ -25,7 +25,6 @@ class AppButton extends StatelessWidget {
     this.roundness = 1,
     this.fontWeight = FontWeight.bold,
     this.fontFamily = "Franklin Gothic",
-    this.padding = const EdgeInsets.symmetric(vertical: 10),
     this.trailingWidget,
     this.onPressed,
   }) : super(key: key);
@@ -33,16 +32,16 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp),
       child: SizedBox(
           width: double.infinity,
-          height: 50,
+          height: 50.sp,
           child: ElevatedButton(
               style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(1))),
                   side: MaterialStateProperty.all(
-                    BorderSide(width: 1, color: borderColor),
+                    BorderSide(width: 1.sp, color: borderColor),
                   ),
                   elevation: MaterialStateProperty.all(0.0),
                   shadowColor: MaterialStateProperty.all(Colors.transparent),
@@ -58,8 +57,8 @@ class AppButton extends StatelessWidget {
                 children: [
                   Image.asset(
                     image,
-                    height: 22,
-                    width: 22,
+                    height: 22.sp,
+                    width: 22.sp,
                   ),
                   Expanded(
                     child: Center(

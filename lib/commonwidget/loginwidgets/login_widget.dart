@@ -23,24 +23,24 @@ class LoginWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 16),
+          padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
           child: AppText(
             text: text1,
             fontFamily: fontfamily,
             fontWeight: FontWeight.w500,
             color: btnTextColor,
-            fontSize: 25.sp,
+            fontSize: 25,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 10, left: 16),
+          padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
           child: AppText(
             text: text2,
             maxLines: 2,
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: textColor,
-            fontSize: 14.sp,
+            fontSize: 14,
           ),
         ),
       ],

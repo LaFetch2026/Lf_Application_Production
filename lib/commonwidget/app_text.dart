@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppText extends StatelessWidget {
   final String text;
@@ -28,7 +29,7 @@ class AppText extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       maxLines: maxLines,
       style: TextStyle(
-        fontSize: fontSize,
+        fontSize: fontSize.sp,
         height: 1.3,
         decoration: TextDecoration.none,
         overflow: TextOverflow.ellipsis,

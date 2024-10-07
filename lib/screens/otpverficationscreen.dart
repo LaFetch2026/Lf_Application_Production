@@ -117,32 +117,32 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      height: 280,
+                      height: 280.sp,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage(otpImage), fit: BoxFit.cover),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 16),
+                      padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
                       child: AppText(
                         text: "Enter your\nVerification Code",
                         fontFamily: "Franklin Gothic",
                         maxLines: 2,
                         fontWeight: FontWeight.w500,
                         color: blackColor,
-                        fontSize: 28.sp,
+                        fontSize: 28,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 20),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 20.sp),
                       child: Row(
                         children: [
                           AppText(
                             text: "We’ve sent a code to ",
                             fontFamily: "Franklin Gothic Regular",
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             color: greyTextColor,
                           ),
                           Column(
@@ -201,7 +201,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     ), */
                     Obx(
                       () => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
                         child: Center(
                           child: OTPTextFieldV2(
                               controller: otpController.controller.value,
@@ -209,16 +209,17 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               autoFocus: false,
                               width: MediaQuery.of(context).size.width,
                               textFieldAlignment: MainAxisAlignment.spaceAround,
+                              spaceBetween: 4.sp,
                               fieldWidth:
-                                  (MediaQuery.of(context).size.width - 65) / 4,
+                                  (MediaQuery.of(context).size.width - 78) / 4,
                               fieldStyle: FieldStyle.box,
-                              outlineBorderRadius: 1,
+                              outlineBorderRadius: 1.sp,
                               otpFieldStyle: OtpFieldStyle(
                                   focusBorderColor: borderColor,
                                   enabledBorderColor: borderColor),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: loginText,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                               onChanged: (code) {
                                 otpController.otp.value = code;
@@ -235,8 +236,8 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(right: 16, top: 20, left: 16),
+                      padding: EdgeInsets.only(
+                          right: 16.sp, top: 20.sp, left: 16.sp),
                       child: Row(
                         children: [
                           Obx(
@@ -263,7 +264,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                 child: AppText(
                                   text: "Resend Code",
                                   fontFamily: "Franklin Gothic",
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   color: otpController.enableResend.value
                                       ? btnTextColor
                                       : Colors.grey,
@@ -278,7 +279,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                 text:
                                     '00 : ${otpController.secondsRemaining.value}',
                                 fontFamily: "Franklin Gothic Regular",
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 color: deepGreytextColor,
                               ),
                             ),
@@ -292,7 +293,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
             ),
             Obx(() => otpController.showButton.value
                 ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: EdgeInsets.symmetric(vertical: 20.sp),
                     child: getSingleButton(
                         label: "Submit",
                         textColor: whiteBorderColor,
@@ -307,7 +308,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         borderColor: btnTextColor),
                   )
                 : Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: EdgeInsets.symmetric(vertical: 20.sp),
                     child: getSingleButton(
                         label: "Submit",
                         textColor: greyTextColor,

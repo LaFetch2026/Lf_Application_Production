@@ -40,7 +40,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       fontFamily: "Franklin Gothic",
                       fontWeight: FontWeight.w500,
                       color: whiteTextColor,
-                      fontSize: 22.sp,
+                      fontSize: 22,
                     ),
                   ),
                   Padding(
@@ -53,7 +53,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       maxLines: 3,
                       fontWeight: FontWeight.w400,
                       color: whiteTextColor,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                     ),
                   ),
                 ],
