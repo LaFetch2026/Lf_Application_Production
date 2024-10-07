@@ -44,16 +44,17 @@ class HorizontalHomeList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 10, left: leftPadding),
+          padding: EdgeInsets.only(top: 10.sp, left: leftPadding.sp),
           child: AppText(
             text: text,
             fontFamily: fontFamily,
             color: textColor,
-            fontSize: 16.sp,
+            fontSize: 16,
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: leftPadding, vertical: 16),
+          padding:
+              EdgeInsets.symmetric(horizontal: leftPadding.sp, vertical: 16),
           child: SizedBox(
             width: double.infinity,
             height: height,
@@ -77,8 +78,8 @@ class HorizontalHomeList extends StatelessWidget {
                               },
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 300),
-                                margin: const EdgeInsets.only(right: 5),
-                                width: 122,
+                                margin: EdgeInsets.only(right: 5.sp),
+                                width: 122.sp,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -86,8 +87,8 @@ class HorizontalHomeList extends StatelessWidget {
                                       list[index]["images"].isNotEmpty &&
                                               list[index]["images"] != null
                                           ? SizedBox(
-                                              height: 150,
-                                              width: 122,
+                                              height: 150.sp,
+                                              width: 122.sp,
                                               child: CachedNetworkImage(
                                                 cacheManager: CacheManager(
                                                     Config("customCacheKey",
@@ -108,14 +109,14 @@ class HorizontalHomeList extends StatelessWidget {
                                                         Image.asset(
                                                   downloadImage,
                                                   fit: BoxFit.cover,
-                                                  height: 150,
-                                                  width: 122,
+                                                  height: 150.sp,
+                                                  width: 122.sp,
                                                 ),
                                               ),
                                             )
                                           : Image.asset(dummyWishlistImage,
-                                              height: 150,
-                                              width: 122,
+                                              height: 150.sp,
+                                              width: 122.sp,
                                               fit: BoxFit.cover),
                                       Visibility(
                                         visible: visibleheart,
@@ -128,13 +129,13 @@ class HorizontalHomeList extends StatelessWidget {
                                                 child: list[index]["wishlisted"]
                                                     ? Image.asset(
                                                         wishlistSelectImage,
-                                                        height: 18,
-                                                        width: 18,
+                                                        height: 18.sp,
+                                                        width: 18.sp,
                                                       )
                                                     : Image.asset(
                                                         heartImage,
-                                                        height: 18,
-                                                        width: 18,
+                                                        height: 18.sp,
+                                                        width: 18.sp,
                                                       )),
                                             onPressed: () {
                                               onPressedHeart?.call(
@@ -145,20 +146,20 @@ class HorizontalHomeList extends StatelessWidget {
                                       ),
                                     ]),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10.sp, vertical: 5.sp),
                                       child: AppText(
                                         text: "${list[index]["name"]}\n",
                                         color: nameText,
                                         maxLines: 2,
-                                        fontSize: 11.sp,
+                                        fontSize: 11,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, left: 10, right: 1),
+                                      padding: EdgeInsets.only(
+                                          top: 10.sp, left: 10.sp, right: 1.sp),
                                       child: Row(
                                         children: [
                                           AppText(
@@ -166,13 +167,13 @@ class HorizontalHomeList extends StatelessWidget {
                                                 "\u{20B9} ${list[index]["price"] ?? ""}",
                                             color: deepGreytextColor,
                                             maxLines: 2,
-                                            fontSize: 11.sp,
+                                            fontSize: 11,
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
                                           ),
                                           Padding(
                                             padding:
-                                                const EdgeInsets.only(left: 5),
+                                                EdgeInsets.only(left: 5.sp),
                                             child: Text(
                                               "\u{20B9} ${list[index]["mrp"] ?? ""}",
                                               style: TextStyle(
@@ -197,28 +198,27 @@ class HorizontalHomeList extends StatelessWidget {
                                           },
                                           child: list[index]["express_delivery"]
                                               ? Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10,
-                                                          left: 10,
-                                                          right: 10),
+                                                  padding: EdgeInsets.only(
+                                                      top: 10.sp,
+                                                      left: 10.sp,
+                                                      right: 10.sp),
                                                   child: Row(
                                                     children: [
-                                                      const ImageIcon(
+                                                      ImageIcon(
                                                         AssetImage(truckImage),
                                                         color: expressText,
-                                                        size: 14,
+                                                        size: 14.sp,
                                                       ),
                                                       Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 5),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
                                                         child: AppText(
                                                           text: "Express",
                                                           color: expressText,
                                                           maxLines: 2,
-                                                          fontSize: 11.sp,
+                                                          fontSize: 11,
                                                           fontFamily:
                                                               "Franklin Gothic Regular",
                                                           fontWeight:

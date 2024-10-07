@@ -23,20 +23,20 @@ class QuestionCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
       child: GestureDetector(
         onTap: () {
           onPressed?.call();
         },
         child: Container(
-          height: 70,
+          height: 70.sp,
           decoration: BoxDecoration(
             color: whiteColor,
             borderRadius: BorderRadius.circular(1),
             border: Border.all(color: btnTextColor, width: 1),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.sp),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -50,21 +50,21 @@ class QuestionCardWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
                       child: AppText(
                         text: text1,
                         color: colorPrimary,
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 10, top: 5),
+                      padding: EdgeInsets.only(left: 10.sp, top: 5.sp),
                       child: AppText(
                         text: text2,
                         color: nameText,
-                        fontSize: 11.sp,
+                        fontSize: 11,
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                       ),

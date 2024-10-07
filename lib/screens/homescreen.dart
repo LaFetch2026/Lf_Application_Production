@@ -135,18 +135,21 @@ class HomeScreenState extends State<HomeScreen> {
               },
             ),
             Container(
-                height: 55,
+                height: 55.sp,
                 width: MediaQuery.of(context).size.width,
                 color: colorPrimary,
                 child: Obx(
                   () => homeController.isCity.value
-                      ? const Padding(
-                          padding: EdgeInsets.all(40.0),
+                      ? Padding(
+                          padding: EdgeInsets.all(40.0.sp),
                           child: Center(child: CircularProgressIndicator()),
                         )
                       : Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 5, bottom: 10),
+                          padding: EdgeInsets.only(
+                              left: 16.sp,
+                              right: 16.sp,
+                              top: 5.sp,
+                              bottom: 10.sp),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -176,8 +179,8 @@ class HomeScreenState extends State<HomeScreen> {
                       size: 24,
                     ), */
                               SizedBox(
-                                height: 40,
-                                width: 180,
+                                height: 40.sp,
+                                width: 180.sp,
                                 child: DropdownButtonFormField2(
                                   value: city,
                                   decoration: InputDecoration(
@@ -191,20 +194,20 @@ class HomeScreenState extends State<HomeScreen> {
                                           const BorderSide(color: colorPrimary),
                                     ),
                                     isDense: true,
-                                    prefixIconConstraints: const BoxConstraints(
-                                        minWidth: 20, maxHeight: 20),
-                                    prefixIcon: const Padding(
-                                      padding: EdgeInsets.only(right: 6),
+                                    prefixIconConstraints: BoxConstraints(
+                                        minWidth: 20.sp, maxHeight: 20.sp),
+                                    prefixIcon: Padding(
+                                      padding: EdgeInsets.only(right: 6.sp),
                                       child: ImageIcon(
                                         AssetImage(locationIcon),
                                         color: colorSecondary,
-                                        size: 20,
+                                        size: 20.sp,
                                       ),
                                     ),
                                     contentPadding: EdgeInsets.zero,
                                     hintText: 'Select Your Location',
-                                    hintStyle: const TextStyle(
-                                        fontSize: 12,
+                                    hintStyle: TextStyle(
+                                        fontSize: 12.sp,
                                         color: colorSecondary,
                                         fontFamily: "Franklin Gothic Regular"),
                                     border: OutlineInputBorder(
@@ -217,8 +220,8 @@ class HomeScreenState extends State<HomeScreen> {
                                             value: item["name"],
                                             child: Text(
                                               item["name"],
-                                              style: const TextStyle(
-                                                fontSize: 12,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
                                                 color: colorSecondary,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
@@ -244,23 +247,23 @@ class HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   },
-                                  buttonStyleData: const ButtonStyleData(
-                                    height: 60,
-                                    padding: EdgeInsets.only(right: 10),
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 60.sp,
+                                    padding: EdgeInsets.only(right: 10.sp),
                                   ),
-                                  iconStyleData: const IconStyleData(
+                                  iconStyleData: IconStyleData(
                                     icon: ImageIcon(
                                       AssetImage(whiteDropDown),
                                       color: colorSecondary,
-                                      size: 8,
+                                      size: 8.sp,
                                     ),
                                     iconSize: 16,
                                   ),
                                   dropdownStyleData: DropdownStyleData(
-                                    maxHeight: 200,
+                                    maxHeight: 200.sp,
                                     decoration: BoxDecoration(
                                       color: colorPrimary,
-                                      borderRadius: BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(4.sp),
                                     ),
                                   ),
                                 ),
@@ -340,7 +343,7 @@ class HomeScreenState extends State<HomeScreen> {
             Container(
               width: double.infinity,
               color: lightText,
-              height: 1,
+              height: 1.sp,
             ),
             const Expanded(
               child: TabBarView(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DummyContainer extends StatelessWidget {
   final double width;
@@ -12,8 +13,8 @@ class DummyContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
-      width: width,
+      height: height.sp,
+      width: width.sp,
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.04),
       ),

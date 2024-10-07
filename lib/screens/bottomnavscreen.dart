@@ -93,23 +93,23 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         },
         child: Image.asset(
           _currentIndex == 4 ? boltWhiteImage : boltBlackImage,
-          height: 70,
-          width: 70,
+          height: 70.sp,
+          width: 70.sp,
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        notchMargin: -15,
+        notchMargin: -15.sp,
         shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
         color: colorPrimary,
-        height: MediaQuery.of(context).size.height * 0.074,
+        height: MediaQuery.of(context).size.height * 0.084, //0.074
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
               child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.068,
+                height: MediaQuery.of(context).size.height * 0.084, //0.068
                 color: _currentIndex == 0 ? colorSecondary : colorPrimary,
                 onPressed: () async {
                   setState(() {
@@ -124,7 +124,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -133,7 +133,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             _currentIndex == 0 ? homeIcon : homeUnselectImage),
                         color:
                             _currentIndex == 0 ? bottomnavBack : greyTextColor,
-                        size: 22,
+                        size: 22.sp,
                       ),
                       Text(
                         "Home",
@@ -151,7 +151,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             Expanded(
               child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.068,
+                height: MediaQuery.of(context).size.height * 0.084,
                 color: _currentIndex == 1 ? colorSecondary : colorPrimary,
                 onPressed: () async {
                   setState(() {
@@ -166,7 +166,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -175,7 +175,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             _currentIndex == 1 ? brandSelectImage : brandsIcon),
                         color:
                             _currentIndex == 1 ? bottomnavBack : greyTextColor,
-                        size: 22,
+                        size: 22.sp,
                       ),
                       Text(
                         "Brands",
@@ -196,7 +196,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             // ),
             Expanded(
               child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.068,
+                height: MediaQuery.of(context).size.height * 0.084,
                 color: _currentIndex == 2 ? colorSecondary : colorPrimary,
                 onPressed: () async {
                   setState(() {
@@ -211,7 +211,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -221,7 +221,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             : wishlistIcon),
                         color:
                             _currentIndex == 2 ? bottomnavBack : greyTextColor,
-                        size: 22,
+                        size: 22.sp,
                       ),
                       Text(
                         "Wishlist",
@@ -239,7 +239,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             Expanded(
               child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.068,
+                height: MediaQuery.of(context).size.height * 0.084,
                 color: _currentIndex == 3 ? colorSecondary : colorPrimary,
                 onPressed: () async {
                   setState(() {
@@ -254,7 +254,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -264,7 +264,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             : accountIcon),
                         color:
                             _currentIndex == 3 ? bottomnavBack : greyTextColor,
-                        size: 22,
+                        size: 22.sp,
                       ),
                       Text(
                         "Account",

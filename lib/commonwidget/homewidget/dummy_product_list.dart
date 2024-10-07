@@ -17,18 +17,18 @@ class DummyProductList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 10, left: 16),
+          padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
           child: AppText(
             text: text,
             fontFamily: "Franklin Gothic",
             color: textColor,
-            fontSize: 16.sp,
+            fontSize: 16,
           ),
         ),
         Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 16.sp),
             child: SizedBox(
-              height: 250,
+              height: 250.sp,
               width: double.infinity,
               child: ListView.builder(
                   shrinkWrap: true,
@@ -40,48 +40,48 @@ class DummyProductList extends StatelessWidget {
                     return Column(
                       children: [
                         Container(
-                          width: 122,
-                          height: 250,
-                          margin: const EdgeInsets.only(right: 5),
+                          width: 122.sp,
+                          height: 250.sp,
+                          margin: EdgeInsets.only(right: 5.sp),
                           color: Colors.white,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                height: 150,
-                                width: 122,
+                                height: 150.sp,
+                                width: 122.sp,
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.04),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10.sp, vertical: 5.sp),
                                 child: Container(
-                                  height: 10,
-                                  width: 102,
+                                  height: 10.sp,
+                                  width: 102.sp,
                                   decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.04),
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, left: 10, right: 1),
+                                padding: EdgeInsets.only(
+                                    top: 10.sp, left: 10.sp, right: 1.sp),
                                 child: Row(
                                   children: [
                                     Container(
-                                      height: 10,
-                                      width: 50,
+                                      height: 10.sp,
+                                      width: 50.sp,
                                       decoration: BoxDecoration(
                                         color: Colors.black.withOpacity(0.04),
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 5),
+                                      padding: EdgeInsets.only(left: 5.sp),
                                       child: Container(
-                                        height: 10,
-                                        width: 50,
+                                        height: 10.sp,
+                                        width: 50.sp,
                                         decoration: BoxDecoration(
                                           color: Colors.black.withOpacity(0.04),
                                         ),
@@ -91,23 +91,23 @@ class DummyProductList extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, left: 10, right: 10),
+                                padding: EdgeInsets.only(
+                                    top: 10.sp, left: 10.sp, right: 10.sp),
                                 child: Row(
                                   children: [
                                     Container(
-                                      height: 14,
-                                      width: 14,
+                                      height: 14.sp,
+                                      width: 14.sp,
                                       decoration: BoxDecoration(
                                         color: Colors.black.withOpacity(0.04),
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 5.sp),
                                       child: Container(
-                                        height: 10,
-                                        width: 50,
+                                        height: 10.sp,
+                                        width: 50.sp,
                                         decoration: BoxDecoration(
                                           color: Colors.black.withOpacity(0.04),
                                         ),

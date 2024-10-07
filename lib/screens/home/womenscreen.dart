@@ -53,16 +53,16 @@ class _WomenScreenState extends State<WomenScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 20,
+          SizedBox(
+            height: 20.sp,
           ),
           Obx(
             () => homeController.istags.value
                 ? Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    padding: EdgeInsets.only(
+                        left: 16.sp, bottom: 10.sp, right: 16.sp),
                     child: SizedBox(
-                      height: 30,
+                      height: 30.sp,
                       width: double.infinity,
                       child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
@@ -70,21 +70,21 @@ class _WomenScreenState extends State<WomenScreen> {
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (ctx, index) {
                             return Container(
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 100,
-                              height: 30,
+                              margin: EdgeInsets.only(right: 5.sp),
+                              width: 100.sp,
+                              height: 30.sp,
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.04),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20.sp),
                               ),
                             );
                           }),
                     ))
                 : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
                     child: SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 50.sp,
                         child: GetBuilder<HomeController>(
                           builder: (value) => ListView.builder(
                               physics: const BouncingScrollPhysics(),
@@ -117,9 +117,9 @@ class _WomenScreenState extends State<WomenScreen> {
                                       child: AnimatedContainer(
                                         duration:
                                             const Duration(milliseconds: 300),
-                                        margin: const EdgeInsets.only(right: 5),
-                                        width: 100,
-                                        height: 30,
+                                        margin: EdgeInsets.only(right: 5.sp),
+                                        width: 100.sp,
+                                        height: 30.sp,
                                         decoration: BoxDecoration(
                                           color: homeController.current.value ==
                                                   index
@@ -149,7 +149,7 @@ class _WomenScreenState extends State<WomenScreen> {
                                                         index
                                                     ? whiteColor
                                                     : textHintColor,
-                                            fontSize: 12.sp,
+                                            fontSize: 12,
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -170,10 +170,10 @@ class _WomenScreenState extends State<WomenScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, bottom: 10, right: 16),
+                              padding: EdgeInsets.only(
+                                  left: 16.sp, bottom: 10.sp, right: 16.sp),
                               child: SizedBox(
-                                height: 210,
+                                height: 210.sp,
                                 width: double.infinity,
                                 child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
@@ -181,7 +181,7 @@ class _WomenScreenState extends State<WomenScreen> {
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder: (ctx, index) {
                                       return Container(
-                                        height: 210,
+                                        height: 210.sp,
                                         width:
                                             MediaQuery.of(context).size.width,
                                         decoration: BoxDecoration(

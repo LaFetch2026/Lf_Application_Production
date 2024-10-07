@@ -161,10 +161,10 @@ class DiscountScreenState extends State<DiscountScreen> {
 
             Obx(() => homeController.isBanner1.value
                 ? Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    padding: EdgeInsets.only(
+                        left: 16.sp, bottom: 10.sp, right: 16.sp),
                     child: SizedBox(
-                      height: 210,
+                      height: 210.sp,
                       width: double.infinity,
                       child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
@@ -172,7 +172,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (ctx, index) {
                             return Container(
-                              height: 210,
+                              height: 210.sp,
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.04),
@@ -182,12 +182,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                     ))
                 : homeController.banner1List.isNotEmpty
                     ? Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, bottom: 10, right: 16),
+                        padding: EdgeInsets.only(
+                            left: 16.sp, bottom: 10.sp, right: 16.sp),
                         child: CarouselSlider.builder(
                           itemCount: homeController.banner1List.length,
                           options: CarouselOptions(
-                            height: 210,
+                            height: 210.sp,
                             viewportFraction: 1.0,
                             aspectRatio: 2.0,
                             autoPlay: true,
@@ -233,12 +233,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                               fit: BoxFit.fill,
                               imageUrl: homeController.banner1List[itemIndex]
                                   ["image"],
-                              height: 210,
+                              height: 210.sp,
                               width: MediaQuery.of(context).size.width,
                               progressIndicatorBuilder:
                                   (context, url, downloadProgress) => Center(
                                 child: Container(
-                                  height: 210,
+                                  height: 210.sp,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                     color: Colors.black.withOpacity(0.04),
@@ -247,7 +247,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                               ),
                               errorWidget: (context, url, error) => Image.asset(
                                 downloadImage,
-                                height: 210,
+                                height: 210.sp,
                               ),
                             ),
                           ),
@@ -257,7 +257,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                         height: 0,
                       )),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 10.sp),
               child: Container(
                 width: double.infinity,
                 color: colorSecondary,
@@ -268,7 +268,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                 ? const DummyProductList(text: "Express Delivery")
                 : HorizontalHomeList(
                     text: "Express Delivery",
-                    height: 250,
+                    height: 250.sp,
                     controller: productController.expressListController,
                     list: productController.expressProductList,
                     visibleExpress: true,
@@ -301,11 +301,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                 ? const DummyProductList(text: "We think you might also like")
                 : productController.tagProductList.isNotEmpty
                     ? Padding(
-                        padding: const EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: HorizontalHomeList(
                           text: "We think you might also like",
                           controller: productController.tagsProductController,
-                          height: 250,
+                          height: 250.sp,
                           visibleExpress: false,
                           onPressed: (p0) async {
                             Navigator.of(context)
@@ -346,18 +346,21 @@ class DiscountScreenState extends State<DiscountScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 10, left: 16),
+                          padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
                           child: AppText(
                             text: "Popular Categories",
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                             color: blackColor,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 15, bottom: 10),
+                          padding: EdgeInsets.only(
+                              left: 16.sp,
+                              right: 16.sp,
+                              top: 15.sp,
+                              bottom: 10.sp),
                           child: Row(
                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -383,9 +386,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         child: AnimatedContainer(
                                           duration:
                                               const Duration(milliseconds: 300),
-                                          margin:
-                                              const EdgeInsets.only(right: 8),
-                                          height: 180,
+                                          margin: EdgeInsets.only(right: 8.sp),
+                                          height: 180.sp,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -394,12 +396,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                           ["thumbnail"] !=
                                                       null
                                                   ? SizedBox(
-                                                      height: 144,
+                                                      height: 144.sp,
                                                       width: (MediaQuery.sizeOf(
                                                                       context)
                                                                   .width /
                                                               2) -
-                                                          20,
+                                                          20.sp,
                                                       child: CachedNetworkImage(
                                                         cacheManager:
                                                             CacheManager(Config(
@@ -419,36 +421,35 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                             Image.asset(
                                                           downloadImage,
                                                           fit: BoxFit.cover,
-                                                          height: 144,
+                                                          height: 144.sp,
                                                           width: (MediaQuery.sizeOf(
                                                                           context)
                                                                       .width /
                                                                   2) -
-                                                              20,
+                                                              20.sp,
                                                         ),
                                                       ),
                                                     )
                                                   : Image.asset(
                                                       dummyWishlistImage,
-                                                      height: 144,
+                                                      height: 144.sp,
                                                       width: (MediaQuery.sizeOf(
                                                                       context)
                                                                   .width /
                                                               2) -
-                                                          20,
+                                                          20.sp,
                                                       fit: BoxFit.cover),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.sp,
+                                                    vertical: 5.sp),
                                                 child: AppText(
                                                   text: homeController
                                                               .categoryList[0]
                                                           ["name"] ??
                                                       "",
                                                   color: greyTextColor,
-                                                  fontSize: 10.sp,
+                                                  fontSize: 10,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
@@ -483,7 +484,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         child: AnimatedContainer(
                                           duration:
                                               const Duration(milliseconds: 300),
-                                          height: 180,
+                                          height: 180.sp,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -492,12 +493,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                           ["thumbnail"] !=
                                                       null
                                                   ? SizedBox(
-                                                      height: 144,
+                                                      height: 144.sp,
                                                       width: (MediaQuery.sizeOf(
                                                                       context)
                                                                   .width /
                                                               2) -
-                                                          20,
+                                                          20.sp,
                                                       child: CachedNetworkImage(
                                                         cacheManager:
                                                             CacheManager(Config(
@@ -517,36 +518,35 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                             Image.asset(
                                                           downloadImage,
                                                           fit: BoxFit.cover,
-                                                          height: 144,
+                                                          height: 144.sp,
                                                           width: (MediaQuery.sizeOf(
                                                                           context)
                                                                       .width /
                                                                   2) -
-                                                              20,
+                                                              20.sp,
                                                         ),
                                                       ),
                                                     )
                                                   : Image.asset(
                                                       dummyWishlistImage,
-                                                      height: 144,
+                                                      height: 144.sp,
                                                       width: (MediaQuery.sizeOf(
                                                                       context)
                                                                   .width /
                                                               2) -
-                                                          20,
+                                                          20.sp,
                                                       fit: BoxFit.cover),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.sp,
+                                                    vertical: 5.sp),
                                                 child: AppText(
                                                   text: homeController
                                                               .categoryList[1]
                                                           ["name"] ??
                                                       "",
                                                   color: greyTextColor,
-                                                  fontSize: 10.sp,
+                                                  fontSize: 10,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
@@ -566,7 +566,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                         homeController.categoryList.length >= 3
                             ? Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
+                                    EdgeInsets.symmetric(horizontal: 16.sp),
                                 child: Center(
                                   child: GridView.count(
                                     shrinkWrap: true,
@@ -575,8 +575,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.7,
                                     physics: const ScrollPhysics(),
-                                    crossAxisSpacing: 5,
-                                    mainAxisSpacing: 1,
+                                    crossAxisSpacing: 5.sp,
+                                    mainAxisSpacing: 1.sp,
                                     children: List.generate(
                                       homeController.categoryList.length - 2,
                                       (index) {
@@ -601,7 +601,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                 );
                                               },
                                               child: SizedBox(
-                                                height: 100,
+                                                height: 100.sp,
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
@@ -614,8 +614,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                   "thumbnail"] !=
                                                               null
                                                           ? SizedBox(
-                                                              width: 80,
-                                                              height: 72,
+                                                              width: 80.sp,
+                                                              height: 72.sp,
                                                               child:
                                                                   CachedNetworkImage(
                                                                 cacheManager: CacheManager(Config(
@@ -649,23 +649,23 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                   downloadImage,
                                                                   fit: BoxFit
                                                                       .cover,
-                                                                  width: 80,
-                                                                  height: 72,
+                                                                  width: 80.sp,
+                                                                  height: 72.sp,
                                                                 ),
                                                               ),
                                                             )
                                                           : Image.asset(
                                                               dummyWishlistImage,
-                                                              width: 80,
-                                                              height: 72,
+                                                              width: 80.sp,
+                                                              height: 72.sp,
                                                               fit:
                                                                   BoxFit.cover),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 5),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10.sp,
+                                                              vertical: 5.sp),
                                                       child: AppText(
                                                         text: homeController
                                                                     .categoryList[
@@ -673,7 +673,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                     2]["name"] ??
                                                             "",
                                                         color: greyTextColor,
-                                                        fontSize: 10.sp,
+                                                        fontSize: 10,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         fontWeight:
@@ -700,10 +700,10 @@ class DiscountScreenState extends State<DiscountScreen> {
             Obx(
               () => homeController.isBanner2.value
                   ? Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16, bottom: 10, right: 16),
+                      padding: EdgeInsets.only(
+                          left: 16.sp, bottom: 10.sp, right: 16.sp),
                       child: SizedBox(
-                        height: 210,
+                        height: 210.sp,
                         width: double.infinity,
                         child: ListView.builder(
                             physics: const BouncingScrollPhysics(),
@@ -711,7 +711,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (ctx, index) {
                               return Container(
-                                height: 210,
+                                height: 210.sp,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.04),
@@ -725,7 +725,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             ? CarouselSlider.builder(
                                 itemCount: homeController.banner2List.length,
                                 options: CarouselOptions(
-                                  height: 210,
+                                  height: 210.sp,
                                   autoPlayInterval: const Duration(seconds: 10),
                                   onPageChanged: (index, reason) {
                                     homeController.currentPage.value = index;
@@ -777,7 +777,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         stalePeriod: const Duration(days: 15),
                                         maxNrOfCacheObjects: 100)),
                                     fit: BoxFit.fill,
-                                    height: 210,
+                                    height: 210.sp,
                                     width: MediaQuery.of(context).size.width,
                                     imageUrl: homeController
                                         .banner2List[itemIndex]["image"],
@@ -785,7 +785,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         (context, url, downloadProgress) =>
                                             Center(
                                       child: Container(
-                                        height: 210,
+                                        height: 210.sp,
                                         width:
                                             MediaQuery.of(context).size.width,
                                         decoration: BoxDecoration(
@@ -796,7 +796,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     errorWidget: (context, url, error) =>
                                         Image.asset(
                                       downloadImage,
-                                      height: 210,
+                                      height: 210.sp,
                                     ),
                                   ),
                                 ),
@@ -804,8 +804,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                             : const SizedBox(
                                 height: 0,
                               ),
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: 20.sp,
                         ),
                         homeController.banner2List.length == 1
                             ? SizedBox(
@@ -829,11 +829,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             return AnimatedContainer(
                                                 duration: const Duration(
                                                     milliseconds: 400),
-                                                height: 6,
-                                                width: 40,
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
+                                                height: 6.sp,
+                                                width: 40.sp,
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
                                                 decoration: BoxDecoration(
                                                     color: index ==
                                                             value.currentPage
@@ -877,14 +876,14 @@ class DiscountScreenState extends State<DiscountScreen> {
                       ],
                     ),
             ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: 20.sp,
             ),
             //  const LafetchCardWidget(),
             QuestionCardWidget(
                 text1: "FAQs",
                 text2: "Your questions answered",
-                size: 26,
+                size: 26.sp,
                 onPressed: () async {
                   await analytics.logEvent(
                     name: 'FAQ_home_page',
@@ -897,7 +896,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             QuestionCardWidget(
                 text1: "Need Help?",
                 text2: "Contact customer service",
-                size: 32,
+                size: 32.sp,
                 onPressed: () async {
                   Get.to(CustomerCareScreen());
                   await analytics.logEvent(
@@ -908,8 +907,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                   );
                 },
                 icon: question1Image),
-            const SizedBox(
-              height: 40,
+            SizedBox(
+              height: 40.sp,
             )
           ],
         ),
