@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DoubleButton extends StatelessWidget {
   final String firstText;
@@ -35,7 +36,8 @@ class DoubleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+      padding:
+          EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp, bottom: 10.sp),
       child: Row(
         children: [
           Expanded(
@@ -43,8 +45,8 @@ class DoubleButton extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Center(
                 child: SizedBox(
-                    width: 160,
-                    height: 50,
+                    width: (MediaQuery.of(context).size.width / 2) - 20,
+                    height: 50.sp,
                     child: ElevatedButton(
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
@@ -58,7 +60,7 @@ class DoubleButton extends StatelessWidget {
                                 MaterialStateProperty.all(firstBackgroundColor),
                             textStyle: MaterialStateProperty.all(TextStyle(
                               color: firstTextColor,
-                              fontSize: firstFontSize,
+                              fontSize: firstFontSize.sp,
                             ))),
                         onPressed: () {
                           onPressedFirst?.call();
@@ -68,7 +70,7 @@ class DoubleButton extends StatelessWidget {
                           style: TextStyle(
                               color: firstTextColor,
                               fontFamily: fontFamily,
-                              fontSize: firstFontSize),
+                              fontSize: firstFontSize.sp),
                         ))),
               ),
             ),
@@ -81,8 +83,8 @@ class DoubleButton extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Center(
                 child: SizedBox(
-                    width: 160,
-                    height: 50,
+                    width: (MediaQuery.of(context).size.width / 2) - 20,
+                    height: 50.sp,
                     child: ElevatedButton(
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
@@ -97,7 +99,7 @@ class DoubleButton extends StatelessWidget {
                                 secondBackgroundColor),
                             textStyle: MaterialStateProperty.all(TextStyle(
                               color: secondTextColor,
-                              fontSize: secondFontSize,
+                              fontSize: secondFontSize.sp,
                             ))),
                         onPressed: () {
                           onPressedSecond?.call();
@@ -107,7 +109,7 @@ class DoubleButton extends StatelessWidget {
                           style: TextStyle(
                               fontFamily: fontFamily,
                               color: secondTextColor,
-                              fontSize: secondFontSize),
+                              fontSize: secondFontSize.sp),
                         ))),
               ),
             ),

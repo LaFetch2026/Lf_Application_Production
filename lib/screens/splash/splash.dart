@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/splash/splashtwo.dart';
@@ -78,14 +79,14 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: Center(
         child: Container(
-            width: 120,
-            height: 120,
+            width: 120.sp,
+            height: 120.sp,
             decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(logoBackImage), fit: BoxFit.cover)),
             child: Center(
               child: Image.asset(logoImage,
-                  height: 75, width: 50, fit: BoxFit.cover),
+                  height: 75.sp, width: 50.sp, fit: BoxFit.cover),
             )),
       ),
     );

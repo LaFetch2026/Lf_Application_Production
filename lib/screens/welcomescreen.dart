@@ -34,7 +34,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 16),
+                    padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
                     child: AppText(
                       text: "Welcome to Lafetch!",
                       fontFamily: "Franklin Gothic",
@@ -45,7 +45,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 20, left: 16, right: 16),
+                        EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
                     child: AppText(
                       text:
                           "In Delhi? Get your order delivered in just 6-hours. Quick, hassle-free checkouts & so much more’s waiting for you on the other side.",
@@ -60,7 +60,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 30, bottom: 40),
+              padding: EdgeInsets.only(top: 30.sp, bottom: 40.sp),
               child: DoubleButton(
                 firstText: "Create Account",
                 secondText: "Sign In",

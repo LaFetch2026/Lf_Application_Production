@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/utils/constants.dart';
 
 class WelcomeBackground extends StatelessWidget {
@@ -12,7 +13,7 @@ class WelcomeBackground extends StatelessWidget {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
-          height: 520,
+          height: MediaQuery.of(context).size.height - 250,
           decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage(backImage), fit: BoxFit.cover),
@@ -20,8 +21,8 @@ class WelcomeBackground extends StatelessWidget {
         ),
         Center(
             child: Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Image.asset(appNameImage, height: 46, fit: BoxFit.cover),
+          padding: EdgeInsets.only(top: 40.sp),
+          child: Image.asset(appNameImage, height: 46.sp, fit: BoxFit.cover),
         )),
       ],
     );
