@@ -103,8 +103,8 @@ class SearchScreenState extends State<SearchScreen> {
                   width: MediaQuery.of(context).size.width,
                   color: colorPrimary,
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, top: 40, bottom: 20),
+                    padding: EdgeInsets.only(
+                        left: 16.sp, right: 16.sp, top: 40.sp, bottom: 20.sp),
                     child: Row(
                       children: [
                         Padding(
@@ -112,8 +112,8 @@ class SearchScreenState extends State<SearchScreen> {
                           child: IconButton(
                             icon: Image.asset(
                               backWhiteArrow,
-                              height: 16,
-                              width: 16,
+                              height: 16.sp,
+                              width: 16.sp,
                             ),
                             onPressed: () {
                               Get.back();
@@ -140,29 +140,29 @@ class SearchScreenState extends State<SearchScreen> {
                               );
                             },
                             child: Container(
-                              height: 40,
+                              height: 40.sp,
                               decoration: BoxDecoration(
                                   color: whiteBorderColor,
-                                  borderRadius: BorderRadius.circular(1),
+                                  borderRadius: BorderRadius.circular(1.sp),
                                   border: Border.all(
-                                      color: colorSecondary, width: 1)),
+                                      color: colorSecondary, width: 1.sp)),
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.only(left: 16, right: 16),
+                                    EdgeInsets.only(left: 16.sp, right: 16.sp),
                                 child: Row(
                                   children: [
-                                    const ImageIcon(
+                                    ImageIcon(
                                       AssetImage(searchImage),
                                       color: textHintColor,
-                                      size: 14,
+                                      size: 14.sp,
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 5.sp),
                                       child: AppText(
                                         text: "Search for brands & products",
                                         color: textHintColor,
-                                        fontSize: 14.sp,
+                                        fontSize: 14,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -187,24 +187,24 @@ class SearchScreenState extends State<SearchScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 20, left: 16),
+                                    padding: EdgeInsets.only(
+                                        top: 20.sp, left: 16.sp),
                                     child: AppText(
                                       text: "Recent Searches",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: bottomnavBack,
-                                      fontSize: 18.sp,
+                                      fontSize: 18,
                                     ),
                                   ),
                                   Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16,
-                                          bottom: 10,
-                                          right: 16,
-                                          top: 20),
+                                      padding: EdgeInsets.only(
+                                          left: 16.sp,
+                                          bottom: 10.sp,
+                                          right: 16.sp,
+                                          top: 20.sp),
                                       child: SizedBox(
-                                        height: 30,
+                                        height: 30.sp,
                                         width: double.infinity,
                                         child: ListView.builder(
                                             physics:
@@ -213,15 +213,16 @@ class SearchScreenState extends State<SearchScreen> {
                                             scrollDirection: Axis.horizontal,
                                             itemBuilder: (ctx, index) {
                                               return Container(
-                                                margin: const EdgeInsets.only(
-                                                    right: 5),
-                                                width: 100,
-                                                height: 30,
+                                                margin: EdgeInsets.only(
+                                                    right: 5.sp),
+                                                width: 100.sp,
+                                                height: 30.sp,
                                                 decoration: BoxDecoration(
                                                   color: Colors.black
                                                       .withOpacity(0.04),
                                                   borderRadius:
-                                                      BorderRadius.circular(20),
+                                                      BorderRadius.circular(
+                                                          20.sp),
                                                 ),
                                               );
                                             }),
@@ -234,26 +235,28 @@ class SearchScreenState extends State<SearchScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 20, left: 16),
+                                        padding: EdgeInsets.only(
+                                            top: 20.sp, left: 16.sp),
                                         child: AppText(
                                           text: "Recent Searches",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: bottomnavBack,
-                                          fontSize: 18.sp,
+                                          fontSize: 18,
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16, right: 16, top: 20),
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            right: 16.sp,
+                                            top: 20.sp),
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.vertical,
                                           controller: ScrollController(),
                                           child: Wrap(
                                             direction: Axis.horizontal,
-                                            spacing: 5.0,
-                                            runSpacing: 9.0,
+                                            spacing: 5.0.sp,
+                                            runSpacing: 9.0.sp,
                                             runAlignment:
                                                 WrapAlignment.spaceEvenly,
                                             children: [
@@ -297,23 +300,23 @@ class SearchScreenState extends State<SearchScreen> {
                                                     );
                                                   },
                                                   child: Container(
-                                                    height: 33,
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            right: 5),
+                                                    height: 33.sp,
+                                                    margin: EdgeInsets.only(
+                                                        right: 5.sp),
                                                     decoration: BoxDecoration(
                                                         color: whiteColor,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(20),
+                                                                .circular(
+                                                                    20.sp),
                                                         border: Border.all(
                                                             color: btnTextColor,
-                                                            width: 1)),
+                                                            width: 1.sp)),
                                                     child: Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 7),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10.sp,
+                                                              vertical: 7.sp),
                                                       child: Text(
                                                         product[
                                                             "search_string"],
@@ -348,22 +351,22 @@ class SearchScreenState extends State<SearchScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 30, left: 16),
+                                        padding: EdgeInsets.only(
+                                            top: 30.sp, left: 16.sp),
                                         child: AppText(
                                           text: "Most Searched",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: bottomnavBack,
-                                          fontSize: 16.sp,
+                                          fontSize: 16,
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16,
-                                            top: 20,
-                                            right: 16,
-                                            bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            top: 20.sp,
+                                            right: 16.sp,
+                                            bottom: 10.sp),
                                         child: Center(
                                           child: GridView.count(
                                             shrinkWrap: true,
@@ -372,8 +375,8 @@ class SearchScreenState extends State<SearchScreen> {
                                             padding: EdgeInsets.zero,
                                             childAspectRatio: 0.7,
                                             physics: const ScrollPhysics(),
-                                            crossAxisSpacing: 5,
-                                            mainAxisSpacing: 1,
+                                            crossAxisSpacing: 5.sp,
+                                            mainAxisSpacing: 1.sp,
                                             children: List.generate(
                                               productController
                                                   .mostSeachList.length,
@@ -427,7 +430,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                         );
                                                       },
                                                       child: SizedBox(
-                                                        height: 100,
+                                                        height: 100.sp,
                                                         child: Column(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -444,8 +447,10 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             "images"] !=
                                                                         null
                                                                 ? SizedBox(
-                                                                    width: 80,
-                                                                    height: 72,
+                                                                    width:
+                                                                        80.sp,
+                                                                    height:
+                                                                        72.sp,
                                                                     child:
                                                                         CachedNetworkImage(
                                                                       cacheManager: CacheManager(Config(
@@ -474,36 +479,37 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         downloadImage,
                                                                         fit: BoxFit
                                                                             .cover,
-                                                                        width:
-                                                                            80,
+                                                                        width: 80
+                                                                            .sp,
                                                                         height:
-                                                                            72,
+                                                                            72.sp,
                                                                       ),
                                                                     ),
                                                                   )
                                                                 : Center(
                                                                     child: Image.asset(
                                                                         dummyWishlistImage,
-                                                                        width:
-                                                                            80,
-                                                                        height:
-                                                                            72,
+                                                                        width: 80
+                                                                            .sp,
+                                                                        height: 72
+                                                                            .sp,
                                                                         fit: BoxFit
                                                                             .cover),
                                                                   ),
                                                             Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      10,
-                                                                  vertical: 5),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          10.sp,
+                                                                      vertical:
+                                                                          5.sp),
                                                               child: AppText(
                                                                 text: productController
                                                                         .mostSeachList[
                                                                     index]["name"],
                                                                 color:
                                                                     greyTextColor,
-                                                                fontSize: 10.sp,
+                                                                fontSize: 10,
                                                                 maxLines: 1,
                                                                 fontFamily:
                                                                     "Franklin Gothic Regular",
@@ -525,8 +531,8 @@ class SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ],
                                   )
-                                : const SizedBox(
-                                    height: 10,
+                                : SizedBox(
+                                    height: 10.sp,
                                   )),
                         Obx(
                           () => brandController.isBrand.value
@@ -536,21 +542,21 @@ class SearchScreenState extends State<SearchScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 16),
+                                      padding: EdgeInsets.only(left: 16.sp),
                                       child: AppText(
                                         text: "Continue Browsing these Brands",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: bottomnavBack,
-                                        fontSize: 16.sp,
+                                        fontSize: 16,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 20),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.sp, vertical: 20.sp),
                                       child: SizedBox(
                                         width: double.infinity,
-                                        height: 235,
+                                        height: 235.sp,
                                         child: ListView.builder(
                                             shrinkWrap: true,
                                             primary: false,
@@ -598,10 +604,9 @@ class SearchScreenState extends State<SearchScreen> {
                                                     child: AnimatedContainer(
                                                       duration: const Duration(
                                                           milliseconds: 300),
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              right: 10),
-                                                      width: 130,
+                                                      margin: EdgeInsets.only(
+                                                          right: 10.sp),
+                                                      width: 130.sp,
                                                       child: Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
@@ -613,8 +618,9 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       "logo"] !=
                                                                   null
                                                               ? SizedBox(
-                                                                  height: 180,
-                                                                  width: 130,
+                                                                  height:
+                                                                      180.sp,
+                                                                  width: 130.sp,
                                                                   child:
                                                                       CachedNetworkImage(
                                                                     cacheManager: CacheManager(Config(
@@ -639,23 +645,23 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       fit: BoxFit
                                                                           .cover,
                                                                       height:
-                                                                          180,
-                                                                      width:
-                                                                          130,
+                                                                          180.sp,
+                                                                      width: 130
+                                                                          .sp,
                                                                     ),
                                                                   ),
                                                                 )
                                                               : Image.asset(
                                                                   dummyWishlistImage,
-                                                                  height: 180,
-                                                                  width: 130,
+                                                                  height:
+                                                                      180.sp,
+                                                                  width: 130.sp,
                                                                   fit: BoxFit
                                                                       .cover),
                                                           Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                              horizontal: 10,
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              horizontal: 10.sp,
                                                             ),
                                                             child: AppText(
                                                               text: brandController
@@ -667,7 +673,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       .center,
                                                               color:
                                                                   greyTextColor,
-                                                              fontSize: 12.sp,
+                                                              fontSize: 12,
                                                               fontFamily:
                                                                   "Franklin Gothic",
                                                               fontWeight:
@@ -676,13 +682,12 @@ class SearchScreenState extends State<SearchScreen> {
                                                             ),
                                                           ),
                                                           Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
-                                                                        10,
+                                                                        10.sp,
                                                                     vertical:
-                                                                        3),
+                                                                        3.sp),
                                                             child: AppText(
                                                               text: brandController
                                                                       .brandList[
@@ -699,7 +704,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                   : "",
                                                               color:
                                                                   greyTextColor,
-                                                              fontSize: 10.sp,
+                                                              fontSize: 10,
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
                                                               fontWeight:
@@ -832,7 +837,7 @@ class SearchScreenState extends State<SearchScreen> {
                             : productController.productList.isNotEmpty
                                 ? HorizontalHomeList(
                                     text: "Items you have viewed",
-                                    height: 250,
+                                    height: 250.sp,
                                     controller:
                                         productController.recentListController,
                                     visibleExpress: false,
@@ -887,10 +892,10 @@ class SearchScreenState extends State<SearchScreen> {
             isSearch
                 ? Container(
                     color: whiteColor,
-                    height: 290,
+                    height: 290.sp,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 30, left: 16, right: 16, bottom: 0),
+                      padding: EdgeInsets.only(
+                          top: 30.sp, left: 16.sp, right: 16.sp, bottom: 0.sp),
                       child: Column(
                         children: [
                           Row(
@@ -899,18 +904,18 @@ class SearchScreenState extends State<SearchScreen> {
                                 onTap: () {
                                   Get.back();
                                 },
-                                child: const ImageIcon(
+                                child: ImageIcon(
                                   AssetImage(backWhiteArrow),
                                   color: colorPrimary,
-                                  size: 16,
+                                  size: 16.sp,
                                 ),
                               ),
                               Expanded(
                                 flex: 1,
                                 child: SizedBox(
-                                  height: 40,
+                                  height: 40.sp,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                                    padding: EdgeInsets.only(left: 10.sp),
                                     child: RawKeyboardListener(
                                       focusNode: FocusNode(),
                                       onKey: (value) {
@@ -939,6 +944,7 @@ class SearchScreenState extends State<SearchScreen> {
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                           filled: true,
+                                          isDense: true,
                                           fillColor: whiteColor,
                                           suffixIcon: InkWell(
                                             onTap: () {
@@ -949,11 +955,11 @@ class SearchScreenState extends State<SearchScreen> {
                                             },
                                             child: ImageIcon(
                                               AssetImage(greyCrossImage),
-                                              size: 14,
+                                              size: 14.sp,
                                             ),
                                           ),
-                                          prefixIcon: const Icon(Icons.search,
-                                              size: 20, color: Colors.grey),
+                                          prefixIcon: Icon(Icons.search,
+                                              size: 20.sp, color: Colors.grey),
                                           focusedBorder:
                                               const OutlineInputBorder(
                                                   borderSide: BorderSide(
@@ -969,12 +975,10 @@ class SearchScreenState extends State<SearchScreen> {
                                                 color: borderColor),
                                           ),
                                           counterText: "",
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 10),
+                                          /*   contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 10.sp), */
                                           hintText: "Search",
-                                          hintStyle:
-                                              const TextStyle(fontSize: 14),
+                                          hintStyle: TextStyle(fontSize: 14.sp),
                                         ),
                                       ),
                                     ),
@@ -986,9 +990,9 @@ class SearchScreenState extends State<SearchScreen> {
                           Obx(() => controller.isSearchItem.value
                               ? Padding(
                                   padding:
-                                      const EdgeInsets.only(bottom: 4, top: 8),
+                                      EdgeInsets.only(bottom: 4.sp, top: 8.sp),
                                   child: SizedBox(
-                                    height: 187,
+                                    height: 187.sp,
                                     child: ListView.builder(
                                         primary: false,
                                         shrinkWrap: true,
@@ -998,12 +1002,11 @@ class SearchScreenState extends State<SearchScreen> {
                                         scrollDirection: Axis.vertical,
                                         itemBuilder: (ctx, index) {
                                           return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 4),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 4.sp),
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.sp),
                                               child: Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
@@ -1015,18 +1018,19 @@ class SearchScreenState extends State<SearchScreen> {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 12),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  12.sp),
                                                       child: DummyContainer(
                                                           height: 16,
                                                           width: 100),
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 8),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8.sp),
                                                     child: DummyContainer(
                                                         height: 14, width: 14),
                                                   ),
@@ -1041,10 +1045,10 @@ class SearchScreenState extends State<SearchScreen> {
                                 )
                               : controller.searchList.isNotEmpty
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 4, top: 8),
+                                      padding: EdgeInsets.only(
+                                          bottom: 4.sp, top: 8.sp),
                                       child: SizedBox(
-                                        height: 187,
+                                        height: 187.sp,
                                         child: ListView.builder(
                                             primary: false,
                                             shrinkWrap: true,
@@ -1055,9 +1059,8 @@ class SearchScreenState extends State<SearchScreen> {
                                             scrollDirection: Axis.vertical,
                                             itemBuilder: (ctx, index) {
                                               return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 4.sp),
                                                 child: GestureDetector(
                                                   onTap: () async {
                                                     controller.callRecentSearch(
@@ -1109,8 +1112,9 @@ class SearchScreenState extends State<SearchScreen> {
                                                     );
                                                   },
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(vertical: 6),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 6.sp),
                                                     child: Row(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -1119,17 +1123,16 @@ class SearchScreenState extends State<SearchScreen> {
                                                           MainAxisAlignment
                                                               .start,
                                                       children: [
-                                                        const Icon(Icons.search,
-                                                            size: 20,
+                                                        Icon(Icons.search,
+                                                            size: 20.sp,
                                                             color: Colors.grey),
                                                         Expanded(
                                                           flex: 1,
                                                           child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
-                                                                        12),
+                                                                        12.sp),
                                                             child: AppText(
                                                               text: controller.searchList[
                                                                           index]
@@ -1142,17 +1145,16 @@ class SearchScreenState extends State<SearchScreen> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
-                                                              fontSize: 14.sp,
+                                                              fontSize: 14,
                                                               color: loginText,
                                                             ),
                                                           ),
                                                         ),
                                                         Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
                                                                   horizontal:
-                                                                      8),
+                                                                      8.sp),
                                                           child: AppText(
                                                             text: controller
                                                                 .searchList[
@@ -1164,15 +1166,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
                                                                 FontWeight.w400,
-                                                            fontSize: 14.sp,
+                                                            fontSize: 14,
                                                             color:
                                                                 greyTextColor,
                                                           ),
                                                         ),
                                                         Image.asset(
                                                             curveArrowImage,
-                                                            height: 14,
-                                                            width: 14,
+                                                            height: 14.sp,
+                                                            width: 14.sp,
                                                             fit: BoxFit.cover),
                                                       ],
                                                     ),
@@ -1183,11 +1185,11 @@ class SearchScreenState extends State<SearchScreen> {
                                       ),
                                     )
                                   : Container(
-                                      margin: const EdgeInsets.only(top: 100),
+                                      margin: EdgeInsets.only(top: 100.sp),
                                       child: Center(
                                         child: Text(controller.searchText.value,
                                             style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: Colors.black,
                                                 fontFamily:
                                                     "Franklin Gothic Regular")),

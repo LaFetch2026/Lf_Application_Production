@@ -16,18 +16,18 @@ class DummyGridMostSearch extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 30, left: 16),
+          padding: EdgeInsets.only(top: 30.sp, left: 16.sp),
           child: AppText(
             text: "Most Searched",
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: bottomnavBack,
-            fontSize: 16.sp,
+            fontSize: 16,
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 10),
+          padding: EdgeInsets.only(
+              left: 16.sp, right: 16.sp, top: 20.sp, bottom: 10.sp),
           child: GridView.count(
             shrinkWrap: true,
             crossAxisCount: 4,
@@ -35,12 +35,12 @@ class DummyGridMostSearch extends StatelessWidget {
             padding: EdgeInsets.zero,
             childAspectRatio: 0.7,
             physics: const ScrollPhysics(),
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 1,
+            crossAxisSpacing: 5.sp,
+            mainAxisSpacing: 1.sp,
             children: List.generate(
               8,
               (index) {
-                return const Column(
+                return Column(
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,8 +52,8 @@ class DummyGridMostSearch extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.sp, vertical: 5.sp),
                           child: InkWell(
                             child: DummyContainer(
                               height: 16,
