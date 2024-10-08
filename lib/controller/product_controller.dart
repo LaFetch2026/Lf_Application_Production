@@ -120,6 +120,7 @@ class ProductController extends BaseController {
   RxString getItBy = "".obs;
   RxBool isAddress = false.obs;
   dynamic defaultAddress = "".obs;
+  RxBool addToCart = false.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -1637,6 +1638,7 @@ class ProductController extends BaseController {
               },
               body: json.encode(sendData));
       if (response.statusCode == 200) {
+        addToCart.value = true;
         if (type == "reorder") {
           Get.to(CartScreen());
         }

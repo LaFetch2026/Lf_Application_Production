@@ -635,6 +635,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.sizeInventoryId.value = 0;
       productController.productImageindex.value = 0;
       productController.colorInventoryId.value = 0;
+      productController.addToCart.value = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));
@@ -816,9 +817,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           },
                                                         );
                                                       },
-                                                      child: AddToCartIcon(
-                                                        key: cartKey,
-                                                        icon: CircleAvatar(
+                                                      child:
+                                                          //  AddToCartIcon(
+                                                          //  key: cartKey,
+                                                          //   icon:
+                                                          SizedBox(
+                                                        height: 36.sp,
+                                                        width: 36.sp,
+                                                        child: CircleAvatar(
                                                             backgroundColor:
                                                                 colorPrimary,
                                                             child: Image.asset(
@@ -826,24 +832,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               height: 22,
                                                               width: 22,
                                                             )),
-                                                        badgeOptions:
-                                                            const BadgeOptions(
+                                                      ),
+                                                      //   badgeOptions:
+                                                      /*   const BadgeOptions(
                                                           active: false,
                                                           backgroundColor:
                                                               Colors.red,
-                                                        ),
-                                                      ),
+                                                        ), */
+                                                      //   ),
                                                     ),
-                                                    IconButton(
-                                                      icon: CircleAvatar(
-                                                          backgroundColor:
-                                                              whiteColor,
-                                                          child: Image.asset(
-                                                            shareImage,
-                                                            height: 24,
-                                                            width: 24,
-                                                          )),
-                                                      onPressed: () async {
+                                                    GestureDetector(
+                                                      onTap: () async {
                                                         Share.share(
                                                             productController
                                                                     .productDetails[
@@ -858,6 +857,24 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           },
                                                         );
                                                       },
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10.sp),
+                                                        child: SizedBox(
+                                                          height: 34.sp,
+                                                          width: 34.sp,
+                                                          child: CircleAvatar(
+                                                              backgroundColor:
+                                                                  whiteColor,
+                                                              child:
+                                                                  Image.asset(
+                                                                shareImage,
+                                                                height: 24,
+                                                                width: 24,
+                                                              )),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 )
@@ -3063,7 +3080,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     height: 0,
                                   )
                                 : productController
-                                        .productDetails["added_to_cart"]
+                                            .productDetails["added_to_cart"] ||
+                                        productController.addToCart.value
                                     ? getSingleButton(
                                         label: "Go to bag",
                                         textColor: whiteBorderColor,
@@ -3078,6 +3096,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   'productDetails_btnGotocart',
                                             },
                                           );
+                                          productController.addToCart.value =
+                                              false;
                                         },
                                         borderColor: colorPrimary)
                                     : getSingleButton(
@@ -3093,7 +3113,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 .checkDetailsValidation()) {
                                               productController.callAddtoCart(
                                                   1, "");
-                                              listClick(widgetKey);
+                                              //  listClick(widgetKey);
                                             }
                                           } else {
                                             if (productController
@@ -3104,7 +3124,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   productController
                                                       .sizeInventoryId.value,
                                                   1);
-                                              listClick(widgetKey);
+                                              //  listClick(widgetKey);
                                             }
                                           }
                                           await analytics.logEvent(
