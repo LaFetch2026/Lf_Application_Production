@@ -117,23 +117,23 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 10),
+                              padding: EdgeInsets.only(
+                                  left: 16.sp, right: 16.sp, top: 10.sp),
                               child: AppText(
                                 text: wishlistController.addItem.value == 0 ||
                                         wishlistController.addItem.value == 1
                                     ? "${wishlistController.addItem.value} item selected"
                                     : "${wishlistController.addItem.value} items selected",
                                 color: textHintColor,
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
                             Center(
                               child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16, right: 16, top: 10),
+                                padding: EdgeInsets.only(
+                                    left: 16.sp, right: 16.sp, top: 10.sp),
                                 child: GetBuilder<WishlistController>(
                                   builder: (value) => GridView.count(
                                     shrinkWrap: true,
@@ -175,18 +175,23 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                     children: [
                                                       Center(
                                                         child: value
-                                                                    .wishListProduct[
-                                                                        index][
+                                                                    .wishListProduct[index]
+                                                                        [
                                                                         "images"]
                                                                     .isNotEmpty &&
-                                                                value.wishListProduct[
-                                                                            index]
-                                                                        [
-                                                                        "images"] !=
+                                                                value.wishListProduct[index]["images"] !=
                                                                     null
                                                             ? SizedBox(
-                                                                height: 190,
-                                                                width: 152,
+                                                                height: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) +
+                                                                    10.sp,
+                                                                width: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) -
+                                                                    24,
                                                                 child:
                                                                     CachedNetworkImage(
                                                                   cacheManager: CacheManager(Config(
@@ -226,15 +231,27 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     downloadImage,
                                                                     fit: BoxFit
                                                                         .cover,
-                                                                    height: 190,
-                                                                    width: 152,
+                                                                    height: (MediaQuery.of(context).size.width /
+                                                                            2) +
+                                                                        10.sp,
+                                                                    width: (MediaQuery.of(context).size.width /
+                                                                            2) -
+                                                                        24,
                                                                   ),
                                                                 ),
                                                               )
                                                             : Image.asset(
                                                                 dummyWishlistImage,
-                                                                height: 190,
-                                                                width: 152,
+                                                                height: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) +
+                                                                    10.sp,
+                                                                width: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) -
+                                                                    24,
                                                                 fit: BoxFit
                                                                     .cover),
                                                       ),
@@ -284,12 +301,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                 );
                                                               },
                                                               child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        10),
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal: 16
+                                                                            .sp,
+                                                                        vertical:
+                                                                            10.sp),
                                                                 child: Align(
                                                                   alignment:
                                                                       Alignment
@@ -299,8 +316,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     child:
                                                                         SizedBox(
                                                                       height:
-                                                                          24,
-                                                                      width: 24,
+                                                                          24.sp,
+                                                                      width:
+                                                                          24.sp,
                                                                       child:
                                                                           CircleAvatar(
                                                                         backgroundColor:
@@ -309,9 +327,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                             .asset(
                                                                           blackRightCircleImage,
                                                                           height:
-                                                                              24,
+                                                                              24.sp,
                                                                           width:
-                                                                              24,
+                                                                              24.sp,
                                                                         ),
                                                                       ),
                                                                     ),
@@ -367,12 +385,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                 );
                                                               },
                                                               child: Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        10),
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal: 16
+                                                                            .sp,
+                                                                        vertical:
+                                                                            10.sp),
                                                                 child: Align(
                                                                   alignment:
                                                                       Alignment
@@ -382,14 +400,15 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                     child:
                                                                         SizedBox(
                                                                       height:
-                                                                          24,
-                                                                      width: 24,
+                                                                          24.sp,
+                                                                      width:
+                                                                          24.sp,
                                                                       child:
                                                                           Container(
                                                                         decoration: BoxDecoration(
                                                                             border: Border.all(
                                                                               color: greyBorder,
-                                                                              width: 1.0,
+                                                                              width: 1.0.sp,
                                                                             ),
                                                                             shape: BoxShape.circle),
                                                                         child:
@@ -404,37 +423,42 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                               ),
                                                             ),
                                                       Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 16,
-                                                                vertical: 10),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    16.sp,
+                                                                vertical:
+                                                                    10.sp),
                                                         child: Align(
                                                           alignment: Alignment
                                                               .bottomLeft,
                                                           child: Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 140),
+                                                            margin: EdgeInsets.only(
+                                                                top: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) -
+                                                                    40.sp),
                                                             color:
                                                                 whiteBorderColor,
-                                                            height: 26,
-                                                            width: 80,
+                                                            height: 26.sp,
+                                                            width: 80.sp,
                                                             child: Row(
                                                               children: [
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          4),
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              4.sp),
                                                                   child: Image
                                                                       .asset(
                                                                     heartImage,
-                                                                    height: 16,
+                                                                    height:
+                                                                        16.sp,
                                                                     color:
                                                                         bottomnavBack,
-                                                                    width: 16,
+                                                                    width:
+                                                                        16.sp,
                                                                   ),
                                                                 ),
                                                                 AppText(
@@ -451,8 +475,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                       : "",
                                                                   color:
                                                                       colorPrimary,
-                                                                  fontSize:
-                                                                      12.sp,
+                                                                  fontSize: 12,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
@@ -460,16 +483,17 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                           .w400,
                                                                 ),
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          10),
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              10.sp),
                                                                   child:
                                                                       Container(
-                                                                    width: 1,
+                                                                    width: 1.sp,
                                                                     color:
                                                                         textHintColor,
-                                                                    height: 16,
+                                                                    height:
+                                                                        16.sp,
                                                                   ),
                                                                 ),
                                                                 AppText(
@@ -481,8 +505,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                       .toString(),
                                                                   color:
                                                                       colorPrimary,
-                                                                  fontSize:
-                                                                      12.sp,
+                                                                  fontSize: 12,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
@@ -497,10 +520,10 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                     ],
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.sp,
+                                                            vertical: 5.sp),
                                                     child: AppText(
                                                       text: wishlistController
                                                                   .wishListProduct[
@@ -508,7 +531,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                           "",
                                                       color: nameText,
                                                       maxLines: 1,
-                                                      fontSize: 12.sp,
+                                                      fontSize: 12,
                                                       fontFamily:
                                                           "Franklin Gothic",
                                                       fontWeight:
@@ -516,9 +539,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.sp),
                                                     child: AppText(
                                                       text: wishlistController
                                                                       .wishListProduct[
@@ -527,7 +550,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                           "",
                                                       color: nameText,
                                                       maxLines: 1,
-                                                      fontSize: 11.sp,
+                                                      fontSize: 11,
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       fontWeight:
@@ -535,11 +558,10 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10,
-                                                            left: 10,
-                                                            right: 1),
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.sp,
+                                                        left: 10.sp,
+                                                        right: 1),
                                                     child: Row(
                                                       children: [
                                                         AppText(
@@ -548,7 +570,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                           color:
                                                               deepGreytextColor,
                                                           maxLines: 2,
-                                                          fontSize: 11.sp,
+                                                          fontSize: 11,
                                                           fontFamily:
                                                               "Franklin Gothic",
                                                           fontWeight:
@@ -556,9 +578,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 5),
+                                                              EdgeInsets.only(
+                                                                  left: 5.sp),
                                                           child: Text(
                                                             "\u{20B9} ${wishlistController.wishListProduct[index]["mrp"] ?? ""}",
                                                             style: TextStyle(
@@ -594,11 +615,11 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                         ),
                       ),
                     )
-                  : const Expanded(
+                  : Expanded(
                       child: Center(
                         child: Text("No Item Found",
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 color: Colors.black,
                                 fontFamily: "Franklin Gothic Regular")),
                       ),
@@ -608,7 +629,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                   height: 0,
                 )
               : Obx(() => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: EdgeInsets.symmetric(vertical: 20.sp),
                     child: getSingleButton(
                         label: widget.btnText == "Add"
                             ? wishlistController.addItem.value == 1 ||

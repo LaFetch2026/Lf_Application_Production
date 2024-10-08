@@ -2,6 +2,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
@@ -59,7 +60,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                     icon: threeDotImage,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 40),
+                    padding: EdgeInsets.only(top: 40.sp),
                     child: TextFieldWidget(
                       hint: widget.hintName,
                       controller: wishlistController.boardNameController,
@@ -70,7 +71,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
             ),
           ),
           Obx(() => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.symmetric(vertical: 20.sp),
                 child: getSingleButton(
                     label: widget.btnText,
                     textColor: whiteBorderColor,

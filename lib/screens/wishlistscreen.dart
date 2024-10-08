@@ -100,13 +100,13 @@ class WishlistScreenState extends State<WishlistScreen> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 20, left: 16, right: 16),
+                        EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
                     child: AppText(
                       text: "Wishlist",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                       color: blackColor,
-                      fontSize: 25.sp,
+                      fontSize: 25,
                     ),
                   ),
                   Obx(() => wishlistController.isWishlist.value
@@ -116,8 +116,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, left: 16, right: 16),
+                                  padding: EdgeInsets.only(
+                                      top: 10.sp, left: 16.sp, right: 16.sp),
                                   child: GestureDetector(
                                     onTap: () async {
                                       Navigator.of(context)
@@ -160,25 +160,24 @@ class WishlistScreenState extends State<WishlistScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: textHintColor,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                         ),
                                         const Expanded(
                                           child: SizedBox(
                                             width: 0,
                                           ),
                                         ),
-                                        const Icon(
+                                        Icon(
                                           Icons.add,
                                           color: blackColor,
-                                          size: 16,
+                                          size: 16.sp,
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
+                                          padding: EdgeInsets.only(left: 5.sp),
                                           child: AppText(
                                             text: "New Board",
                                             color: blackColor,
-                                            fontSize: 12.sp,
+                                            fontSize: 12,
                                             fontFamily: "Franklin Gothic Bold",
                                             fontWeight: FontWeight.w400,
                                           ),
@@ -187,25 +186,30 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 50,
+                                SizedBox(
+                                  height: 50.sp,
                                 ),
                                 Image.asset(emptyBoxImage,
-                                    height: 160, width: 196, fit: BoxFit.cover),
+                                    height: 160.sp,
+                                    width: 196.sp,
+                                    fit: BoxFit.cover),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 40, left: 16, right: 16),
+                                  padding: EdgeInsets.only(
+                                      top: 40.sp, left: 16.sp, right: 16.sp),
                                   child: AppText(
                                     text: "Your Wishlist is empty",
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w500,
                                     color: colorPrimary,
-                                    fontSize: 22.sp,
+                                    fontSize: 22,
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20, left: 16, right: 16, bottom: 20),
+                                  padding: EdgeInsets.only(
+                                      top: 20.sp,
+                                      left: 16.sp,
+                                      right: 16.sp,
+                                      bottom: 20.sp),
                                   child: AppText(
                                     text:
                                         "Add products to your wishlist, review them anytime and easily move to cart",
@@ -214,11 +218,11 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     maxLines: 2,
                                     textAlign: TextAlign.center,
                                     color: nameText,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 20),
+                                  padding: EdgeInsets.only(top: 20.sp),
                                   child: SingleButton(
                                       label: "Continue Shopping",
                                       textColor: btnTextColor,
@@ -234,8 +238,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, left: 16, right: 16),
+                                  padding: EdgeInsets.only(
+                                      top: 10.sp, left: 16.sp, right: 16.sp),
                                   child: GestureDetector(
                                     onTap: () async {
                                       Navigator.of(context)
@@ -281,17 +285,17 @@ class WishlistScreenState extends State<WishlistScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: textHintColor,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                         ),
                                         const Expanded(
                                           child: SizedBox(
                                             width: 0,
                                           ),
                                         ),
-                                        const Icon(
+                                        Icon(
                                           Icons.add,
                                           color: blackColor,
-                                          size: 16,
+                                          size: 16.sp,
                                         ),
                                         Padding(
                                           padding:
@@ -299,7 +303,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                           child: AppText(
                                             text: "New Board",
                                             color: blackColor,
-                                            fontSize: 12.sp,
+                                            fontSize: 12,
                                             fontFamily: "Franklin Gothic Bold",
                                             fontWeight: FontWeight.w400,
                                           ),
@@ -309,8 +313,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 10),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 10.sp),
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
@@ -370,14 +374,24 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                 ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          8.0),
+                                                          8.0.sp),
                                                   child: wishlistController
                                                           .wishlistList[index]
                                                               ["images"]
                                                           .isNotEmpty
                                                       ? SizedBox(
-                                                          height: 156,
-                                                          width: 156,
+                                                          height: (MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  2) -
+                                                              24.sp,
+                                                          width: (MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  2) -
+                                                              24.sp,
                                                           child:
                                                               CachedNetworkImage(
                                                             cacheManager: CacheManager(Config(
@@ -399,38 +413,56 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                                         error) =>
                                                                     Image.asset(
                                                               downloadImage,
-                                                              height: 156,
-                                                              width: 156,
+                                                              height: (MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      2) -
+                                                                  24.sp,
+                                                              width: (MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      2) -
+                                                                  24.sp,
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
                                                         )
                                                       : Image.asset(
                                                           dummyWishlistImage,
-                                                          height: 156,
-                                                          width: 156,
+                                                          height: (MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  2) -
+                                                              24.sp,
+                                                          width: (MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  2) -
+                                                              24.sp,
                                                           fit: BoxFit.cover),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp,
+                                                      vertical: 5.sp),
                                                   child: AppText(
                                                     text:
                                                         "${wishlistController.wishlistList[index]["name"]}"
                                                             .capitalize!,
                                                     color: blackColor,
-                                                    fontSize: 16.sp,
+                                                    fontSize: 16,
                                                     fontFamily:
                                                         "Franklin Gothic",
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp),
                                                   child: AppText(
                                                     text: wishlistController.wishlistList[
                                                                         index][
@@ -444,7 +476,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                         ? "${wishlistController.wishlistList[index]["products_count"]} item"
                                                         : "${wishlistController.wishlistList[index]["products_count"]} items",
                                                     color: textHintColor,
-                                                    fontSize: 12.sp,
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,

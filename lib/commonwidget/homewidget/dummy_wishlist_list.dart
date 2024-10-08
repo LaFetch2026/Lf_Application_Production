@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 
 class DummyWishlistList extends StatelessWidget {
@@ -9,7 +10,7 @@ class DummyWishlistList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
       child: GridView.count(
         shrinkWrap: true,
         crossAxisCount: 2,
@@ -28,15 +29,22 @@ class DummyWishlistList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: const DummyContainer(height: 156, width: 156),
+                    borderRadius: BorderRadius.circular(8.0.sp),
+                    child: Container(
+                      height: (MediaQuery.of(context).size.width / 2) - 24.sp,
+                      width: (MediaQuery.of(context).size.width / 2) - 24.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
                     child: DummyContainer(height: 10, width: 50),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
                     child: DummyContainer(height: 10, width: 50),
                   ),
                 ],

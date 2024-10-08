@@ -35,10 +35,14 @@ class DummyGridList extends StatelessWidget {
                       Stack(
                         children: [
                           Center(
-                            child: DummyContainer(
-                              height: 190,
-                              width:
-                                  (MediaQuery.of(context).size.width / 2) - 24,
+                            child: Container(
+                              height: (MediaQuery.of(context).size.width / 2) +
+                                  10.sp,
+                              width: (MediaQuery.of(context).size.width / 2) -
+                                  24.sp,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                              ),
                             ),
                           ),
                           Padding(

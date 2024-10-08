@@ -24,12 +24,12 @@ class BackButtonAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 80.sp,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(color: backgroundColor),
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
+          padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -39,17 +39,17 @@ class BackButtonAppbar extends StatelessWidget {
                   Get.back();
                 },
                 child: Image.asset(backArrowImage,
-                    height: 16, width: 10, fit: BoxFit.cover),
+                    height: 16.sp, width: 10.sp, fit: BoxFit.cover),
               ),
-              const SizedBox(
-                width: 10,
+              SizedBox(
+                width: 10.sp,
               ),
               AppText(
                 text: text,
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: appbarText,
-                fontSize: 22.sp,
+                fontSize: 22,
               ),
               const Expanded(
                 child: SizedBox(
@@ -65,7 +65,7 @@ class BackButtonAppbar extends StatelessWidget {
                   child: ImageIcon(
                     AssetImage(icon),
                     color: appbarText,
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
               ),

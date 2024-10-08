@@ -21,7 +21,7 @@ class BottomSheetBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 200.sp,
       width: double.infinity,
       decoration: const BoxDecoration(
         color: whiteColor,
@@ -38,11 +38,11 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedAddItem?.call();
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 10.sp),
                 child: AppText(
                   text: "Add items to board",
                   color: colorPrimary,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                 ),
@@ -53,11 +53,11 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedEdit?.call();
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 15),
+                padding: EdgeInsets.only(top: 15.sp),
                 child: AppText(
                   text: "Edit board",
                   color: colorPrimary,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                 ),
@@ -68,11 +68,11 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedRename?.call();
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 15),
+                padding: EdgeInsets.only(top: 15.sp),
                 child: AppText(
                   text: "Rename board",
                   color: colorPrimary,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                 ),
@@ -83,11 +83,11 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedDelete?.call();
               },
               child: Padding(
-                padding: const EdgeInsets.only(top: 15),
+                padding: EdgeInsets.only(top: 15.sp),
                 child: AppText(
                   text: "Delete board",
                   color: redColor,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                 ),

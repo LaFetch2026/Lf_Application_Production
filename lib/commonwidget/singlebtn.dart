@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SingleButton extends StatelessWidget {
   final String label;
@@ -36,7 +37,7 @@ class SingleButton extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: horizontal),
       child: SizedBox(
           width: double.infinity,
-          height: height,
+          height: height.sp,
           child: ElevatedButton(
               style: ButtonStyle(
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(
@@ -58,7 +59,7 @@ class SingleButton extends StatelessWidget {
                 style: TextStyle(
                     color: textColor,
                     fontFamily: fontFamily,
-                    fontSize: fontSize),
+                    fontSize: fontSize.sp),
               ))),
     );
   }

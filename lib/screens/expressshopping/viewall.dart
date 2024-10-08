@@ -149,17 +149,18 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     children: [
                                                       Center(
                                                         child: productController
-                                                                    .productExpressBrandList[
-                                                                        index][
+                                                                    .productExpressBrandList[index]
+                                                                        [
                                                                         "images"]
                                                                     .isNotEmpty &&
-                                                                productController
-                                                                            .productExpressBrandList[index]
-                                                                        [
-                                                                        "images"] !=
+                                                                productController.productExpressBrandList[index]["images"] !=
                                                                     null
                                                             ? SizedBox(
-                                                                height: 190.sp,
+                                                                height: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) +
+                                                                    10.sp,
                                                                 width: (MediaQuery.of(context)
                                                                             .size
                                                                             .width /
@@ -204,8 +205,9 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                     downloadImage,
                                                                     fit: BoxFit
                                                                         .cover,
-                                                                    height:
-                                                                        190.sp,
+                                                                    height: (MediaQuery.of(context).size.width /
+                                                                            2) +
+                                                                        10.sp,
                                                                     width: (MediaQuery.of(context).size.width /
                                                                             2) -
                                                                         24.sp,
@@ -214,14 +216,17 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                               )
                                                             : Image.asset(
                                                                 dummyWishlistImage,
-                                                                height: 190.sp,
+                                                                height: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) +
+                                                                    10.sp,
                                                                 width: (MediaQuery.of(context)
                                                                             .size
                                                                             .width /
                                                                         2) -
                                                                     24.sp,
-                                                                fit: BoxFit
-                                                                    .cover),
+                                                                fit: BoxFit.cover),
                                                       ),
                                                       GestureDetector(
                                                         onTap: () async {
@@ -351,10 +356,11 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           alignment: Alignment
                                                               .bottomLeft,
                                                           child: Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    top:
-                                                                        140.sp),
+                                                            margin: EdgeInsets.only(
+                                                                top: (MediaQuery.sizeOf(context)
+                                                                            .width /
+                                                                        2) -
+                                                                    40),
                                                             color: const Color(
                                                                 0xB3F7F7F5),
                                                             height: 26.sp,

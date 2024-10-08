@@ -150,7 +150,11 @@ Widget showDoubleBtnDailog(
               onTap: () {
                 Get.back();
               },
-              child: Icon(Icons.cancel, color: btncolor),
+              child: Icon(
+                Icons.cancel,
+                color: btncolor,
+                size: 24.sp,
+              ),
             ),
           ),
         ),
