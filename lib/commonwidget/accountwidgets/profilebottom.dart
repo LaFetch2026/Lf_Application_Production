@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
@@ -25,7 +24,7 @@ class ProfileBottom extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.symmetric(vertical: 20.sp),
           child: Container(
             width: double.infinity,
             color: borderColor,
@@ -33,30 +32,30 @@ class ProfileBottom extends StatelessWidget {
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 10),
+          padding: EdgeInsets.only(
+              top: 10.sp, left: 16.sp, right: 16.sp, bottom: 10.sp),
           child: Center(
             child: AppText(
               text: "App version $version",
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: textHintColor,
-              fontSize: 11.sp,
+              fontSize: 11,
             ),
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: 10, left: 16, right: 16, bottom: 40),
+          padding: EdgeInsets.only(
+              top: 10.sp, left: 16.sp, right: 16.sp, bottom: 40.sp),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Column(
                 children: [
                   Image.asset(deliveredImage,
-                      height: 40, width: 40, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "Delivered in\n6 hours",
                       fontFamily: "Franklin Gothic Regular",
@@ -64,7 +63,7 @@ class ProfileBottom extends StatelessWidget {
                       color: greyTextColor,
                       maxLines: 2,
                       textAlign: TextAlign.center,
-                      fontSize: 10.sp,
+                      fontSize: 10,
                     ),
                   )
                 ],
@@ -72,9 +71,9 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(qualityImage,
-                      height: 40, width: 40, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "100% Quality\nassured",
                       fontFamily: "Franklin Gothic Regular",
@@ -82,7 +81,7 @@ class ProfileBottom extends StatelessWidget {
                       color: greyTextColor,
                       maxLines: 2,
                       textAlign: TextAlign.center,
-                      fontSize: 10.sp,
+                      fontSize: 10,
                     ),
                   )
                 ],
@@ -90,9 +89,9 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(locationBaseImage,
-                      height: 40, width: 40, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "Location based\nDeliveries",
                       fontFamily: "Franklin Gothic Regular",
@@ -100,7 +99,7 @@ class ProfileBottom extends StatelessWidget {
                       color: greyTextColor,
                       maxLines: 2,
                       textAlign: TextAlign.center,
-                      fontSize: 10.sp,
+                      fontSize: 10,
                     ),
                   )
                 ],
@@ -108,9 +107,9 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(exchangeImage,
-                      height: 40, width: 40, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "2 exchanges\nwithin 2 days",
                       fontFamily: "Franklin Gothic Regular",
@@ -118,7 +117,7 @@ class ProfileBottom extends StatelessWidget {
                       color: greyTextColor,
                       maxLines: 2,
                       textAlign: TextAlign.center,
-                      fontSize: 10.sp,
+                      fontSize: 10,
                     ),
                   )
                 ],

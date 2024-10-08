@@ -46,7 +46,7 @@ class AccountScreenState extends State<AccountScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
+            padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -56,7 +56,7 @@ class AccountScreenState extends State<AccountScreen> {
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: appbarText,
-                  fontSize: 22.sp,
+                  fontSize: 22,
                 ),
                 const Expanded(
                   child: SizedBox(
@@ -74,14 +74,14 @@ class AccountScreenState extends State<AccountScreen> {
                     );
                   },
                   child: SizedBox(
-                    height: 28,
-                    width: 28,
+                    height: 28.sp,
+                    width: 28.sp,
                     child: CircleAvatar(
                       backgroundColor: blackColor,
                       child: ImageIcon(
                         AssetImage(cartImage),
                         color: whiteBorderColor,
-                        size: 20,
+                        size: 20.sp,
                       ),
                     ),
                   ),
@@ -104,8 +104,8 @@ class AccountScreenState extends State<AccountScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 20),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 20.sp),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -121,22 +121,20 @@ class AccountScreenState extends State<AccountScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: blackColor,
-                                          fontSize: 28.sp,
+                                          fontSize: 28,
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Row(
                                             children: [
-                                              const ImageIcon(
+                                              ImageIcon(
                                                 AssetImage(phoneImage),
                                                 color: greyTextColor,
-                                                size: 18,
+                                                size: 18.sp,
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
                                                 child: AppText(
                                                   text:
                                                       controller.profileDetails[
@@ -146,7 +144,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: greyTextColor,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ],
@@ -200,14 +198,13 @@ class AccountScreenState extends State<AccountScreen> {
                                         );
                                       },
                                       child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 16),
+                                        padding: EdgeInsets.only(bottom: 16.sp),
                                         child: AppText(
                                           text: "Edit",
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w500,
                                           color: colorPrimary,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ),
@@ -330,14 +327,14 @@ class AccountScreenState extends State<AccountScreen> {
                             ],
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 16, right: 16),
+                            padding: EdgeInsets.only(
+                                top: 10.sp, left: 16.sp, right: 16.sp),
                             child: AppText(
                               text: "My Account",
                               fontFamily: "Franklin Gothic Bold",
                               fontWeight: FontWeight.w700,
                               color: nameText,
-                              fontSize: 18.sp,
+                              fontSize: 18,
                             ),
                           ),
                           GestureDetector(
@@ -351,14 +348,14 @@ class AccountScreenState extends State<AccountScreen> {
                               );
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 16, right: 16),
+                              padding: EdgeInsets.only(
+                                  top: 20.sp, left: 16.sp, right: 16.sp),
                               child: AppText(
                                 text: "Orders & Exchanges",
                                 fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
                                 color: nameText,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -373,14 +370,14 @@ class AccountScreenState extends State<AccountScreen> {
                               );
                             },
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 16, right: 16),
+                              padding: EdgeInsets.only(
+                                  top: 20.sp, left: 16.sp, right: 16.sp),
                               child: AppText(
                                 text: "My Wishlist",
                                 fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w400,
                                 color: nameText,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -397,14 +394,14 @@ class AccountScreenState extends State<AccountScreen> {
                                   Get.to(CustomerCareScreen());
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20, left: 16, right: 16),
+                                  padding: EdgeInsets.only(
+                                      top: 20.sp, left: 16.sp, right: 16.sp),
                                   child: AppText(
                                     text: "Customer Care",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: nameText,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),
@@ -421,14 +418,14 @@ class AccountScreenState extends State<AccountScreen> {
                                   );
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 20, left: 16, right: 16),
+                                  padding: EdgeInsets.only(
+                                      top: 20.sp, left: 16.sp, right: 16.sp),
                                   child: AppText(
                                     text: "Saved Addresses",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: nameText,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),
@@ -501,7 +498,7 @@ class AccountScreenState extends State<AccountScreen> {
                                 )
                               : */
                           Padding(
-                            padding: const EdgeInsets.only(top: 60, bottom: 20),
+                            padding: EdgeInsets.only(top: 60.sp, bottom: 20.sp),
                             child: SingleButton(
                                 label: "Logout",
                                 textColor: redColor,

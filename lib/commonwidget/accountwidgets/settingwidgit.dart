@@ -18,13 +18,13 @@ class SettingWidgets extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+          padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: "Settings",
             fontFamily: "Franklin Gothic Bold",
             fontWeight: FontWeight.w700,
             color: nameText,
-            fontSize: 18.sp,
+            fontSize: 18,
           ),
         ),
         GestureDetector(
@@ -32,13 +32,13 @@ class SettingWidgets extends StatelessWidget {
             onPressedNotification?.call();
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: AppText(
               text: "Notifications & Settings",
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: nameText,
-              fontSize: 14.sp,
+              fontSize: 14,
             ),
           ),
         ),

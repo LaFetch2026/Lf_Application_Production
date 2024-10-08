@@ -114,7 +114,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       icon: threeDotImage,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 40),
+                      padding: EdgeInsets.only(top: 40.sp),
                       child: TextFieldWidget(
                         hint: "First Name and Last Name",
                         controller: profileController.nameController,
@@ -122,7 +122,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     Obx(
                       () => Padding(
-                        padding: const EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: NumberWidget(
                             readonly: profileController.isEditNumber.value,
                             controller: profileController.phoneController),
@@ -149,12 +149,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   );
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 5.sp),
                                   child: AppText(
                                     text: "Change number",
                                     fontFamily: "Franklin Gothic",
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     textAlign: TextAlign.right,
                                     color: colorPrimary,
                                   ),
@@ -171,12 +171,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 10),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 10.sp),
                                   child: AppText(
                                     text: "Enter OTP",
                                     fontFamily: "Franklin Gothic",
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     color: colorPrimary,
                                   ),
                                 ),
@@ -219,11 +219,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               */
                                 Obx(
                                   () => Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16,
-                                        right: 16,
-                                        top: 10,
-                                        bottom: 10),
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                        top: 10.sp,
+                                        bottom: 10.sp),
                                     child: Center(
                                       child: OTPTextFieldV2(
                                           controller:
@@ -237,8 +237,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                           fieldWidth: (MediaQuery.of(context)
                                                       .size
                                                       .width -
-                                                  65) /
+                                                  78) /
                                               4,
+                                          spaceBetween: 4.sp,
                                           fieldStyle: FieldStyle.box,
                                           outlineBorderRadius: 1,
                                           otpFieldStyle: OtpFieldStyle(
@@ -272,17 +273,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 10.sp),
                       child: TextFieldWidget(
                         hint: "Email ID",
                         controller: profileController.emailController,
                       ),
                     ),
                     Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16, top: 20, right: 16),
+                      padding: EdgeInsets.only(
+                          left: 16.sp, top: 20.sp, right: 16.sp),
                       child: SizedBox(
-                        height: 44,
+                        height: 44.sp,
                         child: TextField(
                           textCapitalization: TextCapitalization.words,
                           readOnly: true,
@@ -301,24 +302,24 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
-                            suffixIcon: const ImageIcon(
+                            suffixIcon: ImageIcon(
                               AssetImage(dropdownImage),
                               color: nameText,
-                              size: 30,
+                              size: 30.sp,
                             ),
                             fillColor: whiteTextColor,
                             focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: borderColor)),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1),
+                              borderRadius: BorderRadius.circular(1.sp),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1),
+                              borderRadius: BorderRadius.circular(1.sp),
                               borderSide: const BorderSide(color: borderColor),
                             ),
                             counterText: "",
                             hintText: "Gender",
-                            hintStyle: const TextStyle(fontSize: 14),
+                            hintStyle: TextStyle(fontSize: 14.sp),
                           ),
                         ),
                       ),
@@ -327,7 +328,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       () => profileController.showList.value
                           ? Padding(
                               padding:
-                                  const EdgeInsets.only(left: 16, right: 16),
+                                  EdgeInsets.only(left: 16.sp, right: 16.sp),
                               child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
@@ -376,14 +377,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                   color: whiteTextColor,
                                                   alignment: Alignment.center,
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 10),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10.sp),
                                                     child: Text(
                                                       profileController
                                                           .genderList[index],
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
+                                                      style: TextStyle(
+                                                        fontSize: 14.sp,
                                                         color: nameText,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
@@ -393,19 +394,19 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                                 ),
                                               ),
                                               index == 2
-                                                  ? const SizedBox(
+                                                  ? SizedBox(
                                                       width: double.infinity,
-                                                      height: 5,
+                                                      height: 5.sp,
                                                     )
                                                   : Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 2),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 2.sp),
                                                       child: Container(
                                                         width: double.infinity,
                                                         color: colorSecondary,
-                                                        height: 1,
+                                                        height: 1.sp,
                                                       ),
                                                     ),
                                             ],
@@ -425,7 +426,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
             ),
             Obx(
               () => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.symmetric(vertical: 20.sp),
                 child: getSingleButton(
                     label: "Save Changes",
                     textColor: whiteBorderColor,

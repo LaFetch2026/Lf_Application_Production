@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 
 class DummyAccount extends StatelessWidget {
@@ -9,7 +10,7 @@ class DummyAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 40.sp),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,12 +24,12 @@ class DummyAccount extends StatelessWidget {
                 children: [
                   DummyContainer(height: 20, width: 100),
                   Padding(
-                    padding: const EdgeInsets.only(top: 5),
+                    padding: EdgeInsets.only(top: 5.sp),
                     child: Row(
                       children: [
                         DummyContainer(height: 15, width: 20),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
                           child: DummyContainer(height: 14, width: 100),
                         ),
                       ],
@@ -42,7 +43,7 @@ class DummyAccount extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: EdgeInsets.only(bottom: 16.sp),
                 child: DummyContainer(height: 14, width: 50),
               ),
             ],
@@ -80,42 +81,42 @@ class DummyAccount extends StatelessWidget {
           ),
           */
           Padding(
-            padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 30.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 20,
               width: 100,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 14,
               width: 100,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 14,
               width: 100,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 14,
               width: 100,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 30.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 20,
               width: 100,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 14,
               width: 100,
@@ -125,14 +126,14 @@ class DummyAccount extends StatelessWidget {
             height: 30,
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 14,
               width: 100,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
             child: DummyContainer(
               height: 14,
               width: 100,

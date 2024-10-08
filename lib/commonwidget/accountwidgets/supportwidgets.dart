@@ -26,22 +26,22 @@ class SupportWidgets extends StatelessWidget {
         Visibility(
           visible: visibilty,
           child: Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(top: 20.sp),
             child: Container(
               width: double.infinity,
               color: borderColor,
-              height: 1,
+              height: 1.sp,
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+          padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: "Support",
             fontFamily: "Franklin Gothic Bold",
             fontWeight: FontWeight.w700,
             color: nameText,
-            fontSize: 18.sp,
+            fontSize: 18,
           ),
         ),
         GestureDetector(
@@ -49,7 +49,7 @@ class SupportWidgets extends StatelessWidget {
             onPressedAboutUs?.call();
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: Row(
               children: [
                 AppText(
@@ -57,13 +57,13 @@ class SupportWidgets extends StatelessWidget {
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: const ImageIcon(
+                  padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                  child: ImageIcon(
                     AssetImage(linkArrowImage),
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
               ],
@@ -75,7 +75,7 @@ class SupportWidgets extends StatelessWidget {
             onPressedTC?.call();
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: Row(
               children: [
                 AppText(
@@ -83,13 +83,13 @@ class SupportWidgets extends StatelessWidget {
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: const ImageIcon(
+                  padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                  child: ImageIcon(
                     AssetImage(linkArrowImage),
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
               ],
@@ -101,7 +101,7 @@ class SupportWidgets extends StatelessWidget {
             onPressedPrivacy?.call();
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: Row(
               children: [
                 AppText(
@@ -109,13 +109,13 @@ class SupportWidgets extends StatelessWidget {
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: const ImageIcon(
+                  padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                  child: ImageIcon(
                     AssetImage(linkArrowImage),
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
               ],
