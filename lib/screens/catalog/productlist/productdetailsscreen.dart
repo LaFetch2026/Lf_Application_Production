@@ -3124,6 +3124,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   productController
                                                       .sizeInventoryId.value,
                                                   1);
+                                              productController
+                                                  .addToCart.value = true;
                                               //  listClick(widgetKey);
                                             }
                                           }
