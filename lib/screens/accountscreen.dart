@@ -482,6 +482,10 @@ class AccountScreenState extends State<AccountScreen> {
                           ),
                           SupportWidgets(
                             visibilty: false,
+                            onPressedAboutUs: () {
+                              launchUrl(Uri.parse(
+                                  "https://la-fetch.com/terms-and-conditions/"));
+                            },
                             onPressedTC: () {
                               launchUrl(Uri.parse(
                                   "https://la-fetch.com/terms-and-conditions/"));

@@ -372,11 +372,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         );
                                                       },
                                                       child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 16,
-                                                                vertical: 30),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    20.sp,
+                                                                vertical:
+                                                                    30.sp),
                                                         child: Align(
                                                           alignment: Alignment
                                                               .topRight,

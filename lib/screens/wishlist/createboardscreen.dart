@@ -427,7 +427,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                   padding: const EdgeInsets
                                                                           .symmetric(
                                                                       horizontal:
-                                                                          2),
+                                                                          4),
                                                                   child: Image
                                                                       .asset(
                                                                     heartImage,
