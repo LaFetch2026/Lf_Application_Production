@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import '../../utils/constants.dart';
 
@@ -10,7 +11,8 @@ class DummybrandList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 10),
+      padding:
+          EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 10.sp, top: 10.sp),
       child: ListView.builder(
           primary: false,
           shrinkWrap: true,
@@ -24,18 +26,19 @@ class DummybrandList extends StatelessWidget {
                 GestureDetector(
                     onTap: () {},
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(bottom: 10.sp),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1),
-                            border: Border.all(width: 1, color: Colors.white),
+                            borderRadius: BorderRadius.circular(1.sp),
+                            border:
+                                Border.all(width: 1.sp, color: Colors.white),
                             color: whiteBorderColor),
-                        child: const Column(
+                        child: Column(
                           children: [
                             Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
+                                  horizontal: 16.sp, vertical: 10.sp),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -43,7 +46,7 @@ class DummybrandList extends StatelessWidget {
                                   DummyContainer(height: 32, width: 32),
                                   Padding(
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
+                                        EdgeInsets.symmetric(horizontal: 10.sp),
                                     child:
                                         DummyContainer(height: 10, width: 50),
                                   ),

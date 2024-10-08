@@ -30,20 +30,20 @@ class HorizontalBrandList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 10, left: 16),
+          padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
           child: AppText(
             text: text,
             fontFamily: "Franklin Gothic",
             fontWeight: FontWeight.w500,
             color: whiteBorderColor,
-            fontSize: 16.sp,
+            fontSize: 16,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
           child: SizedBox(
             width: double.infinity,
-            height: 250,
+            height: 250.sp,
             child: PrimaryScrollController(
               controller: controller,
               scrollDirection: Axis.horizontal,
@@ -61,9 +61,9 @@ class HorizontalBrandList extends StatelessWidget {
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.only(right: 5),
-                            width: 122,
-                            height: 250,
+                            margin: EdgeInsets.only(right: 5.sp),
+                            width: 122.sp,
+                            height: 250.sp,
                             child: Container(
                               color: whiteBorderColor,
                               child: Column(
@@ -74,8 +74,8 @@ class HorizontalBrandList extends StatelessWidget {
                                       list[index]["images"].isNotEmpty &&
                                               list[index]["images"] != null
                                           ? SizedBox(
-                                              height: 150,
-                                              width: 122,
+                                              height: 150.sp,
+                                              width: 122.sp,
                                               child: CachedNetworkImage(
                                                 cacheManager: CacheManager(
                                                     Config("customCacheKey",
@@ -106,14 +106,14 @@ class HorizontalBrandList extends StatelessWidget {
                                                         Image.asset(
                                                   downloadImage,
                                                   fit: BoxFit.cover,
-                                                  height: 150,
-                                                  width: 122,
+                                                  height: 150.sp,
+                                                  width: 122.sp,
                                                 ),
                                               ),
                                             )
                                           : Image.asset(dummyWishlistImage,
-                                              height: 150,
-                                              width: 122,
+                                              height: 150.sp,
+                                              width: 122.sp,
                                               fit: BoxFit.cover),
                                       GestureDetector(
                                         onTap: () {
@@ -121,28 +121,29 @@ class HorizontalBrandList extends StatelessWidget {
                                               list[index]["id"], index);
                                         },
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.sp,
+                                              vertical: 10.sp),
                                           child: Align(
                                             alignment: Alignment.topRight,
                                             child: InkWell(
                                               child: SizedBox(
-                                                height: 24,
-                                                width: 24,
+                                                height: 24.sp,
+                                                width: 24.sp,
                                                 child: CircleAvatar(
                                                   backgroundColor: whiteColor,
                                                   child: list[index]
                                                           ["wishlisted"]
                                                       ? Image.asset(
                                                           wishlistSelectImage,
-                                                          height: 18,
-                                                          width: 18,
+                                                          height: 18.sp,
+                                                          width: 18.sp,
                                                         )
                                                       : Image.asset(
                                                           heartImage,
-                                                          height: 18,
+                                                          height: 18.sp,
                                                           color: bottomnavBack,
-                                                          width: 18,
+                                                          width: 18.sp,
                                                         ),
                                                 ),
                                               ),
@@ -153,20 +154,20 @@ class HorizontalBrandList extends StatelessWidget {
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10.sp, vertical: 5.sp),
                                     child: AppText(
                                       text: "${list[index]["name"]}\n",
                                       color: nameText,
                                       maxLines: 2,
-                                      fontSize: 11.sp,
+                                      fontSize: 11,
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 10, right: 1),
+                                    padding: EdgeInsets.only(
+                                        top: 10.sp, left: 10.sp, right: 1.sp),
                                     child: Row(
                                       children: [
                                         AppText(
@@ -174,13 +175,12 @@ class HorizontalBrandList extends StatelessWidget {
                                               "\u{20B9} ${list[index]["price"] ?? ""}",
                                           color: deepGreytextColor,
                                           maxLines: 2,
-                                          fontSize: 11.sp,
+                                          fontSize: 11,
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w500,
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
+                                          padding: EdgeInsets.only(left: 5.sp),
                                           child: Text(
                                             "\u{20B9} ${list[index]["mrp"]}",
                                             style: TextStyle(
@@ -199,30 +199,30 @@ class HorizontalBrandList extends StatelessWidget {
                                   ),
                                   list[index]["express_delivery"]
                                       ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10,
-                                              left: 10,
-                                              right: 10,
-                                              bottom: 5),
+                                          padding: EdgeInsets.only(
+                                              top: 10.sp,
+                                              left: 10.sp,
+                                              right: 10.sp,
+                                              bottom: 5.sp),
                                           child: Row(
                                             children: [
-                                              const ImageIcon(
+                                              ImageIcon(
                                                 AssetImage(truckImage),
                                                 color: expressText,
-                                                size: 14,
+                                                size: 14.sp,
                                               ),
                                               GestureDetector(
                                                 onTap: () {
                                                   onPressedExpress!.call();
                                                 },
                                                 child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 5.sp),
                                                   child: AppText(
                                                     text: "Express",
                                                     color: expressText,
                                                     maxLines: 2,
-                                                    fontSize: 11.sp,
+                                                    fontSize: 11,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,

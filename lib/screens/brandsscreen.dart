@@ -144,11 +144,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                   width: MediaQuery.of(context).size.width,
                   color: colorPrimary,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 20),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16.sp, vertical: 20.sp),
                     child: Container(
                       color: loginText,
-                      height: 50,
+                      // height: 50.sp,
                       child: RawKeyboardListener(
                         focusNode: FocusNode(),
                         onKey: (value) {
@@ -161,10 +161,10 @@ class BrandsScreenState extends State<BrandsScreen> {
                         },
                         child: TextField(
                           textCapitalization: TextCapitalization.words,
-                          style: const TextStyle(
-                            color: colorSecondary,
-                            fontFamily: "Franklin Gothic Regular",
-                          ),
+                          style: TextStyle(
+                              color: colorSecondary,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontSize: 14.sp),
                           controller: brandController.searchController,
                           onChanged: onSearchChanged,
                           /*  onChanged: (value) {
@@ -174,23 +174,24 @@ class BrandsScreenState extends State<BrandsScreen> {
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
+                            isDense: true,
                             fillColor: loginText,
-                            prefixIcon: const Icon(Icons.search,
-                                size: 20, color: colorSecondary),
+                            prefixIcon: Icon(Icons.search,
+                                size: 20.sp, color: colorSecondary),
                             focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: borderColor)),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1),
+                              borderRadius: BorderRadius.circular(1.sp),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1),
+                              borderRadius: BorderRadius.circular(1.sp),
                               borderSide:
                                   const BorderSide(color: colorSecondary),
                             ),
                             counterText: "",
                             hintText: "Search for brands",
-                            hintStyle: const TextStyle(
-                                fontSize: 14, color: colorSecondary),
+                            hintStyle: TextStyle(
+                                fontSize: 14.sp, color: colorSecondary),
                           ),
                         ),
                       ),
@@ -209,8 +210,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16, top: 20, right: 16),
+                            padding: EdgeInsets.only(
+                                left: 16.sp, top: 20.sp, right: 16.sp),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -218,7 +219,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                 AppText(
                                   text: "Brand Style Catalog",
                                   color: colorPrimary,
-                                  fontSize: 22.sp,
+                                  fontSize: 22,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -262,7 +263,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                     child: AppText(
                                       text: brandController.text.value,
                                       color: blackColor,
-                                      fontSize: 12.sp,
+                                      fontSize: 12,
                                       fontFamily: "Franklin Gothic",
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -275,11 +276,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                               ? const DummybrandList()
                               : brandController.brandList.isNotEmpty
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16,
-                                          right: 16,
-                                          bottom: 10,
-                                          top: 10),
+                                      padding: EdgeInsets.only(
+                                          left: 16.sp,
+                                          right: 16.sp,
+                                          bottom: 10.sp,
+                                          top: 10.sp),
                                       child: GetBuilder<BrandController>(
                                         builder: (value) => ListView.builder(
                                             primary: false,
@@ -294,9 +295,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                               return Column(
                                                 children: [
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 10),
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 10.sp),
                                                     child: Container(
                                                       width: double.infinity,
                                                       decoration: BoxDecoration(
@@ -355,11 +355,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                               );
                                                             },
                                                             child: Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      16,
-                                                                  vertical: 10),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.sp,
+                                                                      vertical:
+                                                                          10.sp),
                                                               child: Row(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
@@ -385,9 +386,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                               dummyWishlistImage)) */
                                                                       SizedBox(
                                                                           height:
-                                                                              32,
+                                                                              32.sp,
                                                                           width:
-                                                                              32,
+                                                                              32.sp,
                                                                           child:
                                                                               CachedNetworkImage(
                                                                             cacheManager: CacheManager(Config("customCacheKey",
@@ -400,24 +401,23 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             errorWidget: (context, url, error) =>
                                                                                 Image.asset(
                                                                               downloadImage,
-                                                                              height: 32,
-                                                                              width: 32,
+                                                                              height: 32.sp,
+                                                                              width: 32.sp,
                                                                             ),
                                                                           ),
                                                                         )
                                                                       : Image.asset(
                                                                           dummyWishlistImage,
-                                                                          height:
-                                                                              32,
-                                                                          width:
-                                                                              32,
+                                                                          height: 32
+                                                                              .sp,
+                                                                          width: 32
+                                                                              .sp,
                                                                           fit: BoxFit
                                                                               .cover),
                                                                   Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                    padding: EdgeInsets.symmetric(
                                                                         horizontal:
-                                                                            10),
+                                                                            10.sp),
                                                                     child:
                                                                         AppText(
                                                                       text: value.brandList[index]
@@ -427,7 +427,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                       color:
                                                                           colorPrimary,
                                                                       fontSize:
-                                                                          14.sp,
+                                                                          14,
                                                                       fontFamily:
                                                                           "Franklin Gothic Regular",
                                                                       fontWeight:
@@ -452,10 +452,10 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                     },
                                                                     child: Image.asset(
                                                                         upArrowIcon,
-                                                                        height:
-                                                                            20,
-                                                                        width:
-                                                                            20,
+                                                                        height: 20
+                                                                            .sp,
+                                                                        width: 20
+                                                                            .sp,
                                                                         fit: BoxFit
                                                                             .cover),
                                                                   ),
@@ -472,14 +472,14 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                       .isNotEmpty
                                                                   ? Column(
                                                                       children: [
-                                                                        const SizedBox(
+                                                                        SizedBox(
                                                                           height:
-                                                                              10,
+                                                                              10.sp,
                                                                         ),
                                                                         Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                              left: 16,
-                                                                              right: 16),
+                                                                          padding: EdgeInsets.only(
+                                                                              left: 16.sp,
+                                                                              right: 16.sp),
                                                                           child:
                                                                               /*   GetBuilder<BrandController>(
                                                                                 builder: (val) => */
@@ -497,7 +497,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             physics:
                                                                                 const ScrollPhysics(),
                                                                             crossAxisSpacing:
-                                                                                1,
+                                                                                1.sp,
                                                                             mainAxisSpacing:
                                                                                 0,
                                                                             children:
@@ -519,43 +519,37 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                       },
                                                                                     );
                                                                                   },
-                                                                                  child: Container(
-                                                                                    alignment: Alignment.center,
-                                                                                    child: Column(
-                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                      children: [
-                                                                                        value.brandList[index]["categories"][i]["thumbnail"] != null
-                                                                                            ? SizedBox(
-                                                                                                height: 70,
-                                                                                                width: 90,
-                                                                                                child: CachedNetworkImage(
-                                                                                                  cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                  fit: BoxFit.cover,
-                                                                                                  imageUrl: value.brandList[index]["categories"][i]["thumbnail"],
-                                                                                                  errorWidget: (context, url, error) => Image.asset(
-                                                                                                    downloadImage,
-                                                                                                    height: 70,
-                                                                                                    width: 90,
-                                                                                                  ),
+                                                                                  child: Column(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                    children: [
+                                                                                      value.brandList[index]["categories"][i]["thumbnail"] != null
+                                                                                          ? SizedBox(
+                                                                                              height: 70.sp,
+                                                                                              width: 90.sp,
+                                                                                              child: CachedNetworkImage(
+                                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                fit: BoxFit.cover,
+                                                                                                imageUrl: value.brandList[index]["categories"][i]["thumbnail"],
+                                                                                                errorWidget: (context, url, error) => Image.asset(
+                                                                                                  downloadImage,
+                                                                                                  height: 70.sp,
+                                                                                                  width: 90.sp,
                                                                                                 ),
-                                                                                              )
-                                                                                            : Image.asset(dummyWishlistImage, height: 70, width: 90, fit: BoxFit.cover),
-                                                                                        Padding(
-                                                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                                                          child: Center(
-                                                                                            child: AppText(
-                                                                                              textAlign: TextAlign.center,
-                                                                                              text: value.brandList[index]["categories"][i]["name"] ?? "",
-                                                                                              color: greyTextColor,
-                                                                                              fontSize: 10.sp,
-                                                                                              maxLines: 2,
-                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                            ),
-                                                                                          ),
+                                                                                              ),
+                                                                                            )
+                                                                                          : Image.asset(dummyWishlistImage, height: 70.sp, width: 90.sp, fit: BoxFit.cover),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                        child: AppText(
+                                                                                          text: value.brandList[index]["categories"][i]["name"] ?? "",
+                                                                                          color: greyTextColor,
+                                                                                          fontSize: 10,
+                                                                                          maxLines: 2,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
                                                                                         ),
-                                                                                      ],
-                                                                                    ),
+                                                                                      ),
+                                                                                    ],
                                                                                   ),
                                                                                 );
                                                                               },
@@ -565,9 +559,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                         //  ),
                                                                       ],
                                                                     )
-                                                                  : const SizedBox(
+                                                                  : SizedBox(
                                                                       height:
-                                                                          50,
+                                                                          50.sp,
                                                                       width: double
                                                                           .infinity,
                                                                       child:
@@ -575,7 +569,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                         child: Text(
                                                                             "No Category Found",
                                                                             style: TextStyle(
-                                                                                fontSize: 14,
+                                                                                fontSize: 14.sp,
                                                                                 color: Colors.black,
                                                                                 fontFamily: "Franklin Gothic Regular")),
                                                                       ),
@@ -592,8 +586,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                             }),
                                       ),
                                     )
-                                  : const SizedBox(
-                                      height: 400,
+                                  : SizedBox(
+                                      height: 400.sp,
                                       width: double.infinity,
                                       child: Center(
                                         child: Text("No Brand Found",

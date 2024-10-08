@@ -21,12 +21,12 @@ class AllBrandAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 80.sp,
       width: MediaQuery.of(context).size.width,
       color: colorPrimary,
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
+          padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -36,17 +36,17 @@ class AllBrandAppbar extends StatelessWidget {
                   onPressedback!.call();
                 },
                 child: Image.asset(backArrowImage,
-                    height: 16, width: 10, fit: BoxFit.cover),
+                    height: 16.sp, width: 10.sp, fit: BoxFit.cover),
               ),
-              const SizedBox(
-                width: 10,
+              SizedBox(
+                width: 10.sp,
               ),
               AppText(
                 text: text,
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: whiteBorderColor,
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
               const Expanded(
                 child: SizedBox(
@@ -57,12 +57,12 @@ class AllBrandAppbar extends StatelessWidget {
                 onTap: () {
                   onPressedSearch?.call();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.sp),
                   child: ImageIcon(
                     AssetImage(searchImage),
                     color: textHintColor,
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
               ),
@@ -70,17 +70,17 @@ class AllBrandAppbar extends StatelessWidget {
                 onTap: () {
                   onPressedCart?.call();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 5),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5.sp),
                   child: SizedBox(
-                    height: 28,
-                    width: 28,
+                    height: 28.sp,
+                    width: 28.sp,
                     child: CircleAvatar(
                       backgroundColor: whiteColor,
                       child: ImageIcon(
                         AssetImage(cartImage),
                         color: colorPrimary,
-                        size: 20,
+                        size: 20.sp,
                       ),
                     ),
                   ),

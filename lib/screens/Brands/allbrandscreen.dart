@@ -48,50 +48,46 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
   List heightList = [
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
-    100.00,
-    180.00,
-    180.00,
-    100.00,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
+    100.00.sp,
+    180.00.sp,
+    180.00.sp,
+    100.00.sp,
   ];
 
   @override
@@ -204,7 +200,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       children: [
                         widget.brandbackground == ""
                             ? Image.asset(brandback,
-                                height: 112,
+                                height: 112.sp,
                                 width: double.infinity,
                                 fit: BoxFit.cover)
                             : /* SizedBox(
@@ -228,7 +224,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 ),
                               ) */
                             Container(
-                                height: 160,
+                                height: 160.sp,
                                 width: double.infinity,
                                 child: FutureBuilder(
                                   future: _initializeVideoPlayerFuture,
@@ -246,10 +242,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         ],
                                       );
                                     } else {
-                                      return const Center(
+                                      return Center(
                                         child: SizedBox(
-                                            height: 20,
-                                            width: 20,
+                                            height: 20.sp,
+                                            width: 20.sp,
                                             child: CircularProgressIndicator()),
                                       );
                                     }
@@ -258,18 +254,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               ),
                         Container(
                           alignment: Alignment.bottomCenter,
-                          margin: const EdgeInsets.only(top: 110),
+                          margin: EdgeInsets.only(top: 110.sp),
                           decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.white,
-                                width: 2.0,
+                                width: 2.0.sp,
                               ),
                               color: Colors.white,
                               shape: BoxShape.circle),
                           child: ClipOval(
                             child: SizedBox(
-                              height: 80,
-                              width: 80,
+                              height: 80.sp,
+                              width: 80.sp,
                               child: CachedNetworkImage(
                                 cacheManager: CacheManager(Config(
                                     "customCacheKey",
@@ -281,8 +277,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     Image.asset(
                                   chanelLogoImage,
                                   fit: BoxFit.cover,
-                                  height: 80,
-                                  width: 80,
+                                  height: 80.sp,
+                                  width: 80.sp,
                                 ),
                               ),
                             ),
@@ -294,14 +290,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       () => brandController.isCategory.value
                           ? const DummybrandAll()
                           : Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              padding: EdgeInsets.symmetric(horizontal: 16.sp),
                               child: MasonryGridView.count(
                                 primary: false,
                                 shrinkWrap: true,
                                 crossAxisCount: 2,
-                                crossAxisSpacing: 7,
-                                mainAxisSpacing: 7,
+                                crossAxisSpacing: 7.sp,
+                                mainAxisSpacing: 7.sp,
                                 itemCount: brandController.categoryList.length,
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
@@ -348,7 +343,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                                     .size
                                                                     .width /
                                                                 2) -
-                                                            16,
+                                                            16.sp,
                                                     child: CachedNetworkImage(
                                                       cacheManager:
                                                           CacheManager(Config(
@@ -383,7 +378,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                                     .size
                                                                     .width /
                                                                 2) -
-                                                            16,
+                                                            16.sp,
                                                       ),
                                                     ),
                                                   )
@@ -397,24 +392,23 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                                     .size
                                                                     .width /
                                                                 2) -
-                                                            16,
+                                                            16.sp,
                                                         fit: BoxFit.cover),
                                                   ),
                                             Positioned.fill(
                                               child: Align(
                                                 alignment: Alignment.bottomLeft,
                                                 child: Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 18,
-                                                      vertical: 10),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 18.sp,
+                                                      vertical: 10.sp),
                                                   child: AppText(
                                                     text: brandController
                                                                 .categoryList[
                                                             index]["name"] ??
                                                         "",
                                                     color: whiteColor,
-                                                    fontSize: 14.sp,
+                                                    fontSize: 14,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,
@@ -436,7 +430,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           ? const DummyProductList(text: "New Arrivals")
                           // const DummyProductBrand(text: "New Arrivals")
                           : Padding(
-                              padding: const EdgeInsets.only(top: 40),
+                              padding: EdgeInsets.only(top: 40.sp),
                               child: HorizontalBrandList(
                                 text: "New Arrivals",
                                 controller:
@@ -528,7 +522,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         ? const DummyProductList(text: "Bestsellers")
                         //const DummyProductBrand(text: "Bestsellers")
                         : Padding(
-                            padding: const EdgeInsets.only(top: 25),
+                            padding: EdgeInsets.only(top: 25.sp),
                             child: HorizontalBrandList(
                               text: "Bestsellers",
                               controller:
@@ -613,8 +607,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               list: productController.bestSellerList,
                             ),
                           )),
-                    const SizedBox(
-                      height: 40,
+                    SizedBox(
+                      height: 40.sp,
                     ),
                   ],
                 ),
