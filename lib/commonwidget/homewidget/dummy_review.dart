@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 
 class DummyReview extends StatelessWidget {
@@ -9,14 +10,14 @@ class DummyReview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const DummyContainer(height: 10, width: 60),
             Padding(
-              padding: const EdgeInsets.only(bottom: 20, top: 30),
+              padding: EdgeInsets.only(bottom: 20.sp, top: 30.sp),
               child: ListView.builder(
                   primary: false,
                   shrinkWrap: true,
@@ -38,7 +39,7 @@ class DummyReview extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            padding: EdgeInsets.symmetric(vertical: 10.0.sp),
                             child: DummyContainer(height: 14, width: 80)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -47,15 +48,15 @@ class DummyReview extends StatelessWidget {
                             DummyContainer(height: 14, width: 50),
                             DummyContainer(height: 14, width: 16),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.sp,
                               ),
                               child: DummyContainer(height: 14, width: 80),
                             )
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          padding: EdgeInsets.symmetric(vertical: 10.0.sp),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,

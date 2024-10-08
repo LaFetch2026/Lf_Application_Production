@@ -360,7 +360,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 top: (MediaQuery.sizeOf(context)
                                                                             .width /
                                                                         2) -
-                                                                    70),
+                                                                    40),
                                                             color: const Color(
                                                                 0xB3F7F7F5),
                                                             height: 26.sp,

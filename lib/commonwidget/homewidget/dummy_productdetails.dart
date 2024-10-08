@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/utils/constants.dart';
 
@@ -17,35 +18,35 @@ class DummyProductDetails extends StatelessWidget {
           child: Stack(
             children: [
               Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0),
+                  padding: EdgeInsets.symmetric(vertical: 0.sp),
                   child: DummyContainer(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.7,
                   )),
               Positioned(
-                bottom: 30,
-                right: 16,
+                bottom: 30.sp,
+                right: 16.sp,
                 child: DummyContainer(
                   width: MediaQuery.of(context).size.width,
-                  height: 30,
+                  height: 30.sp,
                 ),
               )
             ],
           ),
         ),
-        const SizedBox(
-          height: 24,
+        SizedBox(
+          height: 24.sp,
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0.sp),
           child: DummyContainer(
             width: 50,
             height: 10,
           ),
         ),
-        const Padding(
-            padding:
-                EdgeInsets.only(top: 12.0, bottom: 5.0, left: 12, right: 12),
+        Padding(
+            padding: EdgeInsets.only(
+                top: 12.0.sp, bottom: 5.0.sp, left: 12.sp, right: 12.sp),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -58,7 +59,7 @@ class DummyProductDetails extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.only(left: 10.sp),
                   child: DummyContainer(
                     width: 50,
                     height: 10,
@@ -66,15 +67,15 @@ class DummyProductDetails extends StatelessWidget {
                 )
               ],
             )),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.sp),
           child: DummyContainer(
             width: 50,
             height: 10,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 12.0, left: 12, right: 12),
+          padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
@@ -83,8 +84,8 @@ class DummyProductDetails extends StatelessWidget {
                 width: 50,
                 height: 10,
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0.sp),
                 child: DummyContainer(
                   width: 50,
                   height: 10,
@@ -95,9 +96,9 @@ class DummyProductDetails extends StatelessWidget {
                   color: whiteColor,
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: const Padding(
-                  padding:
-                      EdgeInsets.only(top: 6, bottom: 6, left: 8, right: 8),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top: 6.sp, bottom: 6.sp, left: 8.sp, right: 8.sp),
                   child: DummyContainer(
                     width: 50,
                     height: 10,
@@ -107,12 +108,12 @@ class DummyProductDetails extends StatelessWidget {
             ],
           ),
         ),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
                 padding: EdgeInsets.only(
-                    top: 30.0, bottom: 0.0, left: 12, right: 12),
+                    top: 30.0.sp, bottom: 0.0.sp, left: 12.sp, right: 12.sp),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,

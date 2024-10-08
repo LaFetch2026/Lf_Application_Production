@@ -118,29 +118,42 @@ class HorizontalHomeList extends StatelessWidget {
                                               height: 150.sp,
                                               width: 122.sp,
                                               fit: BoxFit.cover),
-                                      Visibility(
-                                        visible: visibleheart,
-                                        child: Positioned(
-                                          right: 0,
-                                          child: IconButton(
-                                            icon: CircleAvatar(
-                                                radius: 12.0,
-                                                backgroundColor: whiteColor,
-                                                child: list[index]["wishlisted"]
-                                                    ? Image.asset(
-                                                        wishlistSelectImage,
-                                                        height: 18.sp,
-                                                        width: 18.sp,
-                                                      )
-                                                    : Image.asset(
-                                                        heartImage,
-                                                        height: 18.sp,
-                                                        width: 18.sp,
-                                                      )),
-                                            onPressed: () {
-                                              onPressedHeart?.call(
-                                                  list[index]["id"], index);
-                                            },
+                                      GestureDetector(
+                                        onTap: () {
+                                          onPressedHeart?.call(
+                                              list[index]["id"], index);
+                                        },
+                                        child: Visibility(
+                                          visible: visibleheart,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.sp,
+                                                vertical: 10.sp),
+                                            child: Align(
+                                              alignment: Alignment.topRight,
+                                              child: InkWell(
+                                                child: SizedBox(
+                                                  height: 24.sp,
+                                                  width: 24.sp,
+                                                  child: CircleAvatar(
+                                                      // radius: 12.0.sp,
+                                                      backgroundColor:
+                                                          whiteColor,
+                                                      child: list[index]
+                                                              ["wishlisted"]
+                                                          ? Image.asset(
+                                                              wishlistSelectImage,
+                                                              height: 18.sp,
+                                                              width: 18.sp,
+                                                            )
+                                                          : Image.asset(
+                                                              heartImage,
+                                                              height: 18.sp,
+                                                              width: 18.sp,
+                                                            )),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/utils/constants.dart';
 
@@ -9,7 +10,7 @@ class DummySaveAddress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 5),
+      padding: EdgeInsets.only(top: 10.sp, bottom: 5.sp),
       child: ListView.builder(
           primary: false,
           shrinkWrap: true,
@@ -20,59 +21,59 @@ class DummySaveAddress extends StatelessWidget {
           itemBuilder: (ctx, index) {
             return Container(
               color: whiteColor,
-              margin: const EdgeInsets.only(bottom: 10),
+              margin: EdgeInsets.only(bottom: 10.sp),
               child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 10,
+                padding: EdgeInsets.only(
+                  top: 10.sp,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           flex: 1,
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 5),
+                                horizontal: 14.sp, vertical: 5.sp),
                             child: DummyContainer(height: 10, width: 50),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.sp,
                           ),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.only(right: 5),
-                            width: 80,
-                            height: 20,
+                            margin: EdgeInsets.only(right: 5.sp),
+                            width: 80.sp,
+                            height: 20.sp,
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.04),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(20.sp),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14.sp, vertical: 2.sp),
                       child: DummyContainer(height: 10, width: 50),
                     ),
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14.sp, vertical: 2.sp),
                       child: DummyContainer(height: 10, width: 50),
                     ),
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14.sp, vertical: 2.sp),
                       child: DummyContainer(height: 10, width: 50),
                     ),
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 14.sp, vertical: 2.sp),
                       child: DummyContainer(height: 10, width: 50),
                     ),
                   ],

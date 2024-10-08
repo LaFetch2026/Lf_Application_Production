@@ -31,20 +31,21 @@ class _BottomWishlistState extends State<BottomWishlist> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 410,
+      height: 410.sp,
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: whiteColor,
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+            topLeft: Radius.circular(16.0.sp),
+            topRight: Radius.circular(16.0.sp)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
               child: Row(
                 children: [
                   Expanded(
@@ -66,18 +67,18 @@ class _BottomWishlistState extends State<BottomWishlist> {
                     child: Container(
                       color: Colors.transparent,
                       child: Image.asset(blackCrossImage,
-                          height: 20, width: 20, fit: BoxFit.cover),
+                          height: 20.sp, width: 20.sp, fit: BoxFit.cover),
                     ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 10.sp),
               child: widget.wishlistList.isNotEmpty
                   ? SizedBox(
                       width: double.infinity,
-                      height: 250,
+                      height: 250.sp,
                       child: ListView.builder(
                           physics: const ScrollPhysics(),
                           itemCount: widget.wishlistList.length,
@@ -115,13 +116,14 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                               ? blackColor
                                               : whiteColor,
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 10),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10.sp,
+                                                horizontal: 10.sp),
                                             child: Text(
                                               widget.wishlistList[index]
                                                   ["name"],
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: id ==
                                                         widget.wishlistList[
                                                             index]["id"]
@@ -156,9 +158,9 @@ class _BottomWishlistState extends State<BottomWishlist> {
                       )
                   : Center(
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 150),
+                        padding: EdgeInsets.only(top: 150.sp),
                         child: SmallButton(
-                            width: 160,
+                            width: 160.sp,
                             label: "Create Wishlisit",
                             textColor: whiteBorderColor,
                             backgroundColor: colorPrimary,
@@ -175,7 +177,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
             ),
             widget.wishlistList.isNotEmpty
                 ? Obx(() => Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                       child: getSingleButton(
                           label: "Done",
                           textColor: whiteBorderColor,

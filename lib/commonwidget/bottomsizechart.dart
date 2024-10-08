@@ -40,9 +40,9 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                       Get.back();
                     },
                     child: Container(
-                      height: 20,
-                      width: 20,
-                      margin: EdgeInsets.only(top: 50, right: 20),
+                      height: 20.sp,
+                      width: 20.sp,
+                      margin: EdgeInsets.only(top: 50.sp, right: 20.sp),
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         image: DecorationImage(
@@ -53,7 +53,8 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                  padding:
+                      EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp),
                   child: Row(
                     children: [
                       Expanded(
@@ -76,9 +77,9 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      EdgeInsets.only(left: 10.sp, right: 10.sp, bottom: 10.sp),
                   child: SizedBox(
-                    height: 400,
+                    height: 400.sp,
                     width: MediaQuery.sizeOf(context).width,
                     child: CachedNetworkImage(
                       cacheManager: CacheManager(Config("customCacheKey",
@@ -89,7 +90,7 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                       errorWidget: (context, url, error) => Image.asset(
                         downloadImage,
                         fit: BoxFit.contain,
-                        height: 400,
+                        height: 400.sp,
                         width: MediaQuery.sizeOf(context).width,
                       ),
                     ),
