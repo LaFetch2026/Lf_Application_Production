@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 
 class DummyGridList extends StatelessWidget {
@@ -12,8 +13,8 @@ class DummyGridList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding:
-            const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 90),
+        padding: EdgeInsets.only(
+            left: 16.sp, right: 16.sp, top: 10.sp, bottom: 90.sp),
         child: GridView.count(
           shrinkWrap: true,
           crossAxisCount: 2,
@@ -21,12 +22,12 @@ class DummyGridList extends StatelessWidget {
           padding: EdgeInsets.zero,
           childAspectRatio: 0.5,
           physics: const ScrollPhysics(),
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 0,
+          crossAxisSpacing: 5.sp,
+          mainAxisSpacing: 0.sp,
           children: List.generate(
             size,
             (index) {
-              return const Column(
+              return Column(
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,12 +37,13 @@ class DummyGridList extends StatelessWidget {
                           Center(
                             child: DummyContainer(
                               height: 190,
-                              width: 152,
+                              width:
+                                  (MediaQuery.of(context).size.width / 2) - 24,
                             ),
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 22, vertical: 10),
+                                horizontal: 22.sp, vertical: 10.sp),
                             child: Align(
                               alignment: Alignment.topRight,
                               child: InkWell(
@@ -54,7 +56,7 @@ class DummyGridList extends StatelessWidget {
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 22, vertical: 10),
+                                horizontal: 22.sp, vertical: 10.sp),
                             child: Align(
                               alignment: Alignment.bottomLeft,
                               child: DummyContainer(
@@ -66,22 +68,23 @@ class DummyGridList extends StatelessWidget {
                         ],
                       ),
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.sp, vertical: 5.sp),
                         child: DummyContainer(
                           height: 10,
                           width: 50,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: EdgeInsets.symmetric(horizontal: 10.sp),
                         child: DummyContainer(
                           height: 10,
                           width: 50,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 10, left: 10, right: 1),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, left: 10.sp, right: 1.sp),
                         child: Row(
                           children: [
                             DummyContainer(
@@ -89,7 +92,7 @@ class DummyGridList extends StatelessWidget {
                               width: 50,
                             ),
                             Padding(
-                              padding: EdgeInsets.only(left: 5),
+                              padding: EdgeInsets.only(left: 5.sp),
                               child: DummyContainer(
                                 height: 10,
                                 width: 50,
@@ -99,7 +102,8 @@ class DummyGridList extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, left: 10.sp, right: 10.sp),
                         child: Row(
                           children: [
                             DummyContainer(
@@ -107,7 +111,7 @@ class DummyGridList extends StatelessWidget {
                               width: 14,
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
                               child: DummyContainer(
                                 height: 10,
                                 width: 50,

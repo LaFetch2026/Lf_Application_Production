@@ -75,8 +75,11 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16, top: 10, bottom: 90),
+                                  padding: EdgeInsets.only(
+                                      left: 16.sp,
+                                      right: 16.sp,
+                                      top: 10.sp,
+                                      bottom: 90.sp),
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
@@ -156,8 +159,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         "images"] !=
                                                                     null
                                                             ? SizedBox(
-                                                                height: 190,
-                                                                width: 152,
+                                                                height: 190.sp,
+                                                                width: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) -
+                                                                    24.sp,
                                                                 child:
                                                                     CachedNetworkImage(
                                                                   cacheManager: CacheManager(Config(
@@ -197,15 +204,22 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                     downloadImage,
                                                                     fit: BoxFit
                                                                         .cover,
-                                                                    height: 190,
-                                                                    width: 152,
+                                                                    height:
+                                                                        190.sp,
+                                                                    width: (MediaQuery.of(context).size.width /
+                                                                            2) -
+                                                                        24.sp,
                                                                   ),
                                                                 ),
                                                               )
                                                             : Image.asset(
                                                                 dummyWishlistImage,
-                                                                height: 190,
-                                                                width: 152,
+                                                                height: 190.sp,
+                                                                width: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2) -
+                                                                    24.sp,
                                                                 fit: BoxFit
                                                                     .cover),
                                                       ),
@@ -279,19 +293,19 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           }
                                                         },
                                                         child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
                                                                   horizontal:
-                                                                      22,
-                                                                  vertical: 10),
+                                                                      22.sp,
+                                                                  vertical:
+                                                                      10.sp),
                                                           child: Align(
                                                             alignment: Alignment
                                                                 .topRight,
                                                             child: InkWell(
                                                               child: SizedBox(
-                                                                height: 24,
-                                                                width: 24,
+                                                                height: 24.sp,
+                                                                width: 24.sp,
                                                                 child:
                                                                     CircleAvatar(
                                                                   backgroundColor:
@@ -304,21 +318,21 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           .asset(
                                                                           wishlistSelectImage,
                                                                           height:
-                                                                              18,
+                                                                              18.sp,
                                                                           color:
                                                                               bottomnavBack,
                                                                           width:
-                                                                              18,
+                                                                              18.sp,
                                                                         )
                                                                       : Image
                                                                           .asset(
                                                                           heartImage,
                                                                           height:
-                                                                              18,
+                                                                              18.sp,
                                                                           color:
                                                                               bottomnavBack,
                                                                           width:
-                                                                              18,
+                                                                              18.sp,
                                                                         ),
                                                                 ),
                                                               ),
@@ -327,37 +341,40 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                         ),
                                                       ),
                                                       Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 22,
-                                                                vertical: 10),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    22.sp,
+                                                                vertical:
+                                                                    10.sp),
                                                         child: Align(
                                                           alignment: Alignment
                                                               .bottomLeft,
                                                           child: Container(
                                                             margin:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 140),
+                                                                EdgeInsets.only(
+                                                                    top:
+                                                                        140.sp),
                                                             color: const Color(
                                                                 0xB3F7F7F5),
-                                                            height: 26,
-                                                            width: 80,
+                                                            height: 26.sp,
+                                                            width: 80.sp,
                                                             child: Row(
                                                               children: [
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          2),
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              2.sp),
                                                                   child: Image
                                                                       .asset(
                                                                     starImage,
-                                                                    height: 16,
+                                                                    height:
+                                                                        16.sp,
                                                                     color:
                                                                         bottomnavBack,
-                                                                    width: 16,
+                                                                    width:
+                                                                        16.sp,
                                                                   ),
                                                                 ),
                                                                 AppText(
@@ -374,8 +391,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                       : "0",
                                                                   color:
                                                                       colorPrimary,
-                                                                  fontSize:
-                                                                      12.sp,
+                                                                  fontSize: 12,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
@@ -383,16 +399,17 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           .w400,
                                                                 ),
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          10),
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              10.sp),
                                                                   child:
                                                                       Container(
-                                                                    width: 1,
+                                                                    width: 1.sp,
                                                                     color:
                                                                         textHintColor,
-                                                                    height: 16,
+                                                                    height:
+                                                                        16.sp,
                                                                   ),
                                                                 ),
                                                                 AppText(
@@ -404,8 +421,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                       .toString(),
                                                                   color:
                                                                       colorPrimary,
-                                                                  fontSize:
-                                                                      12.sp,
+                                                                  fontSize: 12,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
@@ -420,10 +436,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     ],
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 5),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.sp,
+                                                            vertical: 5.sp),
                                                     child: AppText(
                                                       text: productController
                                                                   .productExpressBrandList[
@@ -431,7 +447,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           "",
                                                       color: nameText,
                                                       maxLines: 1,
-                                                      fontSize: 12.sp,
+                                                      fontSize: 12,
                                                       fontFamily:
                                                           "Franklin Gothic",
                                                       fontWeight:
@@ -439,16 +455,16 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 10),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.sp),
                                                     child: AppText(
                                                       text:
                                                           "${productController.productExpressBrandList[index]["short_description"]} \n"
                                                           "",
                                                       color: nameText,
                                                       maxLines: 2,
-                                                      fontSize: 11.sp,
+                                                      fontSize: 11,
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       fontWeight:
@@ -456,11 +472,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10,
-                                                            left: 10,
-                                                            right: 1),
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.sp,
+                                                        left: 10.sp,
+                                                        right: 1.sp),
                                                     child: Row(
                                                       children: [
                                                         AppText(
@@ -469,7 +484,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           color:
                                                               deepGreytextColor,
                                                           maxLines: 2,
-                                                          fontSize: 11.sp,
+                                                          fontSize: 11,
                                                           fontFamily:
                                                               "Franklin Gothic",
                                                           fontWeight:
@@ -477,9 +492,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 5),
+                                                              EdgeInsets.only(
+                                                                  left: 5.sp),
                                                           child: Text(
                                                             "\u{20B9} ${productController.productExpressBrandList[index]["mrp"] ?? ""}",
                                                             style: TextStyle(
@@ -505,33 +519,31 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           index]["express_delivery"]
                                                       ? Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 10,
-                                                                  left: 10,
-                                                                  right: 10),
+                                                              EdgeInsets.only(
+                                                                  top: 10.sp,
+                                                                  left: 10.sp,
+                                                                  right: 10.sp),
                                                           child: Row(
                                                             children: [
-                                                              const ImageIcon(
+                                                              ImageIcon(
                                                                 AssetImage(
                                                                     truckImage),
                                                                 color:
                                                                     expressText,
-                                                                size: 14,
+                                                                size: 14.sp,
                                                               ),
                                                               Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        5),
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            5.sp),
                                                                 child: AppText(
                                                                   text:
                                                                       "Express",
                                                                   color:
                                                                       expressText,
                                                                   maxLines: 2,
-                                                                  fontSize:
-                                                                      11.sp,
+                                                                  fontSize: 11,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
@@ -578,8 +590,8 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                     bottom: 0,
                     width: MediaQuery.of(context).size.width,
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 30, top: 20, left: 4, right: 12),
+                      padding: EdgeInsets.only(
+                          bottom: 30.sp, top: 20.sp, left: 4.sp, right: 12.sp),
                       child: DoubleButton(
                         firstText: "Sort By",
                         secondText: "Filters",

@@ -11,7 +11,7 @@ class FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -22,7 +22,7 @@ class FilterButton extends StatelessWidget {
             child: Container(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                    EdgeInsets.symmetric(vertical: 10.sp, horizontal: 50.sp),
                 child: Text(
                   "Close",
                   textAlign: TextAlign.center,
@@ -38,11 +38,11 @@ class FilterButton extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 10.sp),
             child: Container(
-              width: 1,
+              width: 1.sp,
               color: borderColor,
-              height: 32,
+              height: 32.sp,
             ),
           ),
           GestureDetector(
@@ -52,7 +52,7 @@ class FilterButton extends StatelessWidget {
             child: Container(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                    EdgeInsets.symmetric(vertical: 10.sp, horizontal: 50.sp),
                 child: Text(
                   "Apply",
                   style: TextStyle(

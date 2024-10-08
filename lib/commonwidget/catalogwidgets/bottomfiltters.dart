@@ -70,8 +70,8 @@ class BottomFiltersState extends State<BottomFilters> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 30, bottom: 20),
+                  padding: EdgeInsets.only(
+                      left: 16.sp, right: 16.sp, top: 30.sp, bottom: 20.sp),
                   child: Row(
                     children: [
                       Text(
@@ -115,12 +115,12 @@ class BottomFiltersState extends State<BottomFilters> {
                   children: [
                     Container(
                       color: backWhite,
-                      width: 150,
-                      height: MediaQuery.of(context).size.height - 120,
+                      width: 150.sp,
+                      height: MediaQuery.of(context).size.height - 120.sp,
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: EdgeInsets.only(bottom: 8.sp),
                         child: SizedBox(
-                          height: 150,
+                          height: 150.sp,
                           child: ListView.builder(
                               physics: const ScrollPhysics(),
                               itemCount: brands.length,
@@ -169,11 +169,13 @@ class BottomFiltersState extends State<BottomFilters> {
                                               ? btnTextColor
                                               : backWhite,
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10.sp),
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 16, top: 2, bottom: 2),
+                                              padding: EdgeInsets.only(
+                                                  left: 16.sp,
+                                                  top: 2.sp,
+                                                  bottom: 2.sp),
                                               child: Text(
                                                 brands[index],
                                                 style: TextStyle(
@@ -199,19 +201,19 @@ class BottomFiltersState extends State<BottomFilters> {
                     ),
                     Container(
                       color: whiteBorderColor,
-                      width: MediaQuery.of(context).size.width - 150,
-                      height: MediaQuery.of(context).size.height - 120,
+                      width: MediaQuery.of(context).size.width - 150.sp,
+                      height: MediaQuery.of(context).size.height - 120.sp,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.sp, vertical: 8.sp),
                         child: Obx(
                           () => productController.isPrice.value
                               ? Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
+                                      EdgeInsets.symmetric(vertical: 10.sp),
                                   child: SizedBox(
                                     height: MediaQuery.of(context).size.height -
-                                        172,
+                                        172.sp,
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -219,8 +221,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.sp),
                                           child: Text(
                                             "Selected Price Range",
                                             style: TextStyle(
@@ -233,8 +235,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.sp),
                                           child: SizedBox(
                                             width: double.maxFinite,
                                             child: Material(
@@ -271,9 +273,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.sp),
                                               child: Text(
                                                 "\u{20B9} ${lowerValue} - \u{20B9} ${UpperValue}",
                                                 style: TextStyle(
@@ -294,12 +295,12 @@ class BottomFiltersState extends State<BottomFilters> {
                                 )
                               : productController.isFilter.value
                                   ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.sp),
                                       child: SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height -
-                                                172,
+                                                172.sp,
                                         child: ListView.builder(
                                             physics: const ScrollPhysics(),
                                             itemCount: 8,
@@ -309,16 +310,16 @@ class BottomFiltersState extends State<BottomFilters> {
                                               return Column(
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        vertical: 10),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10.sp),
                                                     child: Row(
                                                       children: [
-                                                        const Padding(
+                                                        Padding(
                                                             padding: EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
-                                                                        10),
+                                                                        10.sp),
                                                             child:
                                                                 DummyContainer(
                                                                     height: 14,
@@ -351,13 +352,13 @@ class BottomFiltersState extends State<BottomFilters> {
                                             ),
                                           ), */
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10.sp),
                                             child: SizedBox(
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height -
-                                                  172,
+                                                  172.sp,
                                               child: ListView.builder(
                                                   physics:
                                                       const ScrollPhysics(),
@@ -372,11 +373,10 @@ class BottomFiltersState extends State<BottomFilters> {
                                                         GestureDetector(
                                                             onTap: () {},
                                                             child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .symmetric(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
                                                                       vertical:
-                                                                          10),
+                                                                          10.sp),
                                                               child: Row(
                                                                 children: [
                                                                   if (type ==
@@ -390,11 +390,11 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
                                                                               borderRadius: BorderRadius.circular(3),
-                                                                              border: const Border(
-                                                                                top: BorderSide(width: 2.0, color: greyBorder),
-                                                                                left: BorderSide(width: 2.0, color: greyBorder),
-                                                                                right: BorderSide(width: 2.0, color: greyBorder),
-                                                                                bottom: BorderSide(width: 2.0, color: greyBorder),
+                                                                              border: Border(
+                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
                                                                               ),
                                                                             ),
                                                                             width: 20,
@@ -424,17 +424,17 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     Padding(
                                                                       padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child:
                                                                           Material(
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
                                                                               borderRadius: BorderRadius.circular(3),
-                                                                              border: const Border(
-                                                                                top: BorderSide(width: 2.0, color: greyBorder),
-                                                                                left: BorderSide(width: 2.0, color: greyBorder),
-                                                                                right: BorderSide(width: 2.0, color: greyBorder),
-                                                                                bottom: BorderSide(width: 2.0, color: greyBorder),
+                                                                              border: Border(
+                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
                                                                               ),
                                                                             ),
                                                                             width: 20,
@@ -464,17 +464,17 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     Padding(
                                                                       padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child:
                                                                           Material(
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
                                                                               borderRadius: BorderRadius.circular(3),
-                                                                              border: const Border(
-                                                                                top: BorderSide(width: 2.0, color: greyBorder),
-                                                                                left: BorderSide(width: 2.0, color: greyBorder),
-                                                                                right: BorderSide(width: 2.0, color: greyBorder),
-                                                                                bottom: BorderSide(width: 2.0, color: greyBorder),
+                                                                              border: Border(
+                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
                                                                               ),
                                                                             ),
                                                                             width: 20,

@@ -119,14 +119,14 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
             ),
           ), */
           Padding(
-            padding:
-                const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 5),
+            padding: EdgeInsets.only(
+                top: 20.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
             child: AppText(
               text: "Express Shop",
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: blackColor,
-              fontSize: 25.sp,
+              fontSize: 25,
             ),
           ),
           const SizedBox(
@@ -135,23 +135,23 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
           Obx(
             () => brandController.isBrand.value
                 ? Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, bottom: 10, right: 16),
+                    padding: EdgeInsets.only(
+                        left: 16.sp, bottom: 10.sp, right: 16.sp),
                     child: SizedBox(
-                      height: 30,
+                      height: 30.sp,
                       width: double.infinity,
                       child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
+                          physics: BouncingScrollPhysics(),
                           itemCount: 5,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (ctx, index) {
                             return Container(
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 100,
-                              height: 30,
+                              margin: EdgeInsets.only(right: 5.sp),
+                              width: 100.sp,
+                              height: 30.sp,
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.04),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20.sp),
                               ),
                             );
                           }),
@@ -159,10 +159,10 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                 : Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
                         child: SizedBox(
                             width: double.infinity,
-                            height: 50,
+                            height: 50.sp,
                             child: GetBuilder<BrandController>(
                               builder: (value) => ListView.builder(
                                   physics: const BouncingScrollPhysics(),
@@ -217,9 +217,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                             duration: const Duration(
                                                 milliseconds: 300),
                                             margin:
-                                                const EdgeInsets.only(right: 5),
-                                            width: 100,
-                                            height: 30,
+                                                EdgeInsets.only(right: 5.sp),
+                                            width: 100.sp,
+                                            height: 30.sp,
                                             decoration: BoxDecoration(
                                               color: current == index
                                                   ? btnTextColor
@@ -236,9 +236,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                                       width: 1),
                                             ),
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 5.sp),
                                               child: Center(
                                                 child: AppText(
                                                   text: index == 0
@@ -248,7 +247,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                                   color: current == index
                                                       ? whiteBorderColor
                                                       : textHintColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                 ),

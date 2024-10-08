@@ -29,20 +29,20 @@ class _BottomSortByState extends State<BottomSortBy> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 320,
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: whiteColor,
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+            topLeft: Radius.circular(16.sp), topRight: Radius.circular(16.sp)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
               child: Text(
                 "Sort by",
                 style: TextStyle(
@@ -77,7 +77,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                     "Recommended",
                     style: TextStyle(
                       color: colorPrimary,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                     ),
@@ -108,7 +108,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                     "Price - low to high",
                     style: TextStyle(
                       color: colorPrimary,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                     ),
@@ -139,7 +139,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                     "What’s new",
                     style: TextStyle(
                       color: colorPrimary,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                     ),
@@ -170,7 +170,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                     "Price - high to low",
                     style: TextStyle(
                       color: colorPrimary,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                     ),
@@ -201,7 +201,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                     "Customer rating",
                     style: TextStyle(
                       color: colorPrimary,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                     ),
