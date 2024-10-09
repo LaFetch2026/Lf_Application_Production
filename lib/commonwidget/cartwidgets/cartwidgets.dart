@@ -33,22 +33,22 @@ class CartWidget extends StatelessWidget {
             visible: visible,
             child: Center(
               child: Image.asset(image!,
-                  height: 220, width: 189, fit: BoxFit.cover),
+                  height: 220.sp, width: 189.sp, fit: BoxFit.cover),
             )),
         Padding(
-          padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+          padding: EdgeInsets.only(top: 30.sp, left: 20.sp, right: 20.sp),
           child: Center(
             child: AppText(
               text: text1,
               fontFamily: "Franklin Gothic Bold",
               fontWeight: FontWeight.w700,
               color: blackColor,
-              fontSize: 18.sp,
+              fontSize: 18,
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+          padding: EdgeInsets.only(top: 20.sp, left: 20.sp, right: 20.sp),
           child: AppText(
             text: text2,
             textAlign: TextAlign.center,
@@ -56,11 +56,11 @@ class CartWidget extends StatelessWidget {
             fontWeight: FontWeight.w400,
             maxLines: 2,
             color: blackColor,
-            fontSize: 14.sp,
+            fontSize: 14,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 30, left: 24, right: 24),
+          padding: EdgeInsets.only(top: 30.sp, left: 24.sp, right: 24.sp),
           child: SingleButton(
               label: btntext,
               textColor: whiteBorderColor,

@@ -40,18 +40,19 @@ class BottomSizeState extends State<BottomSize> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 220,
+        height: 220.sp,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: whiteTextColor,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+              topLeft: Radius.circular(16.0.sp),
+              topRight: Radius.circular(16.0.sp)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 20.sp),
               child: Row(
                 children: [
                   Expanded(
@@ -73,14 +74,14 @@ class BottomSizeState extends State<BottomSize> {
                     child: Container(
                       color: Colors.transparent,
                       child: Image.asset(blackCrossImage,
-                          height: 18, width: 18, fit: BoxFit.cover),
+                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                     ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
               child: widget.sizeList
                       .where((element) =>
                           int.parse(element['stocks'].toString()) > 0)
@@ -88,8 +89,8 @@ class BottomSizeState extends State<BottomSize> {
                       .isNotEmpty
                   ? Wrap(
                       direction: Axis.horizontal,
-                      spacing: 12.0,
-                      runSpacing: 8.0,
+                      spacing: 12.0.sp,
+                      runSpacing: 8.0.sp,
                       runAlignment: WrapAlignment.spaceEvenly,
                       children: [
                           for (var i in widget.sizeList.where((element) =>
@@ -114,8 +115,8 @@ class BottomSizeState extends State<BottomSize> {
                                               ? colorPrimary
                                               : whiteColor),
                                       child: SizedBox(
-                                        width: 40,
-                                        height: 40,
+                                        width: 40.sp,
+                                        height: 40.sp,
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: AppText(
@@ -130,7 +131,7 @@ class BottomSizeState extends State<BottomSize> {
                                                         i['id']
                                                 ? whiteColor
                                                 : btnTextColor,
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       )),
@@ -138,15 +139,14 @@ class BottomSizeState extends State<BottomSize> {
                                 int.parse(i['stocks'].toString()) > 10
                                     ? const SizedBox()
                                     : Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
+                                        padding: EdgeInsets.only(top: 8.0.sp),
                                         child: AppText(
                                           text:
                                               '${i['stocks'].toString()} left',
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: redColor,
-                                          fontSize: 11.sp,
+                                          fontSize: 11,
                                         ),
                                       )
                               ],
@@ -157,11 +157,11 @@ class BottomSizeState extends State<BottomSize> {
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                       color: redColor,
-                      fontSize: 11.sp,
+                      fontSize: 11,
                     ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 10.sp),
               child: getSingleButton(
                   label: "Done",
                   textColor: whiteBorderColor,

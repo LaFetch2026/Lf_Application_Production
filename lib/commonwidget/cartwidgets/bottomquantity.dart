@@ -39,20 +39,21 @@ class BottomQuantityState extends State<BottomQuantity> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 200.sp,
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: whiteTextColor,
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+            topLeft: Radius.circular(16.0.sp),
+            topRight: Radius.circular(16.0.sp)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
               child: Row(
                 children: [
                   Expanded(
@@ -74,17 +75,17 @@ class BottomQuantityState extends State<BottomQuantity> {
                     child: Container(
                       color: Colors.transparent,
                       child: Image.asset(blackCrossImage,
-                          height: 18, width: 18, fit: BoxFit.cover),
+                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                     ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
               child: SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 50.sp,
                 child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     itemCount: widget.stock,
@@ -100,8 +101,7 @@ class BottomQuantityState extends State<BottomQuantity> {
                               setState(() {});
                             },
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
+                              padding: EdgeInsets.symmetric(horizontal: 4.sp),
                               child: Container(
                                 decoration: BoxDecoration(
                                     color: text == widget.qtyList[index]
@@ -111,10 +111,10 @@ class BottomQuantityState extends State<BottomQuantity> {
                                       width: 1,
                                       color: btnTextColor,
                                     ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(20))),
-                                width: 35,
-                                height: 35,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(20.sp))),
+                                width: 35.sp,
+                                height: 35.sp,
                                 child: Center(
                                   child: AppText(
                                     textAlign: TextAlign.center,
@@ -122,7 +122,7 @@ class BottomQuantityState extends State<BottomQuantity> {
                                     color: text == widget.qtyList[index]
                                         ? whiteColor
                                         : btnTextColor,
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -136,7 +136,7 @@ class BottomQuantityState extends State<BottomQuantity> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(vertical: 10.sp),
               child: getSingleButton(
                   label: "Done",
                   textColor: whiteBorderColor,

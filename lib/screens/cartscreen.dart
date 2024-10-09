@@ -88,7 +88,7 @@ class CartScreenState extends State<CartScreen> {
                       ? const DummyOrderList()
                       : controller.orderList.isEmpty
                           ? Padding(
-                              padding: const EdgeInsets.only(top: 60),
+                              padding: EdgeInsets.only(top: 60.sp),
                               child: CartWidget(
                                   image: shopBagImage,
                                   text1: "There is still room for more",
@@ -112,8 +112,9 @@ class CartScreenState extends State<CartScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 20),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16.sp,
+                                                vertical: 20.sp),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -130,12 +131,11 @@ class CartScreenState extends State<CartScreen> {
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: blackColor,
-                                                      fontSize: 16.sp,
+                                                      fontSize: 16,
                                                     ),
                                                     Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 5),
+                                                      padding: EdgeInsets.only(
+                                                          top: 5.sp),
                                                       child: Row(
                                                         children: [
                                                           AppText(
@@ -153,19 +153,18 @@ class CartScreenState extends State<CartScreen> {
                                                                 FontWeight.w400,
                                                             color:
                                                                 textHintColor,
-                                                            fontSize: 12.sp,
+                                                            fontSize: 12,
                                                           ),
                                                           Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
-                                                                        10),
+                                                                        10.sp),
                                                             child: Container(
-                                                              width: 1,
+                                                              width: 1.sp,
                                                               color:
                                                                   textHintColor,
-                                                              height: 16,
+                                                              height: 16.sp,
                                                             ),
                                                           ),
                                                           AppText(
@@ -177,7 +176,7 @@ class CartScreenState extends State<CartScreen> {
                                                                 FontWeight.w400,
                                                             color:
                                                                 textHintColor,
-                                                            fontSize: 12.sp,
+                                                            fontSize: 12,
                                                           ),
                                                         ],
                                                       ),
@@ -190,9 +189,8 @@ class CartScreenState extends State<CartScreen> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 15),
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15.sp),
                                                   child: GestureDetector(
                                                     onTap: () async {
                                                       showDialog(
@@ -239,18 +237,17 @@ class CartScreenState extends State<CartScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        const ImageIcon(
+                                                        ImageIcon(
                                                           AssetImage(
                                                               deleteIcon),
                                                           color: colorPrimary,
-                                                          size: 16,
+                                                          size: 16.sp,
                                                         ),
                                                         Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
                                                                   horizontal:
-                                                                      2),
+                                                                      2.sp),
                                                           child: AppText(
                                                             text: "Clear Bag",
                                                             fontFamily:
@@ -258,7 +255,7 @@ class CartScreenState extends State<CartScreen> {
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             color: colorPrimary,
-                                                            fontSize: 12.sp,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       ],
@@ -269,8 +266,8 @@ class CartScreenState extends State<CartScreen> {
                                             ),
                                           ),
                                           Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 10, top: 5),
+                                              padding: EdgeInsets.only(
+                                                  bottom: 10.sp, top: 5.sp),
                                               child: GetBuilder<CartController>(
                                                 builder: (value) =>
                                                     RefreshIndicator(
@@ -293,17 +290,17 @@ class CartScreenState extends State<CartScreen> {
                                                       itemBuilder:
                                                           (ctx, index) {
                                                         return Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical: 5),
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      5.sp),
                                                           child: Padding(
                                                             padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 10,
-                                                                    left: 16,
-                                                                    right: 16),
+                                                                EdgeInsets.only(
+                                                                    top: 10.sp,
+                                                                    left: 16.sp,
+                                                                    right:
+                                                                        16.sp),
                                                             child: Column(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
@@ -340,8 +337,8 @@ class CartScreenState extends State<CartScreen> {
                                                                             child: value.orderList[index]["product"] != null
                                                                                 ? value.orderList[index]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["images"] != null
                                                                                     ? SizedBox(
-                                                                                        height: 78,
-                                                                                        width: 64,
+                                                                                        height: 78.sp,
+                                                                                        width: 64.sp,
                                                                                         child: CachedNetworkImage(
                                                                                           cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                           fit: BoxFit.cover,
@@ -352,20 +349,20 @@ class CartScreenState extends State<CartScreen> {
                                                                                           errorWidget: (context, url, error) => Image.asset(
                                                                                             downloadImage,
                                                                                             fit: BoxFit.cover,
-                                                                                            height: 78,
-                                                                                            width: 64,
+                                                                                            height: 78.sp,
+                                                                                            width: 64.sp,
                                                                                           ),
                                                                                         ),
                                                                                       )
-                                                                                    : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)
-                                                                                : Image.asset(dummyWishlistImage, height: 78, width: 64, fit: BoxFit.cover)),
+                                                                                    : Image.asset(dummyWishlistImage, height: 78.sp, width: 64.sp, fit: BoxFit.cover)
+                                                                                : Image.asset(dummyWishlistImage, height: 78.sp, width: 64.sp, fit: BoxFit.cover)),
                                                                         Expanded(
                                                                           flex:
                                                                               3,
                                                                           child:
                                                                               Padding(
                                                                             padding:
-                                                                                const EdgeInsets.only(left: 8),
+                                                                                EdgeInsets.only(left: 8.sp),
                                                                             child:
                                                                                 Column(
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,16 +373,16 @@ class CartScreenState extends State<CartScreen> {
                                                                                   maxLines: 1,
                                                                                   fontFamily: "Franklin Gothic",
                                                                                   fontWeight: FontWeight.w500,
-                                                                                  fontSize: 14.sp,
+                                                                                  fontSize: 14,
                                                                                   color: blackColor,
                                                                                 ),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                                                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                   child: AppText(
                                                                                     text: value.orderList[index]["product"]["short_description"] ?? "",
                                                                                     color: nameText,
                                                                                     maxLines: 2,
-                                                                                    fontSize: 12.sp,
+                                                                                    fontSize: 12,
                                                                                     fontFamily: "Franklin Gothic Regular",
                                                                                     fontWeight: FontWeight.w400,
                                                                                   ),
@@ -393,12 +390,12 @@ class CartScreenState extends State<CartScreen> {
                                                                                 AppText(
                                                                                   text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["description"] ?? ""),
                                                                                   color: textHintColor,
-                                                                                  fontSize: 10.sp,
+                                                                                  fontSize: 10,
                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                   fontWeight: FontWeight.w400,
                                                                                 ),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                                                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                   child: Row(
                                                                                     children: [
                                                                                       /*   value.orderList[index]["inventory"] != null
@@ -468,24 +465,24 @@ class CartScreenState extends State<CartScreen> {
                                                                                               },
                                                                                               child: Container(
                                                                                                 color: whiteTextColor,
-                                                                                                height: 40,
-                                                                                                width: 75,
+                                                                                                height: 40.sp,
+                                                                                                width: 75.sp,
                                                                                                 child: Row(
                                                                                                   children: [
                                                                                                     Padding(
-                                                                                                      padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
+                                                                                                      padding: EdgeInsets.only(left: 4.sp, right: 2.sp, top: 5.sp, bottom: 5.sp),
                                                                                                       child: AppText(
                                                                                                         text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
                                                                                                         color: blackColor,
-                                                                                                        fontSize: 10.sp,
+                                                                                                        fontSize: 10,
                                                                                                         fontFamily: "Franklin Gothic Regular",
                                                                                                         fontWeight: FontWeight.w400,
                                                                                                       ),
                                                                                                     ),
-                                                                                                    const ImageIcon(
+                                                                                                    ImageIcon(
                                                                                                       AssetImage(dropdownImage),
                                                                                                       color: nameText,
-                                                                                                      size: 16,
+                                                                                                      size: 16.sp,
                                                                                                     ),
                                                                                                   ],
                                                                                                 ),
@@ -513,27 +510,27 @@ class CartScreenState extends State<CartScreen> {
                                                                                           );
                                                                                         },
                                                                                         child: Padding(
-                                                                                          padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+                                                                                          padding: EdgeInsets.only(left: 10.sp, top: 5.sp, bottom: 5.sp),
                                                                                           child: Container(
                                                                                             color: whiteTextColor,
-                                                                                            height: 40,
-                                                                                            width: 70,
+                                                                                            height: 40.sp,
+                                                                                            width: 70.sp,
                                                                                             child: Row(
                                                                                               children: [
                                                                                                 Padding(
-                                                                                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                                                                                  padding: EdgeInsets.symmetric(vertical: 5.sp, horizontal: 5.sp),
                                                                                                   child: AppText(
                                                                                                     text: "Qty : ${value.orderList[index]["quantity"] ?? "0"}",
                                                                                                     color: blackColor,
-                                                                                                    fontSize: 10.sp,
+                                                                                                    fontSize: 10,
                                                                                                     fontFamily: "Franklin Gothic Regular",
                                                                                                     fontWeight: FontWeight.w400,
                                                                                                   ),
                                                                                                 ),
-                                                                                                const ImageIcon(
+                                                                                                ImageIcon(
                                                                                                   AssetImage(dropdownImage),
                                                                                                   color: nameText,
-                                                                                                  size: 16,
+                                                                                                  size: 16.sp,
                                                                                                 ),
                                                                                               ],
                                                                                             ),
@@ -544,18 +541,18 @@ class CartScreenState extends State<CartScreen> {
                                                                                   ),
                                                                                 ),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.symmetric(vertical: 5),
+                                                                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                   child: Row(
                                                                                     children: [
                                                                                       AppText(
                                                                                         text: "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
                                                                                         color: blackColor,
-                                                                                        fontSize: 12.sp,
+                                                                                        fontSize: 12,
                                                                                         fontFamily: "Franklin Gothic Regular",
                                                                                         fontWeight: FontWeight.w400,
                                                                                       ),
                                                                                       Padding(
-                                                                                        padding: const EdgeInsets.only(left: 10),
+                                                                                        padding: EdgeInsets.only(left: 10.sp),
                                                                                         child: Text(
                                                                                           "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
                                                                                           style: TextStyle(
@@ -568,7 +565,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                         ),
                                                                                       ),
                                                                                       Padding(
-                                                                                        padding: const EdgeInsets.only(left: 10),
+                                                                                        padding: EdgeInsets.only(left: 10.sp),
                                                                                         child: Text(
                                                                                           "${value.orderList[index]["product"]["discount_percentage"] ?? "0 %"} OFF",
                                                                                           style: TextStyle(
@@ -620,8 +617,8 @@ class CartScreenState extends State<CartScreen> {
                                                                                 Colors.transparent,
                                                                             child:
                                                                                 Padding(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                                                                              child: Image.asset(blackCrossImage, height: 14, width: 14, fit: BoxFit.cover),
+                                                                              padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
+                                                                              child: Image.asset(blackCrossImage, height: 14.sp, width: 14.sp, fit: BoxFit.cover),
                                                                             ),
                                                                           ),
                                                                         ),
@@ -629,17 +626,17 @@ class CartScreenState extends State<CartScreen> {
                                                                     ),
                                                                   ),
                                                                   Padding(
-                                                                    padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                    padding: EdgeInsets.symmetric(
                                                                         vertical:
-                                                                            8),
+                                                                            8.sp),
                                                                     child:
                                                                         Container(
                                                                       width: double
                                                                           .infinity,
                                                                       color:
                                                                           colorSecondary,
-                                                                      height: 1,
+                                                                      height:
+                                                                          1.sp,
                                                                     ),
                                                                   ),
                                                                 ]),
@@ -660,25 +657,24 @@ class CartScreenState extends State<CartScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 24, left: 16),
+                                              padding: EdgeInsets.only(
+                                                  top: 24.sp, left: 16.sp),
                                               child: AppText(
                                                 text: "You may also like",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: colorPrimary,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 10),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 16.sp,
+                                                  vertical: 10.sp),
                                               child: SizedBox(
                                                   width: double.infinity,
-                                                  height: 310,
+                                                  height: 310.sp,
                                                   child: GetBuilder<
                                                       ProductController>(
                                                     builder: (value) =>
@@ -733,14 +729,13 @@ class CartScreenState extends State<CartScreen> {
                                                                       duration: const Duration(
                                                                           milliseconds:
                                                                               300),
-                                                                      margin: const EdgeInsets
-                                                                              .only(
+                                                                      margin: EdgeInsets.only(
                                                                           right:
-                                                                              8),
+                                                                              8.sp),
                                                                       color:
                                                                           whiteColor,
-                                                                      width:
-                                                                          122,
+                                                                      width: 122
+                                                                          .sp,
                                                                       child:
                                                                           Column(
                                                                         crossAxisAlignment:
@@ -748,8 +743,8 @@ class CartScreenState extends State<CartScreen> {
                                                                         children: [
                                                                           productController.productList[index]["images"].isNotEmpty && productController.productList[index]["images"] != null
                                                                               ? SizedBox(
-                                                                                  height: 150,
-                                                                                  width: 122,
+                                                                                  height: 150.sp,
+                                                                                  width: 122.sp,
                                                                                   child: CachedNetworkImage(
                                                                                     cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                     fit: BoxFit.cover,
@@ -760,20 +755,20 @@ class CartScreenState extends State<CartScreen> {
                                                                                     errorWidget: (context, url, error) => Image.asset(
                                                                                       downloadImage,
                                                                                       fit: BoxFit.cover,
-                                                                                      height: 150,
-                                                                                      width: 122,
+                                                                                      height: 150.sp,
+                                                                                      width: 122.sp,
                                                                                     ),
                                                                                   ),
                                                                                 )
                                                                               : Image.asset(dummyWishlistImage, height: 150, width: 122, fit: BoxFit.cover),
                                                                           Padding(
                                                                             padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                                                EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
                                                                               text: value.productList[index]["name"] ?? "",
                                                                               color: nameText,
-                                                                              fontSize: 12.sp,
+                                                                              fontSize: 12,
                                                                               maxLines: 1,
                                                                               fontFamily: "Franklin Gothic",
                                                                               fontWeight: FontWeight.w500,
@@ -781,22 +776,22 @@ class CartScreenState extends State<CartScreen> {
                                                                           ),
                                                                           Padding(
                                                                             padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                                                                EdgeInsets.symmetric(horizontal: 10.sp, vertical: 3.sp),
                                                                             child:
                                                                                 AppText(
                                                                               text: value.productList[index]["short_description"] ?? "",
                                                                               color: nameText,
                                                                               maxLines: 1,
-                                                                              fontSize: 11.sp,
+                                                                              fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
                                                                               fontWeight: FontWeight.w400,
                                                                             ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: const EdgeInsets.only(
-                                                                                top: 10,
-                                                                                left: 10,
-                                                                                right: 1),
+                                                                            padding: EdgeInsets.only(
+                                                                                top: 10.sp,
+                                                                                left: 10.sp,
+                                                                                right: 1.sp),
                                                                             child:
                                                                                 Row(
                                                                               children: [
@@ -804,12 +799,12 @@ class CartScreenState extends State<CartScreen> {
                                                                                   text: "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
                                                                                   color: deepGreytextColor,
                                                                                   maxLines: 2,
-                                                                                  fontSize: 11.sp,
+                                                                                  fontSize: 11,
                                                                                   fontFamily: "Franklin Gothic",
                                                                                   fontWeight: FontWeight.w500,
                                                                                 ),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.only(left: 5),
+                                                                                  padding: EdgeInsets.only(left: 5.sp),
                                                                                   child: Text(
                                                                                     "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
                                                                                     style: TextStyle(
@@ -826,7 +821,7 @@ class CartScreenState extends State<CartScreen> {
                                                                           ),
                                                                           Padding(
                                                                             padding:
-                                                                                const EdgeInsets.only(top: 10),
+                                                                                EdgeInsets.only(top: 10.sp),
                                                                             child: getSmallButton(
                                                                                 label: "Add to bag",
                                                                                 onPressed: () async {
@@ -850,7 +845,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 textColor: btnTextColor,
                                                                                 backgroundColor: whiteColor,
                                                                                 borderColor: btnTextColor,
-                                                                                width: 122),
+                                                                                width: 122.sp),
                                                                           )
                                                                         ],
                                                                       ),
@@ -870,8 +865,8 @@ class CartScreenState extends State<CartScreen> {
                                 Container(
                                   color: whiteColor,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 20),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.sp, vertical: 20.sp),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -881,20 +876,20 @@ class CartScreenState extends State<CartScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: colorPrimary,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.sp),
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 border: Border.all(
                                                     color: borderColor,
-                                                    width: 1),
+                                                    width: 1.sp),
                                                 borderRadius:
                                                     BorderRadius.circular(1)),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(16),
+                                              padding: EdgeInsets.all(16.sp),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
                                                 mainAxisAlignment:
@@ -904,18 +899,17 @@ class CartScreenState extends State<CartScreen> {
                                                     onTap: () {},
                                                     child: Row(
                                                       children: [
-                                                        const ImageIcon(
+                                                        ImageIcon(
                                                           AssetImage(
                                                               coupanImage),
                                                           color: colorPrimary,
-                                                          size: 20,
+                                                          size: 20.sp,
                                                         ),
                                                         Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
                                                                   horizontal:
-                                                                      8),
+                                                                      8.sp),
                                                           child: AppText(
                                                             text: controller
                                                                 .couponText
@@ -925,7 +919,7 @@ class CartScreenState extends State<CartScreen> {
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             color: textColor,
-                                                            fontSize: 14.sp,
+                                                            fontSize: 14,
                                                           ),
                                                         ),
                                                       ],
@@ -972,9 +966,9 @@ class CartScreenState extends State<CartScreen> {
                                                         controller
                                                                 .isRemoveCoupan
                                                                 .value
-                                                            ? const SizedBox(
-                                                                height: 10,
-                                                                width: 10,
+                                                            ? SizedBox(
+                                                                height: 10.sp,
+                                                                width: 10.sp,
                                                                 child: Center(
                                                                     child:
                                                                         CircularProgressIndicator()),
@@ -995,7 +989,7 @@ class CartScreenState extends State<CartScreen> {
                                                                         null
                                                                     ? redColor
                                                                     : textColor,
-                                                                fontSize: 12.sp,
+                                                                fontSize: 12,
                                                               ),
                                                   ),
                                                 ],
@@ -1010,10 +1004,9 @@ class CartScreenState extends State<CartScreen> {
                                                 height: 0,
                                               )
                                             : Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 0,
-                                                        vertical: 10),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 0.sp,
+                                                    vertical: 10.sp),
                                                 child: Row(
                                                   children: [
                                                     GestureDetector(
@@ -1043,7 +1036,7 @@ class CartScreenState extends State<CartScreen> {
                                                         fontWeight:
                                                             FontWeight.w400,
                                                         color: loginText,
-                                                        fontSize: 12.sp,
+                                                        fontSize: 12,
                                                       ),
                                                     ),
                                                     Expanded(
@@ -1052,32 +1045,31 @@ class CartScreenState extends State<CartScreen> {
                                                       ),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 0),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 0.sp),
                                                       child: Container(
                                                           decoration:
                                                               BoxDecoration(
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        3),
-                                                            border:
-                                                                const Border(
+                                                                        3.sp),
+                                                            border: Border(
                                                               top: BorderSide(
-                                                                  width: 2.0,
+                                                                  width: 2.0.sp,
                                                                   color:
                                                                       greyBorder),
                                                               left: BorderSide(
-                                                                  width: 2.0,
+                                                                  width: 2.0.sp,
                                                                   color:
                                                                       greyBorder),
                                                               right: BorderSide(
-                                                                  width: 2.0,
+                                                                  width: 2.0.sp,
                                                                   color:
                                                                       greyBorder),
                                                               bottom: BorderSide(
-                                                                  width: 2.0,
+                                                                  width: 2.0.sp,
                                                                   color:
                                                                       greyBorder),
                                                             ),
@@ -1123,44 +1115,42 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 20),
+                                          padding: EdgeInsets.only(top: 20.sp),
                                           child: AppText(
                                             text: "Price Details",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
                                             color: colorPrimary,
-                                            fontSize: 12.sp,
+                                            fontSize: 12,
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 16),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 16.sp),
                                           child: Container(
                                             width: double.infinity,
                                             color: colorSecondary,
-                                            height: 1,
+                                            height: 1.sp,
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 4),
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
                                                 child: AppText(
                                                   text: "Total MRP",
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                               const Expanded(
@@ -1175,22 +1165,21 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: textColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 4),
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
                                                 child: AppText(
                                                   text:
                                                       "Express Delivery Charges",
@@ -1198,7 +1187,7 @@ class CartScreenState extends State<CartScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                               const Expanded(
@@ -1213,29 +1202,28 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: textColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 4),
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
                                                 child: AppText(
                                                   text: "Discount on MRP",
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                               const Expanded(
@@ -1250,29 +1238,28 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: greenText,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 4),
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
                                                 child: AppText(
                                                   text: "Coupon Discount",
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                               const Expanded(
@@ -1287,14 +1274,13 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: greenText,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -1303,9 +1289,8 @@ class CartScreenState extends State<CartScreen> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 4),
+                                                    padding: EdgeInsets.only(
+                                                        right: 4.sp),
                                                     child: AppText(
                                                       text: "Convenience Fee",
                                                       fontFamily:
@@ -1313,7 +1298,7 @@ class CartScreenState extends State<CartScreen> {
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: textColor,
-                                                      fontSize: 12.sp,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                   GestureDetector(
@@ -1330,8 +1315,8 @@ class CartScreenState extends State<CartScreen> {
                                                     },
                                                     child: Image.asset(
                                                         questionIcon,
-                                                        height: 16,
-                                                        width: 16,
+                                                        height: 16.sp,
+                                                        width: 16.sp,
                                                         fit: BoxFit.cover),
                                                   )
                                                 ],
@@ -1348,14 +1333,13 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: greenText,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
+                                          padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -1364,9 +1348,8 @@ class CartScreenState extends State<CartScreen> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 4),
+                                                    padding: EdgeInsets.only(
+                                                        right: 4.sp),
                                                     child: AppText(
                                                       text: "Tax & Charges",
                                                       fontFamily:
@@ -1374,7 +1357,7 @@ class CartScreenState extends State<CartScreen> {
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: textColor,
-                                                      fontSize: 12.sp,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                   GestureDetector(
@@ -1391,8 +1374,8 @@ class CartScreenState extends State<CartScreen> {
                                                     },
                                                     child: Image.asset(
                                                         questionIcon,
-                                                        height: 16,
-                                                        width: 16,
+                                                        height: 16.sp,
+                                                        width: 16.sp,
                                                         fit: BoxFit.cover),
                                                   )
                                                 ],
@@ -1409,14 +1392,14 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: textColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 20),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 20.sp),
                                           child: Container(
                                             width: double.infinity,
                                             color: colorSecondary,
@@ -1424,22 +1407,21 @@ class CartScreenState extends State<CartScreen> {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 6),
+                                          padding: EdgeInsets.only(top: 6.sp),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 4),
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
                                                 child: AppText(
                                                   text: "Bill total",
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: colorPrimary,
-                                                  fontSize: 16.sp,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               const Expanded(
@@ -1454,13 +1436,13 @@ class CartScreenState extends State<CartScreen> {
                                                     "Franklin Gothic Bold",
                                                 fontWeight: FontWeight.w700,
                                                 color: colorPrimary,
-                                                fontSize: 18.sp,
+                                                fontSize: 18,
                                               ),
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(
-                                          height: 20,
+                                        SizedBox(
+                                          height: 20.sp,
                                         ),
                                       ],
                                     ),
@@ -1662,11 +1644,11 @@ class CartScreenState extends State<CartScreen> {
             ),
           ),
           Obx(() => controller.isOrder.value
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
+              ? SizedBox(
+                  height: 20.sp,
+                  width: 20.sp,
                   child: Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(10.0.sp),
                     child: Center(child: CircularProgressIndicator()),
                   ),
                 )
@@ -1677,8 +1659,8 @@ class CartScreenState extends State<CartScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                top: 16, left: 20, right: 20),
+                            padding: EdgeInsets.only(
+                                top: 16.sp, left: 20.sp, right: 20.sp),
                             child: AppText(
                               text: controller.orderList.length == 1 ||
                                       controller.orderList.isEmpty
@@ -1688,11 +1670,11 @@ class CartScreenState extends State<CartScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: blackColor,
-                              fontSize: 12.sp,
+                              fontSize: 12,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: EdgeInsets.symmetric(vertical: 16.sp),
                             child: getSingleButton(
                                 label: "Proceed to checkout",
                                 textColor: whiteBorderColor,

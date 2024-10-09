@@ -35,8 +35,8 @@ class BottomCouponState extends State<BottomCoupon> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 30, bottom: 20),
+                  padding: EdgeInsets.only(
+                      left: 16.sp, right: 16.sp, top: 30.sp, bottom: 20.sp),
                   child: Row(
                     children: [
                       Text(
@@ -75,10 +75,10 @@ class BottomCouponState extends State<BottomCoupon> {
                 Container(
                   color: backWhite,
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height - 70,
+                  height: MediaQuery.of(context).size.height - 70.sp,
                   child: Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
                     child: widget.list.isNotEmpty
                         ? ListView.builder(
                             primary: false,
@@ -91,10 +91,10 @@ class BottomCouponState extends State<BottomCoupon> {
                               return Container(
                                 color: whiteColor,
                                 margin:
-                                    const EdgeInsets.only(bottom: 10, top: 10),
+                                    EdgeInsets.only(bottom: 10.sp, top: 10.sp),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 10,
+                                  padding: EdgeInsets.only(
+                                    top: 10.sp,
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
@@ -105,15 +105,14 @@ class BottomCouponState extends State<BottomCoupon> {
                                           Expanded(
                                             flex: 1,
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 14.sp,
+                                                  vertical: 5.sp),
                                               child: AppText(
                                                 text: widget.list[index]
                                                     ["code"],
                                                 color: loginText,
-                                                fontSize: 16.sp,
+                                                fontSize: 16,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
@@ -126,33 +125,33 @@ class BottomCouponState extends State<BottomCoupon> {
                                                   widget.list[index]["code"]);
                                             },
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 14,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 14.sp,
                                               ),
                                               child: AnimatedContainer(
                                                 duration: const Duration(
                                                     milliseconds: 300),
-                                                margin: const EdgeInsets.only(
-                                                    right: 5),
-                                                width: 80,
-                                                height: 30,
+                                                margin: EdgeInsets.only(
+                                                    right: 5.sp),
+                                                width: 80.sp,
+                                                height: 30.sp,
                                                 decoration: BoxDecoration(
                                                   color: btnTextColor,
                                                   borderRadius:
-                                                      BorderRadius.circular(20),
+                                                      BorderRadius.circular(
+                                                          20.sp),
                                                   border: Border.all(
                                                       color: btnTextColor,
-                                                      width: 1),
+                                                      width: 1.sp),
                                                 ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 5.sp),
                                                   child: Center(
                                                     child: AppText(
                                                       text: "Apply",
                                                       color: whiteBack,
-                                                      fontSize: 12.sp,
+                                                      fontSize: 12,
                                                       fontFamily:
                                                           "Franklin Gothic",
                                                       fontWeight:
@@ -166,14 +165,14 @@ class BottomCouponState extends State<BottomCoupon> {
                                         ],
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 20),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 14.sp, vertical: 20.sp),
                                         child: AppText(
                                           text: widget.list[index]
                                                   ["description"] ??
                                               "",
                                           color: greyTextColor,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                         ),
@@ -184,12 +183,12 @@ class BottomCouponState extends State<BottomCoupon> {
                               );
                             })
                         : SizedBox(
-                            height: MediaQuery.of(context).size.height - 60,
+                            height: MediaQuery.of(context).size.height - 60.sp,
                             width: MediaQuery.of(context).size.width,
-                            child: const Center(
+                            child: Center(
                               child: Text("No Coupan Found",
                                   style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       decoration: TextDecoration.none,
                                       color: Colors.black,
                                       fontFamily: "Franklin Gothic Regular")),

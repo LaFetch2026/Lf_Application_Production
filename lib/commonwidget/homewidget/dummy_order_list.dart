@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/utils/constants.dart';
 
@@ -14,7 +15,7 @@ class DummyOrderList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.only(bottom: 10.sp),
             child: ListView.builder(
                 primary: false,
                 shrinkWrap: true,
@@ -24,20 +25,20 @@ class DummyOrderList extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 itemBuilder: (ctx, index) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.only(bottom: 10.sp),
                     child: Column(
                       children: [
                         Container(
                           color: whiteColor,
                           child: Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const Padding(
+                                  Padding(
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 16),
+                                        EdgeInsets.symmetric(horizontal: 16.sp),
                                     child: Row(
                                       children: [
                                         Expanded(
@@ -56,7 +57,7 @@ class DummyOrderList extends StatelessWidget {
                                             children: [
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    right: 5, left: 12),
+                                                    right: 5.sp, left: 12.sp),
                                                 child: DummyContainer(
                                                   height: 10,
                                                   width: 70,
@@ -64,10 +65,10 @@ class DummyOrderList extends StatelessWidget {
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    right: 5,
-                                                    left: 12,
-                                                    top: 5,
-                                                    bottom: 5),
+                                                    right: 5.sp,
+                                                    left: 12.sp,
+                                                    top: 5.sp,
+                                                    bottom: 5.sp),
                                                 child: DummyContainer(
                                                   height: 10,
                                                   width: 70,
@@ -75,15 +76,15 @@ class DummyOrderList extends StatelessWidget {
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    right: 5,
-                                                    left: 12,
-                                                    top: 5,
-                                                    bottom: 5),
+                                                    right: 5.sp,
+                                                    left: 12.sp,
+                                                    top: 5.sp,
+                                                    bottom: 5.sp),
                                                 child: Row(
                                                   children: [
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          right: 10),
+                                                          right: 10.sp),
                                                       child: DummyContainer(
                                                         height: 10,
                                                         width: 50,
@@ -94,7 +95,7 @@ class DummyOrderList extends StatelessWidget {
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsets.only(
-                                                                right: 10),
+                                                                right: 10.sp),
                                                         child: DummyContainer(
                                                           height: 10,
                                                           width: 50,
@@ -115,22 +116,23 @@ class DummyOrderList extends StatelessWidget {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 16),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.sp, horizontal: 16.sp),
                                     child: AnimatedContainer(
                                       duration:
                                           const Duration(milliseconds: 300),
-                                      margin: const EdgeInsets.only(right: 5),
-                                      height: 30,
+                                      margin: EdgeInsets.only(right: 5.sp),
+                                      height: 30.sp,
                                       decoration: BoxDecoration(
                                         color: Colors.black.withOpacity(0.04),
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius:
+                                            BorderRadius.circular(20.sp),
                                       ),
                                     ),
                                   ),
-                                  const Padding(
+                                  Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 5),
+                                        horizontal: 20.sp, vertical: 5.sp),
                                     child: DummyContainer(
                                       height: 10,
                                       width: 50,

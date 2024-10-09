@@ -26,19 +26,20 @@ class BottomChargesState extends State<BottomCharges> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 220,
+        height: 220.sp,
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: whiteTextColor,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+              topLeft: Radius.circular(16.0.sp),
+              topRight: Radius.circular(16.0.sp)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 16, right: 16, top: 20, bottom: 5),
+              padding: EdgeInsets.only(
+                  left: 16.sp, right: 16.sp, top: 20.sp, bottom: 5.sp),
               child: Row(
                 children: [
                   Expanded(
@@ -60,7 +61,7 @@ class BottomChargesState extends State<BottomCharges> {
                     child: Container(
                       color: Colors.transparent,
                       child: Image.asset(blackCrossImage,
-                          height: 18, width: 18, fit: BoxFit.cover),
+                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                     ),
                   ),
                 ],
@@ -70,14 +71,14 @@ class BottomChargesState extends State<BottomCharges> {
               color: greyBorder,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
               child: AppText(
                 text: widget.text,
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: textColor,
                 maxLines: 9,
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
             ),
           ],

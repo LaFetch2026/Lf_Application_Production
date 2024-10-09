@@ -74,8 +74,8 @@ class AccountScreenState extends State<AccountScreen> {
                     );
                   },
                   child: SizedBox(
-                    height: 28.sp,
-                    width: 28.sp,
+                    height: 30.sp,
+                    width: 30.sp,
                     child: CircleAvatar(
                       backgroundColor: blackColor,
                       child: ImageIcon(
