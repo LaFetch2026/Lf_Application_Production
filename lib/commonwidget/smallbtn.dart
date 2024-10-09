@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SmallButton extends StatelessWidget {
   final String label;
@@ -34,7 +35,7 @@ class SmallButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
         width: width,
-        height: 44,
+        height: 44.sp,
         child: ElevatedButton(
             style: ButtonStyle(
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
@@ -54,7 +55,9 @@ class SmallButton extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                  color: textColor, fontFamily: fontFamily, fontSize: fontSize),
+                  color: textColor,
+                  fontFamily: fontFamily,
+                  fontSize: fontSize.sp),
             )));
   }
 }

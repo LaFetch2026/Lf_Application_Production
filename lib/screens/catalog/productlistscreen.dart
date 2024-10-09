@@ -2,6 +2,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/catalog_product_appbar.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
@@ -54,13 +55,23 @@ class ProductListScreenState extends State<ProductListScreen> {
 
   Tab getTab(int widgetNumber) {
     if (widgetNumber == 0) {
-      return const Tab(
-        text: "View All",
-      );
+      return Tab(
+          child: Text(
+        "View All",
+        style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: "Franklin Gothic",
+            fontWeight: FontWeight.w400),
+      ));
     } else {
       return Tab(
-        text: widget.tabTextList[widgetNumber - 1],
-      );
+          child: Text(
+        widget.tabTextList[widgetNumber - 1],
+        style: TextStyle(
+            fontSize: 14.sp,
+            fontFamily: "Franklin Gothic",
+            fontWeight: FontWeight.w400),
+      ));
     }
   }
 
@@ -83,7 +94,7 @@ class ProductListScreenState extends State<ProductListScreen> {
               },
             ),
             PreferredSize(
-              preferredSize: const Size.fromHeight(40),
+              preferredSize: Size.fromHeight(40.sp),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: TabBar(
@@ -115,7 +126,7 @@ class ProductListScreenState extends State<ProductListScreen> {
             Container(
               width: double.infinity,
               color: whiteColor,
-              height: 1,
+              height: 1.sp,
             ),
             Expanded(
               child: TabBarView(

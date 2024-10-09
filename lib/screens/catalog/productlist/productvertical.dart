@@ -193,12 +193,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(
-                                    height: 10,
+                                  SizedBox(
+                                    height: 10.sp,
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 100),
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                        bottom: 100.sp),
                                     child: GetBuilder<ProductController>(
                                       builder: (value) => ListView.builder(
                                         primary: false,
@@ -277,11 +279,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                             null
                                                         ? Padding(
                                                             padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 16),
+                                                                EdgeInsets.only(
+                                                                    top: 16.sp),
                                                             child: SizedBox(
-                                                              height: 400,
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width +
+                                                                  40.sp,
                                                               width: double
                                                                   .infinity,
                                                               child: PageView(
@@ -312,7 +317,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                             ))
                                                         : Image.asset(
                                                             dummyWishlistImage,
-                                                            height: 400,
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width +
+                                                                40.sp,
                                                             width:
                                                                 double.infinity,
                                                             fit: BoxFit.cover),
@@ -383,8 +392,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                               .topRight,
                                                           child: InkWell(
                                                             child: SizedBox(
-                                                              height: 30,
-                                                              width: 30,
+                                                              height: 30.sp,
+                                                              width: 30.sp,
                                                               child:
                                                                   CircleAvatar(
                                                                 backgroundColor:
@@ -397,17 +406,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         .asset(
                                                                         wishlistSelectImage,
                                                                         height:
-                                                                            22,
-                                                                        width:
-                                                                            22,
+                                                                            22.sp,
+                                                                        width: 22
+                                                                            .sp,
                                                                       )
                                                                     : Image
                                                                         .asset(
                                                                         heartImage,
                                                                         height:
-                                                                            22,
-                                                                        width:
-                                                                            22,
+                                                                            22.sp,
+                                                                        width: 22
+                                                                            .sp,
                                                                       ),
                                                               ),
                                                             ),
@@ -415,90 +424,80 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 10),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .bottomLeft,
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 350),
-                                                          color: const Color(
-                                                              0xB3F7F7F5),
-                                                          height: 26,
-                                                          width: 80,
-                                                          child: Row(
-                                                            children: [
-                                                              Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        2),
-                                                                child:
-                                                                    Image.asset(
-                                                                  starImage,
-                                                                  height: 16,
-                                                                  color:
-                                                                      bottomnavBack,
-                                                                  width: 16,
-                                                                ),
-                                                              ),
-                                                              AppText(
-                                                                text: productController.productCategoryList[index]
-                                                                            [
-                                                                            "aggregated_rating"] !=
-                                                                        null
-                                                                    ? productController
-                                                                        .productCategoryList[
-                                                                            index]
-                                                                            [
-                                                                            "aggregated_rating"]
-                                                                        .toString()
-                                                                    : "",
+                                                    Positioned(
+                                                      left: 20.sp,
+                                                      bottom: 20.sp,
+                                                      child: Container(
+                                                        color: const Color(
+                                                            0xB3F7F7F5),
+                                                        height: 26.sp,
+                                                        width: 80.sp,
+                                                        child: Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          2.sp),
+                                                              child:
+                                                                  Image.asset(
+                                                                starImage,
+                                                                height: 16.sp,
                                                                 color:
-                                                                    colorPrimary,
-                                                                fontSize: 12.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                                    bottomnavBack,
+                                                                width: 16.sp,
                                                               ),
-                                                              Padding(
-                                                                padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        10),
-                                                                child:
-                                                                    Container(
-                                                                  width: 1,
-                                                                  color:
-                                                                      textHintColor,
-                                                                  height: 16,
-                                                                ),
-                                                              ),
-                                                              AppText(
-                                                                text: productController
-                                                                    .productCategoryList[
-                                                                        index][
-                                                                        "reviews_count"]
-                                                                    .toString(),
+                                                            ),
+                                                            AppText(
+                                                              text: productController
+                                                                              .productCategoryList[index]
+                                                                          [
+                                                                          "aggregated_rating"] !=
+                                                                      null
+                                                                  ? productController
+                                                                      .productCategoryList[
+                                                                          index]
+                                                                          [
+                                                                          "aggregated_rating"]
+                                                                      .toString()
+                                                                  : "",
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          10.sp),
+                                                              child: Container(
+                                                                width: 1.sp,
                                                                 color:
-                                                                    colorPrimary,
-                                                                fontSize: 12.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                                    textHintColor,
+                                                                height: 16.sp,
                                                               ),
-                                                            ],
-                                                          ),
+                                                            ),
+                                                            AppText(
+                                                              text: productController
+                                                                  .productCategoryList[
+                                                                      index][
+                                                                      "reviews_count"]
+                                                                  .toString(),
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -513,11 +512,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         height: 0,
                                                       )
                                                     : Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal: 16,
-                                                                vertical: 10),
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    16.sp,
+                                                                vertical:
+                                                                    10.sp),
                                                         child: SizedBox(
                                                           width:
                                                               double.infinity,
@@ -549,29 +549,29 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         'name'])) {
                                                                       return Padding(
                                                                         padding:
-                                                                            const EdgeInsets.only(top: 2),
+                                                                            EdgeInsets.only(top: 2.sp),
                                                                         child:
                                                                             AnimatedContainer(
                                                                           duration:
                                                                               const Duration(milliseconds: 400),
                                                                           height:
-                                                                              6,
+                                                                              6.sp,
                                                                           width:
-                                                                              6,
+                                                                              6.sp,
                                                                           margin:
-                                                                              const EdgeInsets.symmetric(
+                                                                              EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
+                                                                                5.sp,
                                                                           ),
                                                                           decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(5),
+                                                                              borderRadius: BorderRadius.circular(5.sp),
                                                                               color: (l == productController.curr.value && productController.index.value == index) ? colorPrimary : colorSecondary),
                                                                         ),
                                                                       );
                                                                     } else {
                                                                       return Padding(
                                                                         padding:
-                                                                            const EdgeInsets.symmetric(horizontal: 2.0),
+                                                                            EdgeInsets.symmetric(horizontal: 2.0.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -589,14 +589,13 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           ),
                                                         ),
                                                       ),
-                                                const SizedBox(
-                                                  height: 10,
+                                                SizedBox(
+                                                  height: 10.sp,
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp,
+                                                      vertical: 5.sp),
                                                   child: AppText(
                                                     text: productController
                                                                 .productCategoryList[
@@ -604,16 +603,15 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         "",
                                                     color: nameText,
                                                     maxLines: 2,
-                                                    fontSize: 14.sp,
+                                                    fontSize: 14,
                                                     fontFamily:
                                                         "Franklin Gothic",
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp),
                                                   child: AppText(
                                                     text: productController
                                                                     .productCategoryList[
@@ -622,18 +620,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         "",
                                                     color: nameText,
                                                     maxLines: 2,
-                                                    fontSize: 12.sp,
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 10,
-                                                          left: 10,
-                                                          right: 1),
+                                                  padding: EdgeInsets.only(
+                                                      top: 10.sp,
+                                                      left: 10.sp,
+                                                      right: 1.sp),
                                                   child: Row(
                                                     children: [
                                                       AppText(
@@ -642,7 +639,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         color:
                                                             deepGreytextColor,
                                                         maxLines: 2,
-                                                        fontSize: 14.sp,
+                                                        fontSize: 14,
                                                         fontFamily:
                                                             "Franklin Gothic",
                                                         fontWeight:
@@ -650,8 +647,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       ),
                                                       Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                .only(left: 5),
+                                                            EdgeInsets.only(
+                                                                left: 5.sp),
                                                         child: Text(
                                                           "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
                                                           style: TextStyle(
@@ -676,32 +673,31 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         index]["express_delivery"]
                                                     ? Padding(
                                                         padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                top: 5,
-                                                                left: 10,
-                                                                right: 10,
-                                                                bottom: 30),
+                                                            EdgeInsets.only(
+                                                                top: 5.sp,
+                                                                left: 10.sp,
+                                                                right: 10.sp,
+                                                                bottom: 30.sp),
                                                         child: Row(
                                                           children: [
-                                                            const ImageIcon(
+                                                            ImageIcon(
                                                               AssetImage(
                                                                   truckImage),
                                                               color:
                                                                   expressText,
-                                                              size: 14,
+                                                              size: 14.sp,
                                                             ),
                                                             Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      5),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          5.sp),
                                                               child: AppText(
                                                                 text: "Express",
                                                                 color:
                                                                     expressText,
                                                                 maxLines: 2,
-                                                                fontSize: 11.sp,
+                                                                fontSize: 11,
                                                                 fontFamily:
                                                                     "Franklin Gothic Regular",
                                                                 fontWeight:
@@ -734,10 +730,10 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                           : SizedBox(
                               height: MediaQuery.of(context).size.height,
                               width: MediaQuery.of(context).size.width,
-                              child: const Center(
+                              child: Center(
                                 child: Text("No Product Found",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         color: Colors.black,
                                         fontFamily: "Franklin Gothic Regular")),
                               ),
@@ -747,8 +743,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                       bottom: 0,
                       width: MediaQuery.of(context).size.width,
                       child: Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 16, top: 20, left: 4, right: 8),
+                        padding: EdgeInsets.only(
+                            bottom: 16.sp, top: 20.sp, left: 4.sp, right: 8.sp),
                         child: DoubleButton(
                           firstText: "Sort By",
                           secondText: "Filters",

@@ -161,7 +161,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                         padding: EdgeInsets.only(top: 150.sp),
                         child: SmallButton(
                             width: 160.sp,
-                            label: "Create Wishlisit",
+                            label: "Create Wishlist",
                             textColor: whiteBorderColor,
                             backgroundColor: colorPrimary,
                             onPressed: () {

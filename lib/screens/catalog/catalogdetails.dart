@@ -69,7 +69,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                 children: [
                   widget.catalogImage.isNotEmpty
                       ? SizedBox(
-                          height: 100,
+                          height: 100.sp,
                           width: double.infinity,
                           child: CachedNetworkImage(
                             cacheManager: CacheManager(Config("customCacheKey",
@@ -84,13 +84,13 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                             ), */
                             errorWidget: (context, url, error) => Image.asset(
                               downloadImage,
-                              height: 210,
+                              height: 210.sp,
                             ),
                           ),
                         )
                       : Container(
                           width: double.infinity,
-                          height: 100,
+                          height: 100.sp,
                           decoration: const BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage(backImage),
@@ -99,10 +99,10 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                           ),
                         ),
                   Container(
-                    height: 65,
+                    height: 65.sp,
                     color: whiteBorderColor,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -110,7 +110,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                           AppText(
                             text: widget.title,
                             color: appbarText,
-                            fontSize: 22.sp,
+                            fontSize: 22,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                           ),
@@ -122,7 +122,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                           AppText(
                             text: "For ${widget.catalogText}",
                             color: textHintColor,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                           ),
@@ -132,26 +132,26 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                   ),
                   Obx(() => controller.isCategory.value
                       ? Padding(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 22),
+                          padding: EdgeInsets.only(
+                              left: 16.sp, right: 16.sp, top: 22.sp),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DummyContainer(height: 14, width: 80),
                               Padding(
-                                padding: const EdgeInsets.only(top: 20),
+                                padding: EdgeInsets.only(top: 20.sp),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 20),
+                                padding: EdgeInsets.only(top: 20.sp),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 20),
+                                padding: EdgeInsets.only(top: 20.sp),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(top: 20),
+                                padding: EdgeInsets.only(top: 20.sp),
                                 child: DummyContainer(height: 14, width: 80),
                               ),
                             ],
@@ -159,8 +159,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                         )
                       : controller.categoryList.isNotEmpty
                           ? Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 22),
+                              padding: EdgeInsets.only(
+                                  left: 16.sp, right: 16.sp, top: 22.sp),
                               child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
@@ -197,8 +197,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                               );
                                             },
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 25),
+                                              padding: EdgeInsets.only(
+                                                  bottom: 25.sp),
                                               child: Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -211,7 +211,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                             index]["name"] ??
                                                         "",
                                                     color: greyTextColor,
-                                                    fontSize: 14.sp,
+                                                    fontSize: 14,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,
@@ -223,12 +223,12 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                     );
                                   }),
                             )
-                          : const Padding(
+                          : Padding(
                               padding: EdgeInsets.all(40.0),
                               child: Center(
                                 child: Text("No Category Found",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         color: Colors.black,
                                         fontFamily: "Franklin Gothic Regular")),
                               ),

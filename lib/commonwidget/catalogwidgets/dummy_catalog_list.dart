@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/utils/constants.dart';
 
@@ -10,7 +11,7 @@ class DummyCatalogList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+      padding: EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp),
       child: ListView.builder(
           primary: false,
           shrinkWrap: true,
@@ -22,12 +23,12 @@ class DummyCatalogList extends StatelessWidget {
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: 10.sp),
                   child: Container(
                     color: whiteColor,
                     width: double.infinity,
-                    height: 145,
-                    child: const Column(
+                    height: 145.sp,
+                    child: Column(
                       children: [
                         DummyContainer(
                           height: 100,
@@ -35,7 +36,7 @@ class DummyCatalogList extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
+                              horizontal: 16.sp, vertical: 10.sp),
                           child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Row(

@@ -113,7 +113,7 @@ class CatalogScreenState extends State<CatalogScreen> {
             Container(
               width: double.infinity,
               color: whiteColor,
-              height: 1,
+              height: 1.sp,
             ),
             const Expanded(
               child: TabBarView(

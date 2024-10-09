@@ -45,17 +45,18 @@ class ViewProductScreenState extends State<ViewProductScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16),
+                  padding: EdgeInsets.only(top: 16.sp, left: 16.sp),
                   child: AppText(
                     text: widget.categoryName,
                     fontFamily: "Franklin Gothic Regular",
                     fontWeight: FontWeight.w400,
                     color: blackColor,
-                    fontSize: 22.sp,
+                    fontSize: 22,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 4),
+                  padding:
+                      EdgeInsets.only(left: 16.sp, right: 16.sp, top: 4.sp),
                   child: GestureDetector(
                     onTap: () {},
                     child: Row(
@@ -70,7 +71,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                             color: textHintColor,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                           ),
                         ),
                         const Expanded(
@@ -79,8 +80,8 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                           ),
                         ),
                         SizedBox(
-                          width: 100,
-                          height: 30,
+                          width: 100.sp,
+                          height: 30.sp,
                           child: Align(
                             alignment: Alignment.topRight,
                             child: TabBar(
@@ -107,22 +108,24 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                                 labelPadding: EdgeInsets.zero,
                                 indicatorSize: TabBarIndicatorSize.label,
                                 indicatorWeight: 2,
-                                tabs: const [
+                                tabs: [
                                   Padding(
-                                    padding: EdgeInsets.only(right: 5, left: 5),
+                                    padding: EdgeInsets.only(
+                                        right: 5.sp, left: 5.sp),
                                     child: Tab(
                                       child: ImageIcon(
                                         AssetImage(outlineImage),
-                                        size: 16,
+                                        size: 16.sp,
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    padding: EdgeInsets.only(
+                                        left: 5.sp, right: 5.sp),
                                     child: Tab(
                                       child: ImageIcon(
                                         AssetImage(menuImage),
-                                        size: 16,
+                                        size: 16.sp,
                                       ),
                                     ),
                                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
@@ -16,12 +17,12 @@ class CatalogProductAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 80.sp,
       width: MediaQuery.of(context).size.width,
       color: colorPrimary,
       child: Column(children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 40, right: 16),
+          padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -32,8 +33,8 @@ class CatalogProductAppbar extends StatelessWidget {
                 },
                 child: Image.asset(
                   arrowBack,
-                  height: 20,
-                  width: 20,
+                  height: 20.sp,
+                  width: 20.sp,
                   color: whiteColor,
                 ),
               ),
@@ -43,7 +44,7 @@ class CatalogProductAppbar extends StatelessWidget {
                 ),
               ),
               Image.asset(appNameImage,
-                  height: 28, width: 70, fit: BoxFit.cover),
+                  height: 28.sp, width: 70.sp, fit: BoxFit.cover),
               const Expanded(
                 child: SizedBox(
                   height: 0,
@@ -53,12 +54,12 @@ class CatalogProductAppbar extends StatelessWidget {
                 onTap: () {
                   onPressedSearch?.call();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   child: ImageIcon(
                     AssetImage(searchImage),
                     color: textHintColor,
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
               ),
@@ -66,17 +67,17 @@ class CatalogProductAppbar extends StatelessWidget {
                 onTap: () {
                   onPressedCart?.call();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 10),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10.sp),
                   child: SizedBox(
-                    height: 28,
-                    width: 28,
+                    height: 28.sp,
+                    width: 28.sp,
                     child: CircleAvatar(
                       backgroundColor: whiteColor,
                       child: ImageIcon(
                         AssetImage(cartImage),
                         color: colorPrimary,
-                        size: 20,
+                        size: 20.sp,
                       ),
                     ),
                   ),

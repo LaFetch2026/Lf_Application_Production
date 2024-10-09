@@ -42,31 +42,31 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 16, right: 16),
+              padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
               child: AppText(
                 text: "Explore Catalog",
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: appbarText,
-                fontSize: 25.sp,
+                fontSize: 25,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 10, left: 16, right: 16),
+              padding: EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
               child: AppText(
                 text: "For ${widget.categorytext}",
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: textHintColor,
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
             ),
             Obx(() => controller.isCatalog.value
                 ? const DummyCatalogList()
                 : controller.catalogList.isNotEmpty
                     ? Padding(
-                        padding:
-                            const EdgeInsets.only(left: 16, right: 16, top: 10),
+                        padding: EdgeInsets.only(
+                            left: 16.sp, right: 16.sp, top: 10.sp),
                         child: ListView.builder(
                             primary: false,
                             shrinkWrap: true,
@@ -101,19 +101,18 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                         );
                                       },
                                       child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
+                                        padding: EdgeInsets.only(bottom: 10.sp),
                                         child: Container(
                                           color: whiteColor,
                                           width: double.infinity,
-                                          height: 145,
+                                          height: 145.sp,
                                           child: Column(
                                             children: [
                                               controller.catalogList[index]
                                                           ["thumbnail"] !=
                                                       null
                                                   ? SizedBox(
-                                                      height: 100,
+                                                      height: 100.sp,
                                                       width: double.infinity,
                                                       child: CachedNetworkImage(
                                                         cacheManager:
@@ -133,23 +132,22 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                 url, error) =>
                                                             Image.asset(
                                                           downloadImage,
-                                                          height: 210,
+                                                          height: 210.sp,
                                                         ),
                                                       ),
                                                     )
                                                   : SizedBox(
-                                                      height: 100,
+                                                      height: 100.sp,
                                                       width: double.infinity,
                                                       child: Image.asset(
                                                           backImage,
-                                                          height: 100,
+                                                          height: 100.sp,
                                                           fit: BoxFit.cover),
                                                     ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16.sp,
+                                                    vertical: 10.sp),
                                                 child: Align(
                                                   alignment:
                                                       Alignment.bottomCenter,
@@ -166,7 +164,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                 index]["name"] ??
                                                             "",
                                                         color: appbarText,
-                                                        fontSize: 16.sp,
+                                                        fontSize: 16,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         fontWeight:
@@ -202,8 +200,8 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                         },
                                                         child: Image.asset(
                                                             rightArrowImage,
-                                                            height: 20,
-                                                            width: 20,
+                                                            height: 20.sp,
+                                                            width: 20.sp,
                                                             color: appbarText,
                                                             fit: BoxFit.cover),
                                                       ),
@@ -222,10 +220,10 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                     : SizedBox(
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
-                        child: const Center(
+                        child: Center(
                           child: Text("No Catolog Found",
                               style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                   color: Colors.black,
                                   fontFamily: "Franklin Gothic Regular")),
                         ),
