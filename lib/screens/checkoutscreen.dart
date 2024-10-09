@@ -945,6 +945,10 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               'order_id': widget.orderId,
                               'description': 'Lafetch Customer',
                               'timeout': 60,
+                              'theme': {
+                                'color': '#070707',
+                              },
+                              'fullscreen': true,
                               'prefill': {
                                 'contact': '9002973232',
                                 'email': 'sonamagrahari11@gmail.com'

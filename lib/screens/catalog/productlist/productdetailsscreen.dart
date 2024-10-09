@@ -1369,105 +1369,217 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                       Obx(
-                        () => Padding(
-                          padding: EdgeInsets.only(
-                              top: 12.sp, left: 12.sp, right: 12.sp),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 44.sp,
-                            child: RawKeyboardListener(
-                              focusNode: FocusNode(),
-                              onKey: (value) {
-                                print(value);
-                                if (value is RawKeyDownEvent) {
-                                  productController.getItBy.value =
-                                      productController.productDetails[
-                                          "estimated_delivery_by"];
-                                }
-                              },
-                              child: TextField(
-                                controller: productController.pincodeController,
-                                keyboardType: TextInputType.number,
-                                maxLength: 6,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: whiteColor,
-                                  suffixIcon: TextButton(
-                                    onPressed: () async {
-                                      if (productController.checkPinvalidation(
-                                          productController
-                                              .pincodeController.text
-                                              .toString()
-                                              .trim())) {
-                                        /* productController.getCheckPincode(
+                        () => MediaQuery.of(context).size.width < 600
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    top: 12.sp, left: 12.sp, right: 12.sp),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 44.sp,
+                                  child: RawKeyboardListener(
+                                    focusNode: FocusNode(),
+                                    onKey: (value) {
+                                      print(value);
+                                      if (value is RawKeyDownEvent) {
+                                        productController.getItBy.value =
+                                            productController.productDetails[
+                                                "estimated_delivery_by"];
+                                      }
+                                    },
+                                    child: TextField(
+                                      controller:
+                                          productController.pincodeController,
+                                      keyboardType: TextInputType.number,
+                                      maxLength: 6,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: whiteColor,
+                                        suffixIcon: TextButton(
+                                          onPressed: () async {
+                                            if (productController
+                                                .checkPinvalidation(
+                                                    productController
+                                                        .pincodeController.text
+                                                        .toString()
+                                                        .trim())) {
+                                              /* productController.getCheckPincode(
                                             productController
                                                 .pincodeController.text
                                                 .toString()
                                                 .trim()); */
-                                        productController.getEstimateDate(
-                                            widget.productId,
+                                              productController.getEstimateDate(
+                                                  widget.productId,
+                                                  productController
+                                                      .pincodeController.text
+                                                      .toString()
+                                                      .trim());
+                                              FocusScope.of(context).unfocus();
+                                              await analytics.logEvent(
+                                                name:
+                                                    'check_pincode_productdetails',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'check_pincode_productdetails',
+                                                },
+                                              );
+                                            }
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: 6.sp, bottom: 0.sp),
+                                            child: productController
+                                                    .isEstimateDate.value
+                                                ? SizedBox(
+                                                    height: 10.sp,
+                                                    width: 10.sp,
+                                                    child: Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                  )
+                                                : const AppText(
+                                                    text: 'Check',
+                                                    textAlign: TextAlign.center,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: blackColor,
+                                                    fontSize: 14,
+                                                  ),
+                                          ),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: borderColor)),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1.sp),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1.sp),
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                        ),
+                                        counterText: "",
+                                        contentPadding:
+                                            const EdgeInsets.only(left: 10),
+                                        hintText: 'Enter pincode',
+                                        hintStyle: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: textHintColor,
+                                            fontFamily:
+                                                "Franklin Gothic Regular"),
+                                      ),
+                                      style: TextStyle(
+                                          color: colorPrimary, fontSize: 14.sp),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(
+                                    top: 12.sp, left: 12.sp, right: 12.sp),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 44.sp,
+                                  child: RawKeyboardListener(
+                                    focusNode: FocusNode(),
+                                    onKey: (value) {
+                                      print(value);
+                                      if (value is RawKeyDownEvent) {
+                                        productController.getItBy.value =
+                                            productController.productDetails[
+                                                "estimated_delivery_by"];
+                                      }
+                                    },
+                                    child: TextField(
+                                      controller:
+                                          productController.pincodeController,
+                                      keyboardType: TextInputType.number,
+                                      maxLength: 6,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: whiteColor,
+                                        suffixIcon: TextButton(
+                                          onPressed: () async {
+                                            if (productController
+                                                .checkPinvalidation(
+                                                    productController
+                                                        .pincodeController.text
+                                                        .toString()
+                                                        .trim())) {
+                                              /* productController.getCheckPincode(
                                             productController
                                                 .pincodeController.text
                                                 .toString()
-                                                .trim());
-                                        FocusScope.of(context).unfocus();
-                                        await analytics.logEvent(
-                                          name: 'check_pincode_productdetails',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'check_pincode_productdetails',
+                                                .trim()); */
+                                              productController.getEstimateDate(
+                                                  widget.productId,
+                                                  productController
+                                                      .pincodeController.text
+                                                      .toString()
+                                                      .trim());
+                                              FocusScope.of(context).unfocus();
+                                              await analytics.logEvent(
+                                                name:
+                                                    'check_pincode_productdetails',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'check_pincode_productdetails',
+                                                },
+                                              );
+                                            }
                                           },
-                                        );
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          right: 6.sp, bottom: 0.sp),
-                                      child:
-                                          productController.isEstimateDate.value
-                                              ? SizedBox(
-                                                  height: 10.sp,
-                                                  width: 10.sp,
-                                                  child: Center(
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                                )
-                                              : const AppText(
-                                                  text: 'Check',
-                                                  textAlign: TextAlign.center,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: blackColor,
-                                                  fontSize: 14,
-                                                ),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: 6.sp, bottom: 0.sp),
+                                            child: productController
+                                                    .isEstimateDate.value
+                                                ? SizedBox(
+                                                    height: 10.sp,
+                                                    width: 10.sp,
+                                                    child: Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                  )
+                                                : const AppText(
+                                                    text: 'Check',
+                                                    textAlign: TextAlign.center,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: blackColor,
+                                                    fontSize: 14,
+                                                  ),
+                                          ),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: borderColor)),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1.sp),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1.sp),
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                        ),
+                                        counterText: "",
+                                        hintText: 'Enter pincode',
+                                        hintStyle: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: textHintColor,
+                                            fontFamily:
+                                                "Franklin Gothic Regular"),
+                                      ),
+                                      style: TextStyle(
+                                          color: colorPrimary, fontSize: 14.sp),
                                     ),
                                   ),
-                                  focusedBorder: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: borderColor)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1.sp),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1.sp),
-                                    borderSide:
-                                        const BorderSide(color: borderColor),
-                                  ),
-                                  counterText: "",
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 10),
-                                  hintText: 'Enter pincode',
-                                  hintStyle: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: textHintColor,
-                                      fontFamily: "Franklin Gothic Regular"),
                                 ),
-                                style: TextStyle(
-                                    color: colorPrimary, fontSize: 14.sp),
                               ),
-                            ),
-                          ),
-                        ),
                       ),
                       Obx(() => productController.isAddress.value
                           ? const DummySaveAddress(
