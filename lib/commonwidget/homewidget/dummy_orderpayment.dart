@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 
 import '../../utils/constants.dart';
@@ -11,17 +12,17 @@ class DummyOrderPayment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.symmetric(vertical: 10.sp),
       child: Container(
         color: whiteColor,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 16.sp),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 5),
+                padding: EdgeInsets.only(top: 5.sp),
                 child: Row(
                   children: [
                     Expanded(
@@ -29,14 +30,14 @@ class DummyOrderPayment extends StatelessWidget {
                       child: DummyContainer(height: 16, width: 100),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      padding: EdgeInsets.symmetric(horizontal: 5.sp),
                       child: DummyContainer(height: 16, width: 100),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: EdgeInsets.only(top: 8.sp),
                 child: Row(
                   children: [
                     DummyContainer(height: 16, width: 100),
@@ -50,7 +51,7 @@ class DummyOrderPayment extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: 10.sp),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -63,7 +64,7 @@ class DummyOrderPayment extends StatelessWidget {
                       child: DummyContainer(height: 16, width: 100),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 4, left: 4),
+                      padding: EdgeInsets.only(top: 4.sp, left: 4.sp),
                       child: DummyContainer(height: 16, width: 100),
                     ),
                   ],

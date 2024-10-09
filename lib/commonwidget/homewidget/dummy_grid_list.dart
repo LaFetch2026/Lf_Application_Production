@@ -58,15 +58,12 @@ class DummyGridList extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 22.sp, vertical: 10.sp),
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: DummyContainer(
-                                height: 26,
-                                width: 80,
-                              ),
+                          Positioned(
+                            bottom: 16.sp,
+                            left: 16.sp,
+                            child: DummyContainer(
+                              height: 26,
+                              width: 80,
                             ),
                           ),
                         ],

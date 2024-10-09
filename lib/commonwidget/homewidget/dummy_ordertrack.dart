@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 
 class DummyOrderTrack extends StatelessWidget {
@@ -9,14 +10,14 @@ class DummyOrderTrack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const DummyContainer(height: 10, width: 60),
             Padding(
-              padding: const EdgeInsets.only(bottom: 20, top: 30),
+              padding: EdgeInsets.only(bottom: 20.sp, top: 30.sp),
               child: ListView.builder(
                   primary: false,
                   shrinkWrap: true,
@@ -44,15 +45,15 @@ class DummyOrderTrack extends StatelessWidget {
                                   )
                           ],
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.sp),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DummyContainer(height: 10, width: 60),
                               Padding(
-                                padding: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(top: 8.sp),
                                 child: DummyContainer(height: 10, width: 60),
                               ),
                             ],

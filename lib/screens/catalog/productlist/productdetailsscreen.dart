@@ -1560,7 +1560,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     child: AppText(
                                                       text: "Change",
                                                       color: btnTextColor,
-                                                      fontSize: 12.sp,
+                                                      fontSize: 12,
                                                       fontFamily:
                                                           "Franklin Gothic",
                                                       fontWeight:

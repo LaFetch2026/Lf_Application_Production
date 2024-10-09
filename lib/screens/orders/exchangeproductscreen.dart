@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/exchange_controller.dart';
 import 'package:lafetch/controller/review_controller.dart';
 import 'package:lafetch/screens/orders/exchangeconfirm.dart';
@@ -78,15 +79,15 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 20),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.sp, vertical: 20.sp),
                             child: Row(
                               children: [
                                 Expanded(
                                   flex: 1,
                                   child: SizedBox(
-                                    height: 85,
-                                    width: 70,
+                                    height: 85.sp,
+                                    width: 70.sp,
                                     child: CachedNetworkImage(
                                       cacheManager: CacheManager(Config(
                                           "customCacheKey",
@@ -98,8 +99,8 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                           Image.asset(
                                         downloadImage,
                                         fit: BoxFit.cover,
-                                        height: 85,
-                                        width: 70,
+                                        height: 85.sp,
+                                        width: 70.sp,
                                       ),
                                     ),
                                   ),
@@ -112,28 +113,28 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 10.sp,
                                         ),
                                         child: AppText(
                                           text: widget.productName,
                                           maxLines: 2,
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
-                                          fontSize: 14.sp,
+                                          fontSize: 14,
                                           color: nameText,
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10.sp, horizontal: 10.sp),
                                         child: AppText(
                                           text: Bidi.stripHtmlIfNeeded(
                                               widget.productDescription),
                                           maxLines: 2,
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                           color: nameText,
                                         ),
                                       ),
@@ -144,27 +145,59 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.sp, vertical: 10.sp),
                             child: AppText(
                               text: "Choose why you exchanging this?",
                               maxLines: 2,
                               fontFamily: "Franklin Gothic",
                               fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               color: loginText,
                             ),
                           ),
                           Obx(
                             () => exchangeController.isDetails.value
-                                ? Center(
-                                    child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: const CircularProgressIndicator(),
-                                  ))
+                                ? Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.sp, vertical: 10.sp),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            DummyContainer(
+                                                height: 16.sp, width: 16.sp),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 8.sp),
+                                              child: DummyContainer(
+                                                  height: 16.sp, width: 80.sp),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 30.sp,
+                                        ),
+                                        Row(
+                                          children: [
+                                            DummyContainer(
+                                                height: 16.sp, width: 16.sp),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 8.sp),
+                                              child: DummyContainer(
+                                                  height: 16.sp, width: 80.sp),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 : Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 10),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.sp, vertical: 10.sp),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,

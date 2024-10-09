@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../utils/constants.dart';
@@ -52,15 +53,15 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
                   children: [
                     _getMap(),
                     Padding(
-                      padding: const EdgeInsets.only(top: 40.0, left: 10),
+                      padding: EdgeInsets.only(top: 40.0.sp, left: 10.sp),
                       child: InkWell(
                           onTap: () {
                             Get.back();
                           },
                           child: Image.asset(
                             backWhiteArrow,
-                            height: 16,
-                            width: 16,
+                            height: 16.sp,
+                            width: 16.sp,
                             color: colorPrimary,
                           )),
                     ),

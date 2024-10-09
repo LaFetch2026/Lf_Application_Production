@@ -137,16 +137,16 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                               color: whiteColor,
                               width: double.infinity,
                               child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 16),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 16.sp),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 20, top: 16),
+                                        padding: EdgeInsets.only(
+                                            bottom: 20.sp, top: 16.sp),
                                         child: ListView.builder(
                                             primary: false,
                                             shrinkWrap: true,
@@ -173,11 +173,11 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                                       index])
                                                           ? Image.asset(
                                                               greenCheckImage,
-                                                              height: 24,
+                                                              height: 24.sp,
                                                               fit: BoxFit.cover)
                                                           : Image.asset(
                                                               whiteCircleImage,
-                                                              height: 24,
+                                                              height: 24.sp,
                                                               fit:
                                                                   BoxFit.cover),
                                                       index == 3
@@ -185,16 +185,16 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                               height: 0,
                                                             )
                                                           : Container(
-                                                              width: 2,
-                                                              height: 60,
+                                                              width: 2.sp,
+                                                              height: 60.sp,
                                                               color: greyBack,
                                                             )
                                                     ],
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 12),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12.sp),
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -219,12 +219,12 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           color: loginText,
-                                                          fontSize: 14.sp,
+                                                          fontSize: 14,
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .only(top: 8),
+                                                              EdgeInsets.only(
+                                                                  top: 8.sp),
                                                           child: AppText(
                                                             text: orderController
                                                                     .trackList
@@ -243,7 +243,7 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                                 FontWeight.w400,
                                                             color:
                                                                 textHintColor,
-                                                            fontSize: 14.sp,
+                                                            fontSize: 14,
                                                           ),
                                                         ),
                                                       ],
@@ -256,12 +256,12 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                     ],
                                   )),
                             )
-                          : const Padding(
-                              padding: EdgeInsets.only(top: 200),
+                          : Padding(
+                              padding: EdgeInsets.only(top: 200.sp),
                               child: Center(
                                 child: Text("No Information Found",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         color: Colors.black,
                                         fontFamily: "Franklin Gothic Regular")),
                               ),

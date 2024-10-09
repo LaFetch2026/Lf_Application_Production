@@ -104,8 +104,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                       () => Container(
                         color: whiteColor,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 20),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.sp, vertical: 20.sp),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -143,9 +143,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                               Expanded(
                                 flex: 1,
                                 child: SizedBox(
-                                  height: 40,
+                                  height: 40.sp,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(right: 10),
+                                    padding: EdgeInsets.only(right: 10.sp),
                                     child: RawKeyboardListener(
                                       focusNode: FocusNode(),
                                       onKey: (value) {
@@ -158,8 +158,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                       child: TextField(
                                         textCapitalization:
                                             TextCapitalization.words,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: textColor,
+                                          fontSize: 15.sp,
                                           fontFamily: "Franklin Gothic Regular",
                                         ),
                                         onChanged: onSearchChanged,
@@ -168,27 +169,27 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                           filled: true,
+                                          isDense: true,
                                           fillColor: whiteColor,
-                                          prefixIcon: const Icon(Icons.search,
-                                              size: 20, color: Colors.grey),
+                                          prefixIcon: Icon(Icons.search,
+                                              size: 20.sp, color: Colors.grey),
                                           focusedBorder:
                                               const OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       color: borderColor)),
                                           border: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(1),
+                                                BorderRadius.circular(1.sp),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(1),
+                                                BorderRadius.circular(1.sp),
                                             borderSide: const BorderSide(
                                                 color: borderColor),
                                           ),
                                           counterText: "",
                                           hintText: "Search",
-                                          hintStyle:
-                                              const TextStyle(fontSize: 14),
+                                          hintStyle: TextStyle(fontSize: 14.sp),
                                         ),
                                       ),
                                     ),
@@ -196,8 +197,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 ),
                               ),
                               SizedBox(
-                                height: 40,
-                                width: 130,
+                                height: 40.sp,
+                                width: 130.sp,
                                 child: DropdownButtonFormField2(
                                   value: filter,
                                   decoration: InputDecoration(
@@ -207,16 +208,16 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                         borderSide:
                                             BorderSide(color: borderColor)),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(1),
+                                      borderRadius: BorderRadius.circular(1.sp),
                                       borderSide:
                                           const BorderSide(color: borderColor),
                                     ),
                                     isDense: true,
-                                    contentPadding: const EdgeInsets.only(
-                                        left: 10, right: 0),
+                                    contentPadding:
+                                        EdgeInsets.only(left: 10.sp, right: 0),
                                     hintText: 'Filter',
-                                    hintStyle: const TextStyle(
-                                        fontSize: 12,
+                                    hintStyle: TextStyle(
+                                        fontSize: 12.sp,
                                         fontFamily: "Franklin Gothic Regular"),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(1),
@@ -228,8 +229,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                             value: item,
                                             child: Text(
                                               item,
-                                              style: const TextStyle(
-                                                fontSize: 12,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
                                                 color: textColor,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
@@ -261,19 +262,19 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                     );
                                   },
                                   onSaved: (value) {},
-                                  buttonStyleData: const ButtonStyleData(
-                                    height: 60,
-                                    padding: EdgeInsets.only(right: 10),
+                                  buttonStyleData: ButtonStyleData(
+                                    height: 60.sp,
+                                    padding: EdgeInsets.only(right: 10.sp),
                                   ),
-                                  iconStyleData: const IconStyleData(
+                                  iconStyleData: IconStyleData(
                                     icon: ImageIcon(AssetImage(dropdownImage)),
-                                    iconSize: 10,
+                                    iconSize: 10.sp,
                                   ),
                                   dropdownStyleData: DropdownStyleData(
-                                    maxHeight: 200,
+                                    maxHeight: 200.sp,
                                     decoration: BoxDecoration(
                                       color: whiteTextColor,
-                                      borderRadius: BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(4.sp),
                                     ),
                                   ),
                                 ),
@@ -287,7 +288,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                         ? const DummyOrderList()
                         : orderController.orderList.isNotEmpty
                             ? Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
+                                padding: EdgeInsets.only(bottom: 10.sp),
                                 child: GetBuilder<OrderController>(
                                   builder: (value) => ListView.builder(
                                       primary: false,
@@ -300,7 +301,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                       itemBuilder: (ctx, index) {
                                         return Padding(
                                           padding:
-                                              const EdgeInsets.only(bottom: 10),
+                                              EdgeInsets.only(bottom: 10.sp),
                                           child: Column(
                                             children: [
                                               GestureDetector(
@@ -321,9 +322,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                 child: Container(
                                                   color: whiteColor,
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.sp),
                                                     child: Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
@@ -333,11 +333,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                 .start,
                                                         children: [
                                                           Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
-                                                                        16),
+                                                                        16.sp),
                                                             child: Row(
                                                               children: [
                                                                 Expanded(
@@ -348,8 +347,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 value.orderList[index]["order_lines"][0]["product"]["images"] !=
                                                                                     null
                                                                             ? SizedBox(
-                                                                                height: 85,
-                                                                                width: 70,
+                                                                                height: 85.sp,
+                                                                                width: 70.sp,
                                                                                 child: CachedNetworkImage(
                                                                                   cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                   fit: BoxFit.cover,
@@ -357,23 +356,22 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                   errorWidget: (context, url, error) => Image.asset(
                                                                                     downloadImage,
                                                                                     fit: BoxFit.cover,
-                                                                                    height: 85,
-                                                                                    width: 70,
+                                                                                    height: 85.sp,
+                                                                                    width: 70.sp,
                                                                                   ),
                                                                                 ),
                                                                               )
                                                                             : Image.asset(dummyWishlistImage,
-                                                                                height:
-                                                                                    85,
-                                                                                width:
-                                                                                    70,
+                                                                                height: 85
+                                                                                    .sp,
+                                                                                width: 70
+                                                                                    .sp,
                                                                                 fit: BoxFit
                                                                                     .cover)
                                                                         : Image.asset(
                                                                             dummyWishlistImage,
-                                                                            height:
-                                                                                85,
-                                                                            width: 70,
+                                                                            height: 85.sp,
+                                                                            width: 70.sp,
                                                                             fit: BoxFit.cover)),
                                                                 Expanded(
                                                                   flex: 3,
@@ -386,12 +384,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             .start,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
+                                                                        padding: EdgeInsets.only(
                                                                             right:
-                                                                                5,
-                                                                            left:
-                                                                                12),
+                                                                                5.sp,
+                                                                            left: 12.sp),
                                                                         child:
                                                                             AppText(
                                                                           text: value.orderList[index]["order_lines"][0]["product"] != null
@@ -404,22 +400,18 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           fontWeight:
                                                                               FontWeight.w400,
                                                                           fontSize:
-                                                                              14.sp,
+                                                                              14,
                                                                           color:
                                                                               nameText,
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
+                                                                        padding: EdgeInsets.only(
                                                                             right:
-                                                                                5,
-                                                                            left:
-                                                                                12,
-                                                                            top:
-                                                                                5,
-                                                                            bottom:
-                                                                                5),
+                                                                                5.sp,
+                                                                            left: 12.sp,
+                                                                            top: 5.sp,
+                                                                            bottom: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text: value.orderList[index]["order_lines"][0]["product"] != null
@@ -430,7 +422,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           maxLines:
                                                                               2,
                                                                           fontSize:
-                                                                              12.sp,
+                                                                              12,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -438,29 +430,25 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
+                                                                        padding: EdgeInsets.only(
                                                                             right:
-                                                                                5,
-                                                                            left:
-                                                                                12,
-                                                                            top:
-                                                                                5,
-                                                                            bottom:
-                                                                                5),
+                                                                                5.sp,
+                                                                            left: 12.sp,
+                                                                            top: 5.sp,
+                                                                            bottom: 5.sp),
                                                                         child:
                                                                             Row(
                                                                           children: [
                                                                             value.orderList[index]["order_lines"][0]["inventory"] != null
                                                                                 //  value.orderList[index]["order_lines"].where((element) => element['inventory'] != null)
                                                                                 ? Padding(
-                                                                                    padding: const EdgeInsets.only(right: 10),
+                                                                                    padding: EdgeInsets.only(right: 10.sp),
                                                                                     child: AppText(
                                                                                       //  text: "Size :${value.orderList[index]["order_lines"][0]["product"]["inventories"][value.orderList[index]["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
                                                                                       text: "Size :${value.orderList[index]["order_lines"][0]["inventory"]["product_matrix_name_size"] ?? ""}",
                                                                                       color: greyTextColor,
                                                                                       maxLines: 2,
-                                                                                      fontSize: 12.sp,
+                                                                                      fontSize: 12,
                                                                                       fontFamily: "Franklin Gothic Regular",
                                                                                       fontWeight: FontWeight.w400,
                                                                                     ),
@@ -471,12 +459,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Expanded(
                                                                               flex: 1,
                                                                               child: Padding(
-                                                                                padding: const EdgeInsets.only(right: 10),
+                                                                                padding: EdgeInsets.only(right: 10.sp),
                                                                                 child: AppText(
                                                                                   text: "Qty :${value.orderList[index]["order_lines"][0]["quantity"] ?? "0"}",
                                                                                   color: greyTextColor,
                                                                                   maxLines: 2,
-                                                                                  fontSize: 12.sp,
+                                                                                  fontSize: 12,
                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                   fontWeight: FontWeight.w400,
                                                                                 ),
@@ -485,7 +473,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             AppText(
                                                                               text: "\u{20B9} ${value.orderList[index]["order_lines"][0]["total"] ?? "0"}",
                                                                               color: greyTextColor,
-                                                                              fontSize: 12.sp,
+                                                                              fontSize: 12,
                                                                               textAlign: TextAlign.right,
                                                                               fontFamily: "Franklin Gothic Regular",
                                                                               fontWeight: FontWeight.w400,
@@ -500,13 +488,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                             ),
                                                           ),
                                                           Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     vertical:
-                                                                        10,
+                                                                        10.sp,
                                                                     horizontal:
-                                                                        16),
+                                                                        16.sp),
                                                             child: Row(
                                                               children: [
                                                                 if (value.orderList[index]["status"] ==
@@ -515,46 +502,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightGreen,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(checkImage),
                                                                                 color: deepGreen,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Delivered",
                                                                                 color: deepGreen,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -568,46 +554,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightYellow,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(shippedImage),
                                                                                 color: deeptYellow,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Shipped",
                                                                                 color: deeptYellow,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -621,34 +606,33 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightPurple,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(confirmOrderImage),
                                                                                 color: deepPurple,
@@ -656,11 +640,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Order Confirmed",
                                                                                 color: deepPurple,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -674,46 +658,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightPurple,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(confirmOrderImage),
                                                                                 color: deepPurple,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Pending",
                                                                                 color: deepPurple,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -727,46 +710,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightPurple,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(confirmOrderImage),
                                                                                 color: deepPurple,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Processing",
                                                                                 color: deepPurple,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -781,46 +763,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightback,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(cancelImage),
                                                                                 color: deepRed,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Cancelled",
                                                                                 color: deepRed,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -835,46 +816,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightPurple,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(confirmOrderImage),
                                                                                 color: deepPurple,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Completed",
                                                                                 color: deepPurple,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -890,34 +870,33 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightPurple,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(confirmOrderImage),
                                                                                 color: deepPurple,
@@ -925,11 +904,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Exchange",
                                                                                 color: deepPurple,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -945,46 +924,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightback,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(cancelImage),
                                                                                 color: deepRed,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Rejected",
                                                                                 color: deepRed,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -1000,46 +978,45 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     duration: const Duration(
                                                                         milliseconds:
                                                                             300),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            5),
-                                                                    height: 30,
+                                                                    margin: EdgeInsets.only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                        30.sp,
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       color:
                                                                           lightGreen,
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              20),
+                                                                              20.sp),
                                                                       border: Border.all(
                                                                           color:
                                                                               textHintColor,
                                                                           width:
-                                                                              1),
+                                                                              1.sp),
                                                                     ),
                                                                     child:
                                                                         Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
-                                                                              5),
+                                                                              5.sp),
                                                                       child: Row(
                                                                           children: [
-                                                                            const Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 2),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
                                                                               child: ImageIcon(
                                                                                 AssetImage(checkImage),
                                                                                 color: deepGreen,
-                                                                                size: 14,
+                                                                                size: 14.sp,
                                                                               ),
                                                                             ),
                                                                             Padding(
-                                                                              padding: const EdgeInsets.only(left: 5, right: 2),
+                                                                              padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
                                                                                 text: "Approved",
                                                                                 color: deepGreen,
-                                                                                fontSize: 12.sp,
+                                                                                fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
                                                                                 fontWeight: FontWeight.w500,
                                                                               ),
@@ -1064,12 +1041,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "delivered_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        padding: EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                5),
+                                                                                5.sp,
+                                                                            vertical: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -1077,7 +1052,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           color:
                                                                               greyTextColor,
                                                                           fontSize:
-                                                                              11.sp,
+                                                                              11,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -1089,12 +1064,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "estimated_delivery_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        padding: EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                5),
+                                                                                5.sp,
+                                                                            vertical: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -1102,7 +1075,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           color:
                                                                               greyTextColor,
                                                                           fontSize:
-                                                                              11.sp,
+                                                                              11,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -1114,12 +1087,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "cancelled_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        padding: EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                5),
+                                                                                5.sp,
+                                                                            vertical: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -1127,7 +1098,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           color:
                                                                               greyTextColor,
                                                                           fontSize:
-                                                                              11.sp,
+                                                                              11,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -1140,12 +1111,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "delivered_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        padding: EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                5),
+                                                                                5.sp,
+                                                                            vertical: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -1153,7 +1122,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           color:
                                                                               greyTextColor,
                                                                           fontSize:
-                                                                              11.sp,
+                                                                              11,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -1165,12 +1134,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "estimated_delivery_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        padding: EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                5),
+                                                                                5.sp,
+                                                                            vertical: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -1178,7 +1145,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           color:
                                                                               greyTextColor,
                                                                           fontSize:
-                                                                              11.sp,
+                                                                              11,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -1190,12 +1157,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             "cancelled_at"] !=
                                                                         null) ...[
                                                                       Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
+                                                                        padding: EdgeInsets.symmetric(
                                                                             horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                5),
+                                                                                5.sp,
+                                                                            vertical: 5.sp),
                                                                         child:
                                                                             AppText(
                                                                           text:
@@ -1203,7 +1168,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           color:
                                                                               greyTextColor,
                                                                           fontSize:
-                                                                              11.sp,
+                                                                              11,
                                                                           fontFamily:
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
@@ -1290,12 +1255,13 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       "status"] ==
                                                                   6) ...[
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .only(
-                                                                      left: 16,
-                                                                      right: 16,
-                                                                      bottom:
-                                                                          20),
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                          16.sp,
+                                                                      right:
+                                                                          16.sp,
+                                                                      bottom: 20
+                                                                          .sp),
                                                                   child: DoubleIconButton(
                                                                       firstText: "Exchange Item",
                                                                       secondText: "Rate Order",
@@ -1368,12 +1334,13 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       "status"] ==
                                                                   3) ...[
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .only(
-                                                                      left: 16,
-                                                                      right: 16,
-                                                                      bottom:
-                                                                          20),
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                          16.sp,
+                                                                      right:
+                                                                          16.sp,
+                                                                      bottom: 20
+                                                                          .sp),
                                                                   child: DoubleIconButton(
                                                                       firstText: "Cancel Item",
                                                                       secondText: "Track Order",
@@ -1437,13 +1404,15 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       "status"] ==
                                                                   5) ...[
                                                                 Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .only(
-                                                                      left: 16,
-                                                                      right: 16,
-                                                                      top: 10,
-                                                                      bottom:
-                                                                          30),
+                                                                  padding: EdgeInsets.only(
+                                                                      left:
+                                                                          16.sp,
+                                                                      right:
+                                                                          16.sp,
+                                                                      top:
+                                                                          10.sp,
+                                                                      bottom: 30
+                                                                          .sp),
                                                                   child: SingleIconButton(
                                                                       label: "Track Order",
                                                                       textColor: btnTextColor,
@@ -1474,13 +1443,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       "status"] ==
                                                                   7) ...[
                                                                 Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              10,
-                                                                          bottom:
-                                                                              30),
+                                                                  padding: EdgeInsets.only(
+                                                                      top:
+                                                                          10.sp,
+                                                                      bottom: 30
+                                                                          .sp),
                                                                   child: SingleButton(
                                                                       label: "View details",
                                                                       height: 40,
@@ -1507,13 +1474,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                 )
                                                               ] else ...[
                                                                 Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              10,
-                                                                          bottom:
-                                                                              30),
+                                                                  padding: EdgeInsets.only(
+                                                                      top:
+                                                                          10.sp,
+                                                                      bottom: 30
+                                                                          .sp),
                                                                   child: SingleButton(
                                                                       label: "View details",
                                                                       height: 40,
@@ -1550,12 +1515,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                         );
                                       }),
                                 ))
-                            : const Padding(
-                                padding: EdgeInsets.all(40.0),
+                            : Padding(
+                                padding: EdgeInsets.all(40.0.sp),
                                 child: Center(
                                   child: Text("No Order Found",
                                       style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 14.sp,
                                           color: Colors.black,
                                           fontFamily:
                                               "Franklin Gothic Regular")),

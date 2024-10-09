@@ -169,11 +169,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   1]["status"] ==
                                           4) ...[
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Center(
                                             child: Image.asset(placedGif,
-                                                height: 250, fit: BoxFit.cover),
+                                                height: 250.sp,
+                                                fit: BoxFit.cover),
                                           ),
                                         )
                                       ] else if (orderController.trackList[
@@ -181,11 +181,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   1]["status"] ==
                                           3) ...[
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Center(
                                             child: Image.asset(shippedGif,
-                                                height: 250, fit: BoxFit.cover),
+                                                height: 250.sp,
+                                                fit: BoxFit.cover),
                                           ),
                                         )
                                       ] else if (orderController.trackList[
@@ -193,29 +193,31 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   1]["status"] ==
                                           2) ...[
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Center(
                                             child: Image.asset(truckGif,
-                                                height: 250, fit: BoxFit.cover),
+                                                height: 250.sp,
+                                                fit: BoxFit.cover),
                                           ),
                                         )
                                       ] else ...[
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Center(
                                             child: Image.asset(shippedGif,
-                                                height: 250, fit: BoxFit.cover),
+                                                height: 250.sp,
+                                                fit: BoxFit.cover),
                                           ),
                                         )
                                       ],
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 14, right: 14, bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 14.sp,
+                                            right: 14.sp,
+                                            bottom: 10.sp),
                                         child: SizedBox(
                                           width: double.infinity,
-                                          height: 30,
+                                          height: 30.sp,
                                           child: ListView.builder(
                                               shrinkWrap: true,
                                               primary: false,
@@ -229,9 +231,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       CrossAxisAlignment.center,
                                                   children: [
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 2),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 2.sp),
                                                       child: orderController
                                                               .trackList
                                                               .any((map) =>
@@ -240,21 +242,21 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                       index])
                                                           ? Image.asset(
                                                               greenDotImage,
-                                                              height: 8,
-                                                              width: 8,
+                                                              height: 8.sp,
+                                                              width: 8.sp,
                                                               fit: BoxFit.cover,
                                                             )
                                                           : Image.asset(
                                                               greyDotImage,
-                                                              height: 8,
-                                                              width: 8,
+                                                              height: 8.sp,
+                                                              width: 8.sp,
                                                               fit: BoxFit.cover,
                                                             ),
                                                     ),
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 4),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 4.sp),
                                                       child: AppText(
                                                         text: orderController
                                                                 .trackList
@@ -270,7 +272,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             "Franklin Gothic Regular",
                                                         fontWeight:
                                                             FontWeight.w400,
-                                                        fontSize: 10.sp,
+                                                        fontSize: 10,
                                                         color: orderController
                                                                 .trackList
                                                                 .any((map) =>
@@ -286,14 +288,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             width: 0,
                                                           )
                                                         : Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
-                                                                        2),
+                                                                        2.sp),
                                                             child: Container(
-                                                              width: 20,
-                                                              height: 2,
+                                                              width: 20.sp,
+                                                              height: 2.sp,
                                                               color: index < 1
                                                                   ? color5StartReview
                                                                   : greyDotColor,
@@ -310,14 +311,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     height: 0,
                                   )),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 10.sp),
                           child: AppText(
                             text: "Order Details",
                             maxLines: 1,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
-                            fontSize: 18.sp,
+                            fontSize: 18,
                             color: loginText,
                           ),
                         ),
@@ -325,8 +326,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           () => orderController.isDetails.value
                               ? const DummyOrderDetails()
                               : Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 5.sp),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -336,8 +337,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     ["product"] !=
                                                 null
                                             ? SizedBox(
-                                                height: 85,
-                                                width: 70,
+                                                height: 85.sp,
+                                                width: 70.sp,
                                                 child: CachedNetworkImage(
                                                   cacheManager: CacheManager(
                                                       Config(
@@ -363,14 +364,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           Image.asset(
                                                     downloadImage,
                                                     fit: BoxFit.cover,
-                                                    height: 85,
-                                                    width: 70,
+                                                    height: 85.sp,
+                                                    width: 70.sp,
                                                   ),
                                                 ),
                                               )
                                             : Image.asset(dummyWishlistImage,
-                                                height: 85,
-                                                width: 70,
+                                                height: 85.sp,
+                                                width: 70.sp,
                                                 fit: BoxFit.cover),
                                       ),
                                       Expanded(
@@ -382,9 +383,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 5,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 5.sp,
                                               ),
                                               child: AppText(
                                                 text: orderController
@@ -401,15 +401,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
-                                                fontSize: 14.sp,
+                                                fontSize: 14,
                                                 color: nameText,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5,
-                                                      vertical: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 5.sp,
+                                                  vertical: 5.sp),
                                               child: AppText(
                                                 text: orderController
                                                                     .orderDetails[
@@ -424,17 +423,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     : "",
                                                 color: greyTextColor,
                                                 maxLines: 2,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5,
-                                                      vertical: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 5.sp,
+                                                  vertical: 5.sp),
                                               child: Row(
                                                 children: [
                                                   orderController.orderDetails[
@@ -444,16 +442,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           null
                                                       ? Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 10),
+                                                              EdgeInsets.only(
+                                                                  right: 10.sp),
                                                           child: AppText(
                                                             text:
                                                                 "Size : ${orderController.orderDetails["order_lines"][0]["inventory"]["product_matrix_name_size"] ?? ""}",
                                                             color:
                                                                 greyTextColor,
                                                             maxLines: 2,
-                                                            fontSize: 12.sp,
+                                                            fontSize: 12,
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
@@ -466,15 +463,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 10),
+                                                      padding: EdgeInsets.only(
+                                                          right: 10.sp),
                                                       child: AppText(
                                                         text:
                                                             "Qty :${orderController.orderDetails["order_lines"][0]["quantity"].toString()}",
                                                         color: greyTextColor,
                                                         maxLines: 2,
-                                                        fontSize: 12.sp,
+                                                        fontSize: 12,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         fontWeight:
@@ -486,7 +482,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     text:
                                                         "\u{20B9} ${orderController.orderDetails["order_lines"][0]["total"] ?? "0"}",
                                                     color: greyTextColor,
-                                                    fontSize: 12.sp,
+                                                    fontSize: 12,
                                                     textAlign: TextAlign.right,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
@@ -508,8 +504,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               )
                             : orderController.trackList.isNotEmpty
                                 ? Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 10),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.sp, vertical: 10.sp),
                                     child: Container(
                                       color: orderController.trackList[
                                                   orderController
@@ -519,11 +515,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           ? lightGreen
                                           : whiteBack,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            top: 16,
-                                            bottom: 16),
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            right: 16.sp,
+                                            top: 16.sp,
+                                            bottom: 16.sp),
                                         child: Row(
                                           children: [
                                             if (orderController.trackList[
@@ -537,7 +533,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: deepGreen,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ] else if (orderController.trackList[
@@ -551,7 +547,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: deepGreen,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ] else if (orderController
@@ -565,7 +561,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: deepGreen,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ] else if (orderController
@@ -579,7 +575,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: deepGreen,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ],
@@ -593,7 +589,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
                                               color: deepGreen,
-                                              fontSize: 15.sp,
+                                              fontSize: 15,
                                             ),
                                           ],
                                         ),
@@ -603,8 +599,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 : const SizedBox(
                                     height: 0,
                                   )),
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(
+                          height: 20.sp,
                         ),
                       ],
                     ),
@@ -671,8 +667,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               color: whiteColor,
                               width: double.infinity,
                               child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 16),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 16.sp),
                                   child: /* OrderTracker(
                         status: Status.order,
                         subTitleTextStyle: TextStyle(
@@ -700,11 +696,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: loginText,
-                                        fontSize: 18.sp,
+                                        fontSize: 18,
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 20, top: 30),
+                                        padding: EdgeInsets.only(
+                                            bottom: 20.sp, top: 30.sp),
                                         child: ListView.builder(
                                             primary: false,
                                             shrinkWrap: true,
@@ -731,11 +727,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                       index])
                                                           ? Image.asset(
                                                               greenCheckImage,
-                                                              height: 24,
+                                                              height: 24.sp,
                                                               fit: BoxFit.cover)
                                                           : Image.asset(
                                                               whiteCircleImage,
-                                                              height: 24,
+                                                              height: 24.sp,
                                                               fit:
                                                                   BoxFit.cover),
                                                       index == 3
@@ -743,16 +739,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               height: 0,
                                                             )
                                                           : Container(
-                                                              width: 2,
-                                                              height: 60,
+                                                              width: 2.sp,
+                                                              height: 60.sp,
                                                               color: greyBack,
                                                             )
                                                     ],
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 12),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12.sp),
                                                     child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -777,12 +773,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           color: loginText,
-                                                          fontSize: 14.sp,
+                                                          fontSize: 14,
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .only(top: 8),
+                                                              EdgeInsets.only(
+                                                                  top: 8.sp),
                                                           child: AppText(
                                                             text: orderController
                                                                     .trackList
@@ -801,7 +797,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                 FontWeight.w400,
                                                             color:
                                                                 textHintColor,
-                                                            fontSize: 14.sp,
+                                                            fontSize: 14,
                                                           ),
                                                         ),
                                                       ],
@@ -822,13 +818,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ? DummyOrderAddress()
                         : orderController.orderDetails["address"] != null
                             ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 10.sp),
                                 child: Container(
                                   color: whiteColor,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 16),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.sp, horizontal: 16.sp),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -840,11 +835,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: loginText,
-                                          fontSize: 18.sp,
+                                          fontSize: 18,
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.sp),
                                           child: AppText(
                                             text: orderController
                                                         .orderDetails["address"]
@@ -853,17 +848,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
                                             color: nameText,
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Row(
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 10),
+                                                padding: EdgeInsets.only(
+                                                    right: 10.sp),
                                                 child: AppText(
                                                   text: orderController
                                                               .orderDetails[
@@ -873,28 +867,27 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textHintColor,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
                                                 child: AppText(
                                                   text: email,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textHintColor,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.sp),
                                           child: AppText(
                                             text: orderController.orderDetails[
                                                         "address"]["city"] !=
@@ -908,7 +901,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
                                             color: textHintColor,
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                           ),
                                         ),
                                         GestureDetector(
@@ -928,8 +921,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 deliverPartnerLng: 77.2185));
                                           },
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 5),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5.sp),
                                             child: Text(
                                               "View on Maps",
                                               style: TextStyle(
@@ -944,27 +937,26 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 20),
+                                          padding: EdgeInsets.only(top: 20.sp),
                                           child: AppText(
                                             text: "Billing Address",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
                                             color: bottomnavBack,
-                                            fontSize: 12.sp,
+                                            fontSize: 12,
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.sp),
                                           child: AppText(
                                             text: "Same as Delivery Address",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
                                             color: textHintColor,
-                                            fontSize: 14.sp,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ],
@@ -981,13 +973,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ? DummyOrderPayment()
                         : orderController.orderDetails["payment"] != null
                             ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 10.sp),
                                 child: Container(
                                   color: whiteColor,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 16),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.sp, horizontal: 16.sp),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -995,8 +986,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(top: 5.sp),
                                           child: Row(
                                             children: [
                                               Expanded(
@@ -1007,28 +997,26 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: loginText,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
                                                 child: AppText(
                                                   text:
                                                       "\u{20B9} ${orderController.orderDetails["payment"]["amount"] ?? "0"}",
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: loginText,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 8),
+                                          padding: EdgeInsets.only(top: 8.sp),
                                           child: Row(
                                             children: [
                                               AppText(
@@ -1037,7 +1025,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: greyTextColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                               AppText(
                                                 text:
@@ -1045,7 +1033,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
                                                 color: greenText,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                               Expanded(
                                                 flex: 1,
@@ -1055,7 +1043,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: greyTextColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                               /*  AppText(
@@ -1069,8 +1057,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.sp),
                                           child: Row(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -1083,12 +1071,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: bottomnavBack,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 16),
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp),
                                                 child: AppText(
                                                   text: orderController
                                                                   .orderDetails[
@@ -1099,16 +1087,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textHintColor,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 4, left: 4),
+                                                padding: EdgeInsets.only(
+                                                    top: 4.sp, left: 4.sp),
                                                 child: Image.asset(
                                                     razorpayImage,
-                                                    height: 40,
-                                                    width: 55,
+                                                    height: 40.sp,
+                                                    width: 55.sp,
                                                     fit: BoxFit.cover),
                                               ),
                                             ],
@@ -1124,12 +1112,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               ),
                   ),
                   Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10.sp),
                       child: Container(
                         color: whiteColor,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 16),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.sp, horizontal: 16.sp),
                           child: Obx(
                             () => orderController.isDetails.value
                                 ? const DummyEstimateDelivery()
@@ -1139,29 +1127,29 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 16),
+                                        padding: EdgeInsets.only(top: 16.sp),
                                         child: AppText(
                                           text: "Other items in this order",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: loginText,
-                                          fontSize: 18.sp,
+                                          fontSize: 18,
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 5),
+                                        padding: EdgeInsets.only(top: 5.sp),
                                         child: AppText(
                                           text:
                                               "Order ID ${orderController.orderDetails["payment"] != null ? orderController.orderDetails["payment"]["transaction_id"] : ""} ",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                           color: greyTextColor,
-                                          fontSize: 14.sp,
+                                          fontSize: 14,
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 20, top: 10),
+                                        padding: EdgeInsets.only(
+                                            bottom: 20.sp, top: 10.sp),
                                         child: ListView.builder(
                                             primary: false,
                                             shrinkWrap: true,
@@ -1173,9 +1161,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             scrollDirection: Axis.vertical,
                                             itemBuilder: (ctx, index) {
                                               return Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.sp),
                                                 child: Column(
                                                   children: [
                                                     GestureDetector(
@@ -1184,9 +1171,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         color: whiteColor,
                                                         child: Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 10),
+                                                              EdgeInsets.only(
+                                                                  top: 10.sp),
                                                           child: Column(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
@@ -1202,8 +1188,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                       child: orderController.orderDetails["order_lines"][index]["product"] !=
                                                                               null
                                                                           ? SizedBox(
-                                                                              height: 85,
-                                                                              width: 70,
+                                                                              height: 85.sp,
+                                                                              width: 70.sp,
                                                                               child: CachedNetworkImage(
                                                                                 cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                 fit: BoxFit.cover,
@@ -1211,15 +1197,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   downloadImage,
                                                                                   fit: BoxFit.cover,
-                                                                                  height: 85,
-                                                                                  width: 70,
+                                                                                  height: 85.sp,
+                                                                                  width: 70.sp,
                                                                                 ),
                                                                               ),
                                                                             )
                                                                           : Image.asset(
                                                                               dummyWishlistImage,
-                                                                              height: 85,
-                                                                              width: 70,
+                                                                              height: 85.sp,
+                                                                              width: 70.sp,
                                                                               fit: BoxFit.cover),
                                                                     ),
                                                                     Expanded(
@@ -1233,8 +1219,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                         children: [
                                                                           Padding(
                                                                             padding:
-                                                                                const EdgeInsets.symmetric(
-                                                                              horizontal: 5,
+                                                                                EdgeInsets.symmetric(
+                                                                              horizontal: 5.sp,
                                                                             ),
                                                                             child:
                                                                                 AppText(
@@ -1242,38 +1228,38 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               maxLines: 1,
                                                                               fontFamily: "Franklin Gothic Regular",
                                                                               fontWeight: FontWeight.w400,
-                                                                              fontSize: 14.sp,
+                                                                              fontSize: 14,
                                                                               color: nameText,
                                                                             ),
                                                                           ),
                                                                           Padding(
                                                                             padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                                                                EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
                                                                               text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : "",
                                                                               color: greyTextColor,
                                                                               maxLines: 2,
-                                                                              fontSize: 12.sp,
+                                                                              fontSize: 12,
                                                                               fontFamily: "Franklin Gothic Regular",
                                                                               fontWeight: FontWeight.w400,
                                                                             ),
                                                                           ),
                                                                           Padding(
                                                                             padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                                                                                EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 Row(
                                                                               children: [
                                                                                 orderController.orderDetails["order_lines"][index]["inventory"] != null
                                                                                     ? Padding(
-                                                                                        padding: const EdgeInsets.only(right: 10),
+                                                                                        padding: EdgeInsets.only(right: 10.sp),
                                                                                         child: AppText(
                                                                                           // text: "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
                                                                                           text: "Size : ${orderController.orderDetails["order_lines"][index]["inventory"]["product_matrix_name_size"] ?? ""}",
                                                                                           color: greyTextColor,
                                                                                           maxLines: 2,
-                                                                                          fontSize: 12.sp,
+                                                                                          fontSize: 12,
                                                                                           fontFamily: "Franklin Gothic Regular",
                                                                                           fontWeight: FontWeight.w400,
                                                                                         ),
@@ -1282,12 +1268,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         height: 0,
                                                                                       ),
                                                                                 Padding(
-                                                                                  padding: const EdgeInsets.only(right: 10),
+                                                                                  padding: EdgeInsets.only(right: 10.sp),
                                                                                   child: AppText(
                                                                                     text: "Qty :${orderController.orderDetails["order_lines"][index]["quantity"].toString()}",
                                                                                     color: greyTextColor,
                                                                                     maxLines: 2,
-                                                                                    fontSize: 12.sp,
+                                                                                    fontSize: 12,
                                                                                     fontFamily: "Franklin Gothic Regular",
                                                                                     fontWeight: FontWeight.w400,
                                                                                   ),
@@ -1319,11 +1305,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         );
                                                                                       },
                                                                                       child: Padding(
-                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                        padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
                                                                                         child: AppText(
                                                                                           text: "Write a Review",
                                                                                           color: blue,
-                                                                                          fontSize: 11.sp,
+                                                                                          fontSize: 11,
                                                                                           fontFamily: "Franklin Gothic Regular",
                                                                                           fontWeight: FontWeight.w400,
                                                                                         ),
@@ -1351,22 +1337,22 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                               );
                                                                                             },
                                                                                             child: Padding(
-                                                                                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
                                                                                               child: AppText(
                                                                                                 text: "Exchange",
                                                                                                 color: blue,
-                                                                                                fontSize: 11.sp,
+                                                                                                fontSize: 11,
                                                                                                 fontFamily: "Franklin Gothic Regular",
                                                                                                 fontWeight: FontWeight.w400,
                                                                                               ),
                                                                                             ),
                                                                                           )
                                                                                         : Padding(
-                                                                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
                                                                                             child: AppText(
                                                                                               text: "No Exchange",
                                                                                               color: greyTextColor,
-                                                                                              fontSize: 11.sp,
+                                                                                              fontSize: 11,
                                                                                               fontFamily: "Franklin Gothic Regular",
                                                                                               fontWeight: FontWeight.w400,
                                                                                             ),
@@ -1377,7 +1363,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
                                                                                       },
                                                                                       child: Padding(
-                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                                                        padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
                                                                                         child: /*  productController.isReorder.value
                                                                                             ? const SizedBox(
                                                                                                 height: 10,
@@ -1388,7 +1374,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                             AppText(
                                                                                           text: "Reorder",
                                                                                           color: blue,
-                                                                                          fontSize: 11.sp,
+                                                                                          fontSize: 11,
                                                                                           fontFamily: "Franklin Gothic Regular",
                                                                                           fontWeight: FontWeight.w400,
                                                                                         ),
@@ -1414,7 +1400,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             }),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(top: 5),
+                                        padding: EdgeInsets.only(top: 5.sp),
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -1425,28 +1411,27 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: loginText,
-                                                fontSize: 14.sp,
+                                                fontSize: 14,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 5.sp),
                                               child: AppText(
                                                 text:
                                                     "\u{20B9} ${orderController.orderDetails["total"] ?? "0"}",
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
                                                 color: loginText,
-                                                fontSize: 14.sp,
+                                                fontSize: 14,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10.sp),
                                         child: Row(
                                           children: [
                                             AppText(
@@ -1455,7 +1440,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   "Franklin Gothic Regular",
                                               fontWeight: FontWeight.w400,
                                               color: greyTextColor,
-                                              fontSize: 12.sp,
+                                              fontSize: 12,
                                             ),
                                             AppText(
                                               text:
@@ -1463,7 +1448,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
                                               color: greenText,
-                                              fontSize: 12.sp,
+                                              fontSize: 12,
                                             ),
                                             Expanded(
                                               flex: 1,
@@ -1473,7 +1458,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                                 color: greyTextColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                               ),
                                             ),
                                             /*  AppText(
@@ -1487,8 +1472,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 20, bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            top: 20.sp, bottom: 10.sp),
                                         child: SingleButton(
                                             label: "Download Invoice",
                                             height: 40,

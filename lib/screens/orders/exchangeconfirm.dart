@@ -63,15 +63,15 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 20),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 20.sp),
                           child: Row(
                             children: [
                               Expanded(
                                 flex: 1,
                                 child: SizedBox(
-                                  height: 85,
-                                  width: 70,
+                                  height: 85.sp,
+                                  width: 70.sp,
                                   child: CachedNetworkImage(
                                     cacheManager: CacheManager(Config(
                                         "customCacheKey",
@@ -83,8 +83,8 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                                         Image.asset(
                                       downloadImage,
                                       fit: BoxFit.cover,
-                                      height: 85,
-                                      width: 70,
+                                      height: 85.sp,
+                                      width: 70.sp,
                                     ),
                                   ),
                                 ),
@@ -96,28 +96,28 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 10.sp,
                                       ),
                                       child: AppText(
                                         text: widget.productName,
                                         maxLines: 2,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 14.sp,
+                                        fontSize: 14,
                                         color: nameText,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 10.sp, horizontal: 10.sp),
                                       child: AppText(
                                         text: Bidi.stripHtmlIfNeeded(
                                             widget.productDescription),
                                         maxLines: 2,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         color: nameText,
                                       ),
                                     ),
@@ -128,24 +128,25 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 10.sp),
                           child: AppText(
                             text: "Why you exchanging this?",
                             maxLines: 2,
                             fontFamily: "Franklin Gothic",
                             fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             color: loginText,
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 10.sp),
                           child: TextField(
                             textCapitalization: TextCapitalization.sentences,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: textColor,
+                              fontSize: 14.sp,
                               fontFamily: "Franklin Gothic Regular",
                             ),
                             controller: controller.exchangeComment,
@@ -165,16 +166,16 @@ class ExchangeConfirmScreenState extends State<ExchangeConfirmScreen> {
                                     const BorderSide(color: borderColor),
                               ),
                               counterText: "",
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 10.sp, vertical: 10.sp),
                               hintText: "How is the product? What do you hate?",
-                              hintStyle: const TextStyle(fontSize: 14),
+                              hintStyle: TextStyle(fontSize: 14.sp),
                             ),
                           ),
                         ),
                         Obx(() => Padding(
                               padding:
-                                  const EdgeInsets.only(top: 30, bottom: 10),
+                                  EdgeInsets.only(top: 30.sp, bottom: 10.sp),
                               child: getSingleButton(
                                   label: "Exchange Item",
                                   textColor: btnTextColor,
