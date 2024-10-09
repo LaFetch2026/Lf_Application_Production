@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/common_widgets.dart';
@@ -48,7 +49,7 @@ class SocialMediaLoginScreenState extends State<SocialMediaLoginScreen> {
                     icon: threeDotImage,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.only(top: 10.sp),
                     child: NumberWidget(
                         readonly: false,
                         controller: loginController.phoneNumberRegister),
@@ -59,7 +60,7 @@ class SocialMediaLoginScreenState extends State<SocialMediaLoginScreen> {
           ),
           Obx(
             () => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: EdgeInsets.symmetric(vertical: 20.sp),
               child: getSingleButton(
                 label: "Continue",
                 textColor: whiteTextColor,

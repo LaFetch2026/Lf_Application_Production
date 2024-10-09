@@ -29,7 +29,7 @@ class BottomSheetBoard extends StatelessWidget {
             topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
