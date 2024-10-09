@@ -410,92 +410,80 @@ class BoardScreenState extends State<BoardScreen> {
                                                               ),
                                                             ),
                                                           ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        16.sp,
-                                                                    vertical:
-                                                                        10.sp),
-                                                            child: Align(
-                                                              alignment: Alignment
-                                                                  .bottomLeft,
-                                                              child: Container(
-                                                                margin: EdgeInsets.only(
-                                                                    top: (MediaQuery.of(context).size.width /
-                                                                            2) -
-                                                                        40),
-                                                                color: const Color(
-                                                                    0xB3F7F7F5),
-                                                                height: 26.sp,
-                                                                width: 80.sp,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              2.sp),
-                                                                      child: Image
-                                                                          .asset(
-                                                                        starImage,
-                                                                        height:
-                                                                            16.sp,
-                                                                        color:
-                                                                            bottomnavBack,
-                                                                        width: 16
-                                                                            .sp,
-                                                                      ),
-                                                                    ),
-                                                                    AppText(
-                                                                      text: value.wishListProduct[index]["aggregated_rating"] !=
-                                                                              null
-                                                                          ? value
-                                                                              .wishListProduct[index]["aggregated_rating"]
-                                                                              .toString()
-                                                                          : "",
+                                                          Positioned(
+                                                            bottom: 16.sp,
+                                                            left: 16.sp,
+                                                            child: Container(
+                                                              color: const Color(
+                                                                  0xB3F7F7F5),
+                                                              height: 26.sp,
+                                                              width: 80.sp,
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            2.sp),
+                                                                    child: Image
+                                                                        .asset(
+                                                                      starImage,
+                                                                      height:
+                                                                          16.sp,
                                                                       color:
-                                                                          colorPrimary,
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
+                                                                          bottomnavBack,
+                                                                      width:
+                                                                          16.sp,
                                                                     ),
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              10.sp),
-                                                                      child:
-                                                                          Container(
-                                                                        width: 1
-                                                                            .sp,
-                                                                        color:
-                                                                            textHintColor,
-                                                                        height:
-                                                                            16.sp,
-                                                                      ),
-                                                                    ),
-                                                                    AppText(
-                                                                      text: value
-                                                                          .wishListProduct[
-                                                                              index]
-                                                                              [
-                                                                              "reviews_count"]
-                                                                          .toString(),
+                                                                  ),
+                                                                  AppText(
+                                                                    text: value.wishListProduct[index]["aggregated_rating"] !=
+                                                                            null
+                                                                        ? value
+                                                                            .wishListProduct[index]["aggregated_rating"]
+                                                                            .toString()
+                                                                        : "",
+                                                                    color:
+                                                                        colorPrimary,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10.sp),
+                                                                    child:
+                                                                        Container(
+                                                                      width:
+                                                                          1.sp,
                                                                       color:
-                                                                          colorPrimary,
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
+                                                                          textHintColor,
+                                                                      height:
+                                                                          16.sp,
                                                                     ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                  AppText(
+                                                                    text: value
+                                                                        .wishListProduct[
+                                                                            index]
+                                                                            [
+                                                                            "reviews_count"]
+                                                                        .toString(),
+                                                                    color:
+                                                                        colorPrimary,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),

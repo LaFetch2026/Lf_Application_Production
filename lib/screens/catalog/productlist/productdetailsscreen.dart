@@ -919,8 +919,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     color: colorPrimary,
                                                     fontSize: 12,
                                                   ),
-                                                  const VerticalDivider(
-                                                      color: colorSecondary),
+                                                  /* const VerticalDivider(
+                                                      color: colorSecondary), */
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8.sp),
+                                                    child: Container(
+                                                      width: 1.sp,
+                                                      color: textHintColor,
+                                                      height: 16.sp,
+                                                    ),
+                                                  ),
                                                   AppText(
                                                     text: productController
                                                         .totalReview.value

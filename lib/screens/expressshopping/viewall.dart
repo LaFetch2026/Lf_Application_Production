@@ -345,97 +345,80 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           ),
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    22.sp,
-                                                                vertical:
-                                                                    10.sp),
-                                                        child: Align(
-                                                          alignment: Alignment
-                                                              .bottomLeft,
-                                                          child: Container(
-                                                            margin: EdgeInsets.only(
-                                                                top: (MediaQuery.sizeOf(context)
-                                                                            .width /
-                                                                        2) -
-                                                                    40),
-                                                            color: const Color(
-                                                                0xB3F7F7F5),
-                                                            height: 26.sp,
-                                                            width: 80.sp,
-                                                            child: Row(
-                                                              children: [
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              2.sp),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    starImage,
-                                                                    height:
-                                                                        16.sp,
-                                                                    color:
-                                                                        bottomnavBack,
-                                                                    width:
-                                                                        16.sp,
-                                                                  ),
-                                                                ),
-                                                                AppText(
-                                                                  text: productController.productExpressBrandList[index]
-                                                                              [
-                                                                              "aggregated_rating"] !=
-                                                                          null
-                                                                      ? productController
-                                                                          .productExpressBrandList[
-                                                                              index]
-                                                                              [
-                                                                              "aggregated_rating"]
-                                                                          .toString()
-                                                                      : "0",
+                                                      Positioned(
+                                                        bottom: 16.sp,
+                                                        left: 16.sp,
+                                                        child: Container(
+                                                          color: const Color(
+                                                              0xB3F7F7F5),
+                                                          height: 26.sp,
+                                                          width: 80.sp,
+                                                          child: Row(
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            2.sp),
+                                                                child:
+                                                                    Image.asset(
+                                                                  starImage,
+                                                                  height: 16.sp,
                                                                   color:
-                                                                      colorPrimary,
-                                                                  fontSize: 12,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
+                                                                      bottomnavBack,
+                                                                  width: 16.sp,
                                                                 ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              10.sp),
-                                                                  child:
-                                                                      Container(
-                                                                    width: 1.sp,
-                                                                    color:
-                                                                        textHintColor,
-                                                                    height:
-                                                                        16.sp,
-                                                                  ),
-                                                                ),
-                                                                AppText(
-                                                                  text: productController
-                                                                      .productExpressBrandList[
-                                                                          index]
-                                                                          [
-                                                                          "reviews_count"]
-                                                                      .toString(),
+                                                              ),
+                                                              AppText(
+                                                                text: productController.productExpressBrandList[index]
+                                                                            [
+                                                                            "aggregated_rating"] !=
+                                                                        null
+                                                                    ? productController
+                                                                        .productExpressBrandList[
+                                                                            index]
+                                                                            [
+                                                                            "aggregated_rating"]
+                                                                        .toString()
+                                                                    : "0",
+                                                                color:
+                                                                    colorPrimary,
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            10.sp),
+                                                                child:
+                                                                    Container(
+                                                                  width: 1.sp,
                                                                   color:
-                                                                      colorPrimary,
-                                                                  fontSize: 12,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
+                                                                      textHintColor,
+                                                                  height: 16.sp,
                                                                 ),
-                                                              ],
-                                                            ),
+                                                              ),
+                                                              AppText(
+                                                                text: productController
+                                                                    .productExpressBrandList[
+                                                                        index][
+                                                                        "reviews_count"]
+                                                                    .toString(),
+                                                                color:
+                                                                    colorPrimary,
+                                                                fontSize: 12,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ),
