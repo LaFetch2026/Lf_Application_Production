@@ -33,34 +33,34 @@ class PaymentFailWidget extends StatelessWidget {
             visible: visible,
             child: Center(
               child: Image.asset(image,
-                  height: 180, width: 200, fit: BoxFit.cover),
+                  height: 180.sp, width: 200.sp, fit: BoxFit.cover),
             )),
         Padding(
-          padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+          padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: Center(
             child: AppText(
               text: text1,
               fontFamily: "Franklin Gothic Bold",
               fontWeight: FontWeight.w700,
               color: blackColor,
-              fontSize: 18.sp,
+              fontSize: 18,
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+          padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: text2,
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: blackColor,
-            fontSize: 14.sp,
+            fontSize: 14,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
+          padding: EdgeInsets.only(top: 30.sp, left: 16.sp, right: 16.sp),
           child: SmallButton(
-              width: 160,
+              width: 160.sp,
               label: btntext,
               textColor: whiteBorderColor,
               backgroundColor: colorPrimary,

@@ -159,8 +159,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
               child: SingleChildScrollView(
                   child: Obx(
                 () => shipController.isDetails.value
-                    ? const Padding(
-                        padding: EdgeInsets.all(40.0),
+                    ? Padding(
+                        padding: EdgeInsets.all(40.0.sp),
                         child: Center(child: CircularProgressIndicator()),
                       )
                     : Column(
@@ -284,28 +284,29 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                           ),
                          */
                           Padding(
-                            padding: const EdgeInsets.only(top: 30),
+                            padding: EdgeInsets.only(top: 30.sp),
                             child: TextFieldWidget(
                               hint: "Name",
                               controller: shipController.nameController,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: NumberWidget(
                                 readonly: false,
                                 controller: shipController.phoneController),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16, right: 16, top: 10),
+                            padding: EdgeInsets.only(
+                                left: 16.sp, right: 16.sp, top: 10.sp),
                             child: SizedBox(
-                              height: 44,
+                              height: 44.sp,
                               child: TextField(
                                 keyboardType: TextInputType.number,
                                 maxLength: 6,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: textColor,
+                                  fontSize: 14.sp,
                                   fontFamily: "Franklin Gothic Regular",
                                 ),
                                 controller: shipController.pincodeController,
@@ -316,32 +317,32 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                       borderSide:
                                           BorderSide(color: borderColor)),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
+                                    borderRadius: BorderRadius.circular(1.sp),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
+                                    borderRadius: BorderRadius.circular(1.sp),
                                     borderSide:
                                         const BorderSide(color: borderColor),
                                   ),
                                   hintText: "Pin Code",
                                   counterText: "",
-                                  hintStyle: const TextStyle(fontSize: 14),
+                                  hintStyle: TextStyle(fontSize: 14.sp),
                                 ),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16, top: 30),
+                            padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
                             child: AppText(
                               text: "Address",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: blackColor,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 20),
+                            padding: EdgeInsets.only(top: 20.sp),
                             child: TextFieldWidget(
                               hint:
                                   "Address (House no, building, street, area)",
@@ -349,17 +350,17 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: TextFieldWidget(
                               hint: "Locality / Town",
                               controller: shipController.localityController,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16, top: 10, right: 16),
+                            padding: EdgeInsets.only(
+                                left: 16.sp, top: 10.sp, right: 16.sp),
                             child: SizedBox(
-                              height: 44,
+                              height: 44.sp,
                               child: TextField(
                                 textCapitalization: TextCapitalization.words,
                                 readOnly: true,
@@ -370,18 +371,19 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     shipController.showList.value = true;
                                   }
                                 },
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: textColor,
+                                  fontSize: 14.sp,
                                   fontFamily: "Franklin Gothic Regular",
                                 ),
                                 controller: shipController.stateController,
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  suffixIcon: const ImageIcon(
+                                  suffixIcon: ImageIcon(
                                     AssetImage(dropdownImage),
                                     color: nameText,
-                                    size: 30,
+                                    size: 30.sp,
                                   ),
                                   fillColor: whiteTextColor,
                                   focusedBorder: const OutlineInputBorder(
@@ -397,7 +399,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   ),
                                   counterText: "",
                                   hintText: "Select City",
-                                  hintStyle: const TextStyle(fontSize: 14),
+                                  hintStyle: TextStyle(fontSize: 14.sp),
                                 ),
                               ),
                             ),
@@ -405,8 +407,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                           Obx(
                             () => shipController.showList.value
                                 ? Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16, right: 16),
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp, right: 16.sp),
                                     child: ListView.builder(
                                         primary: false,
                                         shrinkWrap: true,
@@ -445,17 +447,16 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                         alignment:
                                                             Alignment.center,
                                                         child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical: 10),
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      10.sp),
                                                           child: Text(
                                                             shipController
                                                                     .cityList[
                                                                 index]["name"],
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 14,
+                                                            style: TextStyle(
+                                                              fontSize: 14.sp,
                                                               color: nameText,
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
@@ -468,23 +469,24 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                                       .cityList
                                                                       .length -
                                                                   1
-                                                          ? const SizedBox(
+                                                          ? SizedBox(
                                                               width: double
                                                                   .infinity,
-                                                              height: 5,
+                                                              height: 5.sp,
                                                             )
                                                           : Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      16,
-                                                                  vertical: 2),
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.sp,
+                                                                      vertical:
+                                                                          2.sp),
                                                               child: Container(
                                                                 width: double
                                                                     .infinity,
                                                                 color:
                                                                     colorSecondary,
-                                                                height: 1,
+                                                                height: 1.sp,
                                                               ),
                                                             ),
                                                     ],
@@ -500,8 +502,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16, top: 40, right: 16),
+                            padding: EdgeInsets.only(
+                                left: 16.sp, top: 40.sp, right: 16.sp),
                             child: Row(
                               children: [
                                 Expanded(
@@ -511,7 +513,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: loginText,
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                   ),
                                 ),
                                 Obx(() => shipController.onButton.value
@@ -530,8 +532,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                         },
                                         child: Image.asset(
                                           switchOnImage,
-                                          width: 40,
-                                          height: 24,
+                                          width: 40.sp,
+                                          height: 24.sp,
                                         ),
                                       )
                                     : GestureDetector(
@@ -543,29 +545,29 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                         child: Image.asset(
                                           switchOffImage,
                                           fit: BoxFit.cover,
-                                          width: 40,
-                                          height: 24,
+                                          width: 40.sp,
+                                          height: 24.sp,
                                         ),
                                       ))
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 16, top: 24),
+                            padding: EdgeInsets.only(left: 16.sp, top: 24.sp),
                             child: AppText(
                               text: "Save Address as",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 16),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.sp, vertical: 16.sp),
                             child: SizedBox(
                               width: double.infinity,
-                              height: 40,
+                              height: 40.sp,
                               child: ListView.builder(
                                   physics: const BouncingScrollPhysics(),
                                   itemCount: items.length,
@@ -596,10 +598,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                             child: AnimatedContainer(
                                               duration: const Duration(
                                                   milliseconds: 300),
-                                              margin: const EdgeInsets.only(
-                                                  right: 5),
-                                              width: 60,
-                                              height: 30,
+                                              margin:
+                                                  EdgeInsets.only(right: 5.sp),
+                                              width: 60.sp,
+                                              height: 30.sp,
                                               decoration: BoxDecoration(
                                                 color: shipController
                                                             .current.value ==
@@ -609,8 +611,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                 borderRadius: shipController
                                                             .current.value ==
                                                         index
-                                                    ? BorderRadius.circular(20)
-                                                    : BorderRadius.circular(20),
+                                                    ? BorderRadius.circular(
+                                                        20.sp)
+                                                    : BorderRadius.circular(
+                                                        20.sp),
                                                 border: shipController
                                                             .current.value ==
                                                         index
@@ -629,7 +633,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                           index
                                                       ? whiteBorderColor
                                                       : textHintColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -643,23 +647,27 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             ),
                           ),
                           Obx(() => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 10),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 10.sp),
                                 child: Row(
                                   children: [
                                     Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(3),
-                                          border: const Border(
+                                              BorderRadius.circular(3.sp),
+                                          border: Border(
                                             top: BorderSide(
-                                                width: 2.0, color: greyBorder),
+                                                width: 2.0.sp,
+                                                color: greyBorder),
                                             left: BorderSide(
-                                                width: 2.0, color: greyBorder),
+                                                width: 2.0.sp,
+                                                color: greyBorder),
                                             right: BorderSide(
-                                                width: 2.0, color: greyBorder),
+                                                width: 2.0.sp,
+                                                color: greyBorder),
                                             bottom: BorderSide(
-                                                width: 2.0, color: greyBorder),
+                                                width: 2.0.sp,
+                                                color: greyBorder),
                                           ),
                                         ),
                                         width: 20,
@@ -685,8 +693,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                             });
                                           },
                                         )),
-                                    const SizedBox(
-                                      width: 10,
+                                    SizedBox(
+                                      width: 10.sp,
                                     ),
                                     GestureDetector(
                                       onTap: () async {
@@ -711,14 +719,14 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: loginText,
-                                        fontSize: 14.sp,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ],
                                 ),
                               )),
-                          const SizedBox(
-                            height: 20,
+                          SizedBox(
+                            height: 20.sp,
                           ),
                         ],
                       ),
@@ -730,7 +738,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 16.sp),
                         child: getSingleButton(
                             label: widget.addressId == 0
                                 ? "Save and Continue"

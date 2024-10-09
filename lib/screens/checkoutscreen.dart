@@ -145,8 +145,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           ? Container(
                               color: whiteColor,
                               child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 10,
+                                padding: EdgeInsets.only(
+                                  top: 10.sp,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,14 +156,15 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                         Expanded(
                                           flex: 1,
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 14, vertical: 5),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 14.sp,
+                                                vertical: 5.sp),
                                             child: AppText(
                                               text: shipController
                                                       .addressDetails["name"] ??
                                                   "",
                                               color: loginText,
-                                              fontSize: 16.sp,
+                                              fontSize: 16,
                                               fontFamily:
                                                   "Franklin Gothic Regular",
                                               fontWeight: FontWeight.w400,
@@ -171,23 +172,23 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 14,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 14.sp,
                                           ),
                                           child: AnimatedContainer(
                                             duration: const Duration(
                                                 milliseconds: 300),
                                             margin:
-                                                const EdgeInsets.only(right: 5),
-                                            width: 80,
-                                            height: 20,
+                                                EdgeInsets.only(right: 5.sp),
+                                            width: 80.sp,
+                                            height: 20.sp,
                                             decoration: BoxDecoration(
                                               color: whiteColor,
                                               borderRadius:
-                                                  BorderRadius.circular(20),
+                                                  BorderRadius.circular(20.sp),
                                               border: Border.all(
                                                   color: btnTextColor,
-                                                  width: 1),
+                                                  width: 1.sp),
                                             ),
                                             child: GestureDetector(
                                               onTap: () async {
@@ -212,14 +213,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 );
                                               },
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
                                                 child: Center(
                                                   child: AppText(
                                                     text: "Change",
                                                     color: btnTextColor,
-                                                    fontSize: 12.sp,
+                                                    fontSize: 12,
                                                     fontFamily:
                                                         "Franklin Gothic",
                                                     fontWeight: FontWeight.w500,
@@ -232,58 +232,58 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       ],
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 2),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 14.sp, vertical: 2.sp),
                                       child: AppText(
                                         text: shipController
                                                 .addressDetails["address"] ??
                                             "",
                                         color: greyTextColor,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 2),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 14.sp, vertical: 2.sp),
                                       child: AppText(
                                         text:
                                             "${shipController.addressDetails["locality"] ?? ""} ,${shipController.addressDetails["city"] != null ? shipController.addressDetails["city"]["name"] : ""}",
                                         color: greyTextColor,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 2),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 14.sp, vertical: 2.sp),
                                       child: AppText(
                                         text: shipController
                                                 .addressDetails["type"] ??
                                             "",
                                         color: loginText,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 2),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 14.sp, vertical: 2.sp),
                                       child: AppText(
                                         text: shipController
                                             .addressDetails["zip"]
                                             .toString(),
                                         color: loginText,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
+                                    SizedBox(
+                                      height: 10.sp,
                                     ),
                                   ],
                                 ),
@@ -292,8 +292,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           : Column(
                               children: [
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4),
+                                  padding: EdgeInsets.symmetric(vertical: 4.sp),
                                   child: GestureDetector(
                                     onTap: () {
                                       Get.to(MapScreen(
@@ -312,20 +311,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16.sp),
                                                 child: AppText(
                                                   text: "Shipping Address",
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: loginText,
-                                                  fontSize: 16.sp,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 16, top: 2),
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp, top: 2.sp),
                                                 child: AppText(
                                                   text:
                                                       "Add a shipping address",
@@ -333,7 +331,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: greyTextColor,
-                                                  fontSize: 14.sp,
+                                                  fontSize: 14,
                                                 ),
                                               ),
                                             ],
@@ -341,11 +339,11 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                         ),
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(right: 22),
+                                              EdgeInsets.only(right: 22.sp),
                                           child: Image.asset(rightArrowImage,
                                               color: loginText,
-                                              height: 18,
-                                              width: 18,
+                                              height: 18.sp,
+                                              width: 18.sp,
                                               fit: BoxFit.cover),
                                         )
                                       ],
@@ -432,18 +430,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               children: [
                                 Padding(
                                   padding:
-                                      const EdgeInsets.only(left: 16, top: 20),
+                                      EdgeInsets.only(left: 16.sp, top: 20.sp),
                                   child: AppText(
                                     text: "Delivery Estimates",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: blackColor,
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                   ),
                                 ),
                                 Padding(
                                   padding:
-                                      const EdgeInsets.only(bottom: 8, top: 5),
+                                      EdgeInsets.only(bottom: 8.sp, top: 5.sp),
                                   child: ListView.builder(
                                       primary: false,
                                       shrinkWrap: true,
@@ -454,11 +452,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       scrollDirection: Axis.vertical,
                                       itemBuilder: (ctx, index) {
                                         return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 5.sp),
                                           child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 8, left: 16, right: 16),
+                                            padding: EdgeInsets.only(
+                                                top: 8.sp,
+                                                left: 16.sp,
+                                                right: 16.sp),
                                             child: Row(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
@@ -474,8 +474,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                                 ["image"] !=
                                                             null
                                                     ? SizedBox(
-                                                        height: 60,
-                                                        width: 50,
+                                                        height: 60.sp,
+                                                        width: 50.sp,
                                                         child:
                                                             CachedNetworkImage(
                                                           cacheManager: CacheManager(Config(
@@ -503,20 +503,19 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                               Image.asset(
                                                             downloadImage,
                                                             fit: BoxFit.cover,
-                                                            height: 60,
-                                                            width: 50,
+                                                            height: 60.sp,
+                                                            width: 50.sp,
                                                           ),
                                                         ),
                                                       )
                                                     : Image.asset(
                                                         dummyWishlistImage,
-                                                        height: 60,
-                                                        width: 50,
+                                                        height: 60.sp,
+                                                        width: 50.sp,
                                                         fit: BoxFit.cover),
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 16),
+                                                  padding: EdgeInsets.only(
+                                                      left: 16.sp),
                                                   child: AppText(
                                                     text:
                                                         " Estimated delivery :",
@@ -524,7 +523,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w400,
                                                     color: blackColor,
-                                                    fontSize: 12.sp,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                                 AppText(
@@ -535,7 +534,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                       "Franklin Gothic Bold",
                                                   fontWeight: FontWeight.w700,
                                                   color: blackColor,
-                                                  fontSize: 12.sp,
+                                                  fontSize: 12,
                                                 ),
                                               ],
                                             ),
@@ -551,8 +550,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                   Container(
                     color: whiteColor,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 20),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 20.sp),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -609,37 +608,37 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         */
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: AppText(
                               text: "Price Details",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: colorPrimary,
-                              fontSize: 12.sp,
+                              fontSize: 12,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: EdgeInsets.symmetric(vertical: 16.sp),
                             child: Container(
                               width: double.infinity,
                               color: colorSecondary,
-                              height: 1,
+                              height: 1.sp,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 4),
+                                  padding: EdgeInsets.only(right: 4.sp),
                                   child: AppText(
                                     text: "Total MRP",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: textColor,
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                   ),
                                 ),
                                 const Expanded(
@@ -652,25 +651,25 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: textColor,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 4),
+                                  padding: EdgeInsets.only(right: 4.sp),
                                   child: AppText(
                                     text: "Express Delivery Charges",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: textColor,
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                   ),
                                 ),
                                 const Expanded(
@@ -683,25 +682,25 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: textColor,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 4),
+                                  padding: EdgeInsets.only(right: 4.sp),
                                   child: AppText(
                                     text: "Discount on MRP",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: textColor,
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                   ),
                                 ),
                                 const Expanded(
@@ -714,25 +713,25 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 4),
+                                  padding: EdgeInsets.only(right: 4.sp),
                                   child: AppText(
                                     text: "Coupon Discount",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: textColor,
-                                    fontSize: 12.sp,
+                                    fontSize: 12,
                                   ),
                                 ),
                                 const Expanded(
@@ -745,13 +744,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -759,18 +758,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 4),
+                                      padding: EdgeInsets.only(right: 4.sp),
                                       child: AppText(
                                         text: "Convenience Fee",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: textColor,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                       ),
                                     ),
                                     Image.asset(questionIcon,
-                                        height: 16,
-                                        width: 16,
+                                        height: 16.sp,
+                                        width: 16.sp,
                                         fit: BoxFit.cover)
                                   ],
                                 ),
@@ -784,13 +783,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -798,18 +797,18 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 4),
+                                      padding: EdgeInsets.only(right: 4.sp),
                                       child: AppText(
                                         text: "Tax & Charges",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: textColor,
-                                        fontSize: 12.sp,
+                                        fontSize: 12,
                                       ),
                                     ),
                                     Image.asset(questionIcon,
-                                        height: 16,
-                                        width: 16,
+                                        height: 16.sp,
+                                        width: 16.sp,
                                         fit: BoxFit.cover)
                                   ],
                                 ),
@@ -823,33 +822,33 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: textColor,
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ],
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            padding: EdgeInsets.symmetric(vertical: 20.sp),
                             child: Container(
                               width: double.infinity,
                               color: colorSecondary,
-                              height: 1.5,
+                              height: 1.5.sp,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 6),
+                            padding: EdgeInsets.only(top: 6.sp),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 4),
+                                  padding: EdgeInsets.only(right: 4.sp),
                                   child: AppText(
                                     text: "Bill total",
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w500,
                                     color: colorPrimary,
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                   ),
                                 ),
                                 const Expanded(
@@ -862,13 +861,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   fontFamily: "Franklin Gothic Bold",
                                   fontWeight: FontWeight.w700,
                                   color: colorPrimary,
-                                  fontSize: 18.sp,
+                                  fontSize: 18,
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 18,
+                          SizedBox(
+                            height: 18.sp,
                           ),
                         ],
                       ),
@@ -902,8 +901,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
-                      top: 30, left: 20, right: 8, bottom: 16),
+                  padding: EdgeInsets.only(
+                      top: 30.sp, left: 20.sp, right: 8.sp, bottom: 16.sp),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -913,7 +912,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: blackColor,
-                        fontSize: 16.sp,
+                        fontSize: 16,
                       ),
                       /* const SizedBox(
                         height: 2,
@@ -932,7 +931,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                 Expanded(
                   flex: 1,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 30, bottom: 16),
+                    padding: EdgeInsets.only(top: 30.sp, bottom: 16.sp),
                     child: SingleButton(
                         label: "Pay Now",
                         textColor: whiteColor,

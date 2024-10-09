@@ -41,11 +41,11 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 30,
+                  height: 30.sp,
                 ),
                 Obx(() => Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 10.sp),
                       child: Row(
                         children: [
                           GestureDetector(
@@ -69,7 +69,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                             ),
                           ),
                           Expanded(
@@ -78,19 +78,19 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16.sp),
                             child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(3),
-                                  border: const Border(
+                                  borderRadius: BorderRadius.circular(3.sp),
+                                  border: Border(
                                     top: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     left: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     right: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     bottom: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                   ),
                                 ),
                                 width: 20,
@@ -117,8 +117,8 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                       ),
                     )),
                 Obx(() => Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 10.sp),
                       child: Row(
                         children: [
                           GestureDetector(
@@ -142,7 +142,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                             ),
                           ),
                           Expanded(
@@ -151,19 +151,19 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16.sp),
                             child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(3),
-                                  border: const Border(
+                                  border: Border(
                                     top: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     left: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     right: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     bottom: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                   ),
                                 ),
                                 width: 20,
@@ -190,8 +190,8 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                       ),
                     )),
                 Obx(() => Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 10.sp),
                       child: Row(
                         children: [
                           GestureDetector(
@@ -215,7 +215,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                             ),
                           ),
                           Expanded(
@@ -224,19 +224,19 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16.sp),
                             child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(3),
-                                  border: const Border(
+                                  border: Border(
                                     top: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     left: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     right: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                     bottom: BorderSide(
-                                        width: 2.0, color: greyBorder),
+                                        width: 2.0.sp, color: greyBorder),
                                   ),
                                 ),
                                 width: 20,
@@ -266,7 +266,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
             ),
           ),
           Obx(() => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.symmetric(vertical: 20.sp),
                 child: getSingleButton(
                     label: "Submit",
                     textColor: whiteBorderColor,

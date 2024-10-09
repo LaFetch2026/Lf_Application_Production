@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -61,8 +62,8 @@ class MapScreenState extends State<MapScreen> {
     return Scaffold(
         backgroundColor: whiteColor,
         body: Obx(() => shipController.isDetails.value
-            ? const Padding(
-                padding: EdgeInsets.all(40.0),
+            ? Padding(
+                padding: EdgeInsets.all(40.0.sp),
                 child: Center(child: CircularProgressIndicator()),
               )
             : Column(
@@ -73,15 +74,15 @@ class MapScreenState extends State<MapScreen> {
                         children: [
                           _getMap(),
                           Padding(
-                            padding: const EdgeInsets.only(top: 40.0, left: 10),
+                            padding: EdgeInsets.only(top: 40.0.sp, left: 10.sp),
                             child: InkWell(
                                 onTap: () {
                                   Get.back();
                                 },
                                 child: Image.asset(
                                   backWhiteArrow,
-                                  height: 16,
-                                  width: 16,
+                                  height: 16.sp,
+                                  width: 16.sp,
                                   color: colorPrimary,
                                 )),
                           ),
@@ -91,12 +92,12 @@ class MapScreenState extends State<MapScreen> {
                               onTap: () {
                                 _gotoUserCurrentPosition();
                               },
-                              child: const Padding(
+                              child: Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 30),
+                                    horizontal: 20.sp, vertical: 30.sp),
                                 child: Icon(
                                   Icons.location_disabled_sharp,
-                                  size: 20,
+                                  size: 20.sp,
                                   color: colorPrimary,
                                 ),
                               ),
@@ -118,8 +119,8 @@ class MapScreenState extends State<MapScreen> {
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
+                                  spreadRadius: 5.sp,
+                                  blurRadius: 7.sp,
                                   offset: const Offset(
                                       0, 3), // changes position of shadow
                                 ),
@@ -139,27 +140,27 @@ class MapScreenState extends State<MapScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 30, right: 10, top: 15),
+          padding: EdgeInsets.only(left: 30.sp, right: 10.sp, top: 15.sp),
           child: Row(
             children: [
               Image.asset(
                 locationIcon,
-                width: 25,
-                height: 25,
+                width: 25.sp,
+                height: 25.sp,
                 color: colorPrimary,
               ),
-              const SizedBox(width: 6),
-              const Text("Address",
+              SizedBox(width: 6.sp),
+              Text("Address",
                   style: TextStyle(
                       overflow: TextOverflow.ellipsis,
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.black)),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 30, right: 10, top: 15),
+          padding: EdgeInsets.only(left: 30.sp, right: 10.sp, top: 15.sp),
           child: Row(
             children: [
               Flexible(
@@ -172,10 +173,10 @@ class MapScreenState extends State<MapScreen> {
                       child: Text(draggedAddress,
                           maxLines: 2,
                           textAlign: TextAlign.start,
-                          style: const TextStyle(
+                          style: TextStyle(
                             overflow: TextOverflow.ellipsis,
                             fontFamily: "Gilroy",
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
                           )),
                     ),
@@ -186,10 +187,10 @@ class MapScreenState extends State<MapScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 50.sp,
             child: ElevatedButton(
               onPressed: () async {
                 if (shipController.checkLocationValidation()) {
@@ -217,9 +218,9 @@ class MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
-              child: const Text("Next",
+              child: Text("Next",
                   style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: Colors.white,
                       fontFamily: 'Franklin Gothic')),
             ),
@@ -252,8 +253,8 @@ class MapScreenState extends State<MapScreen> {
   Widget _getCustomPin() {
     return Center(
       child: SizedBox(
-        width: 150,
-        child: Lottie.asset(locationAnim, width: 100, height: 100),
+        width: 150.sp,
+        child: Lottie.asset(locationAnim, width: 100.sp, height: 100.sp),
       ),
     );
   }

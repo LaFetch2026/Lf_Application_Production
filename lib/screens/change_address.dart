@@ -49,12 +49,12 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
+                  SizedBox(
+                    height: 10.sp,
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 10, left: 16, right: 16),
+                        EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context)
@@ -76,24 +76,24 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                             color: textHintColor,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                           ),
                           const Expanded(
                             child: SizedBox(
                               width: 0,
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.add,
                             color: blackColor,
-                            size: 16,
+                            size: 16.sp,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 5),
+                            padding: EdgeInsets.only(left: 5.sp),
                             child: AppText(
                               text: "New Address",
                               color: blackColor,
-                              fontSize: 12.sp,
+                              fontSize: 12,
                               fontFamily: "Franklin Gothic Bold",
                               fontWeight: FontWeight.w400,
                             ),
@@ -106,7 +106,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                       ? const DummySaveAddress()
                       : controller.addressList.isNotEmpty
                           ? Padding(
-                              padding: const EdgeInsets.only(top: 10),
+                              padding: EdgeInsets.only(top: 10.sp),
                               child: ListView.builder(
                                   primary: false,
                                   shrinkWrap: true,
@@ -117,10 +117,10 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                   itemBuilder: (ctx, index) {
                                     return Container(
                                       color: whiteColor,
-                                      margin: const EdgeInsets.only(bottom: 10),
+                                      margin: EdgeInsets.only(bottom: 10.sp),
                                       child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 10,
+                                        padding: EdgeInsets.only(
+                                          top: 10.sp,
                                         ),
                                         child: Column(
                                           crossAxisAlignment:
@@ -131,17 +131,17 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 Expanded(
                                                   flex: 1,
                                                   child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 14,
-                                                        vertical: 5),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 14.sp,
+                                                            vertical: 5.sp),
                                                     child: AppText(
                                                       text: controller
                                                                   .addressList[
                                                               index]["name"] ??
                                                           "",
                                                       color: loginText,
-                                                      fontSize: 16.sp,
+                                                      fontSize: 16,
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       fontWeight:
@@ -152,10 +152,9 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 controller.addressList[index]
                                                         ["default_shipping"]
                                                     ? Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 14,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 14.sp,
                                                         ),
                                                         child:
                                                             AnimatedContainer(
@@ -164,11 +163,10 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                   milliseconds:
                                                                       300),
                                                           margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 5),
-                                                          width: 80,
-                                                          height: 20,
+                                                              EdgeInsets.only(
+                                                                  right: 5.sp),
+                                                          width: 80.sp,
+                                                          height: 20.sp,
                                                           decoration:
                                                               BoxDecoration(
                                                             color:
@@ -176,18 +174,17 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        20),
+                                                                        20.sp),
                                                             border: Border.all(
                                                                 color:
                                                                     btnTextColor,
-                                                                width: 1),
+                                                                width: 1.sp),
                                                           ),
                                                           child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
                                                                     horizontal:
-                                                                        5),
+                                                                        5.sp),
                                                             child: Center(
                                                               child: AppText(
                                                                 text: controller
@@ -198,7 +195,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                     : "",
                                                                 color:
                                                                     btnTextColor,
-                                                                fontSize: 12.sp,
+                                                                fontSize: 12,
                                                                 fontFamily:
                                                                     "Franklin Gothic",
                                                                 fontWeight:
@@ -215,73 +212,69 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                               ],
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 2),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 14.sp,
+                                                  vertical: 2.sp),
                                               child: AppText(
                                                 text: controller
                                                             .addressList[index]
                                                         ["address"] ??
                                                     "",
                                                 color: greyTextColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 2),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 14.sp,
+                                                  vertical: 2.sp),
                                               child: AppText(
                                                 text:
                                                     "${controller.addressList[index]["locality"] ?? ""} ,${controller.addressList[index]["city"] != null ? controller.addressList[index]["city"]["name"] : ""}",
                                                 color: greyTextColor,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 2),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 14.sp,
+                                                  vertical: 2.sp),
                                               child: AppText(
                                                 text: controller
                                                             .addressList[index]
                                                         ["type"] ??
                                                     "",
                                                 color: loginText,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 2),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 14.sp,
+                                                  vertical: 2.sp),
                                               child: AppText(
                                                 text: controller
                                                     .addressList[index]["zip"]
                                                     .toString(),
                                                 color: loginText,
-                                                fontSize: 12.sp,
+                                                fontSize: 12,
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10, bottom: 30),
+                                              padding: EdgeInsets.only(
+                                                  top: 10.sp, bottom: 30.sp),
                                               child: getSingleButton(
                                                   label: "Select Address",
                                                   textColor: btnTextColor,
@@ -318,10 +311,10 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                           : SizedBox(
                               height: MediaQuery.of(context).size.height,
                               width: MediaQuery.of(context).size.width,
-                              child: const Center(
+                              child: Center(
                                 child: Text("No Address Found",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         color: Colors.black,
                                         fontFamily: "Franklin Gothic Regular")),
                               ),

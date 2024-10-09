@@ -15,17 +15,17 @@ class DummyEstimateDelivery extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 20),
+          padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
           child: AppText(
             text: "Delivery Estimates",
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: blackColor,
-            fontSize: 16.sp,
+            fontSize: 16,
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(bottom: 8, top: 5),
+          padding: EdgeInsets.only(bottom: 8.sp, top: 5.sp),
           child: ListView.builder(
               primary: false,
               shrinkWrap: true,
@@ -34,10 +34,11 @@ class DummyEstimateDelivery extends StatelessWidget {
               padding: EdgeInsets.zero,
               scrollDirection: Axis.vertical,
               itemBuilder: (ctx, index) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5.sp),
                   child: Padding(
-                    padding: EdgeInsets.only(top: 8, left: 16, right: 16),
+                    padding:
+                        EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -47,7 +48,7 @@ class DummyEstimateDelivery extends StatelessWidget {
                           width: 50,
                         ),
                         Padding(
-                          padding: EdgeInsets.only(left: 16),
+                          padding: EdgeInsets.only(left: 16.sp),
                           child: DummyContainer(
                             height: 16,
                             width: 80,

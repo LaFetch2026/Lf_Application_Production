@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DoubleIconButton extends StatelessWidget {
   final String firstText;
@@ -39,7 +40,7 @@ class DoubleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
       child: Row(
         children: [
           Expanded(
@@ -47,20 +48,20 @@ class DoubleIconButton extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Center(
                 child: SizedBox(
-                    width: 160,
-                    height: 40,
+                    width: (MediaQuery.of(context).size.width / 2) - 4,
+                    height: 40.sp,
                     child: ElevatedButton.icon(
                         icon: ImageIcon(
                           AssetImage(firstIcon),
                           color: firstTextColor,
-                          size: 16,
+                          size: 16.sp,
                         ),
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(1))),
                             side: MaterialStateProperty.all(
-                              BorderSide(width: 1, color: firstBorderColor),
+                              BorderSide(width: 1.sp, color: firstBorderColor),
                             ),
                             elevation: MaterialStateProperty.all(0.0),
                             backgroundColor:
@@ -77,26 +78,26 @@ class DoubleIconButton extends StatelessWidget {
                           style: TextStyle(
                               color: firstTextColor,
                               fontFamily: fontFamily,
-                              fontSize: firstFontSize),
+                              fontSize: firstFontSize.sp),
                         ))),
               ),
             ),
           ),
-          const SizedBox(
-            width: 20,
+          SizedBox(
+            width: 20.sp,
           ),
           Expanded(
             child: Container(
               alignment: Alignment.bottomCenter,
               child: Center(
                 child: SizedBox(
-                    width: 160,
-                    height: 40,
+                    width: (MediaQuery.of(context).size.width / 2) - 4,
+                    height: 40.sp,
                     child: ElevatedButton.icon(
                         icon: ImageIcon(
                           AssetImage(secondIcon),
                           color: secondTextColor,
-                          size: 16,
+                          size: 16.sp,
                         ),
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
@@ -104,7 +105,7 @@ class DoubleIconButton extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(1))),
                             side: MaterialStateProperty.all(BorderSide(
                                 color: secondBorderColor,
-                                width: 1.0,
+                                width: 1.0.sp,
                                 style: BorderStyle.solid)),
                             backgroundColor: MaterialStateProperty.all(
                                 secondBackgroundColor),
@@ -121,7 +122,7 @@ class DoubleIconButton extends StatelessWidget {
                           style: TextStyle(
                               fontFamily: fontFamily,
                               color: secondTextColor,
-                              fontSize: secondFontSize),
+                              fontSize: secondFontSize.sp),
                         ))),
               ),
             ),
