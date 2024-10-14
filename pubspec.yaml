@@ -80,6 +80,7 @@ dependencies:
   otp_text_field_v2: ^1.0.3
   flutter_tawk: ^0.1.0
   fl_downloader: ^2.0.2
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:

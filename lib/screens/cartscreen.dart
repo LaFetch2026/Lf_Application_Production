@@ -312,6 +312,21 @@ class CartScreenState extends State<CartScreen> {
                                                                   GestureDetector(
                                                                     onTap:
                                                                         () async {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .push(
+                                                                              MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], type: "add")))
+                                                                          .then((value) => setState(
+                                                                                () {
+                                                                                  productController.hasnextpage.value = true;
+                                                                                  productController.loadMore.value = false;
+                                                                                  productController.isProduct.value = false;
+                                                                                  productController.page.value = 1;
+                                                                                  productController.getProductData("relevant");
+                                                                                  controller.getCartData();
+                                                                                  controller.update();
+                                                                                },
+                                                                              ));
                                                                       await analytics
                                                                           .logEvent(
                                                                         name:

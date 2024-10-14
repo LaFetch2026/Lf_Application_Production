@@ -15,6 +15,7 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/catalog/productlist/productimage.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -231,20 +232,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           print(
               "show video=========${isImage(productController.productDetails["images"][i]["name"])}");
 
-          list.add(Container(
-            color: colorSecondary,
-            child: CachedNetworkImage(
-              cacheManager: CacheManager(Config("customCacheKey",
-                  stalePeriod: const Duration(days: 15),
-                  maxNrOfCacheObjects: 100)),
-              fit: BoxFit.cover,
-              imageUrl: productController.productDetails["images"][i]["name"],
-              progressIndicatorBuilder: (context, url, downloadProgress) =>
-                  DummyContainer(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      width: MediaQuery.of(context).size.width),
-              errorWidget: (context, url, error) =>
-                  Image.asset(downloadImage, fit: BoxFit.fitHeight),
+          list.add(GestureDetector(
+            onTap: () {
+              Get.to(ProductImageScreen(
+                  curr: _curr,
+                  list: productController.productDetails["images"]));
+            },
+            child: Container(
+              color: colorSecondary,
+              child: CachedNetworkImage(
+                cacheManager: CacheManager(Config("customCacheKey",
+                    stalePeriod: const Duration(days: 15),
+                    maxNrOfCacheObjects: 100)),
+                fit: BoxFit.cover,
+                imageUrl: productController.productDetails["images"][i]["name"],
+                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                    DummyContainer(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        width: MediaQuery.of(context).size.width),
+                errorWidget: (context, url, error) =>
+                    Image.asset(downloadImage, fit: BoxFit.fitHeight),
+              ),
             ),
           ));
         } else {
