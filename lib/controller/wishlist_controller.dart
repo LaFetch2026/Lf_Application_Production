@@ -371,6 +371,7 @@ class WishlistController extends BaseController {
       );
       if (response.statusCode == 200) {
         getSnackBar("Board deleted");
+        addList.clear();
         Get.close(3);
       } else if (response.statusCode == 400) {
         print(response.body);

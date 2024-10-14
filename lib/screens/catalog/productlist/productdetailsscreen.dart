@@ -2428,58 +2428,67 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
                                                   children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        if (commentId ==
-                                                            productController
-                                                                    .reviewList[
-                                                                index]['id']) {
-                                                          commentId = 0;
-                                                        } else {
-                                                          commentId =
-                                                              productController
-                                                                      .reviewList[
-                                                                  index]['id'];
-                                                        }
-                                                        setState(() {});
-                                                      },
-                                                      child: AppText(
-                                                        text: commentId ==
+                                                    Row(
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            if (commentId ==
                                                                 productController
                                                                         .reviewList[
-                                                                    index]['id']
-                                                            ? "Show less"
-                                                            : 'Read more  ',
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: bottomnavBack,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        if (commentId ==
-                                                            productController
-                                                                    .reviewList[
-                                                                index]['id']) {
-                                                          commentId = 0;
-                                                        } else {
-                                                          commentId =
-                                                              productController
-                                                                      .reviewList[
-                                                                  index]['id'];
-                                                        }
-                                                        setState(() {});
-                                                      },
-                                                      child: ImageIcon(
-                                                        AssetImage(
-                                                            dropdownImage),
-                                                        color: nameText,
-                                                        size: 16.sp,
-                                                      ),
-                                                    ),
+                                                                    index]['id']) {
+                                                              commentId = 0;
+                                                            } else {
+                                                              commentId =
+                                                                  productController
+                                                                          .reviewList[
+                                                                      index]['id'];
+                                                            }
+                                                            setState(() {});
+                                                          },
+                                                          child: AppText(
+                                                            text: commentId ==
+                                                                    productController
+                                                                            .reviewList[
+                                                                        index]['id']
+                                                                ? "Show less"
+                                                                : 'Read more  ',
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color:
+                                                                bottomnavBack,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            if (commentId ==
+                                                                productController
+                                                                        .reviewList[
+                                                                    index]['id']) {
+                                                              commentId = 0;
+                                                            } else {
+                                                              commentId =
+                                                                  productController
+                                                                          .reviewList[
+                                                                      index]['id'];
+                                                            }
+                                                            setState(() {});
+                                                          },
+                                                          child: ImageIcon(
+                                                            AssetImage(
+                                                                dropdownImage),
+                                                            color: nameText,
+                                                            size: 16.sp,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                    /*  : SizedBox(
+                                                            height: 0,
+                                                          ) */
+                                                    ,
                                                     productController.reviewList[
                                                                     index]
                                                                 ["upvotes"] ==
