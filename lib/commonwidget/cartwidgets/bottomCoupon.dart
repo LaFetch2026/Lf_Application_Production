@@ -186,7 +186,7 @@ class BottomCouponState extends State<BottomCoupon> {
                             height: MediaQuery.of(context).size.height - 60.sp,
                             width: MediaQuery.of(context).size.width,
                             child: Center(
-                              child: Text("No Coupan Found",
+                              child: Text("No Coupon Found",
                                   style: TextStyle(
                                       fontSize: 14.sp,
                                       decoration: TextDecoration.none,

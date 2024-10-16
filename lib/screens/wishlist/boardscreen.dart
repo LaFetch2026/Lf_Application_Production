@@ -641,7 +641,7 @@ class BoardScreenState extends State<BoardScreen> {
                                     : Padding(
                                         padding: EdgeInsets.only(top: 40.sp),
                                         child: Center(
-                                          child: Text("No Item Found",
+                                          child: Text("No items Found",
                                               style: TextStyle(
                                                   fontSize: 14.sp,
                                                   color: Colors.black,

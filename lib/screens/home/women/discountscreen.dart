@@ -450,6 +450,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                       "",
                                                   color: greyTextColor,
                                                   fontSize: 10,
+                                                  maxLines: 2,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
@@ -547,6 +548,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                       "",
                                                   color: greyTextColor,
                                                   fontSize: 10,
+                                                  maxLines: 2,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
@@ -601,7 +603,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                 );
                                               },
                                               child: SizedBox(
-                                                height: 100.sp,
+                                                height: 110.sp,
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
@@ -673,7 +675,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                     2]["name"] ??
                                                             "",
                                                         color: greyTextColor,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         fontSize: 10,
+                                                        maxLines: 2,
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         fontWeight:

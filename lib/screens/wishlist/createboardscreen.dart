@@ -599,7 +599,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                     )
                   : Expanded(
                       child: Center(
-                        child: Text("No Item Found",
+                        child: Text("No items Found",
                             style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Colors.black,

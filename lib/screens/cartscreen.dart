@@ -40,23 +40,25 @@ class CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.couponList.clear();
+      controller.getCouponData();
+    });
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => controller.getCartData());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.hasnextpage.value = true;
+      productController.loadMore.value = false;
+      productController.isProduct.value = false;
+      productController.page.value = 1;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
         productController.update();
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      controller.couponList.clear();
-      controller.getCouponData();
-    });
-    productController.hasnextpage.value = true;
-    productController.loadMore.value = false;
-    productController.isProduct.value = false;
-    productController.page.value = 1;
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => controller.getCartData());
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
     super.initState();
   }
 
