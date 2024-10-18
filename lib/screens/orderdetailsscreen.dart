@@ -21,7 +21,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/homewidget/dummy_estimatedelivery.dart';
-import '../commonwidget/singlebtn.dart';
 import '../controller/order_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -56,14 +55,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final TextEditingController fileNameController = TextEditingController(
     text: 'test.pdf',
   );
-  final TextEditingController urlController = TextEditingController(
+  /* final TextEditingController urlController = TextEditingController(
     text:
         'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-  );
-  int progress = 0;
+  ); */
+  /* int progress = 0;
   dynamic downloadId;
   String? status;
-  late StreamSubscription progressStream;
+  late StreamSubscription progressStream; */
 
   @override
   void initState() {
@@ -73,7 +72,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => orderController.getTrackorder(widget.orderId));
     FlDownloader.initialize();
-    progressStream = FlDownloader.progressStream.listen((event) {
+    /*    progressStream = FlDownloader.progressStream.listen((event) {
       if (event.status == DownloadStatus.successful) {
         debugPrint('event.progress: ${event.progress}');
         setState(() {
@@ -82,6 +81,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
           status = event.status.name;
         });
         getSnackBar("Invoice downloaded");
+        print("abc${event.filePath}");
         //  FlDownloader.openFile(filePath: event.filePath);
       } else if (event.status == DownloadStatus.running) {
         debugPrint('event.progress: ${event.progress}');
@@ -117,12 +117,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
         });
       }
     });
+    */
     super.initState();
   }
 
   @override
   void dispose() {
-    progressStream.cancel();
+    // progressStream.cancel();
     super.dispose();
   }
 
@@ -1471,46 +1472,41 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                           ],
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 20.sp, bottom: 10.sp),
-                                        child: SingleButton(
-                                            label: "Download Invoice",
-                                            height: 40,
-                                            horizontal: 0.0,
-                                            textColor: whiteTextColor,
-                                            backgroundColor: btnTextColor,
-                                            onPressed: () async {
-                                              final permission =
-                                                  await FlDownloader
-                                                      .requestPermission();
-                                              if (permission ==
-                                                  StoragePermissionStatus
-                                                      .granted) {
-                                                await FlDownloader.download(
-                                                  urlController.text,
-                                                  fileName:
-                                                      fileNameController.text,
-                                                );
-                                              } else {
-                                                debugPrint(
-                                                    'Permission denied =(');
-                                              }
-                                              await analytics.logEvent(
-                                                name: 'download_invoice',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'download_invoice',
-                                                },
-                                              );
-                                            },
-                                            borderColor: btnTextColor),
-                                      )
                                     ],
                                   ),
                           ),
                         ),
                       )),
+                      Obx(() => 
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.sp, bottom: 30.sp),
+                    child: getSingleButton(
+                        label: "Download Invoice",
+                        controller: orderController,
+                        textColor: whiteTextColor,
+                        backgroundColor: btnTextColor,
+                        onPressed: () async {
+                          final permission =
+                              await FlDownloader.requestPermission();
+                          if (permission == StoragePermissionStatus.granted) {
+                            /*   await FlDownloader.download(
+                                                  urlController.text,
+                                                  fileName:
+                                                      fileNameController.text,
+                                                ); */
+                            orderController.getDownloadInvoice(widget.orderId);
+                          } else {
+                            debugPrint('Permission denied =(');
+                          }
+                          await analytics.logEvent(
+                            name: 'download_invoice',
+                            parameters: <String, Object>{
+                              'page_name': 'download_invoice',
+                            },
+                          );
+                        },
+                        borderColor: btnTextColor),
+                  ))
                 ],
               ),
             ),
