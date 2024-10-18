@@ -21,6 +21,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/bottomsizechart.dart';
+import '../../../commonwidget/homewidget/dummy_productImage.dart';
 import '../../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
 import '../../../commonwidget/homewidget/horizontal_home_list.dart';
@@ -224,19 +225,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   List<Widget> getListForPageView() {
     List<Widget> list = [];
-    if (productController.productDetails["images"].isNotEmpty) {
-      for (var i = 0;
-          i < productController.productDetails["images"].length;
-          i++) {
-        if (isImage(productController.productDetails["images"][i]["name"])) {
+    if (productController.imageList.isNotEmpty) {
+      for (var i = 0; i < productController.imageList.length; i++) {
+        if (isImage(productController.imageList[i]["name"])) {
           print(
-              "show video=========${isImage(productController.productDetails["images"][i]["name"])}");
+              "show video=========${isImage(productController.imageList[i]["name"])}");
 
           list.add(GestureDetector(
             onTap: () {
               Get.to(ProductImageScreen(
-                  curr: _curr,
-                  list: productController.productDetails["images"]));
+                  curr: _curr, list: productController.imageList));
             },
             child: Container(
               color: colorSecondary,
@@ -245,7 +243,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     stalePeriod: const Duration(days: 15),
                     maxNrOfCacheObjects: 100)),
                 fit: BoxFit.cover,
-                imageUrl: productController.productDetails["images"][i]["name"],
+                imageUrl: productController.imageList[i]["name"],
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     DummyContainer(
                         height: MediaQuery.of(context).size.height * 0.7,
@@ -259,7 +257,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           productController.isVideoPlaying.value = true;
           videoController = VideoPlayerController.networkUrl(
             Uri.parse(
-              productController.productDetails["images"][i]["name"],
+              productController.imageList[i]["name"],
             ),
           );
 
@@ -500,6 +498,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   },
                                 );
                                 setState(() {});
+                                productController.getProductImage(
+                                    selectedProductColor["id"]);
                                 //   movetoNextScreen(i['product_id']);
                               },
                               child: Container(
@@ -644,6 +644,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.productImageindex.value = 0;
       productController.colorInventoryId.value = 0;
       productController.addToCart.value = false;
+      productController.imageList.clear();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));
@@ -729,8 +730,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Obx(
-                        () => productController.isDetails.value
-                            ? const DummyProductDetails()
+                        () => productController.isColorimage.value ||
+                                productController.isDetails.value
+                            ? const DummyProductImage()
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -993,9 +995,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     )),
                                           ),
                                         ), */
-                                  productController.productDetails["images"]
-                                              .length ==
-                                          1
+                                  productController.imageList.length == 1
                                       ? const SizedBox(
                                           height: 0,
                                         )
@@ -1009,8 +1009,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 MainAxisAlignment.center,
                                             children: List<Widget>.generate(
                                                 productController
-                                                    .productDetails["images"]
-                                                    .length,
+                                                    .imageList.length,
                                                 (index) => Container(
                                                       height: 6.sp,
                                                       width: 40.sp,
@@ -1026,11 +1025,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           ),
                                         ),
                                   SizedBox(
-                                    height: 24.sp,
+                                    height: 12.sp,
                                   ),
+                                ],
+                              ),
+                      ),
+                      Obx(
+                        () => productController.isDetails.value
+                            ? const DummyProductDetails()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 12.0.sp),
+                                    padding: EdgeInsets.only(
+                                        left: 12.0.sp, top: 12.sp),
                                     child: AppText(
                                       text: "New Season",
                                       fontFamily: "Franklin Gothic Regular",

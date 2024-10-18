@@ -121,6 +121,8 @@ class ProductController extends BaseController {
   RxBool isAddress = false.obs;
   dynamic defaultAddress = "".obs;
   RxBool addToCart = false.obs;
+  RxBool isColorimage = false.obs;
+  List imageList = [].obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -1359,6 +1361,15 @@ class ProductController extends BaseController {
           print('Product Details====>${productDetails["images"]}');
           sizeInventoryList = responseData["new_inventories"];
           colorInventoryList.clear();
+          /*  if (sizeInventoryList.length == 1) {
+            if (sizeInventoryList[0]["product_matrix_size_name"] == "") {
+              sizeInventoryList.clear();
+              colorInventoryList =
+                  sizeInventoryList[0]["product_matrix_available_colors"];
+            } else {}
+          } */
+          getProductImage(responseData["default_inventory_id"]);
+
           //  inventoryList = responseData["inventories"];
           // colorInventoryList = responseData["inventories"]["color"];
           /*  sizeInventoryList = inventoryList
@@ -1499,6 +1510,40 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isReview.value = false;
+  }
+
+  getProductImage(int inventoryId) async {
+    isColorimage.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products/product-images-based-color?inventory_id=$inventoryId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          imageList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product review failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isColorimage.value = false;
   }
 
   getProductRecommendations(int productId) async {
