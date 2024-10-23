@@ -117,7 +117,7 @@ class ProductController extends BaseController {
   RxInt catalogIndex = 0.obs;
   RxInt brand_id = 0.obs;
   RxBool isEstimateDate = false.obs;
-  RxString getItBy = "".obs;
+  dynamic getItBy = "".obs;
   RxBool isAddress = false.obs;
   dynamic defaultAddress = "".obs;
   RxBool addToCart = false.obs;
@@ -1319,6 +1319,7 @@ class ProductController extends BaseController {
 
   getProductDetails(int productId, String slug) async {
     isDetails.value = true;
+    isEstimateDate.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic response;
@@ -1344,7 +1345,8 @@ class ProductController extends BaseController {
         if (responseData != null) {
           productDetails = responseData;
           if (productDetails["estimated_delivery_by"] != null) {
-            getItBy.value = productDetails["estimated_delivery_by"];
+            getItBy = productDetails["estimated_delivery_by"];
+            print("move${productDetails["estimated_delivery_by"]}");
           }
           if (responseData["reviews"] != null) {
             totalReview.value = responseData["reviews"].length;
@@ -1405,6 +1407,7 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isDetails.value = false;
+    isEstimateDate.value = false;
   }
 
   getEstimateDate(int id, String zip) async {
@@ -1420,7 +1423,7 @@ class ProductController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        getItBy.value = responseData["message"];
+        getItBy = responseData["estimated_delivery_by"];
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

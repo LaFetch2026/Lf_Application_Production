@@ -639,7 +639,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.brandDetails = "";
       productController.defaultAddress = "";
       productController.pincodeController.clear();
-      productController.getItBy.value = "";
       productController.sizeInventoryId.value = 0;
       productController.productImageindex.value = 0;
       productController.colorInventoryId.value = 0;
@@ -1397,9 +1396,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     onKey: (value) {
                                       print(value);
                                       if (value is RawKeyDownEvent) {
-                                        productController.getItBy.value =
+                                        /*    productController.getItBy =
                                             productController.productDetails[
-                                                "estimated_delivery_by"];
+                                                "estimated_delivery_by"]; */
                                       }
                                     },
                                     child: TextField(
@@ -1503,9 +1502,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     onKey: (value) {
                                       print(value);
                                       if (value is RawKeyDownEvent) {
-                                        productController.getItBy.value =
+                                        /*   productController.getItBy.value =
                                             productController.productDetails[
-                                                "estimated_delivery_by"];
+                                                "estimated_delivery_by"]; */
                                       }
                                     },
                                     child: TextField(
@@ -1814,7 +1813,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisSize: MainAxisSize.max,
+                                      // mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       crossAxisAlignment:
@@ -1829,13 +1828,21 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             width: 18.sp,
                                           ),
                                         ),
-                                        AppText(
-                                          text:
-                                              'Get it by ${productController.getItBy.value}',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w500,
-                                          color: blackColor,
-                                          fontSize: 14,
+                                        Expanded(
+                                          flex: 1,
+                                          child: AppText(
+                                            text:
+                                                productController.getItBy != ""
+                                                    ? productController
+                                                        .getItBy["message"]
+                                                    : "",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w500,
+                                            color: blackColor,
+                                            maxLines: 2,
+                                            fontSize: 14,
+                                          ),
                                         )
                                       ],
                                     )
