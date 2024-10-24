@@ -123,6 +123,8 @@ class ProductController extends BaseController {
   RxBool addToCart = false.obs;
   RxBool isColorimage = false.obs;
   List imageList = [].obs;
+  RxBool isExpressDelivery = false.obs;
+  RxInt expressValue = 0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -1675,7 +1677,8 @@ class ProductController extends BaseController {
     try {
       final Map<String, dynamic> sendData = {
         "quantity": quantity,
-        "inventory_id": sizeInventoryId.value
+        "inventory_id": sizeInventoryId.value,
+        "express_delivery": expressValue.value,
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
