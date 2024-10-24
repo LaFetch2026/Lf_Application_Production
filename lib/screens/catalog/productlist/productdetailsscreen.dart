@@ -2007,106 +2007,118 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                       ),
                       Obx(
-                        () => productController
-                                .productDetails["express_delivery"]
+                        () => productController.isDetails.value
                             ? SizedBox(
                                 height: 0,
                               )
-                            : Padding(
-                                padding: EdgeInsets.only(
-                                    top: 18.0.sp,
-                                    left: 12.sp,
-                                    right: 12.sp,
-                                    bottom: 40),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 12.0.sp),
-                                      child: Image.asset(
-                                        truckImage,
-                                        height: 18.sp,
-                                        width: 18.sp,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        if (productController
-                                            .isExpressDelivery.value) {
-                                          productController
-                                              .isExpressDelivery.value = false;
-                                          productController.expressValue.value =
-                                              0;
-                                        } else {
-                                          productController
-                                              .isExpressDelivery.value = true;
-                                          productController.expressValue.value =
-                                              1;
-                                        }
-                                      },
-                                      child: AppText(
-                                        text: 'Express Delivery',
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w500,
-                                        color: blackColor,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: const SizedBox(
-                                        width: 0,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 0.sp),
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(3.sp),
-                                            border: Border(
-                                              top: BorderSide(
-                                                  width: 2.0.sp,
-                                                  color: greyBorder),
-                                              left: BorderSide(
-                                                  width: 2.0.sp,
-                                                  color: greyBorder),
-                                              right: BorderSide(
-                                                  width: 2.0.sp,
-                                                  color: greyBorder),
-                                              bottom: BorderSide(
-                                                  width: 2.0.sp,
-                                                  color: greyBorder),
-                                            ),
+                            : productController
+                                    .productDetails["express_delivery"]
+                                ? SizedBox(
+                                    height: 0,
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 18.0.sp,
+                                        left: 12.sp,
+                                        right: 12.sp,
+                                        bottom: 40.sp),
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 12.0.sp),
+                                          child: Image.asset(
+                                            truckImage,
+                                            height: 18.sp,
+                                            width: 18.sp,
                                           ),
-                                          width: 20,
-                                          height: 20,
-                                          child: Checkbox(
-                                            value: productController
-                                                .isExpressDelivery.value,
-                                            checkColor: btnTextColor,
-                                            activeColor: whiteBorderColor,
-                                            side: const BorderSide(
-                                                color: btnTextColor, width: 0),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                productController
-                                                    .isExpressDelivery
-                                                    .value = value!;
-                                                if (productController
-                                                    .isExpressDelivery.value) {
-                                                  productController
-                                                      .expressValue.value = 1;
-                                                } else {
-                                                  productController
-                                                      .expressValue.value = 0;
-                                                }
-                                              });
-                                            },
-                                          )),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            if (productController
+                                                .isExpressDelivery.value) {
+                                              productController
+                                                  .isExpressDelivery
+                                                  .value = false;
+                                              productController
+                                                  .expressValue.value = 0;
+                                            } else {
+                                              productController
+                                                  .isExpressDelivery
+                                                  .value = true;
+                                              productController
+                                                  .expressValue.value = 1;
+                                            }
+                                          },
+                                          child: AppText(
+                                            text: 'Express Delivery',
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w500,
+                                            color: blackColor,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: const SizedBox(
+                                            width: 0,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 0.sp),
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(3.sp),
+                                                border: Border(
+                                                  top: BorderSide(
+                                                      width: 2.0.sp,
+                                                      color: greyBorder),
+                                                  left: BorderSide(
+                                                      width: 2.0.sp,
+                                                      color: greyBorder),
+                                                  right: BorderSide(
+                                                      width: 2.0.sp,
+                                                      color: greyBorder),
+                                                  bottom: BorderSide(
+                                                      width: 2.0.sp,
+                                                      color: greyBorder),
+                                                ),
+                                              ),
+                                              width: 20,
+                                              height: 20,
+                                              child: Checkbox(
+                                                value: productController
+                                                    .isExpressDelivery.value,
+                                                checkColor: btnTextColor,
+                                                activeColor: whiteBorderColor,
+                                                side: const BorderSide(
+                                                    color: btnTextColor,
+                                                    width: 0),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    productController
+                                                        .isExpressDelivery
+                                                        .value = value!;
+                                                    if (productController
+                                                        .isExpressDelivery
+                                                        .value) {
+                                                      productController
+                                                          .expressValue
+                                                          .value = 1;
+                                                    } else {
+                                                      productController
+                                                          .expressValue
+                                                          .value = 0;
+                                                    }
+                                                  });
+                                                },
+                                              )),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
                       ),
                       Obx(
                         () => productController.isDetails.value

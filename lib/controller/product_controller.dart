@@ -1245,16 +1245,18 @@ class ProductController extends BaseController {
     isMostSearch.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
+      /*  var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/products?type=most-searched"), */
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=most-searched"),
+          Uri.parse("${ApiConstants.baseUrl}/categories?type=most-searched"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          mostSeachList = responseData["data"];
+        if (responseData != null) {
+          mostSeachList = responseData;
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

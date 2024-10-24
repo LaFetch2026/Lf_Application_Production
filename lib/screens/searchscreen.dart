@@ -20,6 +20,7 @@ import '../commonwidget/homewidget/horizontal_home_list.dart';
 import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
 import '../controller/search_controller.dart';
+import 'Brands/categoryproduct.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -389,14 +390,16 @@ class SearchScreenState extends State<SearchScreen> {
                                                         } else {
                                                           Navigator.of(context)
                                                               .push(MaterialPageRoute(
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      ProductDetailsScreen(
-                                                                          productId: productController.mostSeachList[index]
+                                                                  builder: (BuildContext context) => CategoryProductScreen(
+                                                                      categoryId:
+                                                                          productController.mostSeachList[index]
                                                                               [
                                                                               "id"],
-                                                                          type:
-                                                                              "add")))
+                                                                      brandId:
+                                                                          0,
+                                                                      genderType:
+                                                                          0,
+                                                                      tagIds: const [])))
                                                               .then((value) =>
                                                                   setState(
                                                                     () {
@@ -417,6 +420,16 @@ class SearchScreenState extends State<SearchScreen> {
                                                                           .getMostViewProductData();
                                                                     },
                                                                   ));
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'categories_searchpage',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'categories_searchpage',
+                                                            },
+                                                          );
                                                         }
                                                         await analytics
                                                             .logEvent(
@@ -440,11 +453,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         .mostSeachList[
                                                                             index]
                                                                             [
-                                                                            "images"]
+                                                                            "thumbnail"]
                                                                         .isNotEmpty &&
                                                                     productController.mostSeachList[index]
                                                                             [
-                                                                            "images"] !=
+                                                                            "thumbnail"] !=
                                                                         null
                                                                 ? SizedBox(
                                                                     width:
@@ -462,15 +475,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               100)),
                                                                       fit: BoxFit
                                                                           .cover,
-                                                                      imageUrl: isImage(productController.mostSeachList[index]["images"][0]
+                                                                      imageUrl: isImage(productController.mostSeachList[index]
                                                                               [
-                                                                              "name"])
-                                                                          ? productController.mostSeachList[index]["images"][0]
+                                                                              "thumbnail"])
+                                                                          ? productController.mostSeachList[index]
                                                                               [
-                                                                              "name"]
-                                                                          : productController.mostSeachList[index]["images"][1]
+                                                                              "thumbnail"]
+                                                                          : productController.mostSeachList[index]
                                                                               [
-                                                                              "name"],
+                                                                              "thumbnail"],
                                                                       errorWidget: (context,
                                                                               url,
                                                                               error) =>
