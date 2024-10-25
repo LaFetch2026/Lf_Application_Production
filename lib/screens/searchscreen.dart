@@ -1076,18 +1076,6 @@ class SearchScreenState extends State<SearchScreen> {
                                                     vertical: 4.sp),
                                                 child: GestureDetector(
                                                   onTap: () async {
-                                                    controller.callRecentSearch(
-                                                        controller.searchList[
-                                                            index]["id"],
-                                                        controller.searchList[
-                                                            index]["name"]);
-                                                    setState(() {
-                                                      isSearch = false;
-                                                      controller.searchText
-                                                              .value =
-                                                          "Search for products";
-                                                    });
-
                                                     Navigator.of(context)
                                                         .push(MaterialPageRoute(
                                                             builder: (BuildContext
@@ -1114,6 +1102,17 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         .getSearchData();
                                                                   },
                                                                 ));
+                                                    controller.callRecentSearch(
+                                                        controller.searchList[
+                                                            index]["id"],
+                                                        controller.searchList[
+                                                            index]["name"]);
+                                                    setState(() {
+                                                      isSearch = false;
+                                                      controller.searchText
+                                                              .value =
+                                                          "Search for products";
+                                                    });
                                                     await analytics.logEvent(
                                                       name:
                                                           "search_page_searchproductdetails",

@@ -690,12 +690,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     super.initState();
   }
 
-  void listClick(GlobalKey widgetKey) async {
+  /*  void listClick(GlobalKey widgetKey) async {
     await runAddToCartAnimation(widgetKey);
     await cartKey.currentState!
         .runCartAnimation((++cartQuantityItems).toString());
     //  productController.getProductDetails(widget.productId);
-  }
+  } */
 
   @override
   void dispose() {
