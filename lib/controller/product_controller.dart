@@ -506,7 +506,7 @@ class ProductController extends BaseController {
     }
   }
 
-  getExpressProductData(int genderType) async {
+  getExpressProductData(int tagid, int genderType) async {
     isExpress.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -514,14 +514,15 @@ class ProductController extends BaseController {
       if (genderType != 0) {
         response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&gender_type=$genderType"),
+                "${ApiConstants.baseUrl}/products?type=express&gender_type=$genderType&tag_ids[]=$tagid"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
       } else {
         response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/products?type=express"),
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=express&tag_ids[]=$tagid"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -552,7 +553,7 @@ class ProductController extends BaseController {
     isExpress.value = false;
   }
 
-  fetchExpressMoreData(int genderType) async {
+  fetchExpressMoreData(int tagid, int genderType) async {
     if (expressHasnextpage.value == true &&
         isExpress.value == false &&
         expressLoadMore.value == false) {
@@ -565,7 +566,7 @@ class ProductController extends BaseController {
         if (genderType != 0) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}&gender_type=$genderType"),
+                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}&gender_type=$genderType&tag_ids[]=$tagid"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -573,7 +574,7 @@ class ProductController extends BaseController {
         } else {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}"),
+                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}&tag_ids[]=$tagid"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
