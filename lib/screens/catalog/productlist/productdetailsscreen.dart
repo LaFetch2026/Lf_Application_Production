@@ -1845,11 +1845,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             .symmetric(
                                                         horizontal: 6),
                                                     child: AppText(
-                                                      text: productController
-                                                                  .getItBy !=
-                                                              ""
-                                                          ? "\u{20B9} ${productController.getItBy["shipping_cost"].toString()}"
-                                                          : "",
+                                                      text:
+                                                          "\u{20B9} ${productController.getItBy["shipping_cost"].toString()}",
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
                                                       fontWeight:
@@ -1863,8 +1860,36 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   )
                                                 ],
                                               )
-                                            : SizedBox(
-                                                height: 0,
+                                            : Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        right: 12.0.sp),
+                                                    child: Image.asset(
+                                                      getItByIcon,
+                                                      height: 18.sp,
+                                                      width: 18.sp,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: AppText(
+                                                      text: productController
+                                                          .getItBy["message"],
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: blackColor,
+                                                      maxLines: 2,
+                                                      fontSize: 14,
+                                                    ),
+                                                  )
+                                                ],
                                               )
                                         : SizedBox(
                                             height: 0,
@@ -1873,7 +1898,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ),
                       ),
-                      Obx(() => productController.isEstimateDate.value
+                      /*   Obx(() => productController.isEstimateDate.value
                           ? SizedBox(
                               height: 0,
                             )
@@ -1924,7 +1949,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 )
                               : SizedBox(
                                   height: 0,
-                                )),
+                                )), */
                       Obx(
                         () => productController.isDetails.value
                             ? SizedBox(

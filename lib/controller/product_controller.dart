@@ -1427,7 +1427,7 @@ class ProductController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        getItBy = responseData["estimated_delivery_by"];
+        getItBy = responseData;
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
