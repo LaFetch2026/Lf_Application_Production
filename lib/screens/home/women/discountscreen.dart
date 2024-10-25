@@ -42,6 +42,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagProductList.clear();
+      productController.expressProductList.clear();
       homeController.currentPage.value = 0;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -266,37 +267,41 @@ class DiscountScreenState extends State<DiscountScreen> {
             ),
             Obx(() => productController.isExpress.value
                 ? const DummyProductList(text: "Express Delivery")
-                : HorizontalHomeList(
-                    text: "Express Delivery",
-                    height: 250.sp,
-                    controller: productController.expressListController,
-                    list: productController.expressProductList,
-                    visibleExpress: true,
-                    onPressed: (p0) async {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProductDetailsScreen(
-                                      productId: p0, type: "add")))
-                          .then((value) => setState(
-                                () {
-                                  productController.expressHasnextpage.value =
-                                      true;
-                                  productController.expressLoadMore.value =
-                                      false;
-                                  productController.isExpress.value = false;
-                                  productController.expressPage.value = 1;
-                                  //  productController.getExpressProductData();
-                                },
-                              ));
-                      await analytics.logEvent(
-                        name: 'expressproductDetails_home_page',
-                        parameters: <String, Object>{
-                          'page_name': 'expressproductDetails_home_page',
+                : productController.expressProductList.isNotEmpty
+                    ? HorizontalHomeList(
+                        text: "Express Delivery",
+                        height: 250.sp,
+                        controller: productController.expressListController,
+                        list: productController.expressProductList,
+                        visibleExpress: true,
+                        onPressed: (p0) async {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ProductDetailsScreen(
+                                          productId: p0, type: "add")))
+                              .then((value) => setState(
+                                    () {
+                                      productController
+                                          .expressHasnextpage.value = true;
+                                      productController.expressLoadMore.value =
+                                          false;
+                                      productController.isExpress.value = false;
+                                      productController.expressPage.value = 1;
+                                      //  productController.getExpressProductData();
+                                    },
+                                  ));
+                          await analytics.logEvent(
+                            name: 'expressproductDetails_home_page',
+                            parameters: <String, Object>{
+                              'page_name': 'expressproductDetails_home_page',
+                            },
+                          );
                         },
-                      );
-                    },
-                  )),
+                      )
+                    : SizedBox(
+                        height: 0,
+                      )),
             Obx(() => productController.istagsProduct.value
                 ? const DummyProductList(text: "We think you might also like")
                 : productController.tagProductList.isNotEmpty
