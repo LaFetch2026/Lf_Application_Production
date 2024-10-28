@@ -2015,10 +2015,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   )
                                 : Padding(
                                     padding: EdgeInsets.only(
-                                        top: 18.0.sp,
-                                        left: 12.sp,
-                                        right: 12.sp,
-                                        bottom: 40.sp),
+                                      top: 18.0.sp,
+                                      left: 12.sp,
+                                      right: 12.sp,
+                                    ),
                                     child: Row(
                                       children: [
                                         Padding(
@@ -2118,269 +2118,336 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                       ),
                       Obx(
+                        () => !productController.isExpressDelivery.value
+                            ? SizedBox(
+                                height: 0,
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(
+                                    top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 12.0.sp),
+                                          child: Image.asset(
+                                            walletBlack,
+                                            height: 18.sp,
+                                            width: 18.sp,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text: "Express Delivery Cost :",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w500,
+                                          color: blackColor,
+                                          maxLines: 1,
+                                          fontSize: 14,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6),
+                                          child: AppText(
+                                            text:
+                                                "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w500,
+                                            color: blackColor,
+                                            maxLines: 1,
+                                            textAlign: TextAlign.center,
+                                            fontSize: 14,
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                      ),
+                      Obx(
                         () => productController.isDetails.value
                             ? Padding(
                                 padding: EdgeInsets.all(40.0.sp),
                                 child:
                                     Center(child: CircularProgressIndicator()),
                               )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  productController
-                                              .productDetails['description'] !=
-                                          null
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Divider(
-                                              color: colorSecondary,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Theme(
-                                                data: Theme.of(context)
-                                                    .copyWith(
-                                                        dividerColor:
-                                                            Colors.transparent),
-                                                child: ExpansionTile(
-                                                  title: AppText(
-                                                    text: 'Product Description',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
-                                                    fontSize: 16,
-                                                  ),
-                                                  tilePadding:
-                                                      EdgeInsets.all(0.sp),
-                                                  childrenPadding:
-                                                      EdgeInsets.symmetric(
-                                                          vertical: 4.0.sp),
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: AppText(
-                                                        text: Bidi.stripHtmlIfNeeded(
-                                                            productController
-                                                                        .productDetails[
-                                                                    'description'] ??
-                                                                ""),
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        maxLines: 20,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: colorPrimary,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : const SizedBox(
-                                          height: 0,
-                                        ),
-                                  productController.compositionDetails !=
-                                              null &&
-                                          productController
-                                                  .compositionDetails !=
-                                              ""
-                                      ? Column(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Divider(
+                            : Padding(
+                                padding: EdgeInsets.only(top: 40.sp),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    productController.productDetails[
+                                                'description'] !=
+                                            null
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Divider(
                                                 color: colorSecondary,
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Theme(
-                                                data: Theme.of(context)
-                                                    .copyWith(
-                                                        dividerColor:
-                                                            Colors.transparent),
-                                                child: ExpansionTile(
-                                                  title: AppText(
-                                                    text: 'Composition & Care',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
-                                                    fontSize: 16,
-                                                  ),
-                                                  tilePadding:
-                                                      EdgeInsets.all(0.sp),
-                                                  childrenPadding:
-                                                      EdgeInsets.symmetric(
-                                                          vertical: 4.0.sp),
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: AppText(
-                                                        text: Bidi.stripHtmlIfNeeded(
-                                                            productController
-                                                                        .compositionDetails[
-                                                                    "description"] ??
-                                                                ""),
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        maxLines: 20,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: colorPrimary,
-                                                        fontSize: 12,
-                                                      ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Theme(
+                                                  data: Theme.of(context)
+                                                      .copyWith(
+                                                          dividerColor: Colors
+                                                              .transparent),
+                                                  child: ExpansionTile(
+                                                    title: AppText(
+                                                      text:
+                                                          'Product Description',
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: colorPrimary,
+                                                      fontSize: 16,
                                                     ),
-                                                  ],
+                                                    tilePadding:
+                                                        EdgeInsets.all(0.sp),
+                                                    childrenPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.0.sp),
+                                                    children: [
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: AppText(
+                                                          text: Bidi.stripHtmlIfNeeded(
+                                                              productController
+                                                                          .productDetails[
+                                                                      'description'] ??
+                                                                  ""),
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          maxLines: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: colorPrimary,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      : const SizedBox(
-                                          height: 0,
-                                        ),
-                                  productController.returnPolicyDetails !=
-                                              null &&
-                                          productController
-                                                  .returnPolicyDetails !=
-                                              ""
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Divider(
-                                                color: colorSecondary,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Theme(
-                                                data: Theme.of(context)
-                                                    .copyWith(
-                                                        dividerColor:
-                                                            Colors.transparent),
-                                                child: ExpansionTile(
-                                                  title: AppText(
-                                                    text: 'Delivery & Returns',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
-                                                    fontSize: 16,
-                                                  ),
-                                                  tilePadding:
-                                                      EdgeInsets.all(0.sp),
-                                                  childrenPadding:
-                                                      EdgeInsets.symmetric(
-                                                          vertical: 4.0.sp),
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: AppText(
-                                                        text: Bidi.stripHtmlIfNeeded(
-                                                            productController
-                                                                        .returnPolicyDetails[
-                                                                    "description"] ??
-                                                                ""),
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        maxLines: 20,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: colorPrimary,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ],
+                                            ],
+                                          )
+                                        : const SizedBox(
+                                            height: 0,
+                                          ),
+                                    productController.compositionDetails !=
+                                                null &&
+                                            productController
+                                                    .compositionDetails !=
+                                                ""
+                                        ? Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Divider(
+                                                  color: colorSecondary,
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      : const SizedBox(
-                                          height: 0,
-                                        ),
-                                  productController.brandDetails != null &&
-                                          productController.brandDetails != ""
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Divider(
-                                                color: colorSecondary,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.sp),
-                                              child: Theme(
-                                                data: Theme.of(context)
-                                                    .copyWith(
-                                                        dividerColor:
-                                                            Colors.transparent),
-                                                child: ExpansionTile(
-                                                  title: AppText(
-                                                    text: 'About the Brand',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
-                                                    fontSize: 16,
-                                                  ),
-                                                  tilePadding:
-                                                      EdgeInsets.all(0.sp),
-                                                  childrenPadding:
-                                                      EdgeInsets.symmetric(
-                                                          vertical: 4.0.sp),
-                                                  children: [
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: AppText(
-                                                        text: Bidi.stripHtmlIfNeeded(
-                                                            productController
-                                                                        .brandDetails[
-                                                                    "description"] ??
-                                                                ""),
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        maxLines: 20,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: colorPrimary,
-                                                        fontSize: 12,
-                                                      ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Theme(
+                                                  data: Theme.of(context)
+                                                      .copyWith(
+                                                          dividerColor: Colors
+                                                              .transparent),
+                                                  child: ExpansionTile(
+                                                    title: AppText(
+                                                      text:
+                                                          'Composition & Care',
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: colorPrimary,
+                                                      fontSize: 16,
                                                     ),
-                                                  ],
+                                                    tilePadding:
+                                                        EdgeInsets.all(0.sp),
+                                                    childrenPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.0.sp),
+                                                    children: [
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: AppText(
+                                                          text: Bidi.stripHtmlIfNeeded(
+                                                              productController
+                                                                          .compositionDetails[
+                                                                      "description"] ??
+                                                                  ""),
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          maxLines: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: colorPrimary,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      : const SizedBox(
-                                          height: 0,
-                                        ),
-                                ],
+                                            ],
+                                          )
+                                        : const SizedBox(
+                                            height: 0,
+                                          ),
+                                    productController.returnPolicyDetails !=
+                                                null &&
+                                            productController
+                                                    .returnPolicyDetails !=
+                                                ""
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Divider(
+                                                  color: colorSecondary,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Theme(
+                                                  data: Theme.of(context)
+                                                      .copyWith(
+                                                          dividerColor: Colors
+                                                              .transparent),
+                                                  child: ExpansionTile(
+                                                    title: AppText(
+                                                      text:
+                                                          'Delivery & Returns',
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: colorPrimary,
+                                                      fontSize: 16,
+                                                    ),
+                                                    tilePadding:
+                                                        EdgeInsets.all(0.sp),
+                                                    childrenPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.0.sp),
+                                                    children: [
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: AppText(
+                                                          text: Bidi.stripHtmlIfNeeded(
+                                                              productController
+                                                                          .returnPolicyDetails[
+                                                                      "description"] ??
+                                                                  ""),
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          maxLines: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: colorPrimary,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox(
+                                            height: 0,
+                                          ),
+                                    productController.brandDetails != null &&
+                                            productController.brandDetails != ""
+                                        ? Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Divider(
+                                                  color: colorSecondary,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.sp),
+                                                child: Theme(
+                                                  data: Theme.of(context)
+                                                      .copyWith(
+                                                          dividerColor: Colors
+                                                              .transparent),
+                                                  child: ExpansionTile(
+                                                    title: AppText(
+                                                      text: 'About the Brand',
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: colorPrimary,
+                                                      fontSize: 16,
+                                                    ),
+                                                    tilePadding:
+                                                        EdgeInsets.all(0.sp),
+                                                    childrenPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.0.sp),
+                                                    children: [
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: AppText(
+                                                          text: Bidi.stripHtmlIfNeeded(
+                                                              productController
+                                                                          .brandDetails[
+                                                                      "description"] ??
+                                                                  ""),
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          maxLines: 20,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: colorPrimary,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox(
+                                            height: 0,
+                                          ),
+                                  ],
+                                ),
                               ),
                       ),
                       Padding(
