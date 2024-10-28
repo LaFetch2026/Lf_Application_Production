@@ -13,6 +13,7 @@ class DummyEstimateDelivery extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
