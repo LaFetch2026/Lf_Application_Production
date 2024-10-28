@@ -1905,7 +1905,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             flex: 1,
                                             child: AppText(
                                               text: productController
-                                                  .getItBy["message"],
+                                                      .getItBy["message"] ??
+                                                  "Enter your pincode to get estimate delivery date",
                                               fontFamily:
                                                   "Franklin Gothic Regular",
                                               fontWeight: FontWeight.w500,

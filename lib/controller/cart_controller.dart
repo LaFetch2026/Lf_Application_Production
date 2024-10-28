@@ -138,8 +138,8 @@ class CartController extends BaseController {
     }
   }
 
-  callAddtoCart(
-      int quantity, String page, int inventoryId, int productId) async {
+  callAddtoCart(int quantity, String page, int inventoryId, int productId,
+      int expressValue) async {
     if (page == "quantity") {
       showLoading();
     }
@@ -149,7 +149,8 @@ class CartController extends BaseController {
         "quantity": quantity,
         "inventory_id": inventoryId,
         "product_id": productId,
-        "order_id": cartId.value
+        "order_id": cartId.value,
+        "express_delivery": expressValue,
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
@@ -177,6 +178,8 @@ class CartController extends BaseController {
           getSnackBar("Size updated");
           Get.close(1);
           getCartData();
+        } else if (page == "express") {
+          getCartData();
         } else {
           Get.close(1);
         }
@@ -188,6 +191,8 @@ class CartController extends BaseController {
         } else if (page == "remove") {
           print("remove");
           Get.close(1);
+          getCartData();
+        } else if (page == "express") {
           getCartData();
         } else {
           Get.close(1);

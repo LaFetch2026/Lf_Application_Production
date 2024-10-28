@@ -426,7 +426,9 @@ class ProductController extends BaseController {
     }
   }
 
-  getTagsBannerData(List list) async {
+  getTagsBannerData(
+    List list,
+  ) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {

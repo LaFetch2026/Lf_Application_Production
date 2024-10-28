@@ -871,16 +871,20 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   fontSize: 14,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5.sp),
-                                                child: AppText(
-                                                  text: email,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: textHintColor,
-                                                  fontSize: 14,
+                                              Expanded(
+                                                flex: 1,
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 5.sp),
+                                                  child: AppText(
+                                                    text: email,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: textHintColor,
+                                                    maxLines: 1,
+                                                    fontSize: 14,
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -1477,36 +1481,37 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ),
                         ),
                       )),
-                      Obx(() => 
-                  Padding(
-                    padding: EdgeInsets.only(top: 20.sp, bottom: 30.sp),
-                    child: getSingleButton(
-                        label: "Download Invoice",
-                        controller: orderController,
-                        textColor: whiteTextColor,
-                        backgroundColor: btnTextColor,
-                        onPressed: () async {
-                          final permission =
-                              await FlDownloader.requestPermission();
-                          if (permission == StoragePermissionStatus.granted) {
-                            /*   await FlDownloader.download(
+                  Obx(() => Padding(
+                        padding: EdgeInsets.only(top: 20.sp, bottom: 30.sp),
+                        child: getSingleButton(
+                            label: "Download Invoice",
+                            controller: orderController,
+                            textColor: whiteTextColor,
+                            backgroundColor: btnTextColor,
+                            onPressed: () async {
+                              final permission =
+                                  await FlDownloader.requestPermission();
+                              if (permission ==
+                                  StoragePermissionStatus.granted) {
+                                /*   await FlDownloader.download(
                                                   urlController.text,
                                                   fileName:
                                                       fileNameController.text,
                                                 ); */
-                            orderController.getDownloadInvoice(widget.orderId);
-                          } else {
-                            debugPrint('Permission denied =(');
-                          }
-                          await analytics.logEvent(
-                            name: 'download_invoice',
-                            parameters: <String, Object>{
-                              'page_name': 'download_invoice',
+                                orderController
+                                    .getDownloadInvoice(widget.orderId);
+                              } else {
+                                debugPrint('Permission denied =(');
+                              }
+                              await analytics.logEvent(
+                                name: 'download_invoice',
+                                parameters: <String, Object>{
+                                  'page_name': 'download_invoice',
+                                },
+                              );
                             },
-                          );
-                        },
-                        borderColor: btnTextColor),
-                  ))
+                            borderColor: btnTextColor),
+                      ))
                 ],
               ),
             ),
