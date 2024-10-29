@@ -258,6 +258,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                 0,
                                                                 widget.brandId,
                                                                 [],
+                                                                [],
                                                                 0,
                                                                 0,
                                                                 0);
@@ -277,6 +278,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                           0,
                                                                           widget
                                                                               .brandId,
+                                                                          [],
                                                                           [],
                                                                           0,
                                                                           0,

@@ -28,6 +28,8 @@ class HomeController extends BaseController {
   List banner1List = [].obs;
   List bannerTag1Id = [].obs;
   List bannerTag2Id = [].obs;
+  List bannerCategory1Id = [].obs;
+  List bannerCategory2Id = [].obs;
   List categoryList = [].obs;
   RxInt currentPage = 0.obs;
   List banners = [].obs;

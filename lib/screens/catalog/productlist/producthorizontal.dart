@@ -270,6 +270,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                             widget.categoryId,
                                                             0,
                                                             [],
+                                                            [],
                                                             0,
                                                             widget.genderType,
                                                             widget.catalogId);
@@ -290,6 +291,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                           widget
                                                                               .categoryId,
                                                                           0,
+                                                                          [],
                                                                           [],
                                                                           0,
                                                                           widget

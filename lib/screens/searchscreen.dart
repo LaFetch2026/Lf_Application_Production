@@ -399,6 +399,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                           0,
                                                                       genderType:
                                                                           0,
+                                                                      categoryList: [],
                                                                       tagIds: const [])))
                                                               .then((value) =>
                                                                   setState(

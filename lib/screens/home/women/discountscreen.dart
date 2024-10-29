@@ -211,12 +211,25 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   homeController.bannerTag1Id.add(homeController
                                       .banner1List[itemIndex]["tags"][i]["id"]);
                                 }
+                                for (var i = 0;
+                                    i <
+                                        homeController
+                                            .banner1List[itemIndex]
+                                                ["categories"]
+                                            .length;
+                                    i++) {
+                                  homeController.bannerCategory1Id.add(
+                                      homeController.banner1List[itemIndex]
+                                          ["categories"][i]["id"]);
+                                }
                                 print(homeController.bannerTag1Id);
                                 Get.to(CategoryProductScreen(
                                   categoryId: 0,
                                   brandId: 0,
                                   genderType: widget.genderType,
                                   tagIds: homeController.bannerTag1Id,
+                                  categoryList:
+                                      homeController.bannerCategory1Id,
                                 ));
                                 await analytics.logEvent(
                                   name: 'banner_home_page',
@@ -378,6 +391,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                 .categoryList[0]["id"],
                                             brandId: 0,
                                             genderType: widget.genderType,
+                                            categoryList: [],
                                             tagIds: const []));
                                         await analytics.logEvent(
                                           name: 'categories_home_page',
@@ -476,6 +490,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             categoryId: homeController
                                                 .categoryList[1]["id"],
                                             brandId: 0,
+                                            categoryList: [],
                                             genderType: widget.genderType,
                                             tagIds: const []));
                                         await analytics.logEvent(
@@ -596,6 +611,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                             .categoryList[
                                                         index + 2]["id"],
                                                     brandId: 0,
+                                                    categoryList: [],
                                                     genderType:
                                                         widget.genderType,
                                                     tagIds: const []));
@@ -766,12 +782,26 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                     .banner2List[itemIndex]
                                                 ["tags"][i]["id"]);
                                       }
+                                      for (var i = 0;
+                                          i <
+                                              homeController
+                                                  .banner2List[itemIndex]
+                                                      ["categories"]
+                                                  .length;
+                                          i++) {
+                                        homeController.bannerCategory2Id.add(
+                                            homeController
+                                                    .banner2List[itemIndex]
+                                                ["categories"][i]["id"]);
+                                      }
                                       print(homeController.bannerTag2Id);
                                       Get.to(CategoryProductScreen(
                                         categoryId: 0,
                                         brandId: 0,
                                         genderType: widget.genderType,
                                         tagIds: homeController.bannerTag2Id,
+                                        categoryList:
+                                            homeController.bannerCategory2Id,
                                       ));
                                       await analytics.logEvent(
                                         name: 'promotion_home_page',

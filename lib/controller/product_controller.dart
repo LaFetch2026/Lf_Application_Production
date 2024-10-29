@@ -426,15 +426,13 @@ class ProductController extends BaseController {
     }
   }
 
-  getTagsBannerData(
-    List list,
-  ) async {
+  getTagsBannerData(List list, List categoryList) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
         Uri.parse(
-            "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}"),
+            "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}"),
         headers: <String, String>{
           'Accept': 'application/json; charset=UTF-8',
           "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -463,7 +461,7 @@ class ProductController extends BaseController {
     isCategoryProduct.value = false;
   }
 
-  fetchMoreBannerTagProductData(List list) async {
+  fetchMoreBannerTagProductData(List list, List categoryList) async {
     if (bannerTagHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         bannerTagLoadMore.value == false) {
@@ -474,7 +472,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}"),
+                "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1722,6 +1720,7 @@ class ProductController extends BaseController {
       int categoryId,
       int brandId,
       List list,
+      List categoryList,
       int existId,
       int genderType,
       int catalogId) async {
@@ -1756,7 +1755,7 @@ class ProductController extends BaseController {
           getBrandExpressProductData(
               brandId, expressSortBy.value, filterExpressEnable.value);
         } else if (type == "bannerTag") {
-          getTagsBannerData(list);
+          getTagsBannerData(list, categoryList);
         } else if (type == "frequently") {
           getFrequentlyProductData("frequently-bought", existId);
           getProductRecommendations(existId);

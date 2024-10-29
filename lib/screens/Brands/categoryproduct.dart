@@ -21,12 +21,14 @@ class CategoryProductScreen extends StatefulWidget {
   final int brandId;
   final int genderType;
   final List tagIds;
+  final List categoryList;
   const CategoryProductScreen(
       {super.key,
       required this.categoryId,
       required this.brandId,
       required this.genderType,
-      required this.tagIds});
+      required this.tagIds,
+      required this.categoryList});
 
   @override
   State<CategoryProductScreen> createState() => CategoryProductScreenState();
@@ -59,11 +61,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
     } else {
-      WidgetsBinding.instance.addPostFrameCallback(
-          (_) => productController.getTagsBannerData(widget.tagIds));
+      WidgetsBinding.instance.addPostFrameCallback((_) => productController
+          .getTagsBannerData(widget.tagIds, widget.categoryList));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.bannerTagController.addListener(() {
-          productController.fetchMoreBannerTagProductData(widget.tagIds);
+          productController.fetchMoreBannerTagProductData(
+              widget.tagIds, widget.categoryList);
           productController.update();
         });
       });
@@ -247,6 +250,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               widget.categoryId,
                                                               widget.brandId,
                                                               [],
+                                                              [],
                                                               0,
                                                               widget.genderType,
                                                               0);
@@ -265,6 +269,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             widget.brandId,
+                                                                            [],
                                                                             [],
                                                                             0,
                                                                             widget.genderType,
@@ -290,6 +295,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               widget.categoryId,
                                                               widget.brandId,
                                                               widget.tagIds,
+                                                              widget
+                                                                  .categoryList,
                                                               0,
                                                               0,
                                                               0);
@@ -309,6 +316,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             widget.categoryId,
                                                                             0,
                                                                             widget.tagIds,
+                                                                            widget.categoryList,
                                                                             0,
                                                                             0,
                                                                             0);

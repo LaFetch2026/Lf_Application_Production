@@ -445,54 +445,58 @@ class CartScreenState extends State<CartScreen> {
                                                                                     : SizedBox(
                                                                                         height: 0,
                                                                                       ),
-                                                                                Padding(
-                                                                                  padding: EdgeInsets.only(
-                                                                                    top: 8.0.sp,
-                                                                                  ),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Padding(
-                                                                                        padding: EdgeInsets.only(right: 10.0.sp),
-                                                                                        child: Image.asset(
-                                                                                          truckImage,
-                                                                                          height: 18.sp,
-                                                                                          width: 18.sp,
+                                                                                value.orderList[index]["product"]["express_delivery"]
+                                                                                    ? Padding(
+                                                                                        padding: EdgeInsets.only(
+                                                                                          top: 8.0.sp,
                                                                                         ),
-                                                                                      ),
-                                                                                      AppText(
-                                                                                        text: 'Express Delivery',
-                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                        color: blackColor,
-                                                                                        fontSize: 12,
-                                                                                      ),
-                                                                                      Padding(
-                                                                                        padding: EdgeInsets.only(left: 12.sp),
-                                                                                        child: Container(
-                                                                                            decoration: BoxDecoration(
-                                                                                              borderRadius: BorderRadius.circular(3.sp),
-                                                                                              border: Border(
-                                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                        child: Row(
+                                                                                          children: [
+                                                                                            Padding(
+                                                                                              padding: EdgeInsets.only(right: 10.0.sp),
+                                                                                              child: Image.asset(
+                                                                                                truckImage,
+                                                                                                height: 18.sp,
+                                                                                                width: 18.sp,
                                                                                               ),
                                                                                             ),
-                                                                                            width: 20,
-                                                                                            height: 20,
-                                                                                            child: Checkbox(
-                                                                                              value: value.orderList[index]["product"]["express_delivery"],
-                                                                                              checkColor: btnTextColor,
-                                                                                              activeColor: whiteBorderColor,
-                                                                                              side: const BorderSide(color: btnTextColor, width: 0),
-                                                                                              onChanged: (value) {
-                                                                                                controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["product"]["express_delivery"] ? 0 : 1);
-                                                                                              },
-                                                                                            )),
+                                                                                            AppText(
+                                                                                              text: 'Express Delivery',
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                              color: blackColor,
+                                                                                              fontSize: 12,
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: EdgeInsets.only(left: 12.sp),
+                                                                                              child: Container(
+                                                                                                  decoration: BoxDecoration(
+                                                                                                    borderRadius: BorderRadius.circular(3.sp),
+                                                                                                    border: Border(
+                                                                                                      top: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                      left: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                      right: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                      bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  width: 20,
+                                                                                                  height: 20,
+                                                                                                  child: Checkbox(
+                                                                                                    value: value.orderList[index]["product"]["express_delivery"],
+                                                                                                    checkColor: btnTextColor,
+                                                                                                    activeColor: whiteBorderColor,
+                                                                                                    side: const BorderSide(color: btnTextColor, width: 0),
+                                                                                                    onChanged: (value) {
+                                                                                                      controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["product"]["express_delivery"] ? 0 : 1);
+                                                                                                    },
+                                                                                                  )),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      )
+                                                                                    : SizedBox(
+                                                                                        height: 0,
                                                                                       ),
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
                                                                                 Padding(
                                                                                   padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                   child: Row(
@@ -1096,7 +1100,7 @@ class CartScreenState extends State<CartScreen> {
                                             ),
                                           ),
                                         ),
-                                        controller.cartDetails[
+                                        /*    controller.cartDetails[
                                                     "express_delivery_charges"] ==
                                                 "0.00"
                                             ? SizedBox(
@@ -1213,6 +1217,7 @@ class CartScreenState extends State<CartScreen> {
                                                   ],
                                                 ),
                                               ),
+                                       */
                                         Padding(
                                           padding: EdgeInsets.only(top: 20.sp),
                                           child: AppText(

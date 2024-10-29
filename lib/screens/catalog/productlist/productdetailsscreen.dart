@@ -3202,6 +3202,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     0,
                                                     0,
                                                     [],
+                                                    [],
                                                     widget.productId,
                                                     0,
                                                     0);
@@ -3221,6 +3222,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       p1]["id"],
                                                                   0,
                                                                   0,
+                                                                  [],
                                                                   [],
                                                                   widget
                                                                       .productId,
@@ -3293,6 +3295,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     0,
                                                     0,
                                                     [],
+                                                    [],
                                                     widget.productId,
                                                     0,
                                                     0);
@@ -3312,6 +3315,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       p1]["id"],
                                                                   0,
                                                                   0,
+                                                                  [],
                                                                   [],
                                                                   widget
                                                                       .productId,

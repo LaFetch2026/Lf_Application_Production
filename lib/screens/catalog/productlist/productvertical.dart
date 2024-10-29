@@ -342,6 +342,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                               widget.categoryId,
                                                               0,
                                                               [],
+                                                              [],
                                                               0,
                                                               widget.genderType,
                                                               widget.catalogId);
@@ -360,6 +361,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             0,
+                                                                            [],
                                                                             [],
                                                                             0,
                                                                             widget.genderType,

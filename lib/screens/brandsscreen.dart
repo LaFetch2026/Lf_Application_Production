@@ -511,6 +511,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                       brandId: value.brandList[index]["id"],
                                                                                       genderType: 0,
                                                                                       tagIds: const [],
+                                                                                      categoryList: [],
                                                                                     ));
                                                                                     await analytics.logEvent(
                                                                                       name: 'brand_category_click',

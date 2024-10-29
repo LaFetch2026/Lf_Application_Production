@@ -310,6 +310,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                             .categoryList[index]
                                                         ["id"],
                                                     tagIds: const [],
+                                                    categoryList: [],
                                                     genderType: 0,
                                                     brandId: brandController
                                                         .brandId.value,
@@ -480,6 +481,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         0,
                                         brandController.brandId.value,
                                         [],
+                                        [],
                                         0,
                                         0,
                                         0);
@@ -498,6 +500,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                       0,
                                                       brandController
                                                           .brandId.value,
+                                                      [],
                                                       [],
                                                       0,
                                                       0,
@@ -570,6 +573,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       0,
                                       brandController.brandId.value,
                                       [],
+                                      [],
                                       0,
                                       0,
                                       0);
@@ -588,6 +592,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     0,
                                                     brandController
                                                         .brandId.value,
+                                                    [],
                                                     [],
                                                     0,
                                                     0,
