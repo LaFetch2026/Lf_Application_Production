@@ -143,6 +143,7 @@ class CartController extends BaseController {
     if (page == "quantity") {
       showLoading();
     }
+    isExpress.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -213,6 +214,7 @@ class CartController extends BaseController {
     if (page == "quantity") {
       hideLoading();
     }
+    isExpress.value = false;
   }
 
   callInitiatePayment(int addressId, dynamic context) async {
