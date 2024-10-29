@@ -34,6 +34,7 @@ class SearchScreenController extends BaseController {
         if (responseData["products"] != null &&
             responseData["products"].isNotEmpty) {
           searchList = responseData["products"];
+          searchText.value = "Search for products";
         } else {
           searchText.value = "No product found";
           searchList.clear();
