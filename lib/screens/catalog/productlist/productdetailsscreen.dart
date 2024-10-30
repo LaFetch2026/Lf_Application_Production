@@ -2709,7 +2709,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                         index]
                                                                     ['comment'])
                                                                 .length >
-                                                            8
+                                                            30
                                                         ? Padding(
                                                             padding:
                                                                 EdgeInsets.only(
