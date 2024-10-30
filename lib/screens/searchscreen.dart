@@ -444,7 +444,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                         );
                                                       },
                                                       child: SizedBox(
-                                                        height: 100.sp,
+                                                        height: 105.sp,
                                                         child: Column(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -516,7 +516,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       horizontal:
                                                                           10.sp,
                                                                       vertical:
-                                                                          5.sp),
+                                                                          3.sp),
                                                               child: AppText(
                                                                 text: productController
                                                                         .mostSeachList[
@@ -524,7 +524,10 @@ class SearchScreenState extends State<SearchScreen> {
                                                                 color:
                                                                     greyTextColor,
                                                                 fontSize: 10,
-                                                                maxLines: 1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                maxLines: 2,
                                                                 fontFamily:
                                                                     "Franklin Gothic Regular",
                                                                 fontWeight:

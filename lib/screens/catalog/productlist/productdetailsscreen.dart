@@ -1937,7 +1937,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    productController.productDetails["has_cod"]
+                                    /*  productController.productDetails["has_cod"]
                                         ? Padding(
                                             padding: EdgeInsets.only(
                                                 bottom: 18.0.sp),
@@ -1972,6 +1972,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         : SizedBox(
                                             height: 0,
                                           ),
+                                    */
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
