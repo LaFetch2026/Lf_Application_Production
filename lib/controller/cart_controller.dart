@@ -139,7 +139,7 @@ class CartController extends BaseController {
   }
 
   callAddtoCart(int quantity, String page, int inventoryId, int productId,
-      int expressValue) async {
+      int expressValue, int type) async {
     if (page == "quantity") {
       showLoading();
     }
@@ -152,6 +152,7 @@ class CartController extends BaseController {
         "product_id": productId,
         "order_id": cartId.value,
         "express_delivery": expressValue,
+        "update_inventory": type,
       };
       var response =
           await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),

@@ -2013,10 +2013,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               )
                             : productController
                                     .productDetails["express_delivery"]
-                                ? SizedBox(
-                                    height: 0,
-                                  )
-                                : Padding(
+                                ? Padding(
                                     padding: EdgeInsets.only(
                                       top: 18.0.sp,
                                       left: 12.sp,
@@ -2118,6 +2115,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ),
                                       ],
                                     ),
+                                  )
+                                : SizedBox(
+                                    height: 0,
                                   ),
                       ),
                       Obx(
