@@ -38,8 +38,8 @@ class BottomFiltersState extends State<BottomFilters> {
   List<bool> sizeSelected = List.generate(50, (i) => false);
   String type = "";
   String lowerValue = "500";
-  String UpperValue = "50000";
-  RangeValues values = RangeValues(500, 50000);
+  String UpperValue = "100000";
+  RangeValues values = RangeValues(500, 100000);
 
   @override
   void initState() {
@@ -243,7 +243,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                               child: RangeSlider(
                                                 values: values,
                                                 min: 500,
-                                                max: 50000,
+                                                max: 100000,
                                                 // divisions: 5,
                                                 inactiveColor: Colors.grey,
                                                 activeColor: btnTextColor,
