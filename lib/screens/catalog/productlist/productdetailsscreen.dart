@@ -59,8 +59,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _curr = 0;
   int commentId = 0;
   int reviewHelpfulId = 0;
-  Map<String, dynamic> selectedProductSize = {};
-  Map<String, dynamic> selectedProductColor = {};
   Map<String, dynamic> selectedProductFabric = {};
   final GlobalKey<CartIconKey> cartKey = GlobalKey<CartIconKey>();
   late Function(GlobalKey) runAddToCartAnimation;
@@ -330,6 +328,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     } else {
       list.add(Image.asset(dummyWishlistImage, fit: BoxFit.fitHeight));
     }
+
     return list;
   }
 
@@ -342,100 +341,110 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Padding(
-          padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
-          child: productController.sizeInventoryList
-                  .where(
-                      (element) => int.parse(element['stocks'].toString()) > 0)
-                  .toList()
-                  .isNotEmpty
-              ? Wrap(
-                  direction: Axis.horizontal,
-                  spacing: 12.0.sp,
-                  runSpacing: 8.0.sp,
-                  runAlignment: WrapAlignment.spaceEvenly,
-                  children: [
-                      for (var i in productController.sizeInventoryList.where(
-                          (element) =>
-                              int.parse(element['stocks'].toString()) > 0))
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                /*  final prefs =
+            padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
+            child: productController.sizeInventoryList
+                    .where((element) =>
+                        int.parse(element['stocks'].toString()) > 0)
+                    .toList()
+                    .isNotEmpty
+                ? Wrap(
+                    direction: Axis.horizontal,
+                    spacing: 12.0.sp,
+                    runSpacing: 8.0.sp,
+                    runAlignment: WrapAlignment.spaceEvenly,
+                    children: [
+                        for (var i in productController.sizeInventoryList.where(
+                            (element) =>
+                                int.parse(element['stocks'].toString()) > 0))
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  /*  final prefs =
                                     await SharedPreferences.getInstance(); */
-                                selectedProductSize = i;
-                                productController.sizeInventoryId.value =
-                                    selectedProductSize["id"];
-                                productController.colorInventoryId.value = 0;
-                                print(productController.sizeInventoryId.value);
-                                productController.colorInventoryList =
-                                    i["product_matrix_available_colors"];
+                                  productController.selectedProductSize = i;
+                                  productController.sizeInventoryId.value =
+                                      productController
+                                          .selectedProductSize["id"];
+                                  productController.colorInventoryId.value = 0;
+                                  print(
+                                      productController.sizeInventoryId.value);
+                                  productController.colorInventoryList =
+                                      i["product_matrix_available_colors"];
 
-                                /*   prefs.setInt("inventorySizeId",
+                                  /*   prefs.setInt("inventorySizeId",
                                     selectedProductSize["id"]); */
-                                print(selectedProductSize["id"]);
-                                print(i['product_matrix_size_name']);
-                                // prefs.remove("inventoryColorId");
-                                setState(() {});
-                                await analytics.logEvent(
-                                  name: 'productDetails_sizeSelect',
-                                  parameters: <String, Object>{
-                                    'page_name': 'productDetails_sizeSelect',
-                                  },
-                                );
-                              },
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: btnTextColor, width: 1.sp),
-                                      color: selectedProductSize.isNotEmpty &&
-                                              selectedProductSize['id'] ==
-                                                  i['id']
-                                          ? colorPrimary
-                                          : whiteColor),
-                                  child: SizedBox(
-                                    width: 40.sp,
-                                    height: 40.sp,
-                                    child: Align(
-                                      alignment: Alignment.center,
+                                  print(productController
+                                      .selectedProductSize["id"]);
+                                  print(i['product_matrix_size_name']);
+                                  // prefs.remove("inventoryColorId");
+                                  setState(() {});
+                                  await analytics.logEvent(
+                                    name: 'productDetails_sizeSelect',
+                                    parameters: <String, Object>{
+                                      'page_name': 'productDetails_sizeSelect',
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: btnTextColor, width: 1.sp),
+                                        color: productController
+                                                    .selectedProductSize
+                                                    .isNotEmpty &&
+                                                productController
+                                                            .selectedProductSize[
+                                                        'id'] ==
+                                                    i['id']
+                                            ? colorPrimary
+                                            : whiteColor),
+                                    child: SizedBox(
+                                      width: 40.sp,
+                                      height: 40.sp,
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: AppText(
+                                          text: i['product_matrix_size_name']
+                                              .toString(),
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: productController
+                                                      .selectedProductSize
+                                                      .isNotEmpty &&
+                                                  productController
+                                                              .selectedProductSize[
+                                                          'id'] ==
+                                                      i['id']
+                                              ? whiteColor
+                                              : btnTextColor,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                              int.parse(i['stocks'].toString()) > 10
+                                  ? const SizedBox()
+                                  : Padding(
+                                      padding: EdgeInsets.only(top: 8.0.sp),
                                       child: AppText(
-                                        text: i['product_matrix_size_name']
-                                            .toString(),
+                                        text: '${i['stocks'].toString()} left',
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        color: selectedProductSize.isNotEmpty &&
-                                                selectedProductSize['id'] ==
-                                                    i['id']
-                                            ? whiteColor
-                                            : btnTextColor,
-                                        fontSize: 14,
+                                        color: redColor,
+                                        fontSize: 11,
                                       ),
-                                    ),
-                                  )),
-                            ),
-                            int.parse(i['stocks'].toString()) > 10
-                                ? const SizedBox()
-                                : Padding(
-                                    padding: EdgeInsets.only(top: 8.0.sp),
-                                    child: AppText(
-                                      text: '${i['stocks'].toString()} left',
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: redColor,
-                                      fontSize: 11,
-                                    ),
-                                  )
-                          ],
-                        ),
-                    ])
-              : AppText(
-                  text: 'N/A',
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: redColor,
-                  fontSize: 11,
-                ),
-        ));
+                                    )
+                            ],
+                          ),
+                      ])
+                : AppText(
+                    text: 'N/A',
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: redColor,
+                    fontSize: 11,
+                  )));
   }
 
   /* movetoNextScreen(int id) {
@@ -475,20 +484,24 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               onTap: () async {
                                 /*  final prefs =
                                     await SharedPreferences.getInstance(); */
-                                selectedProductColor = i;
+                                productController.selectedProductColor = i;
                                 productController.colorInventoryId.value =
-                                    selectedProductColor["id"];
+                                    productController
+                                        .selectedProductColor["id"];
                                 productController.sizeInventoryId.value =
-                                    selectedProductColor["id"];
+                                    productController
+                                        .selectedProductColor["id"];
                                 productController.productImageindex.value =
                                     productController.sizeInventoryList
                                         .indexWhere((item) =>
                                             item["id"] ==
-                                            selectedProductSize["id"]);
+                                            productController
+                                                .selectedProductSize["id"]);
                                 _curr = 0;
                                 /*   prefs.setInt("inventoryColorId",
                                     selectedProductColor["id"]); */
-                                print(selectedProductColor["id"]);
+                                print(productController
+                                    .selectedProductColor["id"]);
                                 print(
                                     productController.productImageindex.value);
                                 print(i['name']);
@@ -498,17 +511,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     'page_name': 'productDetails_colorSelect',
                                   },
                                 );
+                                productController.update();
                                 setState(() {});
                                 productController.getProductImage(
-                                    selectedProductColor["id"]);
+                                    productController
+                                        .selectedProductColor["id"]);
                                 //   movetoNextScreen(i['product_id']);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(
                                         color: btnTextColor, width: 1),
-                                    color: selectedProductColor.isNotEmpty &&
-                                            selectedProductColor['id'] ==
+                                    color: productController
+                                                .selectedProductColor
+                                                .isNotEmpty &&
+                                            productController
+                                                        .selectedProductColor[
+                                                    'id'] ==
                                                 i['id']
                                         ? colorPrimary
                                         : whiteColor),
@@ -518,8 +537,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     text: i['name'].toString(),
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
-                                    color: selectedProductColor.isNotEmpty &&
-                                            selectedProductColor['id'] ==
+                                    color: productController
+                                                .selectedProductColor
+                                                .isNotEmpty &&
+                                            productController
+                                                        .selectedProductColor[
+                                                    'id'] ==
                                                 i['id']
                                         ? whiteColor
                                         : btnTextColor,
@@ -644,7 +667,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.productImageindex.value = 0;
       productController.colorInventoryId.value = 0;
       productController.addToCart.value = false;
+      productController.showSizeList.value = true;
       productController.imageList.clear();
+      productController.selectedProductSize = "";
+      productController.selectedProductColor = "";
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));
@@ -1206,73 +1232,76 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ),
                                   ),
                                   productController.sizeInventoryList.isNotEmpty
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 30.0.sp,
-                                                    bottom: 0.0.sp,
-                                                    left: 12.sp,
-                                                    right: 12.sp),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    AppText(
-                                                      text: 'Select size',
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: colorPrimary,
-                                                      fontSize: 16,
-                                                    ),
-                                                    productController
-                                                                    .productDetails[
-                                                                "productSizeChart"] !=
-                                                            null
-                                                        ? GestureDetector(
-                                                            onTap: () {
-                                                              scaffoldKey
-                                                                  .currentState
-                                                                  ?.showBottomSheet(
-                                                                      (context) =>
-                                                                          BottomSizeChart(
-                                                                            productSizeChart:
-                                                                                productController.productDetails["productSizeChart"]["image"],
-                                                                            productName:
-                                                                                productController.productDetails["name"],
-                                                                          ));
-                                                            },
-                                                            child: AppText(
-                                                              text:
-                                                                  'View Size chart',
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color:
-                                                                  colorPrimary,
-                                                              fontSize: 12,
-                                                            ),
-                                                          )
-                                                        : SizedBox(
-                                                            height: 0,
-                                                          )
-                                                  ],
-                                                )),
-                                            getListForProductSize(),
-                                          ],
-                                        )
-                                      : const SizedBox(
+                                      ? productController.showSizeList.value
+                                          ? Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 30.0.sp,
+                                                        bottom: 0.0.sp,
+                                                        left: 12.sp,
+                                                        right: 12.sp),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        AppText(
+                                                          text: 'Select size',
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: colorPrimary,
+                                                          fontSize: 16,
+                                                        ),
+                                                        productController
+                                                                        .productDetails[
+                                                                    "productSizeChart"] !=
+                                                                null
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  scaffoldKey
+                                                                      .currentState
+                                                                      ?.showBottomSheet(
+                                                                          (context) =>
+                                                                              BottomSizeChart(
+                                                                                productSizeChart: productController.productDetails["productSizeChart"]["image"],
+                                                                                productName: productController.productDetails["name"],
+                                                                              ));
+                                                                },
+                                                                child: AppText(
+                                                                  text:
+                                                                      'View Size chart',
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              )
+                                                            : SizedBox(
+                                                                height: 0,
+                                                              )
+                                                      ],
+                                                    )),
+                                                getListForProductSize(),
+                                              ],
+                                            )
+                                          : const SizedBox(
+                                              height: 0,
+                                            )
+                                      : SizedBox(
                                           height: 0,
                                         ),
                                   productController
@@ -3561,7 +3590,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           right: 16,
                                           textColor: whiteBorderColor,
                                           backgroundColor: colorPrimary,
-                                          controller: productController,
+                                          //  controller: productController,
                                           onPressed: () async {
                                             Get.to(CartScreen());
                                             await analytics.logEvent(

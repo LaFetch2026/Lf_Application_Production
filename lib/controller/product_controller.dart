@@ -25,6 +25,7 @@ class ProductController extends BaseController {
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
   RxBool isReorder = false.obs;
+  RxBool showSizeList = true.obs;
   RxBool isBestSeller = false.obs;
   RxBool isFrequentlyBought = false.obs;
   RxInt currentpage = 0.obs;
@@ -33,6 +34,8 @@ class ProductController extends BaseController {
   RxInt colorInventoryId = 0.obs;
   RxInt fabricInventoryId = 0.obs;
   dynamic productDetails = "".obs;
+  dynamic selectedProductSize = {}.obs;
+  dynamic selectedProductColor = {}.obs;
   dynamic brandDetails = "".obs;
   dynamic compositionDetails = "".obs;
   dynamic returnPolicyDetails = "".obs;
@@ -1368,13 +1371,37 @@ class ProductController extends BaseController {
           print('Product Details====>${productDetails["images"]}');
           sizeInventoryList = responseData["new_inventories"];
           colorInventoryList.clear();
-          /*  if (sizeInventoryList.length == 1) {
+          if (sizeInventoryList.length == 1) {
+            print("abc 1");
             if (sizeInventoryList[0]["product_matrix_size_name"] == "") {
-              sizeInventoryList.clear();
+              print("abc 2");
+              showSizeList.value = false;
+              sizeInventoryId.value = responseData["default_inventory_id"];
+              selectedProductSize = sizeInventoryList[0];
               colorInventoryList =
                   sizeInventoryList[0]["product_matrix_available_colors"];
-            } else {}
-          } */
+            } else {
+              print("abc 3");
+              showSizeList.value = true;
+              if (sizeInventoryList[0]["product_matrix_available_colors"]
+                      .length ==
+                  1) {
+                showSizeList.value = true;
+                sizeInventoryId.value = responseData["default_inventory_id"];
+                colorInventoryId.value = responseData["default_inventory_id"];
+                selectedProductSize = sizeInventoryList[0];
+                colorInventoryList =
+                    sizeInventoryList[0]["product_matrix_available_colors"];
+                selectedProductColor =
+                    sizeInventoryList[0]["product_matrix_available_colors"][0];
+              } else {
+                showSizeList.value = true;
+              }
+            }
+          } else {
+            print("abc 4");
+            showSizeList.value = true;
+          }
           getProductImage(responseData["default_inventory_id"]);
 
           //  inventoryList = responseData["inventories"];
@@ -1695,6 +1722,8 @@ class ProductController extends BaseController {
         addToCart.value = true;
         if (type == "reorder") {
           Get.to(CartScreen());
+        } else {
+          getSnackBar("Product added to cart");
         }
       } else if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {

@@ -596,7 +596,8 @@ class CartScreenState extends State<CartScreen> {
                                                                                             height: 0,
                                                                                           ), */
                                                                                     value.orderList[index]["inventory"] != null
-                                                                                        ? GestureDetector(
+                                                                                        ? value.orderList[index]["inventory"]["product_matrix_name_size"]!=""?
+                                                                                        GestureDetector(
                                                                                             onTap: () async {
                                                                                               scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
                                                                                                     onPressedCross: () {
@@ -642,6 +643,8 @@ class CartScreenState extends State<CartScreen> {
                                                                                             ),
                                                                                           )
                                                                                         : const SizedBox(
+                                                                                            height: 0,
+                                                                                          ): const SizedBox(
                                                                                             height: 0,
                                                                                           ),
                                                                                     GestureDetector(
