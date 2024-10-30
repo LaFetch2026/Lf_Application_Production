@@ -29,12 +29,14 @@ Widget getSingleButton(
     width = double.infinity,
     textColor,
     borderColor,
+    double right = 16,
+    double left = 16,
     backgroundColor,
     controller,
     Widget? trailingWidget,
     Function? onPressed}) {
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16.sp),
+    padding: EdgeInsets.only(left: left.sp, right: right.sp),
     child: Container(
         width: width,
         height: 50.sp,
