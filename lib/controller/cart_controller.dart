@@ -218,7 +218,7 @@ class CartController extends BaseController {
     isExpress.value = false;
   }
 
-  callInitiatePayment(int addressId, dynamic context) async {
+  callInitiatePayment(int addressId, dynamic context, double shipCost) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -259,6 +259,7 @@ class CartController extends BaseController {
                       tax: tax.value,
                       total: total.value,
                       addressId: addressId,
+                      ShipCost: shipCost,
                     )))
             .then((value) => (value) {
                   getCartData();

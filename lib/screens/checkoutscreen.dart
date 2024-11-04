@@ -33,6 +33,7 @@ class CheckoutScreen extends StatefulWidget {
   final String tax;
   final int addressId;
   final String total;
+  final double ShipCost;
 
   const CheckoutScreen({
     super.key,
@@ -47,6 +48,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.tax,
     required this.addressId,
     required this.total,
+    required this.ShipCost,
   });
 
   @override
@@ -656,37 +658,42 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4.sp),
-                                  child: AppText(
-                                    text: "Express Delivery Charges",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: textColor,
-                                    fontSize: 12,
+                          widget.expressDelivery != "0.00"
+                              ? Padding(
+                                  padding: EdgeInsets.only(top: 10.sp),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 4.sp),
+                                        child: AppText(
+                                          text: "Express Delivery Charges",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        child: SizedBox(
+                                          height: 0,
+                                        ),
+                                      ),
+                                      AppText(
+                                        text:
+                                            "\u{20B9} ${widget.expressDelivery}",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: textColor,
+                                        fontSize: 12,
+                                      ),
+                                    ],
                                   ),
+                                )
+                              : SizedBox(
+                                  height: 0,
                                 ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.expressDelivery}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: textColor,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
                           Padding(
                             padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
@@ -718,37 +725,78 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4.sp),
-                                  child: AppText(
-                                    text: "Coupon Discount",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: textColor,
-                                    fontSize: 12,
+                          widget.coupanDiscount != "0.00"
+                              ? Padding(
+                                  padding: EdgeInsets.only(top: 10.sp),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 4.sp),
+                                        child: AppText(
+                                          text: "Coupon Discount",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        child: SizedBox(
+                                          height: 0,
+                                        ),
+                                      ),
+                                      AppText(
+                                        text:
+                                            "\u{20B9} ${widget.coupanDiscount}",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greenText,
+                                        fontSize: 12,
+                                      ),
+                                    ],
                                   ),
+                                )
+                              : SizedBox(
+                                  height: 0,
                                 ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
+                          widget.ShipCost != 0
+                              ? Padding(
+                                  padding: EdgeInsets.only(top: 10.sp),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 4.sp),
+                                        child: AppText(
+                                          text: "Shipping Cost",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        child: SizedBox(
+                                          height: 0,
+                                        ),
+                                      ),
+                                      AppText(
+                                        text:
+                                            "\u{20B9} ${widget.ShipCost.toString()}",
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: greenText,
+                                        fontSize: 12,
+                                      ),
+                                    ],
                                   ),
+                                )
+                              : SizedBox(
+                                  height: 0,
                                 ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.coupanDiscount}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: greenText,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
                           Padding(
                             padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
@@ -779,7 +827,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 ),
                                 AppText(
-                                  text: widget.convenienceFee,
+                                  text: "\u{20B9} ${widget.convenienceFee}",
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                   color: greenText,
