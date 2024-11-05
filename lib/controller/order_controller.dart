@@ -30,6 +30,7 @@ class OrderController extends BaseController {
   ScrollController orderListController = ScrollController();
   final searchController = TextEditingController();
   final exchangeComment = TextEditingController();
+  List<bool> selected = List.generate(50, (i) => false).obs;
   final List filterList = [
     'All',
     'Pending',
