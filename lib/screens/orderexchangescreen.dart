@@ -1330,15 +1330,15 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                   children: [
                                                                                     Expanded(
                                                                                         flex: 1,
-                                                                                        child: value.orderList[index]["order_lines"][0]["product"] != null
-                                                                                            ? value.orderList[index]["order_lines"][0]["product"]["images"].isNotEmpty && value.orderList[index]["order_lines"][0]["product"]["images"] != null
+                                                                                        child: val.orderList[index]["orders"][i]["order_lines"][0]["product"] != null
+                                                                                            ? val.orderList[index]["orders"][i]["order_lines"][0]["product"]["images"].isNotEmpty && val.orderList[index]["orders"][i]["order_lines"][0]["product"]["images"] != null
                                                                                                 ? SizedBox(
                                                                                                     height: 85.sp,
                                                                                                     width: 70.sp,
                                                                                                     child: CachedNetworkImage(
                                                                                                       cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                                       fit: BoxFit.cover,
-                                                                                                      imageUrl: isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]) ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"] : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"],
+                                                                                                      imageUrl: isImage(val.orderList[index]["orders"][i]["order_lines"][0]["product"]["images"][0]["name"]) ? val.orderList[index]["orders"][i]["order_lines"][0]["product"]["images"][0]["name"] : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"],
                                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                                         downloadImage,
                                                                                                         fit: BoxFit.cover,
@@ -1358,7 +1358,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                           Padding(
                                                                                             padding: EdgeInsets.only(right: 5.sp, left: 12.sp),
                                                                                             child: AppText(
-                                                                                              text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["name"] : "",
+                                                                                              text:val.orderList[index]["orders"][i]["order_lines"][0]["product"] != null ? val.orderList[index]["orders"][i]["order_lines"][0]["product"]["name"] : "",
                                                                                               maxLines: 1,
                                                                                               fontFamily: "Franklin Gothic Regular",
                                                                                               fontWeight: FontWeight.w400,
@@ -1369,7 +1369,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                           Padding(
                                                                                             padding: EdgeInsets.only(right: 5.sp, left: 12.sp, top: 5.sp, bottom: 5.sp),
                                                                                             child: AppText(
-                                                                                              text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["short_description"] : "",
+                                                                                              text: val.orderList[index]["orders"][i]["order_lines"][0]["product"] != null ? val.orderList[index]["orders"][i]["order_lines"][0]["product"]["short_description"] : "",
                                                                                               color: greyTextColor,
                                                                                               maxLines: 2,
                                                                                               fontSize: 12,
@@ -1381,13 +1381,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                             padding: EdgeInsets.only(right: 5.sp, left: 12.sp, top: 5.sp, bottom: 5.sp),
                                                                                             child: Row(
                                                                                               children: [
-                                                                                                value.orderList[index]["order_lines"][0]["inventory"] != null
-                                                                                                    //  value.orderList[index]["order_lines"].where((element) => element['inventory'] != null)
+                                                                                                val.orderList[index]["orders"][i]["order_lines"][0]["inventory"] != null
+                                                                                                    
                                                                                                     ? Padding(
                                                                                                         padding: EdgeInsets.only(right: 10.sp),
                                                                                                         child: AppText(
-                                                                                                          //  text: "Size :${value.orderList[index]["order_lines"][0]["product"]["inventories"][value.orderList[index]["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
-                                                                                                          text: "Size :${value.orderList[index]["order_lines"][0]["inventory"]["product_matrix_name_size"] ?? ""}",
+                                                                                                          text: "Size :${val.orderList[index]["orders"][i]["order_lines"][0]["inventory"]["product_matrix_name_size"] ?? ""}",
                                                                                                           color: greyTextColor,
                                                                                                           maxLines: 2,
                                                                                                           fontSize: 12,
@@ -1403,7 +1402,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                                   child: Padding(
                                                                                                     padding: EdgeInsets.only(right: 10.sp),
                                                                                                     child: AppText(
-                                                                                                      text: "Qty :${value.orderList[index]["order_lines"][0]["quantity"] ?? "0"}",
+                                                                                                      text: "Qty :${val.orderList[index]["orders"][i]["order_lines"][0]["quantity"] ?? "0"}",
                                                                                                       color: greyTextColor,
                                                                                                       maxLines: 2,
                                                                                                       fontSize: 12,
@@ -1413,7 +1412,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                                   ),
                                                                                                 ),
                                                                                                 AppText(
-                                                                                                  text: "\u{20B9} ${value.orderList[index]["order_lines"][0]["total"] ?? "0"}",
+                                                                                                  text: "\u{20B9} ${val.orderList[index]["orders"][i]["order_lines"][0]["total"] ?? "0"}",
                                                                                                   color: greyTextColor,
                                                                                                   fontSize: 12,
                                                                                                   textAlign: TextAlign.right,

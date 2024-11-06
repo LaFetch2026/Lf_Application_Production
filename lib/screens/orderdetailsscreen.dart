@@ -1286,16 +1286,18 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               ],
                                                                             ),
                                                                           ),
-                                                                          orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED"
+                                                                          orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED" || orderController.orderDetails["status_details"] == "EXCHANGE_REQUESTED"
                                                                               ? Row(
                                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   mainAxisSize: MainAxisSize.max,
                                                                                   children: [
                                                                                     /*  orderController.orderDetails["order_lines"][index]["quantity"] == 1
                                                                                         ? */
-                                                                                    Row(
+                                                                                   /*  Row(
                                                                                       mainAxisSize: MainAxisSize.min,
-                                                                                      children: [
+                                                                                      children: [ */
+                                                                                         orderController.orderDetails["order_lines"][index]["review"]
+                                                                                        ? 
                                                                                         GestureDetector(
                                                                                           onTap: () async {
                                                                                             Get.to(ReviewProductScreen(
@@ -1324,7 +1326,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                               fontWeight: FontWeight.w400,
                                                                                             ),
                                                                                           ),
-                                                                                        ),
+                                                                                        ): SizedBox(
+                                                                                            height: 0,
+                                                                                          ),
+                                                                                           orderController.orderDetails["order_lines"][index]["exchange"]
+                                                                                        ? 
                                                                                         orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
                                                                                             ? GestureDetector(
                                                                                                 onTap: () async {
@@ -1366,15 +1372,17 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                                   fontWeight: FontWeight.w400,
                                                                                                 ),
-                                                                                              ),
-                                                                                      ],
-                                                                                    )
+                                                                                              ): SizedBox(
+                                                                                            height: 0,
+                                                                                          ),
+                                                                                  /*     ],
+                                                                                    ) */
                                                                                     /*  : SizedBox(
                                                                                             height: 0,
                                                                                           ) */
                                                                                     ,
-                                                                                    /*  orderController.orderDetails["order_lines"][index]["quantity"] == 1
-                                                                                        ? */
+                                                                                      orderController.orderDetails["order_lines"][index]["reorder"]
+                                                                                        ? 
                                                                                     GestureDetector(
                                                                                       onTap: () {
                                                                                         productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
@@ -1398,9 +1406,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         ),
                                                                                       ),
                                                                                     )
-                                                                                    /*  : const SizedBox(
+                                                                                      : const SizedBox(
                                                                                             height: 0,
-                                                                                          ) */
+                                                                                          ) 
                                                                                     ,
                                                                                   ],
                                                                                 )
