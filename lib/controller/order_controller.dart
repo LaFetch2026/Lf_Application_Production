@@ -326,7 +326,7 @@ class OrderController extends BaseController {
         if (Platform.isAndroid) {
           const downloadsFolderPath = '/storage/emulated/0/Download/';
           Directory dir = Directory(downloadsFolderPath);
-          final file = File('${dir.path}/invoice.pdf');
+          final file = File('${dir.path}/OrderId${orderId}_invoice.pdf');
           print('PDF downloaded to: ${file.path}');
           await file.writeAsBytes(response.bodyBytes);
         } else {
