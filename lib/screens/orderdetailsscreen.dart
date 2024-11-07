@@ -606,6 +606,28 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ],
                     ),
                   ),
+                  Obx(() => orderController.isDetails.value
+                      ? const SizedBox(
+                          height: 0,
+                        )
+                      : orderController.orderDetails["status_details"] ==
+                              "CANCELLED"
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.sp, vertical: 5.sp),
+                              child: AppText(
+                                text:
+                                    "Note: Your order was canceled due to unavailability.The product amount will be refunded, platform and delivery fees will be retained.",
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                                color: deepRed,
+                                maxLines: 4,
+                                fontSize: 14,
+                              ),
+                            )
+                          : SizedBox(
+                              height: 0,
+                            )),
                   /*  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Container(

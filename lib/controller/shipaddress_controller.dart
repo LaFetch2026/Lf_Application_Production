@@ -14,6 +14,7 @@ import '../utils/constants.dart';
 
 class ShipAddressController extends BaseController {
   RxBool showList = false.obs;
+  RxBool isUpdateAddress = false.obs;
   RxBool onButton = false.obs;
   RxBool isCheck = false.obs;
   RxInt defaultBilling = 0.obs;
@@ -30,6 +31,7 @@ class ShipAddressController extends BaseController {
   RxInt addressId = 0.obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
+  List<bool> selected = List.generate(50, (i) => false).obs;
   Rx<LatLng> defaultLatLng = const LatLng(0.0, 0.0).obs;
   Rx<LatLng> draggedLatLng = const LatLng(0.0, 0.0).obs;
   Rx<CameraPosition> cameraPosition =

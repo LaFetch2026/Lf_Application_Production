@@ -29,6 +29,10 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
   void initState() {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getAddressData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      shipController.selected.clear();
+      shipController.selected = List.generate(50, (i) => false);
+    });
     super.initState();
   }
 
@@ -272,36 +276,65 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 10.sp, bottom: 30.sp),
-                                              child: getSingleButton(
-                                                  label: "Select Address",
-                                                  textColor: btnTextColor,
-                                                  backgroundColor: whiteColor,
-                                                  controller: shipController,
-                                                  onPressed: () async {
-                                                    shipController.addressId
-                                                        .value = controller
-                                                            .addressList[index]
-                                                        ["id"];
-                                                    shipController.cartId
-                                                        .value = widget.cartId;
-                                                    shipController
-                                                        .callCartAddressUpdate(
-                                                            "update");
-                                                    await analytics.logEvent(
-                                                      name:
-                                                          'changeAddress_btnclick',
-                                                      parameters: <String,
-                                                          Object>{
-                                                        'page_name':
-                                                            'changeAddress_btnclick',
-                                                      },
-                                                    );
-                                                  },
-                                                  borderColor: btnTextColor),
-                                            )
+                                            shipController.selected[index]
+                                                ? Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.sp,
+                                                        bottom: 30.sp),
+                                                    child: Center(
+                                                      child: SizedBox(
+                                                        height: 16.sp,
+                                                        width: 16.sp,
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.sp,
+                                                        bottom: 30.sp),
+                                                    child: getSingleButton(
+                                                        label: "Select Address",
+                                                        textColor: btnTextColor,
+                                                        backgroundColor:
+                                                            whiteColor,
+                                                        onPressed: () async {
+                                                          shipController
+                                                                      .selected[
+                                                                  index] =
+                                                              !shipController
+                                                                      .selected[
+                                                                  index];
+                                                          shipController
+                                                              .update();
+                                                          setState(() {});
+                                                          shipController
+                                                              .addressId
+                                                              .value = controller
+                                                                  .addressList[
+                                                              index]["id"];
+                                                          shipController.cartId
+                                                                  .value =
+                                                              widget.cartId;
+                                                          shipController
+                                                              .callCartAddressUpdate(
+                                                                  "update");
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'changeAddress_btnclick',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'changeAddress_btnclick',
+                                                            },
+                                                          );
+                                                        },
+                                                        borderColor:
+                                                            btnTextColor),
+                                                  )
                                           ],
                                         ),
                                       ),
