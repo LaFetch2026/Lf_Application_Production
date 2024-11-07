@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -28,6 +29,9 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
   LatLng dropLatLng = const LatLng(0, 0);
   LatLng deliveryPatnerLatLng = const LatLng(0, 0);
   BitmapDescriptor myIcon = BitmapDescriptor.defaultMarker;
+  Map<PolylineId, Polyline> polylines = {};
+  String googleAPiKey = "AIzaSyCei4lyJgwzgsBLWRYjMALVbAe85K7k3sk";
+  PolylinePoints polylinePoints = PolylinePoints();
   @override
   void initState() {
     dropLatLng = LatLng(widget.dropLat, widget.dropLng);
@@ -38,7 +42,40 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
         .then((onValue) {
       myIcon = onValue;
     });
+    getDirections();
     super.initState();
+  }
+
+  getDirections() async {
+    print("pointer abcd");
+    List<LatLng> polylineCoordinates = [];
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      googleAPiKey,
+      PointLatLng(widget.dropLat, widget.dropLng),
+      PointLatLng(widget.deliverPartnerLat, widget.deliverPartnerLng),
+      travelMode: TravelMode.driving,
+    );
+    print("pointer ${result.points}");
+    if (result.points.isNotEmpty) {
+      result.points.forEach((PointLatLng point) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      });
+    } else {
+      print(result.errorMessage);
+    }
+    addPolyLine(polylineCoordinates);
+  }
+
+  addPolyLine(List<LatLng> polylineCoordinates) {
+    PolylineId id = PolylineId("poly");
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.deepPurpleAccent,
+      points: polylineCoordinates,
+      width: 5,
+    );
+    polylines[id] = polyline;
+    setState(() {});
   }
 
   @override
@@ -78,6 +115,7 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
       tiltGesturesEnabled: false,
       rotateGesturesEnabled: false,
       zoomControlsEnabled: false,
+      polylines: Set<Polyline>.of(polylines.values),
       initialCameraPosition: CameraPosition(
         target: dropLatLng,
         zoom: 15.0,
