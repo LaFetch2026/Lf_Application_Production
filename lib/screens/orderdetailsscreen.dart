@@ -1293,45 +1293,44 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                   children: [
                                                                                     /*  orderController.orderDetails["order_lines"][index]["quantity"] == 1
                                                                                         ? */
-                                                                                   /*  Row(
+                                                                                    /*  Row(
                                                                                       mainAxisSize: MainAxisSize.min,
                                                                                       children: [ */
-                                                                                         orderController.orderDetails["order_lines"][index]["review"]
-                                                                                        ? 
-                                                                                        GestureDetector(
-                                                                                          onTap: () async {
-                                                                                            Get.to(ReviewProductScreen(
-                                                                                              productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
-                                                                                              productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                                              productimage: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                                  ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
-                                                                                                      ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
-                                                                                                      : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
-                                                                                                  : "",
-                                                                                            ));
-                                                                                            await analytics.logEvent(
-                                                                                              name: 'order_reviewClick',
-                                                                                              parameters: <String, Object>{
-                                                                                                'page_name': 'order_reviewClick',
-                                                                                              },
-                                                                                            );
-                                                                                          },
-                                                                                          child: Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                            child: AppText(
-                                                                                              text: "Write a Review",
-                                                                                              color: blue,
-                                                                                              fontSize: 11,
-                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                              fontWeight: FontWeight.w400,
+                                                                                    orderController.orderDetails["order_lines"][index]["review"]
+                                                                                        ? GestureDetector(
+                                                                                            onTap: () async {
+                                                                                              Get.to(ReviewProductScreen(
+                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                    : "",
+                                                                                              ));
+                                                                                              await analytics.logEvent(
+                                                                                                name: 'order_reviewClick',
+                                                                                                parameters: <String, Object>{
+                                                                                                  'page_name': 'order_reviewClick',
+                                                                                                },
+                                                                                              );
+                                                                                            },
+                                                                                            child: Padding(
+                                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                              child: AppText(
+                                                                                                text: "Write a Review",
+                                                                                                color: blue,
+                                                                                                fontSize: 11,
+                                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                                                fontWeight: FontWeight.w400,
+                                                                                              ),
                                                                                             ),
-                                                                                          ),
-                                                                                        ): SizedBox(
+                                                                                          )
+                                                                                        : SizedBox(
                                                                                             height: 0,
                                                                                           ),
-                                                                                           orderController.orderDetails["order_lines"][index]["exchange"]
-                                                                                        ? 
-                                                                                        orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
+                                                                                    orderController.orderDetails["order_lines"][index]["exchange"]
+                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
                                                                                             ? GestureDetector(
                                                                                                 onTap: () async {
                                                                                                   Get.to(ExchangeProductScreen(
@@ -1372,44 +1371,42 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                                   fontWeight: FontWeight.w400,
                                                                                                 ),
-                                                                                              ): SizedBox(
+                                                                                              )
+                                                                                        : SizedBox(
                                                                                             height: 0,
                                                                                           ),
-                                                                                  /*     ],
+                                                                                    /*     ],
                                                                                     ) */
                                                                                     /*  : SizedBox(
                                                                                             height: 0,
                                                                                           ) */
-                                                                                    ,
-                                                                                      orderController.orderDetails["order_lines"][index]["reorder"]
-                                                                                        ? 
-                                                                                    GestureDetector(
-                                                                                      onTap: () {
-                                                                                        productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
-                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
-                                                                                      },
-                                                                                      child: Padding(
-                                                                                        padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                        child: /*  productController.isReorder.value
+                                                                                    orderController.orderDetails["order_lines"][index]["reorder"]
+                                                                                        ? GestureDetector(
+                                                                                            onTap: () {
+                                                                                              productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
+                                                                                              productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
+                                                                                            },
+                                                                                            child: Padding(
+                                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                              child: /*  productController.isReorder.value
                                                                                             ? const SizedBox(
                                                                                                 height: 10,
                                                                                                 width: 10,
                                                                                                 child: Center(child: CircularProgressIndicator()),
                                                                                               )
                                                                                             :  */
-                                                                                            AppText(
-                                                                                          text: "Reorder",
-                                                                                          color: blue,
-                                                                                          fontSize: 11,
-                                                                                          fontFamily: "Franklin Gothic Regular",
-                                                                                          fontWeight: FontWeight.w400,
-                                                                                        ),
-                                                                                      ),
-                                                                                    )
-                                                                                      : const SizedBox(
+                                                                                                  AppText(
+                                                                                                text: "Reorder",
+                                                                                                color: blue,
+                                                                                                fontSize: 11,
+                                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                                                fontWeight: FontWeight.w400,
+                                                                                              ),
+                                                                                            ),
+                                                                                          )
+                                                                                        : const SizedBox(
                                                                                             height: 0,
-                                                                                          ) 
-                                                                                    ,
+                                                                                          ),
                                                                                   ],
                                                                                 )
                                                                               : const SizedBox(
