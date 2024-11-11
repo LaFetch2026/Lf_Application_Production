@@ -967,6 +967,7 @@ class SearchScreenState extends State<SearchScreen> {
                                             onTap: () {
                                               controller.searchController
                                                   .clear();
+                                              controller.getSearchData();
                                               controller.searchText.value =
                                                   "Search for products";
                                             },
