@@ -617,7 +617,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   horizontal: 16.sp, vertical: 5.sp),
                               child: AppText(
                                 text:
-                                    "Note: Your order was canceled due to unavailability.The product amount will be refunded, platform and delivery fees will be retained.",
+                                    "Note: Your order was cancelled due to unavailability.The product amount will be refunded, Platform and Delivery fees will be retained.",
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
                                 color: deepRed,

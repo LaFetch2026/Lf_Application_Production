@@ -1358,7 +1358,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                           Padding(
                                                                                             padding: EdgeInsets.only(right: 5.sp, left: 12.sp),
                                                                                             child: AppText(
-                                                                                              text:val.orderList[index]["orders"][i]["order_lines"][0]["product"] != null ? val.orderList[index]["orders"][i]["order_lines"][0]["product"]["name"] : "",
+                                                                                              text: val.orderList[index]["orders"][i]["order_lines"][0]["product"] != null ? val.orderList[index]["orders"][i]["order_lines"][0]["product"]["name"] : "",
                                                                                               maxLines: 1,
                                                                                               fontFamily: "Franklin Gothic Regular",
                                                                                               fontWeight: FontWeight.w400,
@@ -1382,7 +1382,6 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                             child: Row(
                                                                                               children: [
                                                                                                 val.orderList[index]["orders"][i]["order_lines"][0]["inventory"] != null
-                                                                                                    
                                                                                                     ? Padding(
                                                                                                         padding: EdgeInsets.only(right: 10.sp),
                                                                                                         child: AppText(
@@ -1520,7 +1519,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           index]
                                                                       [
                                                                       "status"] ==
-                                                                  3) ...[
+                                                                  2) ...[
                                                                 Padding(
                                                                   padding: EdgeInsets.only(
                                                                       left:
