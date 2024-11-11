@@ -33,7 +33,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandListController.addListener(() {
-        brandController.fetchMoreData();
+        brandController.fetchMoreData("express");
         brandController.update();
       });
     });
@@ -48,7 +48,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     productController.brandExpressPage.value = 1;
     productController.filterExpressEnable.value = false;
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => brandController.getBrandData());
+        .addPostFrameCallback((_) => brandController.getBrandData("express"));
     super.initState();
   }
 

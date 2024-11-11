@@ -47,7 +47,7 @@ class BrandsScreenState extends State<BrandsScreen> {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () async {
       brandController.queryText.value = query;
-      brandController.getBrandData();
+      brandController.getBrandData("brand");
       await analytics.logEvent(
         name: 'brand_page_search',
         parameters: <String, Object>{
@@ -74,7 +74,7 @@ class BrandsScreenState extends State<BrandsScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandListController.addListener(() {
-        brandController.fetchMoreData();
+        brandController.fetchMoreData("brand");
         brandController.update();
       });
     });
@@ -87,7 +87,7 @@ class BrandsScreenState extends State<BrandsScreen> {
       brandController.queryText.value = "";
     });
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => brandController.getBrandData());
+        .addPostFrameCallback((_) => brandController.getBrandData("brand"));
     super.initState();
   }
 
@@ -156,7 +156,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                           if (value is RawKeyDownEvent) {
                             brandController.text.value = "Expand All";
                             brandController.queryText.value = "";
-                            brandController.getBrandData();
+                            brandController.getBrandData("brand");
                           }
                         },
                         child: TextField(

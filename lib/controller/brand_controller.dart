@@ -38,16 +38,27 @@ class BrandController extends BaseController {
     super.onInit();
   } */
 
-  getBrandData() async {
+  getBrandData(String type) async {
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/brands?q=${queryText.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (type == "express") {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&express_delivery=1"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/brands?q=${queryText.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -74,7 +85,7 @@ class BrandController extends BaseController {
     isBrand.value = false;
   }
 
-  fetchMoreData() async {
+  fetchMoreData(String type) async {
     if (hasnextpage.value == true &&
         isBrand.value == false &&
         loadMore.value == false) {
@@ -83,13 +94,24 @@ class BrandController extends BaseController {
       print(page.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        dynamic response;
+        if (type == "express") {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}&express_delivery=1"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {

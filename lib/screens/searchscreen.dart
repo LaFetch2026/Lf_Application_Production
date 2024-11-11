@@ -75,7 +75,7 @@ class SearchScreenState extends State<SearchScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("recently-viewed"));
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => brandController.getBrandData());
+        .addPostFrameCallback((_) => brandController.getBrandData("brand"));
     super.initState();
   }
 
