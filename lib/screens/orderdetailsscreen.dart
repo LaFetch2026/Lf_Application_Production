@@ -1440,6 +1440,55 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                     )
                                                                   ],
                                                                 ),
+                                                                /* orderController.orderDetails["order_lines"]
+                                                                            [
+                                                                            index]
+                                                                        [
+                                                                        "review"]
+                                                                    ? GestureDetector(
+                                                                        onTap:
+                                                                            () async {
+                                                                          /*  Get.to(ReviewProductScreen(
+                                                                                                orderId: orderController.orderDetails["id"],
+                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                    : "",
+                                                                                              ));
+                                                                                              await analytics.logEvent(
+                                                                                                name: 'order_reviewClick',
+                                                                                                parameters: <String, Object>{
+                                                                                                  'page_name': 'order_reviewClick',
+                                                                                                },
+                                                                                              ); */
+                                                                        },
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: EdgeInsets.symmetric(
+                                                                              horizontal: 5.sp,
+                                                                              vertical: 2.sp),
+                                                                          child:
+                                                                              AppText(
+                                                                            text:
+                                                                                "Track Product",
+                                                                            color:
+                                                                                blue,
+                                                                            fontSize:
+                                                                                11,
+                                                                            fontFamily:
+                                                                                "Franklin Gothic Regular",
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : SizedBox(
+                                                                        height:
+                                                                            0,
+                                                                      ), */
                                                               ]),
                                                         ),
                                                       ),
