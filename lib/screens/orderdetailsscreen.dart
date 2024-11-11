@@ -1322,6 +1322,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         ? GestureDetector(
                                                                                             onTap: () async {
                                                                                               Get.to(ReviewProductScreen(
+                                                                                                orderId: orderController.orderDetails["id"],
                                                                                                 productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
                                                                                                 productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
                                                                                                 productimage: orderController.orderDetails["order_lines"][index]["product"] != null

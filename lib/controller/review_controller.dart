@@ -29,13 +29,14 @@ class ReviewController extends BaseController {
     return true;
   }
 
-  callAddReview(int id) async {
+  callAddReview(int id, int orderId) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
         "comment": comment.text.toString().trim(),
         "rating": rating.value,
+        "order_id": orderId
       };
       var response = await http.put(
           Uri.parse("${ApiConstants.baseUrl}/products/$id/reviews"),

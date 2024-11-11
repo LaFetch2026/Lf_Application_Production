@@ -16,11 +16,13 @@ import '../../utils/constants.dart';
 class ReviewProductScreen extends StatefulWidget {
   final String productName;
   final int productId;
+  final int orderId;
   final String productimage;
   const ReviewProductScreen(
       {super.key,
       required this.productName,
       required this.productimage,
+      required this.orderId,
       required this.productId});
 
   @override
@@ -183,7 +185,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                                 onPressed: () async {
                                   if (controller.checkReviewValidation()) {
                                     controller.callAddReview(
-                                        widget.productId); //id will change
+                                        widget.productId, widget.orderId);
                                   }
                                   await analytics.logEvent(
                                     name: 'submit_productReviewClick',
