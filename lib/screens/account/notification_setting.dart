@@ -4,7 +4,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/utils/constants.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/common_widgets.dart';
@@ -30,18 +29,59 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          const BackButtonAppbar(
+          /*  const BackButtonAppbar(
             text: "Notifications & Settings",
             threeDot: false,
             backgroundColor: whiteColor,
             icon: threeDotImage,
-          ),
+          ), */
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Stack(
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 400.sp,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(blackBackImage),
+                                fit: BoxFit.cover)),
+                        child: Center(
+                          child: Image.asset(whiteBellImage,
+                              height: 180.sp,
+                              width: 180.sp,
+                              fit: BoxFit.contain),
+                        )),
+                    GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 40.sp, left: 30.sp),
+                        child: Image.asset(backArrowImage,
+                            color: whiteColor,
+                            height: 16.sp,
+                            width: 10.sp,
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(
-                  height: 30.sp,
+                  height: 20.sp,
+                ),
+                AppText(
+                  text: "Notifications & Settings",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  textAlign: TextAlign.center,
+                  color: appbarText,
+                  fontSize: 20,
+                ),
+                SizedBox(
+                  height: 20.sp,
                 ),
                 Obx(() => Padding(
                       padding: EdgeInsets.symmetric(
@@ -69,14 +109,14 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                           ),
-                          Expanded(
+                          /*  Expanded(
                             child: const SizedBox(
                               width: 0,
                             ),
-                          ),
+                          ), */
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.sp),
                             child: Container(
@@ -116,7 +156,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                         ],
                       ),
                     )),
-                Obx(() => Padding(
+                /*      Obx(() => Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 16.sp, vertical: 10.sp),
                       child: Row(
@@ -262,6 +302,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                         ],
                       ),
                     ))
+            */
               ],
             ),
           ),

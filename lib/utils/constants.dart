@@ -151,6 +151,8 @@ const dislikeImage = 'assets/images/dislike.png';
 const linkArrowImage = 'assets/images/link_icon.png';
 const dummyProductImage = 'assets/images/image.jpg';
 const deliveryImage = 'assets/images/delivery.png';
+const blackBackImage = 'assets/images/black_back.jpg';
+const whiteBellImage = 'assets/images/whitebell.png';
 
 class ApiConstants {
   ApiConstants._();
