@@ -1529,7 +1529,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                       bottom: 20
                                                                           .sp),
                                                                   child: DoubleIconButton(
-                                                                      firstText: "Cancel Item",
+                                                                      firstText: "Cancel Order",
                                                                       secondText: "Track Order",
                                                                       firstTextColor: btnTextColor,
                                                                       secondTextColor: btnTextColor,
