@@ -82,6 +82,12 @@ class LoginController extends BaseController {
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
+      } else if (response.statusCode == 201) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        Get.to(OTPVerficationScreen(
+          phoneMunber: number.value,
+        ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
           getSnackBar(responseData['errors']['phone'][0]);
@@ -112,6 +118,12 @@ class LoginController extends BaseController {
       });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        Get.to(OTPVerficationScreen(
+          phoneMunber: number.value,
+        ));
+      } else if (response.statusCode == 201) {
         print(responseData);
         getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
@@ -175,6 +187,30 @@ class LoginController extends BaseController {
             () => const UserDetailsScreen(),
           );
         }
+      } else if (response.statusCode == 201) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        prefs.setString('token', responseData['meta']['access_token']);
+        prefs.setInt('userId', responseData['data']['id']);
+        if (responseData['data']['phone'] != null) {
+          prefs.setString('phonenumber', responseData['data']['phone']);
+        }
+        if (responseData['data']['email'] != null) {
+          prefs.setString('email', responseData['data']['email']);
+        }
+        if (responseData['data']['gender'] != null) {
+          prefs.setInt('gender', responseData['data']['gender']);
+        }
+        if (responseData['data']['name'] != null) {
+          prefs.setString('name', responseData['data']['name']);
+          Get.offAll(
+            () => const BottomNavScreen(),
+          );
+        } else {
+          Get.off(
+            () => const UserDetailsScreen(),
+          );
+        }
       } else if (response.statusCode == 400) {
         if (responseData['errors']['email'] != null) {
           getSnackBar(responseData['errors']['email'][0]);
@@ -205,6 +241,30 @@ class LoginController extends BaseController {
       });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        print(responseData);
+        getSnackBar(responseData['message']);
+        prefs.setString('token', responseData['meta']['access_token']);
+        prefs.setInt('userId', responseData['data']['id']);
+        if (responseData['data']['phone'] != null) {
+          prefs.setString('phonenumber', responseData['data']['phone']);
+        }
+        if (responseData['data']['email'] != null) {
+          prefs.setString('email', responseData['data']['email']);
+        }
+        if (responseData['data']['gender'] != null) {
+          prefs.setInt('gender', responseData['data']['gender']);
+        }
+        if (responseData['data']['name'] != null) {
+          prefs.setString('name', responseData['data']['name']);
+          Get.offAll(
+            () => const BottomNavScreen(),
+          );
+        } else {
+          Get.off(
+            () => const UserDetailsScreen(),
+          );
+        }
+      } else if (response.statusCode == 201) {
         print(responseData);
         getSnackBar(responseData['message']);
         prefs.setString('token', responseData['meta']['access_token']);
