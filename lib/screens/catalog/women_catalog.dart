@@ -103,15 +103,14 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                       child: Padding(
                                         padding: EdgeInsets.only(bottom: 10.sp),
                                         child: Container(
-                                          color: whiteColor,
                                           width: double.infinity,
-                                          height: 145.sp,
-                                          child: Column(
-                                            children: [
-                                              controller.catalogList[index]
-                                                          ["thumbnail"] !=
-                                                      null
-                                                  ? SizedBox(
+                                          height: 100.sp,
+                                          child: controller.catalogList[index]
+                                                      ["thumbnail"] !=
+                                                  null
+                                              ? Stack(
+                                                  children: [
+                                                    SizedBox(
                                                       height: 100.sp,
                                                       width: double.infinity,
                                                       child: CachedNetworkImage(
@@ -132,85 +131,110 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                 url, error) =>
                                                             Image.asset(
                                                           downloadImage,
-                                                          height: 210.sp,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : SizedBox(
-                                                      height: 100.sp,
-                                                      width: double.infinity,
-                                                      child: Image.asset(
-                                                          backImage,
                                                           height: 100.sp,
-                                                          fit: BoxFit.cover),
-                                                    ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.sp,
-                                                    vertical: 10.sp),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.bottomCenter,
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      AppText(
-                                                        text: controller
-                                                                    .catalogList[
-                                                                index]["name"] ??
-                                                            "",
-                                                        color: appbarText,
-                                                        fontSize: 16,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                      const Expanded(
-                                                        child: SizedBox(
-                                                          width: 0,
                                                         ),
                                                       ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Get.to(
-                                                              CatalogDetailsScreen(
-                                                            title: controller
-                                                                            .catalogList[
-                                                                        index]
-                                                                    ["name"] ??
-                                                                "",
-                                                            catalogId: controller
-                                                                    .catalogList[
-                                                                index]["id"],
-                                                            catalogImage: controller
-                                                                            .catalogList[
-                                                                        index][
-                                                                    "thumbnail"] ??
-                                                                "",
-                                                            genderType:
-                                                                widget.type,
-                                                            catalogText: widget
-                                                                .categorytext,
-                                                          ));
-                                                        },
-                                                        child: Image.asset(
-                                                            rightArrowImage,
-                                                            height: 20.sp,
-                                                            width: 20.sp,
-                                                            color: appbarText,
-                                                            fit: BoxFit.cover),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 10.sp),
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .bottomCenter,
+                                                        child: Container(
+                                                          height: 20.sp,
+                                                          decoration:
+                                                              new BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200
+                                                                      .withOpacity(
+                                                                          0.5)),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.sp),
+                                                            child: Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                AppText(
+                                                                  text: controller
+                                                                              .catalogList[index]
+                                                                          [
+                                                                          "name"] ??
+                                                                      "",
+                                                                  color:
+                                                                      appbarText,
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                                const Expanded(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    width: 0,
+                                                                  ),
+                                                                ),
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    Get.to(
+                                                                        CatalogDetailsScreen(
+                                                                      title: controller.catalogList[index]
+                                                                              [
+                                                                              "name"] ??
+                                                                          "",
+                                                                      catalogId:
+                                                                          controller.catalogList[index]
+                                                                              [
+                                                                              "id"],
+                                                                      catalogImage:
+                                                                          controller.catalogList[index]["thumbnail"] ??
+                                                                              "",
+                                                                      genderType:
+                                                                          widget
+                                                                              .type,
+                                                                      catalogText:
+                                                                          widget
+                                                                              .categorytext,
+                                                                    ));
+                                                                  },
+                                                                  child: Image.asset(
+                                                                      rightArrowImage,
+                                                                      height:
+                                                                          20.sp,
+                                                                      width:
+                                                                          20.sp,
+                                                                      color:
+                                                                          appbarText,
+                                                                      fit: BoxFit
+                                                                          .cover),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : SizedBox(
+                                                  height: 100.sp,
+                                                  width: double.infinity,
+                                                  child: Image.asset(backImage,
+                                                      height: 100.sp,
+                                                      fit: BoxFit.cover),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
                                         ),
                                       )),
                                 ],

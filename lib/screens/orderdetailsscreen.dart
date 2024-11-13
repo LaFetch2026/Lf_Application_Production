@@ -15,7 +15,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_order_address.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderpayment.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
-import 'package:lafetch/screens/orders/delivery_track.dart';
+//import 'package:lafetch/screens/orders/delivery_track.dart';
 import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
@@ -931,7 +931,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             fontSize: 14,
                                           ),
                                         ),
-                                        GestureDetector(
+                                        /* GestureDetector(
                                           onTap: () {
                                             Get.to(DeliverTrackScreen(
                                                 //change delivery partner lat lng
@@ -962,7 +962,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               ),
                                             ),
                                           ),
-                                        ),
+                                        ), */
                                         Padding(
                                           padding: EdgeInsets.only(top: 20.sp),
                                           child: AppText(
