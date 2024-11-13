@@ -105,17 +105,19 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                         child: Container(
                                           width: double.infinity,
                                           height: 100.sp,
-                                          child: controller.catalogList[index]
-                                                      ["thumbnail"] !=
-                                                  null
-                                              ? Stack(
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 100.sp,
-                                                      width: double.infinity,
-                                                      child: CachedNetworkImage(
-                                                        cacheManager:
-                                                            CacheManager(Config(
+                                          child:
+                                              controller.catalogList[index]
+                                                          ["thumbnail"] !=
+                                                      null
+                                                  ? Stack(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 100.sp,
+                                                          width:
+                                                              double.infinity,
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            cacheManager: CacheManager(Config(
                                                                 "customCacheKey",
                                                                 stalePeriod:
                                                                     const Duration(
@@ -123,118 +125,125 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                             15),
                                                                 maxNrOfCacheObjects:
                                                                     100)),
-                                                        fit: BoxFit.cover,
-                                                        imageUrl: controller
-                                                                .catalogList[
-                                                            index]["thumbnail"],
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                          downloadImage,
-                                                          height: 100.sp,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16.sp,
-                                                              vertical: 10.sp),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .bottomCenter,
-                                                        child: Container(
-                                                          height: 20.sp,
-                                                          decoration:
-                                                              new BoxDecoration(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade200
-                                                                      .withOpacity(
-                                                                          0.5)),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5.sp),
-                                                            child: Row(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .end,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                AppText(
-                                                                  text: controller
-                                                                              .catalogList[index]
-                                                                          [
-                                                                          "name"] ??
-                                                                      "",
-                                                                  color:
-                                                                      appbarText,
-                                                                  fontSize: 16,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                                const Expanded(
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 0,
-                                                                  ),
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    Get.to(
-                                                                        CatalogDetailsScreen(
-                                                                      title: controller.catalogList[index]
-                                                                              [
-                                                                              "name"] ??
-                                                                          "",
-                                                                      catalogId:
-                                                                          controller.catalogList[index]
-                                                                              [
-                                                                              "id"],
-                                                                      catalogImage:
-                                                                          controller.catalogList[index]["thumbnail"] ??
-                                                                              "",
-                                                                      genderType:
-                                                                          widget
-                                                                              .type,
-                                                                      catalogText:
-                                                                          widget
-                                                                              .categorytext,
-                                                                    ));
-                                                                  },
-                                                                  child: Image.asset(
-                                                                      rightArrowImage,
-                                                                      height:
-                                                                          20.sp,
-                                                                      width:
-                                                                          20.sp,
-                                                                      color:
-                                                                          appbarText,
-                                                                      fit: BoxFit
-                                                                          .cover),
-                                                                ),
-                                                              ],
+                                                            fit: BoxFit.cover,
+                                                            imageUrl: controller
+                                                                    .catalogList[
+                                                                index]["thumbnail"],
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                              downloadImage,
+                                                              height: 100.sp,
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              : SizedBox(
-                                                  height: 100.sp,
-                                                  width: double.infinity,
-                                                  child: Image.asset(backImage,
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .bottomCenter,
+                                                          child: Container(
+                                                            height: 28.sp,
+                                                            decoration:
+                                                                new BoxDecoration(
+                                                              gradient:
+                                                                  LinearGradient(
+                                                                colors: [
+                                                                  Colors.grey
+                                                                      .shade200
+                                                                      .withOpacity(
+                                                                          0.3),
+                                                                  Colors.black
+                                                                      .withOpacity(
+                                                                          0.3),
+                                                                ],
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                stops: [
+                                                                  0.1,
+                                                                  0.6
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                horizontal:
+                                                                    5.sp,
+                                                              ),
+                                                              child: Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  AppText(
+                                                                    text: controller.catalogList[index]
+                                                                            [
+                                                                            "name"] ??
+                                                                        "",
+                                                                    color:
+                                                                        whiteColor,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                  const Expanded(
+                                                                    child:
+                                                                        SizedBox(
+                                                                      width: 0,
+                                                                    ),
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      Get.to(
+                                                                          CatalogDetailsScreen(
+                                                                        title: controller.catalogList[index]["name"] ??
+                                                                            "",
+                                                                        catalogId:
+                                                                            controller.catalogList[index]["id"],
+                                                                        catalogImage:
+                                                                            controller.catalogList[index]["thumbnail"] ??
+                                                                                "",
+                                                                        genderType:
+                                                                            widget.type,
+                                                                        catalogText:
+                                                                            widget.categorytext,
+                                                                      ));
+                                                                    },
+                                                                    child: Image.asset(
+                                                                        rightArrowImage,
+                                                                        height: 20
+                                                                            .sp,
+                                                                        width: 20
+                                                                            .sp,
+                                                                        color:
+                                                                            whiteColor,
+                                                                        fit: BoxFit
+                                                                            .cover),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : SizedBox(
                                                       height: 100.sp,
-                                                      fit: BoxFit.cover),
-                                                ),
+                                                      width: double.infinity,
+                                                      child: Image.asset(
+                                                          backImage,
+                                                          height: 100.sp,
+                                                          fit: BoxFit.cover),
+                                                    ),
                                         ),
                                       )),
                                 ],
