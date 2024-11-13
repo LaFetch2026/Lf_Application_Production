@@ -946,7 +946,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     },
                   );
                 },
-                icon: question1Image),
+                icon: questionIcon),
             SizedBox(
               height: 40.sp,
             )

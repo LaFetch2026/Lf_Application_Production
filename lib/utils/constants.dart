@@ -153,6 +153,11 @@ const dummyProductImage = 'assets/images/image.jpg';
 const deliveryImage = 'assets/images/delivery.png';
 const blackBackImage = 'assets/images/black_back.jpg';
 const whiteBellImage = 'assets/images/whitebell.png';
+const handleImage = 'assets/images/handle.png';
+const renameBoardImage = 'assets/images/rename_board.png';
+const editBoardImage = 'assets/images/edit_board.png';
+const addBoardImage = 'assets/images/add_board.png';
+const deleteBoardImage = 'assets/images/red_delete.png';
 
 class ApiConstants {
   ApiConstants._();

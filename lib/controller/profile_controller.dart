@@ -42,9 +42,9 @@ class ProfileController extends BaseController {
 
   bool checkvalidation(String name, String phone, String email, int gender) {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-    String p =
+    /*  String p =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regExp = RegExp(p);
+    RegExp regExp = RegExp(p); */
     RegExp regExPhone = RegExp(patttern);
     if (name.isEmpty) {
       getSnackBar("Enter Name");
@@ -68,14 +68,14 @@ class ProfileController extends BaseController {
       );
       return false;
     }
-    if (email.isEmpty) {
+    /*  if (email.isEmpty) {
       getSnackBar("Enter Email");
       return false;
     }
     if (!regExp.hasMatch(email)) {
       getSnackBar("Enter Valid Email Id");
       return false;
-    }
+    } */
     if (gender == 0) {
       getSnackBar("Select Gender");
       return false;

@@ -21,7 +21,7 @@ class BottomSheetBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200.sp,
+      height: 220.sp,
       width: double.infinity,
       decoration: const BoxDecoration(
         color: whiteColor,
@@ -33,18 +33,39 @@ class BottomSheetBoard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10.sp),
+              child: Center(
+                child: Image.asset(
+                  handleImage,
+                  height: 7.sp,
+                  width: 80.sp,
+                ),
+              ),
+            ),
             GestureDetector(
               onTap: () {
                 onPressedAddItem?.call();
               },
               child: Padding(
-                padding: EdgeInsets.only(top: 10.sp),
-                child: AppText(
-                  text: "Add items to board",
-                  color: colorPrimary,
-                  fontSize: 16,
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
+                padding: EdgeInsets.only(top: 25.sp),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.sp),
+                      child: ImageIcon(
+                        AssetImage(addBoardImage),
+                        size: 20.sp,
+                      ),
+                    ),
+                    AppText(
+                      text: "Add items to board",
+                      color: colorPrimary,
+                      fontSize: 16,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -53,13 +74,24 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedEdit?.call();
               },
               child: Padding(
-                padding: EdgeInsets.only(top: 15.sp),
-                child: AppText(
-                  text: "Edit board",
-                  color: colorPrimary,
-                  fontSize: 16,
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
+                padding: EdgeInsets.only(top: 20.sp),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.sp),
+                      child: ImageIcon(
+                        AssetImage(editBoardImage),
+                        size: 20.sp,
+                      ),
+                    ),
+                    AppText(
+                      text: "Edit board",
+                      color: colorPrimary,
+                      fontSize: 16,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -68,13 +100,24 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedRename?.call();
               },
               child: Padding(
-                padding: EdgeInsets.only(top: 15.sp),
-                child: AppText(
-                  text: "Rename board",
-                  color: colorPrimary,
-                  fontSize: 16,
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
+                padding: EdgeInsets.only(top: 20.sp),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.sp),
+                      child: ImageIcon(
+                        AssetImage(renameBoardImage),
+                        size: 20.sp,
+                      ),
+                    ),
+                    AppText(
+                      text: "Rename board",
+                      color: colorPrimary,
+                      fontSize: 16,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -83,13 +126,25 @@ class BottomSheetBoard extends StatelessWidget {
                 onPressedDelete?.call();
               },
               child: Padding(
-                padding: EdgeInsets.only(top: 15.sp),
-                child: AppText(
-                  text: "Delete board",
-                  color: redColor,
-                  fontSize: 16,
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
+                padding: EdgeInsets.only(top: 20.sp),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.sp),
+                      child: ImageIcon(
+                        AssetImage(deleteBoardImage),
+                        color: redColor,
+                        size: 20.sp,
+                      ),
+                    ),
+                    AppText(
+                      text: "Delete board",
+                      color: redColor,
+                      fontSize: 16,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
                 ),
               ),
             ),
