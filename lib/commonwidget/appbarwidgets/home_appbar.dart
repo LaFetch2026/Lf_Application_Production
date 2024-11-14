@@ -18,17 +18,17 @@ class HomeAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.sp,
+      height: 100.sp,
       width: MediaQuery.of(context).size.width,
-      color: colorPrimary,
+      color: whiteColor,
       child: Column(children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
+          padding: EdgeInsets.only(left: 16.sp, top: 60.sp, right: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset(appNameImage,
+              Image.asset(lafetchBlackImage,
                   height: 28.sp, width: 70.sp, fit: BoxFit.cover),
               const Expanded(
                 child: SizedBox(
@@ -42,8 +42,8 @@ class HomeAppbar extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   child: ImageIcon(
-                    AssetImage(searchImage),
-                    color: textHintColor,
+                    AssetImage(searchNewImage),
+                    // color: textHintColor,
                     size: 20.sp,
                   ),
                 ),
@@ -56,7 +56,7 @@ class HomeAppbar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 15.sp),
                   child: ImageIcon(
                     AssetImage(saveIcon),
-                    color: textHintColor,
+                    color: blackColor,
                     size: 20.sp,
                   ),
                 ),
@@ -66,8 +66,8 @@ class HomeAppbar extends StatelessWidget {
                   onPressedCart?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(left: 5.sp),
-                  child: SizedBox(
+                    padding: EdgeInsets.only(left: 5.sp),
+                    child: /* SizedBox(
                     height: 28.sp,
                     width: 28.sp,
                     child: CircleAvatar(
@@ -78,8 +78,12 @@ class HomeAppbar extends StatelessWidget {
                         size: 20.sp,
                       ),
                     ),
-                  ),
-                ),
+                  ), */
+                        ImageIcon(
+                      AssetImage(cartNewImage),
+                      color: blackColor,
+                      size: 24.sp,
+                    )),
               ),
             ],
           ),

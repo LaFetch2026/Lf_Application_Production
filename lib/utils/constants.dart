@@ -41,6 +41,7 @@ const Color color3StartReview = Color(0xFF60AB9A);
 const Color color2StartReview = Color(0xFFE9C437);
 const Color color1StartReview = Color(0xFFD95656);
 const Color greyDotColor = Color(0xFFC6C3C0);
+const Color greyback = Color(0xFFEEEEEE);
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';
@@ -165,6 +166,7 @@ const accountNewImage = 'assets/images/account_new.png';
 const expressNewImage = 'assets/images/express_new.png';
 const cartNewImage = 'assets/images/cart_new.png';
 const searchNewImage = 'assets/images/search_new.png';
+const lafetchBlackImage = 'assets/images/lafetch_black.png';
 
 class ApiConstants {
   ApiConstants._();

@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
+//import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -134,7 +134,7 @@ class HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            Container(
+            /*    Container(
                 height: 55.sp,
                 width: MediaQuery.of(context).size.width,
                 color: colorPrimary,
@@ -272,6 +272,7 @@ class HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                 )),
+            */
             Stack(
               children: [
                 PreferredSize(

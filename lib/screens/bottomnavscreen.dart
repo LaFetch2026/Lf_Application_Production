@@ -64,21 +64,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     return Scaffold(
       backgroundColor: whiteTextColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: /* FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _currentIndex = 4;
-          });
-        },
-        backgroundColor: null,
-        foregroundColor: null,
-        child: Image.asset(
-          _currentIndex == 4 ? boltIcon : boltIcon,
-          height: 70,
-          width: 70,
-        ),
-      ), */
-          GestureDetector(
+      floatingActionButton: GestureDetector(
         onTap: () async {
           setState(() {
             _currentIndex = 4;
@@ -92,12 +78,231 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           );
         },
         child: Image.asset(
-          _currentIndex == 4 ? boltWhiteImage : boltBlackImage,
+          _currentIndex == 4 ? boltWhiteImage : expressNewImage,
           height: 70.sp,
           width: 70.sp,
         ),
       ),
       bottomNavigationBar: BottomAppBar(
+        notchMargin: -15.sp,
+        shape: const CircularNotchedRectangle(),
+        padding: EdgeInsets.zero,
+        color: whiteColor,
+        height: MediaQuery.of(context).size.height * 0.084,
+        child: Row(
+          children: [
+            Expanded(
+              child: MaterialButton(
+                height: MediaQuery.of(context).size.height * 0.084,
+                onPressed: () async {
+                  setState(() {
+                    _currentIndex = 0;
+                  });
+                  await analytics.logEvent(
+                    name: 'home_page',
+                    parameters: <String, Object>{
+                      'page_name': 'home_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.sp),
+                            color: _currentIndex == 0 ? greyback : whiteColor),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0.sp, horizontal: 8.sp),
+                          child: ImageIcon(
+                            AssetImage(homeNewImage),
+                            color:
+                                _currentIndex == 0 ? blackColor : greyTextColor,
+                            size: 22.sp,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.sp),
+                        child: Text(
+                          "Home",
+                          style: TextStyle(
+                              color: _currentIndex == 0
+                                  ? blackColor
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: MediaQuery.of(context).size.height * 0.084,
+                onPressed: () async {
+                  setState(() {
+                    _currentIndex = 1;
+                  });
+                  await analytics.logEvent(
+                    name: 'brand_page',
+                    parameters: <String, Object>{
+                      'page_name': 'brand_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.sp),
+                            color: _currentIndex == 1 ? greyback : whiteColor),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0.sp, horizontal: 8.sp),
+                          child: ImageIcon(
+                            AssetImage(shopNewImage),
+                            color:
+                                _currentIndex == 1 ? blackColor : greyTextColor,
+                            size: 22.sp,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.sp),
+                        child: Text(
+                          "Brands",
+                          style: TextStyle(
+                              color: _currentIndex == 1
+                                  ? blackColor
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: MediaQuery.of(context).size.height * 0.084,
+                onPressed: () async {
+                  setState(() {
+                    _currentIndex = 2;
+                  });
+                  await analytics.logEvent(
+                    name: 'wishlist_page',
+                    parameters: <String, Object>{
+                      'page_name': 'wishlist_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.sp),
+                            color: _currentIndex == 2 ? greyback : whiteColor),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0.sp, horizontal: 8.sp),
+                          child: ImageIcon(
+                            AssetImage(wishlistNewImage),
+                            color:
+                                _currentIndex == 2 ? blackColor : greyTextColor,
+                            size: 22.sp,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.sp),
+                        child: Text(
+                          "Wishlist",
+                          style: TextStyle(
+                              color: _currentIndex == 2
+                                  ? blackColor
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: MediaQuery.of(context).size.height * 0.084,
+                onPressed: () async {
+                  setState(() {
+                    _currentIndex = 3;
+                  });
+                  await analytics.logEvent(
+                    name: 'account_page',
+                    parameters: <String, Object>{
+                      'page_name': 'account_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.sp),
+                            color: _currentIndex == 3 ? greyback : whiteColor),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0.sp, horizontal: 8.sp),
+                          child: ImageIcon(
+                            AssetImage(accountNewImage),
+                            color:
+                                _currentIndex == 3 ? blackColor : greyTextColor,
+                            size: 22.sp,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.sp),
+                        child: Text(
+                          "Account",
+                          style: TextStyle(
+                              color: _currentIndex == 3
+                                  ? blackColor
+                                  : greyTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      /*  bottomNavigationBar: BottomAppBar(
         notchMargin: -15.sp,
         shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
@@ -283,6 +488,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           ],
         ),
       ),
+      */
       body: screen[_currentIndex],
     );
   }
