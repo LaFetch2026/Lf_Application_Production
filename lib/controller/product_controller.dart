@@ -1724,9 +1724,9 @@ class ProductController extends BaseController {
         addToCart.value = true;
         if (type == "reorder") {
           Get.to(CartScreen());
-        } else {
+        } /*  else {
           getSnackBar("Product added to cart");
-        }
+        } */
       } else if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {
         print(response.body);

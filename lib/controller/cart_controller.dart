@@ -218,7 +218,7 @@ class CartController extends BaseController {
     isExpress.value = false;
   }
 
-  callInitiatePayment(int addressId, dynamic context, double shipCost) async {
+  callInitiatePayment(int addressId, dynamic context, String shipCost) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {

@@ -33,7 +33,7 @@ class CheckoutScreen extends StatefulWidget {
   final String tax;
   final int addressId;
   final String total;
-  final double ShipCost;
+  final String ShipCost;
 
   const CheckoutScreen({
     super.key,
@@ -761,7 +761,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               : SizedBox(
                                   height: 0,
                                 ),
-                          widget.ShipCost != 0
+                          widget.ShipCost != "0.00"
                               ? Padding(
                                   padding: EdgeInsets.only(top: 10.sp),
                                   child: Row(
@@ -784,8 +784,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                         ),
                                       ),
                                       AppText(
-                                        text:
-                                            "\u{20B9} ${widget.ShipCost.toString()}",
+                                        text: "\u{20B9} ${widget.ShipCost}",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: greenText,

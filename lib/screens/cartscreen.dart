@@ -450,7 +450,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 fontFamily: "Franklin Gothic Regular",
                                                                                 fontWeight: FontWeight.w400,
                                                                               ),
-                                                                              value.orderList[index]["express_delivery"] == 0
+                                                                              !value.orderList[index]["express_delivery"]
                                                                                   ? value.orderList[index]["estimated_delivery_by"] != null
                                                                                       ? value.orderList[index]["estimated_delivery_by"]["show_shipping_cost"]
                                                                                           ? Padding(
@@ -462,7 +462,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       ? AppText(
                                                                                                           text: value.orderList[index]["estimated_delivery_by"]["message"],
                                                                                                           color: nameText,
-                                                                                                          fontSize: 12,
+                                                                                                          fontSize: 10,
                                                                                                           fontFamily: "Franklin Gothic Regular",
                                                                                                           fontWeight: FontWeight.w400,
                                                                                                         )
@@ -472,7 +472,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   AppText(
                                                                                                     text: "Shipping Cost : \u{20B9} ${value.orderList[index]["estimated_delivery_by"]["shipping_cost"]}",
                                                                                                     color: nameText,
-                                                                                                    fontSize: 12,
+                                                                                                    fontSize: 10,
                                                                                                     fontFamily: "Franklin Gothic Regular",
                                                                                                     fontWeight: FontWeight.w400,
                                                                                                   ),
@@ -1466,42 +1466,52 @@ class CartScreenState extends State<CartScreen> {
                                                   ],
                                                 ),
                                               ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 10.sp),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 4.sp),
-                                                child: AppText(
-                                                  text: "Shipping Cost",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: textColor,
-                                                  fontSize: 12,
+                                        controller.cartDetails[
+                                                    "shipping_cost"] !=
+                                                "0.00"
+                                            ? Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 10.sp),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 4.sp),
+                                                      child: AppText(
+                                                        text: "Shipping Cost",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: textColor,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    const Expanded(
+                                                      child: SizedBox(
+                                                        height: 0,
+                                                      ),
+                                                    ),
+                                                    AppText(
+                                                      text:
+                                                          "\u{20B9} ${controller.cartDetails["shipping_cost"]}",
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: greenText,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ],
                                                 ),
+                                              )
+                                            : SizedBox(
+                                                height: 0,
                                               ),
-                                              const Expanded(
-                                                child: SizedBox(
-                                                  height: 0,
-                                                ),
-                                              ),
-                                              AppText(
-                                                text:
-                                                    "\u{20B9} ${controller.cartDetails["shipping_cost"] ?? "0"}",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: greenText,
-                                                fontSize: 12,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
                                         Padding(
                                           padding: EdgeInsets.only(top: 10.sp),
                                           child: Row(
