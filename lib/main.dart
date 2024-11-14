@@ -12,7 +12,7 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
+    statusBarColor: Colors.black,
   ));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
