@@ -2150,61 +2150,76 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                       ),
                       Obx(
-                        () => !productController.isExpressDelivery.value
+                        () => productController.isDetails.value
                             ? SizedBox(
                                 height: 0,
                               )
-                            : Padding(
-                                padding: EdgeInsets.only(
-                                    top: 18.0.sp, left: 12.sp, right: 12.sp),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(right: 12.0.sp),
-                                          child: Image.asset(
-                                            walletBlack,
-                                            height: 18.sp,
-                                            width: 18.sp,
-                                          ),
+                            : productController
+                                    .productDetails["express_delivery"]
+                                ? !productController.isExpressDelivery.value
+                                    ? SizedBox(
+                                        height: 0,
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 18.0.sp,
+                                            left: 12.sp,
+                                            right: 12.sp),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 12.0.sp),
+                                                  child: Image.asset(
+                                                    walletBlack,
+                                                    height: 18.sp,
+                                                    width: 18.sp,
+                                                  ),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      "Express Delivery Cost :",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: blackColor,
+                                                  maxLines: 1,
+                                                  fontSize: 14,
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 6),
+                                                  child: AppText(
+                                                    text:
+                                                        "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: blackColor,
+                                                    maxLines: 1,
+                                                    textAlign: TextAlign.center,
+                                                    fontSize: 14,
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
                                         ),
-                                        AppText(
-                                          text: "Express Delivery Cost :",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w500,
-                                          color: blackColor,
-                                          maxLines: 1,
-                                          fontSize: 14,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          child: AppText(
-                                            text:
-                                                "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w500,
-                                            color: blackColor,
-                                            maxLines: 1,
-                                            textAlign: TextAlign.center,
-                                            fontSize: 14,
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
+                                      )
+                                : SizedBox(
+                                    height: 0,
+                                  ),
                       ),
                       Obx(
                         () => productController.isDetails.value

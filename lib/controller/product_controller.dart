@@ -1444,6 +1444,7 @@ class ProductController extends BaseController {
 
   getEstimateDate(int id, String zip) async {
     isEstimateDate.value = true;
+    isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -1472,6 +1473,7 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isEstimateDate.value = false;
+    isDetails.value = false;
   }
 
   getAddressData(int id) async {

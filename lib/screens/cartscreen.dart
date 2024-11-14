@@ -532,12 +532,12 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 width: 20,
                                                                                                 height: 20,
                                                                                                 child: Checkbox(
-                                                                                                  value: value.orderList[index]["express_delivery"] == 1 ? true : false,
+                                                                                                  value: value.orderList[index]["express_delivery"],
                                                                                                   checkColor: btnTextColor,
                                                                                                   activeColor: whiteBorderColor,
                                                                                                   side: const BorderSide(color: btnTextColor, width: 0),
                                                                                                   onChanged: (value) {
-                                                                                                    controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["express_delivery"] == 0 ? 1 : 0, 1);
+                                                                                                    controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["express_delivery"] ? 0 : 1, 1);
                                                                                                   },
                                                                                                 )),
                                                                                           ),

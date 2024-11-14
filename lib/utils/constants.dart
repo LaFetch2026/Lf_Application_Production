@@ -158,6 +158,13 @@ const renameBoardImage = 'assets/images/rename_board.png';
 const editBoardImage = 'assets/images/edit_board.png';
 const addBoardImage = 'assets/images/add_board.png';
 const deleteBoardImage = 'assets/images/red_delete.png';
+const homeNewImage = 'assets/images/home_new.png';
+const shopNewImage = 'assets/images/shop_new.png';
+const wishlistNewImage = 'assets/images/wishlist_new.png';
+const accountNewImage = 'assets/images/account_new.png';
+const expressNewImage = 'assets/images/express_new.png';
+const cartNewImage = 'assets/images/cart_new.png';
+const searchNewImage = 'assets/images/search_new.png';
 
 class ApiConstants {
   ApiConstants._();
