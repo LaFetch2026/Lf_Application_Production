@@ -22,6 +22,7 @@ import '../controller/order_controller.dart';
 import '../utils/constants.dart';
 import 'package:intl/intl.dart';
 
+import 'orders/delivery_track.dart';
 import 'orders/trackorderscreen.dart';
 
 class OrderExchangeScreen extends StatefulWidget {
@@ -1239,7 +1240,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           },
                                                                           secondIcon: rateOrderImage),
                                                                     )
-                                                                  ] else if (value
+                                                                  ] /* else if (value
                                                                               .orderList[index]
                                                                           [
                                                                           "status"] ==
@@ -1300,7 +1301,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           },
                                                                           secondIcon: locationIcon),
                                                                     )
-                                                                  ] else if (value
+                                                                  ] */
+                                                                  else if (value
                                                                               .orderList[index]
                                                                           [
                                                                           "status"] ==
@@ -1320,15 +1322,31 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           textColor: btnTextColor,
                                                                           backgroundColor: whiteColor,
                                                                           onPressed: () async {
-                                                                            Get.to(TrackOrderScreen(
-                                                                              orderId: value.orderList[index]["id"],
-                                                                            ));
-                                                                            await analytics.logEvent(
-                                                                              name: 'order_trackOrderClick',
-                                                                              parameters: <String, Object>{
-                                                                                'page_name': 'order_trackOrderClick',
-                                                                              },
-                                                                            );
+                                                                            if (value.orderList[index]["express_delivery_charges"] ==
+                                                                                "0.00") {
+                                                                              Get.to(TrackOrderScreen(
+                                                                                orderId: value.orderList[index]["id"],
+                                                                              ));
+                                                                              await analytics.logEvent(
+                                                                                name: 'order_trackOrderClick',
+                                                                                parameters: <String, Object>{
+                                                                                  'page_name': 'order_trackOrderClick',
+                                                                                },
+                                                                              );
+                                                                            } else {
+                                                                              Get.to(DeliverTrackScreen(
+                                                                                deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"] ?? 28.6263),
+                                                                                deliverPartnerLng: double.parse(value.orderList[index]["delivery_partner_longitude"] ?? 77.2185),
+                                                                                dropLat: double.parse(value.orderList[index]["customer_latitude"]),
+                                                                                dropLng: double.parse(value.orderList[index]["customer_longitude"]),
+                                                                              ));
+                                                                              await analytics.logEvent(
+                                                                                name: 'order_trackdeliveryClick',
+                                                                                parameters: <String, Object>{
+                                                                                  'page_name': 'order_trackOrderClick',
+                                                                                },
+                                                                              );
+                                                                            }
                                                                           },
                                                                           borderColor: btnTextColor,
                                                                           icon: locationIcon),
@@ -2019,56 +2037,92 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 ],
                                                                               ),
                                                                             ),
-                                                                            Padding(
-                                                                              padding: EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 20.sp),
-                                                                              child: DoubleIconButton(
-                                                                                  firstText: "Cancel Order",
-                                                                                  secondText: "Track Order",
-                                                                                  firstTextColor: btnTextColor,
-                                                                                  secondTextColor: btnTextColor,
-                                                                                  firstBackgroundColor: whiteColor,
-                                                                                  secondBackgroundColor: whiteColor,
-                                                                                  firstBorderColor: btnTextColor,
-                                                                                  secondBorderColor: btnTextColor,
-                                                                                  firstIcon: blackCrossImage,
-                                                                                  onPressedFirst: () async {
-                                                                                    showDialog(
-                                                                                      barrierColor: Colors.black26,
-                                                                                      context: context,
-                                                                                      builder: (context) {
-                                                                                        return showDoubleBtnDailog(
-                                                                                            click1: () {
-                                                                                              Get.back();
+                                                                            val.orderList[index]["orders"][i]["status"] == 5
+                                                                                ? Padding(
+                                                                                    padding: EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 20.sp),
+                                                                                    child: DoubleIconButton(
+                                                                                        firstText: "Cancel Order",
+                                                                                        secondText: "Track Order",
+                                                                                        firstTextColor: btnTextColor,
+                                                                                        secondTextColor: btnTextColor,
+                                                                                        firstBackgroundColor: whiteColor,
+                                                                                        secondBackgroundColor: whiteColor,
+                                                                                        firstBorderColor: btnTextColor,
+                                                                                        secondBorderColor: btnTextColor,
+                                                                                        firstIcon: blackCrossImage,
+                                                                                        onPressedFirst: () async {
+                                                                                          showDialog(
+                                                                                            barrierColor: Colors.black26,
+                                                                                            context: context,
+                                                                                            builder: (context) {
+                                                                                              return showDoubleBtnDailog(
+                                                                                                  click1: () {
+                                                                                                    Get.back();
+                                                                                                  },
+                                                                                                  click2: () async {
+                                                                                                    orderController.callCancelOrder(val.orderList[index]["orders"][i]["id"]);
+                                                                                                    await analytics.logEvent(
+                                                                                                      name: 'order_cancelOrderClick',
+                                                                                                      parameters: <String, Object>{
+                                                                                                        'page_name': 'order_cancelOrderClick',
+                                                                                                      },
+                                                                                                    );
+                                                                                                  },
+                                                                                                  btncolor: colorPrimary,
+                                                                                                  text: "Are you sure you want to cancel order?",
+                                                                                                  btn1Text: "No",
+                                                                                                  btn2Text: "Yes");
                                                                                             },
-                                                                                            click2: () async {
-                                                                                              orderController.callCancelOrder(val.orderList[index]["orders"][i]["id"]);
-                                                                                              await analytics.logEvent(
-                                                                                                name: 'order_cancelOrderClick',
-                                                                                                parameters: <String, Object>{
-                                                                                                  'page_name': 'order_cancelOrderClick',
-                                                                                                },
-                                                                                              );
+                                                                                          );
+                                                                                        },
+                                                                                        onPressedSecond: () async {
+                                                                                          if (val.orderList[index]["orders"][i]["express_delivery_charges"] == "0.00") {
+                                                                                            Get.to(TrackOrderScreen(
+                                                                                              orderId: val.orderList[index]["orders"][i]["id"],
+                                                                                            ));
+                                                                                            await analytics.logEvent(
+                                                                                              name: 'order_trackOrderClick',
+                                                                                              parameters: <String, Object>{
+                                                                                                'page_name': 'order_trackOrderClick',
+                                                                                              },
+                                                                                            );
+                                                                                          } else {
+                                                                                            Get.to(DeliverTrackScreen(
+                                                                                              deliverPartnerLat: double.parse(val.orderList[index]["orders"][i]["delivery_partner_latitude"] ?? 28.6263),
+                                                                                              deliverPartnerLng: double.parse(val.orderList[index]["orders"][i]["delivery_partner_longitude"] ?? 77.2185),
+                                                                                              dropLat: double.parse(val.orderList[index]["orders"][i]["customer_latitude"]),
+                                                                                              dropLng: double.parse(val.orderList[index]["orders"][i]["customer_longitude"]),
+                                                                                            ));
+                                                                                            await analytics.logEvent(
+                                                                                              name: 'order_trackdeliveryClick',
+                                                                                              parameters: <String, Object>{
+                                                                                                'page_name': 'order_trackOrderClick',
+                                                                                              },
+                                                                                            );
+                                                                                          }
+                                                                                        },
+                                                                                        secondIcon: locationIcon),
+                                                                                  )
+                                                                                : Padding(
+                                                                                    padding: EdgeInsets.only(top: 10.sp, bottom: 30.sp),
+                                                                                    child: SingleButton(
+                                                                                        label: "View details",
+                                                                                        height: 40,
+                                                                                        textColor: btnTextColor,
+                                                                                        backgroundColor: whiteColor,
+                                                                                        onPressed: () async {
+                                                                                          Get.to(OrderDetailsScreen(
+                                                                                            orderId: val.orderList[index]["orders"][i]["id"],
+                                                                                          ));
+                                                                                          await analytics.logEvent(
+                                                                                            name: 'order_details',
+                                                                                            parameters: <String, Object>{
+                                                                                              'page_name': 'order_details',
                                                                                             },
-                                                                                            btncolor: colorPrimary,
-                                                                                            text: "Are you sure you want to cancel order?",
-                                                                                            btn1Text: "No",
-                                                                                            btn2Text: "Yes");
-                                                                                      },
-                                                                                    );
-                                                                                  },
-                                                                                  onPressedSecond: () async {
-                                                                                    Get.to(TrackOrderScreen(
-                                                                                      orderId: val.orderList[index]["orders"][i]["id"],
-                                                                                    ));
-                                                                                    await analytics.logEvent(
-                                                                                      name: 'order_trackOrderClick',
-                                                                                      parameters: <String, Object>{
-                                                                                        'page_name': 'order_trackOrderClick',
-                                                                                      },
-                                                                                    );
-                                                                                  },
-                                                                                  secondIcon: locationIcon),
-                                                                            )
+                                                                                          );
+                                                                                        },
+                                                                                        borderColor: btnTextColor),
+                                                                                  )
                                                                           ],
                                                                         );
                                                                       }),
