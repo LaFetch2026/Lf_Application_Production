@@ -301,7 +301,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                     );
                                                   },
                                                   child: Container(
-                                                    height: 33.sp,
+                                                    height: 30.sp,
                                                     margin: EdgeInsets.only(
                                                         right: 5.sp),
                                                     decoration: BoxDecoration(
