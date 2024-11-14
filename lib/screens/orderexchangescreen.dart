@@ -40,23 +40,25 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
 
   @override
   void initState() {
-    setState(() {
-      filter = "All";
+    filter = "All";
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      orderController.hasnextpage.value = true;
+      orderController.loadMore.value = false;
+      orderController.isOrder.value = false;
+      orderController.page.value = 1;
+      orderController.selected.clear();
+      orderController.selected = List.generate(50, (i) => false);
+      orderController.lat.value = 0.0;
+      orderController.lng.value = 0.0;
     });
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => orderController.getOrderData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       orderController.orderListController.addListener(() {
         orderController.fetchMoreData();
         orderController.update();
       });
     });
-    orderController.hasnextpage.value = true;
-    orderController.loadMore.value = false;
-    orderController.isOrder.value = false;
-    orderController.page.value = 1;
-    orderController.selected.clear();
-    orderController.selected = List.generate(50, (i) => false);
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => orderController.getOrderData());
     super.initState();
   }
 
@@ -1335,7 +1337,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               );
                                                                             } else {
                                                                               Get.to(DeliverTrackScreen(
-                                                                                deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"] ?? 28.6263),
+                                                                                deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"]),
                                                                                 deliverPartnerLng: double.parse(value.orderList[index]["delivery_partner_longitude"] ?? 77.2185),
                                                                                 dropLat: double.parse(value.orderList[index]["customer_latitude"]),
                                                                                 dropLng: double.parse(value.orderList[index]["customer_longitude"]),

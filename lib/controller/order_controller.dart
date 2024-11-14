@@ -22,6 +22,8 @@ class OrderController extends BaseController {
   RxString queryText = "".obs;
   List orderList = [].obs;
   List trackList = [].obs;
+  RxDouble lat = 0.0.obs;
+  RxDouble lng = 0.0.obs;
   // List deliveriesList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
@@ -351,5 +353,34 @@ class OrderController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  }
+
+  getLatLng() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/order/location"), //url br change
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get lat lng failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
   }
 }

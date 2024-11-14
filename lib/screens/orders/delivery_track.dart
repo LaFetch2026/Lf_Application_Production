@@ -1,9 +1,14 @@
 // ignore_for_file: avoid_print
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../controller/order_controller.dart';
 import '../../utils/constants.dart';
 
 class DeliverTrackScreen extends StatefulWidget {
@@ -25,6 +30,7 @@ class DeliverTrackScreen extends StatefulWidget {
 
 class DeliverTrackScreenState extends State<DeliverTrackScreen> {
   late GoogleMapController mapController;
+  final orderController = Get.put(OrderController());
   final Set<Marker> markers = new Set();
   LatLng dropLatLng = const LatLng(0, 0);
   LatLng deliveryPatnerLatLng = const LatLng(0, 0);
@@ -42,8 +48,52 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
         .then((onValue) {
       myIcon = onValue;
     });
+    initializeService();
     getDirections();
     super.initState();
+  }
+
+  Future<void> initializeService() async {
+    final service = FlutterBackgroundService();
+
+    await service.configure(
+      androidConfiguration: AndroidConfiguration(
+        onStart: onStart,
+        autoStart: true,
+        isForegroundMode: false,
+      ),
+      iosConfiguration: IosConfiguration(),
+    );
+  }
+
+  @pragma('vm:entry-point')
+  static void onStart(ServiceInstance service) async {
+    service.on('stopService').listen((event) async {
+      await FlutterLocalNotificationsPlugin().cancelAll();
+      service.stopSelf();
+    });
+
+    service.on('initiateLocation').listen((event) {
+      print('initiateLocation--------${event?['ongoingDeliveries']}');
+    });
+
+    // bring to foreground
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      print("hello");
+      //  DeliverTrackScreenState().orderController.getLatLng();
+      /*  final deliveryList =
+          _DeliveriesTabState().deliveryController.deliveryList;
+      if (deliveryList.isEmpty) {
+        _DeliveriesTabState().deliveryController.getOngoingDeliveryList();
+      }
+
+      deliveryList.forEach((item) async {
+        if (item['status_details'] == 'SHIPPED') {
+          print('${item['status_details']}----------${item['id']}');
+          _DeliveriesTabState()._getCurrentPosition(item);
+        }
+      }); */
+    });
   }
 
   getDirections() async {
