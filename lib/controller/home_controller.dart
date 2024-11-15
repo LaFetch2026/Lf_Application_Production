@@ -36,9 +36,11 @@ class HomeController extends BaseController {
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
+  RxBool IsAnimateTag = true.obs;
   RxInt tagId = 0.obs;
   RxInt current = 0.obs;
   ScrollController tagsController = ScrollController();
+  ScrollController discountScreenController = ScrollController();
 
   /* @override
   void onInit() {

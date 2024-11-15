@@ -1337,6 +1337,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               );
                                                                             } else {
                                                                               Get.to(DeliverTrackScreen(
+                                                                                orderId: value.orderList[index]["id"],
                                                                                 deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"]),
                                                                                 deliverPartnerLng: double.parse(value.orderList[index]["delivery_partner_longitude"] ?? 77.2185),
                                                                                 dropLat: double.parse(value.orderList[index]["customer_latitude"]),
@@ -2090,6 +2091,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                             );
                                                                                           } else {
                                                                                             Get.to(DeliverTrackScreen(
+                                                                                              orderId: val.orderList[index]["orders"][i]["id"],
                                                                                               deliverPartnerLat: double.parse(val.orderList[index]["orders"][i]["delivery_partner_latitude"] ?? 28.6263),
                                                                                               deliverPartnerLng: double.parse(val.orderList[index]["orders"][i]["delivery_partner_longitude"] ?? 77.2185),
                                                                                               dropLat: double.parse(val.orderList[index]["orders"][i]["customer_latitude"]),

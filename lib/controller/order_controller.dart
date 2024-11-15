@@ -29,6 +29,7 @@ class OrderController extends BaseController {
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
   RxInt status = 0.obs;
+  RxInt order_id = 0.obs;
   ScrollController orderListController = ScrollController();
   final searchController = TextEditingController();
   final exchangeComment = TextEditingController();
@@ -356,11 +357,11 @@ class OrderController extends BaseController {
   }
 
   getLatLng() async {
-    print("hello");
-    /* final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/order/location"), //url br change
+          Uri.parse(
+              "${ApiConstants.baseUrl}/order/${order_id.value}/live-track"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -368,6 +369,7 @@ class OrderController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        print("hello");
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -382,6 +384,6 @@ class OrderController extends BaseController {
       }
     } catch (e) {
       print("error$e");
-    } */
+    }
   }
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,12 +11,14 @@ import '../../controller/order_controller.dart';
 import '../../utils/constants.dart';
 
 class DeliverTrackScreen extends StatefulWidget {
+  final int orderId;
   final double dropLat;
   final double dropLng;
   final double deliverPartnerLat;
   final double deliverPartnerLng;
   const DeliverTrackScreen({
     super.key,
+    required this.orderId,
     required this.dropLat,
     required this.dropLng,
     required this.deliverPartnerLat,
@@ -28,7 +29,8 @@ class DeliverTrackScreen extends StatefulWidget {
   State<DeliverTrackScreen> createState() => DeliverTrackScreenState();
 }
 
-class DeliverTrackScreenState extends State<DeliverTrackScreen> {
+class DeliverTrackScreenState extends State<DeliverTrackScreen>
+    with WidgetsBindingObserver {
   late GoogleMapController mapController;
   final orderController = Get.put(OrderController());
   final Set<Marker> markers = new Set();
@@ -40,6 +42,7 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
   PolylinePoints polylinePoints = PolylinePoints();
   @override
   void initState() {
+    orderController.order_id.value = widget.orderId;
     dropLatLng = LatLng(widget.dropLat, widget.dropLng);
     deliveryPatnerLatLng =
         LatLng(widget.deliverPartnerLat, widget.deliverPartnerLng);
@@ -48,6 +51,7 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
         .then((onValue) {
       myIcon = onValue;
     });
+    orderController.getLatLng();
     initializeService();
     getDirections();
     super.initState();
@@ -55,44 +59,64 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
 
   Future<void> initializeService() async {
     final service = FlutterBackgroundService();
-
     await service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
         autoStart: true,
-        isForegroundMode: false,
+        isForegroundMode: true,
       ),
-      iosConfiguration: IosConfiguration(),
+      iosConfiguration: IosConfiguration(
+        autoStart: true,
+        onForeground: onStart,
+      ),
     );
+    service.startService();
   }
 
-  @pragma('vm:entry-point')
   static void onStart(ServiceInstance service) async {
-    service.on('stopService').listen((event) async {
-      await FlutterLocalNotificationsPlugin().cancelAll();
+    if (service is AndroidServiceInstance) {
+      service.on('setAsForeground').listen((event) {
+        service.setAsForegroundService();
+      });
+      service.on('setAsBackground').listen((event) {
+        service.setAsBackgroundService();
+      });
+    }
+    service.on('stopService').listen((event) {
       service.stopSelf();
     });
-
-    service.on('initiateLocation').listen((event) {
-      print('initiateLocation--------${event?['ongoingDeliveries']}');
-    });
-
-    // bring to foreground
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       DeliverTrackScreenState().orderController.getLatLng();
-      /*  final deliveryList =
-          _DeliveriesTabState().deliveryController.deliveryList;
-      if (deliveryList.isEmpty) {
-        _DeliveriesTabState().deliveryController.getOngoingDeliveryList();
-      }
-
-      deliveryList.forEach((item) async {
-        if (item['status_details'] == 'SHIPPED') {
-          print('${item['status_details']}----------${item['id']}');
-          _DeliveriesTabState()._getCurrentPosition(item);
-        }
-      }); */
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        orderController.getLatLng();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        FlutterBackgroundService().invoke("stopService");
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    Future.delayed(const Duration(seconds: 0), () async {
+      final service = FlutterBackgroundService();
+      var isRunning = await service.isRunning();
+      if (isRunning) {
+        service.invoke("stopService");
+      }
+    });
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   getDirections() async {

@@ -16,10 +16,14 @@ class WomenScreen extends StatefulWidget {
   State<WomenScreen> createState() => _WomenScreenState();
 }
 
-class _WomenScreenState extends State<WomenScreen> {
+class _WomenScreenState extends State<WomenScreen>
+    with SingleTickerProviderStateMixin {
   final homeController = Get.put(HomeController());
   PageController pageController = PageController();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  /*  late AnimationController _controller =
+      AnimationController(vsync: this, duration: Duration(seconds: 2));
+  late Animation<double> _animation; */
 
   callOnchanged(int index) {
     homeController.current.value = index;
@@ -33,6 +37,10 @@ class _WomenScreenState extends State<WomenScreen> {
       homeController.loadMore.value = false;
       homeController.istags.value = false;
       homeController.page.value = 1;
+      homeController.IsAnimateTag.value = true;
+      /*   _animation = Tween<double>(begin: 0.0, end: 0.5).animate(_controller)
+        ..addListener(() {});
+      _controller.forward(); */
     });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => homeController.getTagsData(widget.genderType));
@@ -80,58 +88,150 @@ class _WomenScreenState extends State<WomenScreen> {
                             );
                           }),
                     ))
-                : Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                    child: SizedBox(
-                        width: double.infinity,
-                        height: 50.sp,
-                        child: GetBuilder<HomeController>(
-                          builder: (value) => ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: homeController.tagsList.length,
-                              scrollDirection: Axis.horizontal,
-                              controller: homeController.tagsController,
-                              itemBuilder: (ctx, index) {
-                                return Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () async {
-                                        homeController.current.value = index;
-                                        homeController.tagId.value =
-                                            homeController.tagsList[index]
-                                                ["id"];
-                                        pageController.animateToPage(
-                                          homeController.current.value,
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          curve: Curves.ease,
-                                        );
-                                        homeController.update();
-                                        await analytics.logEvent(
-                                          name: 'tabclick_home_page',
-                                          parameters: <String, Object>{
-                                            'page_name': 'tabclick_home_page',
+                : homeController.IsAnimateTag.value
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                        child: Center(
+                          child: SizedBox(
+                              width: double.infinity,
+                              height: 50.sp,
+                              child: GetBuilder<HomeController>(
+                                builder: (value) => ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: homeController.tagsList.length,
+                                    scrollDirection: Axis.horizontal,
+                                    controller: homeController.tagsController,
+                                    itemBuilder: (ctx, index) {
+                                      return Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () async {
+                                              homeController.current.value =
+                                                  index;
+                                              homeController.tagId.value =
+                                                  homeController.tagsList[index]
+                                                      ["id"];
+                                              pageController.animateToPage(
+                                                homeController.current.value,
+                                                duration: const Duration(
+                                                    milliseconds: 200),
+                                                curve: Curves.ease,
+                                              );
+                                              homeController.update();
+                                              await analytics.logEvent(
+                                                name: 'tabclick_home_page',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'tabclick_home_page',
+                                                },
+                                              );
+                                            },
+                                            child: AnimatedContainer(
+                                              duration: const Duration(
+                                                  milliseconds: 300),
+                                              margin:
+                                                  EdgeInsets.only(right: 5.sp),
+                                              width: 100.sp,
+                                              height: 30.sp,
+                                              decoration: BoxDecoration(
+                                                color: homeController
+                                                            .current.value ==
+                                                        index
+                                                    ? btnTextColor
+                                                    : whiteColor,
+                                                borderRadius: homeController
+                                                            .current.value ==
+                                                        index
+                                                    ? BorderRadius.circular(20)
+                                                    : BorderRadius.circular(20),
+                                                border: homeController
+                                                            .current.value ==
+                                                        index
+                                                    ? Border.all(
+                                                        color: btnTextColor,
+                                                        width: 1)
+                                                    : Border.all(
+                                                        color: textHintColor,
+                                                        width: 1),
+                                              ),
+                                              child: Center(
+                                                child: AppText(
+                                                  text: homeController
+                                                      .tagsList[index]["name"],
+                                                  color: homeController
+                                                              .current.value ==
+                                                          index
+                                                      ? whiteColor
+                                                      : textHintColor,
+                                                  fontSize: 12,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                              )),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                        child: SizedBox(
+                            width: double.infinity,
+                            height: 50.sp,
+                            child: GetBuilder<HomeController>(
+                              builder: (value) => ListView.builder(
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: homeController.tagsList.length,
+                                  scrollDirection: Axis.horizontal,
+                                  controller: homeController.tagsController,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            homeController.current.value =
+                                                index;
+                                            homeController.tagId.value =
+                                                homeController.tagsList[index]
+                                                    ["id"];
+                                            pageController.animateToPage(
+                                              homeController.current.value,
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              curve: Curves.ease,
+                                            );
+                                            homeController.update();
+                                            await analytics.logEvent(
+                                              name: 'tabclick_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'tabclick_home_page',
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        margin: EdgeInsets.only(right: 5.sp),
-                                        width: 100.sp,
-                                        height: 30.sp,
-                                        decoration: BoxDecoration(
-                                          color: homeController.current.value ==
-                                                  index
-                                              ? btnTextColor
-                                              : whiteColor,
-                                          borderRadius:
-                                              homeController.current.value ==
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            margin:
+                                                EdgeInsets.only(right: 5.sp),
+                                            width: 100.sp,
+                                            height: 30.sp,
+                                            decoration: BoxDecoration(
+                                              color: homeController
+                                                          .current.value ==
+                                                      index
+                                                  ? btnTextColor
+                                                  : whiteColor,
+                                              borderRadius: homeController
+                                                          .current.value ==
                                                       index
                                                   ? BorderRadius.circular(20)
                                                   : BorderRadius.circular(20),
-                                          border:
-                                              homeController.current.value ==
+                                              border: homeController
+                                                          .current.value ==
                                                       index
                                                   ? Border.all(
                                                       color: btnTextColor,
@@ -139,28 +239,28 @@ class _WomenScreenState extends State<WomenScreen> {
                                                   : Border.all(
                                                       color: textHintColor,
                                                       width: 1),
-                                        ),
-                                        child: Center(
-                                          child: AppText(
-                                            text: homeController.tagsList[index]
-                                                ["name"],
-                                            color:
-                                                homeController.current.value ==
+                                            ),
+                                            child: Center(
+                                              child: AppText(
+                                                text: homeController
+                                                    .tagsList[index]["name"],
+                                                color: homeController
+                                                            .current.value ==
                                                         index
                                                     ? whiteColor
                                                     : textHintColor,
-                                            fontSize: 12,
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
+                                                fontSize: 12,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }),
-                        )),
-                  ),
+                                      ],
+                                    );
+                                  }),
+                            )),
+                      ),
           ),
           Obx(
             () => homeController.istags.value

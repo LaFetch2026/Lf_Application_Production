@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -68,6 +69,22 @@ class DiscountScreenState extends State<DiscountScreen> {
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      homeController.discountScreenController.addListener(() {
+        print(homeController
+            .discountScreenController.position.userScrollDirection);
+        if (homeController
+                .discountScreenController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          homeController.IsAnimateTag.value = false;
+        }
+        if (homeController
+                .discountScreenController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          homeController.IsAnimateTag.value = true;
+        }
+      });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;
       productController.isExpress.value = false;
@@ -98,6 +115,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     return Scaffold(
       backgroundColor: whiteColor,
       body: SingleChildScrollView(
+        controller: homeController.discountScreenController,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
