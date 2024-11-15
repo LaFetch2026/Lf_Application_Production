@@ -79,8 +79,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         },
         child: Image.asset(
           _currentIndex == 4 ? boltWhiteImage : expressNewImage,
-          height: 70.sp,
-          width: 70.sp,
+          height: _currentIndex == 4 ? 70.sp : 58.sp,
+          width: _currentIndex == 4 ? 70.sp : 58.sp,
+          fit: BoxFit.contain,
         ),
       ),
       bottomNavigationBar: BottomAppBar(
