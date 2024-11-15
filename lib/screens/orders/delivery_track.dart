@@ -79,8 +79,7 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen> {
 
     // bring to foreground
     Timer.periodic(const Duration(seconds: 10), (timer) async {
-      print("hello");
-      //  DeliverTrackScreenState().orderController.getLatLng();
+      DeliverTrackScreenState().orderController.getLatLng();
       /*  final deliveryList =
           _DeliveriesTabState().deliveryController.deliveryList;
       if (deliveryList.isEmpty) {

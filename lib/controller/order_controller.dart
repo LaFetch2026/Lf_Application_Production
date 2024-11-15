@@ -356,7 +356,8 @@ class OrderController extends BaseController {
   }
 
   getLatLng() async {
-    final prefs = await SharedPreferences.getInstance();
+    print("hello");
+    /* final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
           Uri.parse("${ApiConstants.baseUrl}/order/location"), //url br change
@@ -381,6 +382,6 @@ class OrderController extends BaseController {
       }
     } catch (e) {
       print("error$e");
-    }
+    } */
   }
 }
