@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -42,6 +44,8 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen>
   PolylinePoints polylinePoints = PolylinePoints();
   @override
   void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    DartPluginRegistrant.ensureInitialized();
     orderController.order_id.value = widget.orderId;
     dropLatLng = LatLng(widget.dropLat, widget.dropLng);
     deliveryPatnerLatLng =
@@ -51,41 +55,41 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen>
         .then((onValue) {
       myIcon = onValue;
     });
-    orderController.getLatLng();
-    initializeService();
     getDirections();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      orderController.getLatLng();
+      initializeService();
+    });
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   Future<void> initializeService() async {
     final service = FlutterBackgroundService();
+
     await service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
         autoStart: true,
-        isForegroundMode: true,
+        isForegroundMode: false,
       ),
-      iosConfiguration: IosConfiguration(
-        autoStart: true,
-        onForeground: onStart,
-      ),
+      iosConfiguration: IosConfiguration(),
     );
     service.startService();
   }
 
+  @pragma('vm:entry-point')
   static void onStart(ServiceInstance service) async {
-    if (service is AndroidServiceInstance) {
-      service.on('setAsForeground').listen((event) {
-        service.setAsForegroundService();
-      });
-      service.on('setAsBackground').listen((event) {
-        service.setAsBackgroundService();
-      });
-    }
-    service.on('stopService').listen((event) {
+    service.on('stopService').listen((event) async {
+      await FlutterLocalNotificationsPlugin().cancelAll();
       service.stopSelf();
     });
-    Timer.periodic(const Duration(seconds: 10), (timer) async {
+
+    service.on('initiateLocation').listen((event) {
+      print('initiateLocation--------${event?['ongoingDeliveries']}');
+    });
+
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
       DeliverTrackScreenState().orderController.getLatLng();
     });
   }
