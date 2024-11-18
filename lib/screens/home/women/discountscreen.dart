@@ -42,9 +42,8 @@ class DiscountScreenState extends State<DiscountScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.tagProductList.clear();
-      productController.expressProductList.clear();
       homeController.currentPage.value = 0;
+      productController.current.value = 0;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getConfigurationData();
@@ -59,7 +58,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsHasnextpage.value = true;
       productController.tagsLoadMore.value = false;
-      productController.istagsProduct.value = false;
+      //  productController.istagsProduct.value = false;
       productController.tagsPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -87,7 +86,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;
-      productController.isExpress.value = false;
+      //  productController.isExpress.value = false;
       productController.expressPage.value = 1;
     });
     WidgetsBinding.instance
@@ -96,10 +95,18 @@ class DiscountScreenState extends State<DiscountScreen> {
         .addPostFrameCallback((_) => homeController.getBannar2Data());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => homeController.getCategoryData(widget.genderType));
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getTagsProductData(widget.tagId, widget.genderType, 0));
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getExpressProductData(widget.tagId, widget.genderType));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        productController.homeTagshasnextpage.value = true;
+        productController.homeTagsloadMore.value = false;
+        // productController.istags.value = false;
+        productController.homeTagsPage.value = 1;
+      });
+      productController.tagsController.addListener(() {
+        productController.fetchMoreTagsData(widget.genderType);
+        productController.update();
+      });
+    });
   }
 
   Future getPrefrenceValue() async {
@@ -177,7 +184,120 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
            */
-
+            Obx(() => productController.istags.value
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        left: 16.sp, bottom: 10.sp, right: 16.sp),
+                    child: SizedBox(
+                      height: 30.sp,
+                      width: double.infinity,
+                      child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: 5,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (ctx, index) {
+                            return Container(
+                              margin: EdgeInsets.only(right: 5.sp),
+                              width: 100.sp,
+                              height: 30.sp,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                                borderRadius: BorderRadius.circular(20.sp),
+                              ),
+                            );
+                          }),
+                    ))
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                    child: Center(
+                      child: SizedBox(
+                          width: double.infinity,
+                          height: 50.sp,
+                          child: GetBuilder<ProductController>(
+                            builder: (value) => ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: productController.tagsList.length,
+                                scrollDirection: Axis.horizontal,
+                                controller: productController.tagsController,
+                                itemBuilder: (ctx, index) {
+                                  return Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          productController.current.value =
+                                              index;
+                                          productController.tagId.value =
+                                              productController.tagsList[index]
+                                                  ["id"];
+                                          productController.tagProductList
+                                              .clear();
+                                          productController.expressProductList
+                                              .clear();
+                                          productController
+                                              .getExpressProductData(
+                                                  productController.tagId.value,
+                                                  widget.genderType);
+                                          productController.getTagsProductData(
+                                              productController.tagId.value,
+                                              widget.genderType,
+                                              0);
+                                          productController.update();
+                                          await analytics.logEvent(
+                                            name: 'tabclick_home_page',
+                                            parameters: <String, Object>{
+                                              'page_name': 'tabclick_home_page',
+                                            },
+                                          );
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          margin: EdgeInsets.only(right: 5.sp),
+                                          width: 100.sp,
+                                          height: 30.sp,
+                                          decoration: BoxDecoration(
+                                            color: productController
+                                                        .current.value ==
+                                                    index
+                                                ? btnTextColor
+                                                : whiteColor,
+                                            borderRadius: productController
+                                                        .current.value ==
+                                                    index
+                                                ? BorderRadius.circular(20)
+                                                : BorderRadius.circular(20),
+                                            border: productController
+                                                        .current.value ==
+                                                    index
+                                                ? Border.all(
+                                                    color: btnTextColor,
+                                                    width: 1)
+                                                : Border.all(
+                                                    color: textHintColor,
+                                                    width: 1),
+                                          ),
+                                          child: Center(
+                                            child: AppText(
+                                              text: productController
+                                                  .tagsList[index]["name"],
+                                              color: productController
+                                                          .current.value ==
+                                                      index
+                                                  ? whiteColor
+                                                  : textHintColor,
+                                              fontSize: 12,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                          )),
+                    ),
+                  )),
             Obx(() => homeController.isBanner1.value
                 ? Padding(
                     padding: EdgeInsets.only(
@@ -242,6 +362,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 }
                                 print(homeController.bannerTag1Id);
                                 Get.to(CategoryProductScreen(
+                                  categoryName: "Product List",
                                   categoryId: 0,
                                   brandId: 0,
                                   genderType: widget.genderType,
@@ -305,23 +426,23 @@ class DiscountScreenState extends State<DiscountScreen> {
                         controller: productController.expressListController,
                         list: productController.expressProductList,
                         visibleExpress: true,
-                        onPressed: (p0) async {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      ProductDetailsScreen(
-                                          productId: p0, type: "add")))
-                              .then((value) => setState(
-                                    () {
-                                      productController
-                                          .expressHasnextpage.value = true;
-                                      productController.expressLoadMore.value =
-                                          false;
-                                      productController.isExpress.value = false;
-                                      productController.expressPage.value = 1;
-                                      //  productController.getExpressProductData();
-                                    },
-                                  ));
+                        onPressed: (p0, p1) async {
+                          Get.to(
+                            ProductDetailsScreen(
+                              productId: p0,
+                              type: "add",
+                              brandName: p1,
+                            ),
+                          )?.then((value) => setState(
+                                () {
+                                  productController.expressHasnextpage.value =
+                                      true;
+                                  productController.expressLoadMore.value =
+                                      false;
+                                  productController.isExpress.value = false;
+                                  productController.expressPage.value = 1;
+                                },
+                              ));
                           await analytics.logEvent(
                             name: 'expressproductDetails_home_page',
                             parameters: <String, Object>{
@@ -343,25 +464,24 @@ class DiscountScreenState extends State<DiscountScreen> {
                           controller: productController.tagsProductController,
                           height: 250.sp,
                           visibleExpress: false,
-                          onPressed: (p0) async {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        ProductDetailsScreen(
-                                            productId: p0, type: "add")))
-                                .then((value) => setState(
-                                      () {
-                                        productController
-                                            .tagsHasnextpage.value = true;
-                                        productController.tagsLoadMore.value =
-                                            false;
-                                        productController.istagsProduct.value =
-                                            false;
-                                        productController.tagsPage.value = 1;
-                                        /*  productController
-                                        .getTagsProductData(widget.tagId); */
-                                      },
-                                    ));
+                          onPressed: (p0, p1) async {
+                            Get.to(
+                              ProductDetailsScreen(
+                                productId: p0,
+                                type: "add",
+                                brandName: p1,
+                              ),
+                            )?.then((value) => setState(
+                                  () {
+                                    productController.tagsHasnextpage.value =
+                                        true;
+                                    productController.tagsLoadMore.value =
+                                        false;
+                                    productController.istagsProduct.value =
+                                        false;
+                                    productController.tagsPage.value = 1;
+                                  },
+                                ));
                             await analytics.logEvent(
                               name: 'product_tabid_details_home_page',
                               parameters: <String, Object>{
@@ -405,6 +525,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   ? GestureDetector(
                                       onTap: () async {
                                         Get.to(CategoryProductScreen(
+                                            categoryName: homeController
+                                                .categoryList[0]["name"],
                                             categoryId: homeController
                                                 .categoryList[0]["id"],
                                             brandId: 0,
@@ -505,6 +627,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   ? GestureDetector(
                                       onTap: () async {
                                         Get.to(CategoryProductScreen(
+                                            categoryName: homeController
+                                                .categoryList[1]["name"],
                                             categoryId: homeController
                                                 .categoryList[1]["id"],
                                             brandId: 0,
@@ -625,6 +749,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                             GestureDetector(
                                               onTap: () async {
                                                 Get.to(CategoryProductScreen(
+                                                    categoryName: homeController
+                                                            .categoryList[
+                                                        index + 2]["name"],
                                                     categoryId: homeController
                                                             .categoryList[
                                                         index + 2]["id"],
@@ -814,6 +941,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                       }
                                       print(homeController.bannerTag2Id);
                                       Get.to(CategoryProductScreen(
+                                        categoryName: "Product List",
                                         categoryId: 0,
                                         brandId: 0,
                                         genderType: widget.genderType,

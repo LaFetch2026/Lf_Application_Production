@@ -2,10 +2,10 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/screens/home/women/discountscreen.dart';
-import '../../commonwidget/app_text.dart';
+//import '../../commonwidget/app_text.dart';
 import '../../commonwidget/homewidget/dummy_product_list.dart';
+import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 
 class WomenScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class WomenScreen extends StatefulWidget {
 
 class _WomenScreenState extends State<WomenScreen>
     with SingleTickerProviderStateMixin {
-  final homeController = Get.put(HomeController());
+  final productController = Get.put(ProductController());
   PageController pageController = PageController();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   /*  late AnimationController _controller =
@@ -26,13 +26,15 @@ class _WomenScreenState extends State<WomenScreen>
   late Animation<double> _animation; */
 
   callOnchanged(int index) {
-    homeController.current.value = index;
-    homeController.update();
+    productController.current.value = index;
+    productController.update();
   }
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getTagsData(widget.genderType));
+    /*  WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.hasnextpage.value = true;
       homeController.loadMore.value = false;
       homeController.istags.value = false;
@@ -41,15 +43,13 @@ class _WomenScreenState extends State<WomenScreen>
       /*   _animation = Tween<double>(begin: 0.0, end: 0.5).animate(_controller)
         ..addListener(() {});
       _controller.forward(); */
-    });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => homeController.getTagsData(widget.genderType));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    }); */
+    /* WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.tagsController.addListener(() {
         homeController.fetchMoreTagsData(widget.genderType);
         homeController.update();
       });
-    });
+    }); */
     super.initState();
   }
 
@@ -64,7 +64,7 @@ class _WomenScreenState extends State<WomenScreen>
           SizedBox(
             height: 20.sp,
           ),
-          Obx(
+          /*  Obx(
             () => homeController.istags.value
                 ? Padding(
                     padding: EdgeInsets.only(
@@ -261,14 +261,37 @@ class _WomenScreenState extends State<WomenScreen>
                                   }),
                             )),
                       ),
-          ),
+          ), */
           Obx(
-            () => homeController.istags.value
+            () => productController.istags.value
                 ? Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp, bottom: 10.sp, right: 16.sp),
+                              child: SizedBox(
+                                height: 30.sp,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 5.sp),
+                                        width: 100.sp,
+                                        height: 30.sp,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.04),
+                                          borderRadius:
+                                              BorderRadius.circular(20.sp),
+                                        ),
+                                      );
+                                    }),
+                              )),
                           Padding(
                               padding: EdgeInsets.only(
                                   left: 16.sp, bottom: 10.sp, right: 16.sp),
@@ -303,7 +326,7 @@ class _WomenScreenState extends State<WomenScreen>
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return DiscountScreen(
-                          tagId: homeController.tagId.value,
+                          tagId: productController.tagId.value,
                           genderType: widget.genderType,
                         );
                       },

@@ -17,6 +17,7 @@ import '../../commonwidget/common_widgets.dart';
 import '../../commonwidget/homewidget/dummy_grid_list.dart';
 
 class CategoryProductScreen extends StatefulWidget {
+  final String categoryName;
   final int categoryId;
   final int brandId;
   final int genderType;
@@ -24,6 +25,7 @@ class CategoryProductScreen extends StatefulWidget {
   final List categoryList;
   const CategoryProductScreen(
       {super.key,
+      required this.categoryName,
       required this.categoryId,
       required this.brandId,
       required this.genderType,
@@ -85,8 +87,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         backgroundColor: whiteColor,
         body: Column(
           children: [
-            const BackButtonAppbar(
-              text: "Product List",
+            BackButtonAppbar(
+              text: widget.categoryName,
               threeDot: false,
               backgroundColor: whiteColor,
               icon: threeDotImage,
@@ -125,6 +127,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         return GestureDetector(
                                           onTap: () async {
                                             Get.to(ProductDetailsScreen(
+                                                brandName: productController
+                                                        .productCategoryList[
+                                                    index]["brand_name"],
                                                 productId: productController
                                                         .productCategoryList[
                                                     index]["id"],

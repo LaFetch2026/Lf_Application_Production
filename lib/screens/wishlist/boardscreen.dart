@@ -242,12 +242,15 @@ class BoardScreenState extends State<BoardScreen> {
                                                   onTap: () async {
                                                     if (isDrawer) {
                                                     } else {
-                                                      Get.to(() =>
-                                                          ProductDetailsScreen(
-                                                              productId: value
-                                                                      .wishListProduct[
-                                                                  index]["id"],
-                                                              type: "add"));
+                                                      Get.to(() => ProductDetailsScreen(
+                                                          brandName:
+                                                              value.wishListProduct[
+                                                                      index][
+                                                                  "brand_name"],
+                                                          productId: value
+                                                                  .wishListProduct[
+                                                              index]["id"],
+                                                          type: "add"));
                                                     }
                                                     await analytics.logEvent(
                                                       name:
@@ -600,6 +603,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                           context)
                                                                       .push(MaterialPageRoute(
                                                                           builder: (BuildContext context) => ProductDetailsScreen(
+                                                                                brandName: value.wishListProduct[index]["brand_name"],
                                                                                 productId: value.wishListProduct[index]["id"],
                                                                                 type: "move",
                                                                                 boardId: widget.boardId,

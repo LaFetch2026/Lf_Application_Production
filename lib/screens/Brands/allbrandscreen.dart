@@ -306,6 +306,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           .push(MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   CategoryProductScreen(
+                                                    categoryName:
+                                                        brandController
+                                                                .categoryList[
+                                                            index]["name"],
                                                     categoryId: brandController
                                                             .categoryList[index]
                                                         ["id"],
@@ -436,13 +440,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 text: "New Arrivals",
                                 controller:
                                     productController.tagsProductController,
-                                onPressed: (p0) async {
+                                onPressed: (p0, p1) async {
                                   videoController.pause();
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (BuildContext context) =>
                                               ProductDetailsScreen(
-                                                  productId: p0, type: "add")))
+                                                  brandName: p1,
+                                                  productId: p0,
+                                                  type: "add")))
                                       .then((value) => setState(
                                             () {
                                               videoController.play();
@@ -530,13 +536,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               text: "Bestsellers",
                               controller:
                                   productController.bestSellerController,
-                              onPressed: (p0) async {
+                              onPressed: (p0, p1) async {
                                 videoController.pause();
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (BuildContext context) =>
                                             ProductDetailsScreen(
-                                                productId: p0, type: "add")))
+                                                brandName: p1,
+                                                productId: p0,
+                                                type: "add")))
                                     .then((value) => setState(
                                           () {
                                             videoController.play();

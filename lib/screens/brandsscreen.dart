@@ -507,6 +507,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 return GestureDetector(
                                                                                   onTap: () async {
                                                                                     Get.to(CategoryProductScreen(
+                                                                                      categoryName: value.brandList[index]["categories"][i]["name"],
                                                                                       categoryId: value.brandList[index]["categories"][i]["id"],
                                                                                       brandId: value.brandList[index]["id"],
                                                                                       genderType: 0,

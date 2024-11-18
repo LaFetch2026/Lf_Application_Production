@@ -119,6 +119,10 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                     builder: (BuildContext
                                                             context) =>
                                                         ProductDetailsScreen(
+                                                            brandName: productController
+                                                                        .productCategoryList[
+                                                                    index]
+                                                                ["brand_name"],
                                                             productId:
                                                                 productController
                                                                         .productCategoryList[

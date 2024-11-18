@@ -39,6 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
         Get.to(ProductDetailsScreen(
           productId: 0,
           type: "add",
+          brandName: "",
           Slug: "womens-salwar-suit-set",
         ));
       }

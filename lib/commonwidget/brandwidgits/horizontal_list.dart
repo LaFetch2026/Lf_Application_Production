@@ -8,7 +8,7 @@ import '../common_widgets.dart';
 
 class HorizontalBrandList extends StatelessWidget {
   final String text;
-  final Function(int)? onPressed;
+  final Function(int, String)? onPressed;
   final List list;
   final ScrollController controller;
   final Function? onPressedExpress;
@@ -57,7 +57,8 @@ class HorizontalBrandList extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            onPressed?.call(list[index]["id"]);
+                            onPressed?.call(
+                                list[index]["id"], list[index]["brand_name"]);
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),

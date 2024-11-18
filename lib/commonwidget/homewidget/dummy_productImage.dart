@@ -9,32 +9,42 @@ class DummyProductImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: [
-              Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0.sp),
-                  child: DummyContainer(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.7,
-                  )),
-              Positioned(
-                bottom: 30.sp,
-                right: 16.sp,
-                child: DummyContainer(
-                  width: MediaQuery.of(context).size.width,
-                  height: 30.sp,
-                ),
-              )
-            ],
-          ),
+        Padding(
+          padding:
+              EdgeInsets.only(top: MediaQuery.sizeOf(context).height / 2.sp),
+          child: Align(
+              alignment: Alignment.center, child: CircularProgressIndicator()),
         ),
-        SizedBox(
-          height: 12.sp,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Stack(
+                children: [
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 0.sp),
+                      child: DummyContainer(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.7,
+                      )),
+                  Positioned(
+                    bottom: 30.sp,
+                    right: 16.sp,
+                    child: DummyContainer(
+                      width: 60.sp,
+                      height: 30.sp,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 12.sp,
+            ),
+          ],
         ),
       ],
     );

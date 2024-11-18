@@ -155,6 +155,9 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                             GestureDetector(
                                               onTap: () async {
                                                 Get.to(ProductDetailsScreen(
+                                                    brandName: value
+                                                            .wishListProduct[
+                                                        index]["brand_name"],
                                                     productId:
                                                         value.wishListProduct[
                                                             index]["id"],

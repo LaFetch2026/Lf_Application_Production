@@ -272,6 +272,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                               builder: (BuildContext
                                                                       context) =>
                                                                   ProductDetailsScreen(
+                                                                      brandName:
+                                                                          product[
+                                                                                  "product"]
+                                                                              [
+                                                                              "brand_name"],
                                                                       productId:
                                                                           product["product"]
                                                                               [
@@ -391,6 +396,10 @@ class SearchScreenState extends State<SearchScreen> {
                                                           Navigator.of(context)
                                                               .push(MaterialPageRoute(
                                                                   builder: (BuildContext context) => CategoryProductScreen(
+                                                                      categoryName:
+                                                                          productController.mostSeachList[index]
+                                                                              [
+                                                                              "name"],
                                                                       categoryId:
                                                                           productController.mostSeachList[index]
                                                                               [
@@ -860,7 +869,7 @@ class SearchScreenState extends State<SearchScreen> {
                                     visibleExpress: false,
                                     textColor: bottomnavBack,
                                     fontFamily: "Franklin Gothic Regular",
-                                    onPressed: (p0) async {
+                                    onPressed: (p0, p1) async {
                                       if (isSearch) {
                                       } else {
                                         Navigator.of(context)
@@ -868,6 +877,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                 builder:
                                                     (BuildContext context) =>
                                                         ProductDetailsScreen(
+                                                            brandName: p1,
                                                             productId: p0,
                                                             type: "add")))
                                             .then((value) => setState(
@@ -1086,6 +1096,10 @@ class SearchScreenState extends State<SearchScreen> {
                                                             builder: (BuildContext
                                                                     context) =>
                                                                 ProductDetailsScreen(
+                                                                    brandName: controller
+                                                                            .searchList[index]
+                                                                        [
+                                                                        "brand_name"],
                                                                     productId:
                                                                         controller.searchList[index]
                                                                             [

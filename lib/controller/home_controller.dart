@@ -14,7 +14,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 class HomeController extends BaseController {
   RxBool isBanner1 = false.obs;
   RxBool isCity = false.obs;
-  RxBool istags = false.obs;
+  // RxBool istags = false.obs;
   RxBool isBanner2 = false.obs;
   RxBool isCategory = false.obs;
   RxString playerId = "".obs;
@@ -22,7 +22,7 @@ class HomeController extends BaseController {
   String devicename = "";
   String platform = "";
   RxInt gender_Type = 0.obs;
-  List tagsList = [].obs;
+  // List tagsList = [].obs;
   List banner2List = [].obs;
   List cityList = [].obs;
   List banner1List = [].obs;
@@ -33,12 +33,12 @@ class HomeController extends BaseController {
   List categoryList = [].obs;
   RxInt currentPage = 0.obs;
   List banners = [].obs;
-  RxBool loadMore = false.obs;
-  RxBool hasnextpage = true.obs;
-  RxInt page = 1.obs;
+  // RxBool loadMore = false.obs;
+  // RxBool hasnextpage = true.obs;
+  // RxInt page = 1.obs;
   RxBool IsAnimateTag = true.obs;
   RxInt tagId = 0.obs;
-  RxInt current = 0.obs;
+  // RxInt current = 0.obs;
   ScrollController tagsController = ScrollController();
   ScrollController discountScreenController = ScrollController();
 
@@ -73,7 +73,7 @@ class HomeController extends BaseController {
     }
   }
 
-  getTagsData(int genderType) async {
+  /*  getTagsData(int genderType) async {
     istags.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -108,7 +108,7 @@ class HomeController extends BaseController {
     }
     istags.value = false;
   }
-
+ */
   getConfigurationData() async {
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -140,7 +140,7 @@ class HomeController extends BaseController {
     }
   }
 
-  fetchMoreTagsData(int genderType) async {
+  /*  fetchMoreTagsData(int genderType) async {
     if (hasnextpage.value == true &&
         istags.value == false &&
         loadMore.value == false) {
@@ -184,7 +184,7 @@ class HomeController extends BaseController {
       loadMore.value = false;
     }
   }
-
+ */
   getCitiesData() async {
     isCity.value = true;
     final prefs = await SharedPreferences.getInstance();

@@ -104,6 +104,10 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                         builder: (BuildContext
                                                                 context) =>
                                                             ProductDetailsScreen(
+                                                                brandName: productController
+                                                                            .productExpressBrandList[
+                                                                        index][
+                                                                    "brand_name"],
                                                                 productId: productController
                                                                         .productExpressBrandList[
                                                                     index]["id"],

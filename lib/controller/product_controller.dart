@@ -16,6 +16,7 @@ class ProductController extends BaseController {
   RxBool isProduct = false.obs;
   RxBool isFilter = false.obs;
   RxBool isMostSearch = false.obs;
+  RxBool istags = false.obs;
   RxBool isCategoryProduct = false.obs;
   RxBool istagsProduct = false.obs;
   RxBool isBannerTag = false.obs;
@@ -30,6 +31,7 @@ class ProductController extends BaseController {
   RxBool isFrequentlyBought = false.obs;
   RxInt currentpage = 0.obs;
   RxInt inventoryId = 0.obs;
+  RxInt tagId = 0.obs;
   RxInt sizeInventoryId = 0.obs;
   RxInt colorInventoryId = 0.obs;
   RxInt fabricInventoryId = 0.obs;
@@ -40,6 +42,7 @@ class ProductController extends BaseController {
   dynamic compositionDetails = "".obs;
   dynamic returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
+  List tagsList = [].obs;
   List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
   List productList = [].obs;
@@ -51,6 +54,7 @@ class ProductController extends BaseController {
   RxInt total = 0.obs;
   RxInt curr = 0.obs;
   RxInt index = 0.obs;
+  RxInt current = 0.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
   List sizeInventoryList = [].obs;
@@ -62,6 +66,9 @@ class ProductController extends BaseController {
   final pincodeController = TextEditingController();
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
+  RxBool homeTagsloadMore = false.obs;
+  RxBool homeTagshasnextpage = true.obs;
+  RxInt homeTagsPage = 1.obs;
   RxBool filterEnable = false.obs;
   RxBool filterExpressEnable = false.obs;
   RxInt page = 1.obs;
@@ -103,6 +110,7 @@ class ProductController extends BaseController {
   RxBool recommendedHasnextpage = true.obs;
   RxInt recommendedPage = 1.obs;
   ScrollController bestSellerController = ScrollController();
+  ScrollController tagsController = ScrollController();
   RxBool bestSellerLoadMore = false.obs;
   RxBool bestSellerHasnextpage = true.obs;
   RxInt bestSellerPage = 1.obs;
@@ -1844,6 +1852,91 @@ class ProductController extends BaseController {
       }
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  getTagsData(int genderType) async {
+    istags.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/tags?gender_type=$genderType"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          tagsList = responseData["data"];
+          if (tagsList.isNotEmpty) {
+            tagId.value = tagsList[0]["id"];
+            tagProductList.clear();
+            expressProductList.clear();
+            getExpressProductData(tagId.value, genderType);
+            getTagsProductData(tagId.value, genderType, 0);
+          }
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get tags failed ${response.statusCode}");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    istags.value = false;
+  }
+
+  fetchMoreTagsData(int genderType) async {
+    if (homeTagshasnextpage.value == true &&
+        istags.value == false &&
+        homeTagsloadMore.value == false) {
+      homeTagsloadMore.value = true;
+      homeTagsPage.value += 1;
+      print(homeTagsPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/tags?page=${homeTagsPage.value}&gender_type=$genderType"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              tagsList.addAll(responseData['data']);
+            } else {
+              homeTagshasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch tags failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      homeTagsloadMore.value = false;
     }
   }
 }

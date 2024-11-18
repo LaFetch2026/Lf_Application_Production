@@ -18,7 +18,7 @@ class HorizontalHomeList extends StatelessWidget {
   final Color textColor;
   final double leftPadding;
   final ScrollController controller;
-  final Function(int)? onPressed;
+  final Function(int, String)? onPressed;
   final Function? onPressedExpress;
   final Function(int, int)? onPressedHeart;
 
@@ -74,7 +74,8 @@ class HorizontalHomeList extends StatelessWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                onPressed?.call(list[index]["id"]);
+                                onPressed?.call(list[index]["id"],
+                                    list[index]["brand_name"]);
                               },
                               child: AnimatedContainer(
                                 duration: const Duration(milliseconds: 300),

@@ -220,6 +220,10 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       builder: (BuildContext
                                                               context) =>
                                                           ProductDetailsScreen(
+                                                              brandName: productController
+                                                                      .productCategoryList[index]
+                                                                  [
+                                                                  "brand_name"],
                                                               productId: productController
                                                                       .productCategoryList[
                                                                   index]["id"],

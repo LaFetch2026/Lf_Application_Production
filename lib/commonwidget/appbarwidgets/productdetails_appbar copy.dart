@@ -1,32 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
-class BackButtonAppbar extends StatelessWidget {
+class ProductdetailsAppbar extends StatelessWidget {
   final String text;
-  final bool threeDot;
-  final String icon;
-  final Function? onPressedThreeDot;
-  final Color backgroundColor;
-
-  const BackButtonAppbar(
-      {Key? key,
-      required this.text,
-      required this.threeDot,
-      required this.icon,
-      this.backgroundColor = whiteTextColor,
-      this.onPressedThreeDot})
-      : super(key: key);
+  const ProductdetailsAppbar({
+    required this.text,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 90.sp,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(color: backgroundColor),
+      decoration: BoxDecoration(color: whiteTextColor),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(left: 6.sp, right: 16.sp),
@@ -47,34 +37,28 @@ class BackButtonAppbar extends StatelessWidget {
                 ),
               ),
               Padding(
+                padding: EdgeInsets.only(top: 40.sp, left: 10.sp, right: 20.sp),
+                child: Container(
+                  width: 30.0,
+                  height: 30.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(appLogoImage),
+                    ),
+                  ),
+                  child: null,
+                ),
+              ),
+              Padding(
                 padding: EdgeInsets.only(top: 40.sp),
                 child: AppText(
                   text: text,
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: appbarText,
-                  fontSize: 22,
-                ),
-              ),
-              const Expanded(
-                child: SizedBox(
-                  height: 0,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 40.sp),
-                child: Visibility(
-                  visible: threeDot,
-                  child: GestureDetector(
-                    onTap: () {
-                      onPressedThreeDot?.call();
-                    },
-                    child: ImageIcon(
-                      AssetImage(icon),
-                      color: appbarText,
-                      size: 20.sp,
-                    ),
-                  ),
+                  fontSize: 16,
                 ),
               ),
             ],
