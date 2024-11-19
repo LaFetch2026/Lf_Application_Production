@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-
+import 'dart:io';
 //import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../controller/home_controller.dart';
 import '../utils/constants.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'cartscreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.cityList.clear();
       getPrefrenceValue();
+      checkUserConnection();
     });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getCitiesData());
@@ -45,6 +47,18 @@ class HomeScreenState extends State<HomeScreen> {
     });
     initPlatformState();
     super.initState();
+  }
+
+   static Future checkUserConnection() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      getSnackBar("Please turn on internet");
+      return false;
+    }
   }
 
   Future getPrefrenceValue() async {
