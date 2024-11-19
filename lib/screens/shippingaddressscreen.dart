@@ -294,6 +294,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             padding: EdgeInsets.only(top: 10.sp),
                             child: NumberWidget(
                                 readonly: false,
+                                login: false,
+                                onPressedLogin: () {},
                                 controller: shipController.phoneController),
                           ),
                           Padding(

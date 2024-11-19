@@ -124,6 +124,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       () => Padding(
                         padding: EdgeInsets.only(top: 10.sp),
                         child: NumberWidget(
+                            login: false,
+                            onPressedLogin: () {},
                             readonly: profileController.isEditNumber.value,
                             controller: profileController.phoneController),
                       ),

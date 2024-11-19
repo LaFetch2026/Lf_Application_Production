@@ -7,11 +7,15 @@ import '../app_text.dart';
 class NumberWidget extends StatelessWidget {
   final TextEditingController controller;
   final bool readonly;
+  final bool login;
+  final Function onPressedLogin;
 
   const NumberWidget({
     Key? key,
     required this.controller,
     required this.readonly,
+    required this.login,
+    required this.onPressedLogin,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,11 @@ class NumberWidget extends StatelessWidget {
           readOnly: readonly,
           keyboardType: TextInputType.number,
           maxLength: 10,
+          onChanged: (value) {
+            if (value.length == 10 && login == true) {
+              onPressedLogin.call();
+            }
+          },
           style: const TextStyle(color: textColor),
           decoration: InputDecoration(
             filled: true,

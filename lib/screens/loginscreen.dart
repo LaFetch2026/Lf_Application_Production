@@ -222,6 +222,24 @@ class LoginScreenState extends State<LoginScreen> {
                         padding: EdgeInsets.symmetric(vertical: 10.sp),
                         child: NumberWidget(
                             readonly: false,
+                            login: true,
+                            onPressedLogin: () async {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              if (loginController.checkNumbervalidation(
+                                  loginController.phoneNumberLogin.text
+                                      .toString()
+                                      .trim())) {
+                                loginController.number.value =
+                                    "+91${loginController.phoneNumberLogin.text.toString().trim()}";
+                                loginController.callRegisterAccount();
+                                await analytics.logEvent(
+                                  name: 'signin_phonelogin',
+                                  parameters: <String, Object>{
+                                    'page_name': 'signin_phonelogin',
+                                  },
+                                );
+                              }
+                            },
                             controller: loginController.phoneNumberLogin),
                       ),
                       Obx(
@@ -339,6 +357,24 @@ class LoginScreenState extends State<LoginScreen> {
                         padding: EdgeInsets.symmetric(vertical: 10.sp),
                         child: NumberWidget(
                             readonly: false,
+                            login: true,
+                            onPressedLogin: () async {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              if (loginController.checkNumbervalidation(
+                                  loginController.phoneNumberRegister.text
+                                      .toString()
+                                      .trim())) {
+                                loginController.number.value =
+                                    "+91${loginController.phoneNumberRegister.text.toString().trim()}";
+                                loginController.callRegisterAccount();
+                                await analytics.logEvent(
+                                  name: 'signup_phonelogin',
+                                  parameters: <String, Object>{
+                                    'page_name': 'signup_phonelogin',
+                                  },
+                                );
+                              }
+                            },
                             controller: loginController.phoneNumberRegister),
                       ),
                       Obx(
