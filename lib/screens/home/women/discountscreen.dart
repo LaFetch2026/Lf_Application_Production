@@ -67,7 +67,7 @@ class DiscountScreenState extends State<DiscountScreen> {
         productController.update();
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /* WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.discountScreenController.addListener(() {
         print(homeController
             .discountScreenController.position.userScrollDirection);
@@ -82,7 +82,7 @@ class DiscountScreenState extends State<DiscountScreen> {
           homeController.IsAnimateTag.value = true;
         }
       });
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;
@@ -498,7 +498,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             Obx(
               () => homeController.isCategory.value
                   ? const DummyProductList(text: "Popular Categories")
-                  : homeController.categoryList.isEmpty
+                  : homeController.categoryList.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

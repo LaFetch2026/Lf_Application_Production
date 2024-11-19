@@ -101,7 +101,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                       )),
                       Tab(
                           child: Text(
-                        "Kids",
+                        "Accessories",
                         style: TextStyle(
                             fontSize: 14.sp,
                             fontFamily: "Franklin Gothic",
@@ -128,7 +128,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                       type: 2,
                     ),
                     WomenCatalogScreen(
-                      categorytext: "kids",
+                      categorytext: "accessories",
                       type: 1,
                     ),
                   ]),

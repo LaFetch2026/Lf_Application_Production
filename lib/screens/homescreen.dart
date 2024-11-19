@@ -38,8 +38,8 @@ class HomeScreenState extends State<HomeScreen> {
       getPrefrenceValue();
       checkUserConnection();
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getCitiesData());
+    /* WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getCitiesData()); */
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getTagsData(3)); */
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -49,7 +49,7 @@ class HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-   static Future checkUserConnection() async {
+  static Future checkUserConnection() async {
     try {
       final result = await InternetAddress.lookup('example.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -307,7 +307,7 @@ class HomeScreenState extends State<HomeScreen> {
                             type = "Men";
                             //  homeController.getTagsData(2);
                           } else {
-                            type = "Kids";
+                            type = "Accessories";
                             //  homeController.getTagsData(1);
                           }
                           await analytics.logEvent(
@@ -338,7 +338,7 @@ class HomeScreenState extends State<HomeScreen> {
                           )),
                           Tab(
                               child: Text(
-                            "Kids",
+                            "Accessories",
                             style: TextStyle(
                                 fontSize: 14.sp,
                                 fontFamily: "Franklin Gothic",
