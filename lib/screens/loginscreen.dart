@@ -255,7 +255,7 @@ class LoginScreenState extends State<LoginScreen> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 40.sp),
                         child: MultipleTextWidget(
-                          fontSize: 11.sp,
+                          fontSize: 10.sp,
                           text1: "By continuing, I agree to the",
                           text2: " Terms of Use",
                           text3: " and",
@@ -379,7 +379,7 @@ class LoginScreenState extends State<LoginScreen> {
                               "https://la-fetch.com/terms-and-conditions/"));
                         },
                         text4: "",
-                        fontSize: 12.sp,
+                        fontSize: 11.sp,
                       ),
                       Padding(
                         padding: EdgeInsets.only(bottom: 40.sp),

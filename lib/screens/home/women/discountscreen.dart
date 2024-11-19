@@ -498,310 +498,310 @@ class DiscountScreenState extends State<DiscountScreen> {
             Obx(
               () => homeController.isCategory.value
                   ? const DummyProductList(text: "Popular Categories")
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
-                          child: AppText(
-                            text: "Popular Categories",
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: blackColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 16.sp,
-                              right: 16.sp,
-                              top: 15.sp,
-                              bottom: 10.sp),
-                          child: Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // ignore: prefer_is_empty
-                              homeController.categoryList.length >= 1
-                                  ? GestureDetector(
-                                      onTap: () async {
-                                        Get.to(CategoryProductScreen(
-                                            categoryName: homeController
-                                                .categoryList[0]["name"],
-                                            categoryId: homeController
-                                                .categoryList[0]["id"],
-                                            brandId: 0,
-                                            genderType: widget.genderType,
-                                            categoryList: [],
-                                            tagIds: const []));
-                                        await analytics.logEvent(
-                                          name: 'categories_home_page',
-                                          parameters: <String, Object>{
-                                            'page_name': 'categories_home_page',
-                                          },
-                                        );
-                                      },
-                                      child: Expanded(
-                                        flex: 1,
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          margin: EdgeInsets.only(right: 8.sp),
-                                          height: 180.sp,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              homeController.categoryList[0]
-                                                          ["thumbnail"] !=
-                                                      null
-                                                  ? SizedBox(
-                                                      height: 144.sp,
-                                                      width: (MediaQuery.sizeOf(
-                                                                      context)
-                                                                  .width /
-                                                              2) -
-                                                          20.sp,
-                                                      child: CachedNetworkImage(
-                                                        cacheManager:
-                                                            CacheManager(Config(
-                                                                "customCacheKey",
-                                                                stalePeriod:
-                                                                    const Duration(
-                                                                        days:
-                                                                            15),
-                                                                maxNrOfCacheObjects:
-                                                                    100)),
-                                                        fit: BoxFit.cover,
-                                                        imageUrl: homeController
-                                                                .categoryList[0]
-                                                            ["thumbnail"],
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                          downloadImage,
-                                                          fit: BoxFit.cover,
-                                                          height: 144.sp,
-                                                          width: (MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .width /
-                                                                  2) -
-                                                              20.sp,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Image.asset(
-                                                      dummyWishlistImage,
-                                                      height: 144.sp,
-                                                      width: (MediaQuery.sizeOf(
-                                                                      context)
-                                                                  .width /
-                                                              2) -
-                                                          20.sp,
-                                                      fit: BoxFit.cover),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.sp,
-                                                    vertical: 5.sp),
-                                                child: AppText(
-                                                  text: homeController
-                                                              .categoryList[0]
-                                                          ["name"] ??
-                                                      "",
-                                                  color: greyTextColor,
-                                                  fontSize: 10,
-                                                  maxLines: 2,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox(
-                                      width: 0,
-                                    ),
-                              homeController.categoryList.length >= 2
-                                  ? GestureDetector(
-                                      onTap: () async {
-                                        Get.to(CategoryProductScreen(
-                                            categoryName: homeController
-                                                .categoryList[1]["name"],
-                                            categoryId: homeController
-                                                .categoryList[1]["id"],
-                                            brandId: 0,
-                                            categoryList: [],
-                                            genderType: widget.genderType,
-                                            tagIds: const []));
-                                        await analytics.logEvent(
-                                          name: 'categories_home_page',
-                                          parameters: <String, Object>{
-                                            'page_name': 'categories_home_page',
-                                          },
-                                        );
-                                      },
-                                      child: Expanded(
-                                        flex: 1,
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          height: 180.sp,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              homeController.categoryList[1]
-                                                          ["thumbnail"] !=
-                                                      null
-                                                  ? SizedBox(
-                                                      height: 144.sp,
-                                                      width: (MediaQuery.sizeOf(
-                                                                      context)
-                                                                  .width /
-                                                              2) -
-                                                          20.sp,
-                                                      child: CachedNetworkImage(
-                                                        cacheManager:
-                                                            CacheManager(Config(
-                                                                "customCacheKey",
-                                                                stalePeriod:
-                                                                    const Duration(
-                                                                        days:
-                                                                            15),
-                                                                maxNrOfCacheObjects:
-                                                                    100)),
-                                                        fit: BoxFit.cover,
-                                                        imageUrl: homeController
-                                                                .categoryList[1]
-                                                            ["thumbnail"],
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                          downloadImage,
-                                                          fit: BoxFit.cover,
-                                                          height: 144.sp,
-                                                          width: (MediaQuery.sizeOf(
-                                                                          context)
-                                                                      .width /
-                                                                  2) -
-                                                              20.sp,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  : Image.asset(
-                                                      dummyWishlistImage,
-                                                      height: 144.sp,
-                                                      width: (MediaQuery.sizeOf(
-                                                                      context)
-                                                                  .width /
-                                                              2) -
-                                                          20.sp,
-                                                      fit: BoxFit.cover),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.sp,
-                                                    vertical: 5.sp),
-                                                child: AppText(
-                                                  text: homeController
-                                                              .categoryList[1]
-                                                          ["name"] ??
-                                                      "",
-                                                  color: greyTextColor,
-                                                  fontSize: 10,
-                                                  maxLines: 2,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox(
-                                      width: 0,
-                                    ),
-                            ],
-                          ),
-                        ),
-                        homeController.categoryList.length >= 3
-                            ? Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 16.sp),
-                                child: Center(
-                                  child: GridView.count(
-                                    shrinkWrap: true,
-                                    crossAxisCount: 4,
-                                    scrollDirection: Axis.vertical,
-                                    padding: EdgeInsets.zero,
-                                    childAspectRatio: 0.7,
-                                    physics: const ScrollPhysics(),
-                                    crossAxisSpacing: 5.sp,
-                                    mainAxisSpacing: 1.sp,
-                                    children: List.generate(
-                                      homeController.categoryList.length - 2,
-                                      (index) {
-                                        return Column(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () async {
-                                                Get.to(CategoryProductScreen(
-                                                    categoryName: homeController
-                                                            .categoryList[
-                                                        index + 2]["name"],
-                                                    categoryId: homeController
-                                                            .categoryList[
-                                                        index + 2]["id"],
-                                                    brandId: 0,
-                                                    categoryList: [],
-                                                    genderType:
-                                                        widget.genderType,
-                                                    tagIds: const []));
-                                                await analytics.logEvent(
-                                                  name: 'categories_home_page',
-                                                  parameters: <String, Object>{
-                                                    'page_name':
-                                                        'categories_home_page',
-                                                  },
-                                                );
+                  : homeController.categoryList.isEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
+                              child: AppText(
+                                text: "Popular Categories",
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: blackColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  right: 16.sp,
+                                  top: 15.sp,
+                                  bottom: 10.sp),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  homeController.categoryList.length >= 1
+                                      ? GestureDetector(
+                                          onTap: () async {
+                                            Get.to(CategoryProductScreen(
+                                                categoryName: homeController
+                                                    .categoryList[0]["name"],
+                                                categoryId: homeController
+                                                    .categoryList[0]["id"],
+                                                brandId: 0,
+                                                genderType: widget.genderType,
+                                                categoryList: [],
+                                                tagIds: const []));
+                                            await analytics.logEvent(
+                                              name: 'categories_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'categories_home_page',
                                               },
-                                              child: SizedBox(
-                                                height: 110.sp,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Center(
-                                                      child: homeController
-                                                                          .categoryList[
-                                                                      index + 2]
-                                                                  [
-                                                                  "thumbnail"] !=
-                                                              null
-                                                          ? SizedBox(
-                                                              width: 80.sp,
-                                                              height: 72.sp,
-                                                              child:
-                                                                  CachedNetworkImage(
-                                                                cacheManager: CacheManager(Config(
-                                                                    "customCacheKey",
-                                                                    stalePeriod:
-                                                                        const Duration(
+                                            );
+                                          },
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            margin:
+                                                EdgeInsets.only(right: 8.sp),
+                                            height: 180.sp,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                homeController.categoryList[0]
+                                                            ["thumbnail"] !=
+                                                        null
+                                                    ? SizedBox(
+                                                        height: 144.sp,
+                                                        width: (MediaQuery.sizeOf(
+                                                                        context)
+                                                                    .width /
+                                                                2) -
+                                                            20.sp,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          cacheManager: CacheManager(Config(
+                                                              "customCacheKey",
+                                                              stalePeriod:
+                                                                  const Duration(
+                                                                      days: 15),
+                                                              maxNrOfCacheObjects:
+                                                                  100)),
+                                                          fit: BoxFit.cover,
+                                                          imageUrl: homeController
+                                                                  .categoryList[
+                                                              0]["thumbnail"],
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Image.asset(
+                                                            downloadImage,
+                                                            fit: BoxFit.cover,
+                                                            height: 144.sp,
+                                                            width: (MediaQuery.sizeOf(
+                                                                            context)
+                                                                        .width /
+                                                                    2) -
+                                                                20.sp,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Image.asset(
+                                                        dummyWishlistImage,
+                                                        height: 144.sp,
+                                                        width: (MediaQuery.sizeOf(
+                                                                        context)
+                                                                    .width /
+                                                                2) -
+                                                            20.sp,
+                                                        fit: BoxFit.cover),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp,
+                                                      vertical: 5.sp),
+                                                  child: AppText(
+                                                    text: homeController
+                                                                .categoryList[0]
+                                                            ["name"] ??
+                                                        "",
+                                                    color: greyTextColor,
+                                                    fontSize: 10,
+                                                    maxLines: 2,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox(
+                                          width: 0,
+                                        ),
+                                  homeController.categoryList.length >= 2
+                                      ? GestureDetector(
+                                          onTap: () async {
+                                            Get.to(CategoryProductScreen(
+                                                categoryName: homeController
+                                                    .categoryList[1]["name"],
+                                                categoryId: homeController
+                                                    .categoryList[1]["id"],
+                                                brandId: 0,
+                                                categoryList: [],
+                                                genderType: widget.genderType,
+                                                tagIds: const []));
+                                            await analytics.logEvent(
+                                              name: 'categories_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'categories_home_page',
+                                              },
+                                            );
+                                          },
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            height: 180.sp,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                homeController.categoryList[1]
+                                                            ["thumbnail"] !=
+                                                        null
+                                                    ? SizedBox(
+                                                        height: 144.sp,
+                                                        width: (MediaQuery.sizeOf(
+                                                                        context)
+                                                                    .width /
+                                                                2) -
+                                                            20.sp,
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          cacheManager: CacheManager(Config(
+                                                              "customCacheKey",
+                                                              stalePeriod:
+                                                                  const Duration(
+                                                                      days: 15),
+                                                              maxNrOfCacheObjects:
+                                                                  100)),
+                                                          fit: BoxFit.cover,
+                                                          imageUrl: homeController
+                                                                  .categoryList[
+                                                              1]["thumbnail"],
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Image.asset(
+                                                            downloadImage,
+                                                            fit: BoxFit.cover,
+                                                            height: 144.sp,
+                                                            width: (MediaQuery.sizeOf(
+                                                                            context)
+                                                                        .width /
+                                                                    2) -
+                                                                20.sp,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Image.asset(
+                                                        dummyWishlistImage,
+                                                        height: 144.sp,
+                                                        width: (MediaQuery.sizeOf(
+                                                                        context)
+                                                                    .width /
+                                                                2) -
+                                                            20.sp,
+                                                        fit: BoxFit.cover),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp,
+                                                      vertical: 5.sp),
+                                                  child: AppText(
+                                                    text: homeController
+                                                                .categoryList[1]
+                                                            ["name"] ??
+                                                        "",
+                                                    color: greyTextColor,
+                                                    fontSize: 10,
+                                                    maxLines: 2,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox(
+                                          width: 0,
+                                        ),
+                                ],
+                              ),
+                            ),
+                            homeController.categoryList.length >= 3
+                                ? Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 16.sp),
+                                    child: Center(
+                                      child: GridView.count(
+                                        shrinkWrap: true,
+                                        crossAxisCount: 4,
+                                        scrollDirection: Axis.vertical,
+                                        padding: EdgeInsets.zero,
+                                        childAspectRatio: 0.7,
+                                        physics: const ScrollPhysics(),
+                                        crossAxisSpacing: 5.sp,
+                                        mainAxisSpacing: 1.sp,
+                                        children: List.generate(
+                                          homeController.categoryList.length -
+                                              2,
+                                          (index) {
+                                            return Column(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    Get.to(CategoryProductScreen(
+                                                        categoryName:
+                                                            homeController
+                                                                    .categoryList[
+                                                                index +
+                                                                    2]["name"],
+                                                        categoryId: homeController
+                                                                .categoryList[
+                                                            index + 2]["id"],
+                                                        brandId: 0,
+                                                        categoryList: [],
+                                                        genderType:
+                                                            widget.genderType,
+                                                        tagIds: const []));
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'categories_home_page',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'categories_home_page',
+                                                      },
+                                                    );
+                                                  },
+                                                  child: SizedBox(
+                                                    height: 110.sp,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Center(
+                                                          child: homeController
+                                                                              .categoryList[
+                                                                          index +
+                                                                              2]
+                                                                      [
+                                                                      "thumbnail"] !=
+                                                                  null
+                                                              ? SizedBox(
+                                                                  width: 80.sp,
+                                                                  height: 72.sp,
+                                                                  child:
+                                                                      CachedNetworkImage(
+                                                                    cacheManager: CacheManager(Config(
+                                                                        "customCacheKey",
+                                                                        stalePeriod: const Duration(
                                                                             days:
                                                                                 15),
-                                                                    maxNrOfCacheObjects:
-                                                                        100)),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                imageUrl: homeController
+                                                                        maxNrOfCacheObjects:
+                                                                            100)),
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    imageUrl: homeController
                                                                             .categoryList[
                                                                         index +
-                                                                            2][
-                                                                    "thumbnail"],
-                                                                /*   progressIndicatorBuilder:
+                                                                            2]["thumbnail"],
+                                                                    /*   progressIndicatorBuilder:
                                                                     (context,
                                                                             url,
                                                                             downloadProgress) =>
@@ -810,63 +810,73 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                                       value: downloadProgress
                                                                           .progress),
                                                                 ), */
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                                  downloadImage,
-                                                                  fit: BoxFit
-                                                                      .cover,
+                                                                    errorWidget: (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Image
+                                                                            .asset(
+                                                                      downloadImage,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      width:
+                                                                          80.sp,
+                                                                      height:
+                                                                          72.sp,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : Image.asset(
+                                                                  dummyWishlistImage,
                                                                   width: 80.sp,
                                                                   height: 72.sp,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : Image.asset(
-                                                              dummyWishlistImage,
-                                                              width: 80.sp,
-                                                              height: 72.sp,
-                                                              fit:
-                                                                  BoxFit.cover),
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10.sp,
+                                                                  vertical:
+                                                                      5.sp),
+                                                          child: AppText(
+                                                            text: homeController
+                                                                            .categoryList[
+                                                                        index +
+                                                                            2]
+                                                                    ["name"] ??
+                                                                "",
+                                                            color:
+                                                                greyTextColor,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            fontSize: 10,
+                                                            maxLines: 2,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10.sp,
-                                                              vertical: 5.sp),
-                                                      child: AppText(
-                                                        text: homeController
-                                                                    .categoryList[
-                                                                index +
-                                                                    2]["name"] ??
-                                                            "",
-                                                        color: greyTextColor,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        fontSize: 10,
-                                                        maxLines: 2,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
                                     ),
+                                  )
+                                : const SizedBox(
+                                    width: 0,
                                   ),
-                                ),
-                              )
-                            : const SizedBox(
-                                width: 0,
-                              ),
-                      ],
-                    ),
+                          ],
+                        )
+                      : SizedBox(
+                          height: 0,
+                        ),
             ),
             Obx(
               () => homeController.isBanner2.value
