@@ -92,6 +92,10 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
           print("abc $otpcode");
           otpController.controller.value.set(otpcode.split(""));
           setState(() {});
+             if (otpController
+                              .checkOtpvalidation(otpController.otp.value)) {
+                            otpController.callVerifyOtp(widget.phoneMunber);
+                          }
         } else {
           print("error");
         }
