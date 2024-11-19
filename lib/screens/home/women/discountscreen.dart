@@ -409,7 +409,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     : const SizedBox(
                         height: 0,
                       )),
-            Padding(
+            /* Padding(
               padding: EdgeInsets.symmetric(vertical: 10.sp),
               child: Container(
                 width: double.infinity,
@@ -454,6 +454,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                     : SizedBox(
                         height: 0,
                       )),
+           */
             Obx(() => productController.istagsProduct.value
                 ? const DummyProductList(text: "We think you might also like")
                 : productController.tagProductList.isNotEmpty
