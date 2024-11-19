@@ -78,13 +78,13 @@ class LoginController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 201) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
@@ -119,13 +119,13 @@ class LoginController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 201) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        //  getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
