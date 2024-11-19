@@ -217,9 +217,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 AppText(
-                                  text: "Brand Style Catalog",
+                                  text: "Explore all our Brands",
                                   color: colorPrimary,
-                                  fontSize: 22,
+                                  fontSize: 20,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
