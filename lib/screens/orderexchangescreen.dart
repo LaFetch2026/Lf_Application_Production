@@ -1054,7 +1054,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
-                                                                              text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
+                                                                                text:  value.orderList[index]["delivered_at"],
+                                                                             // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
                                                                               color: greyTextColor,
                                                                               fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
@@ -1068,7 +1069,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
-                                                                              text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
+                                                                              text:    value.orderList[index]["estimated_delivery_at"],
+                                                                             // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
                                                                               color: greyTextColor,
                                                                               fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
@@ -1082,7 +1084,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
-                                                                              text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
+                                                                                  text:value.orderList[index]["cancelled_at"],
+                                                                            //  text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
                                                                               color: greyTextColor,
                                                                               fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
@@ -2005,7 +2008,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]))}",
+                                                                                            text:val.orderList[index]["orders"][i]["delivered_at"],
+                                                                                           // text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]))}",
                                                                                             color: greyTextColor,
                                                                                             fontSize: 11,
                                                                                             fontFamily: "Franklin Gothic Regular",
@@ -2016,7 +2020,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).year}",
+                                                                                            text:val.orderList[index]["orders"][i]["estimated_delivery_at"],
+                                                                                           // text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).year}",
                                                                                             color: greyTextColor,
                                                                                             fontSize: 11,
                                                                                             fontFamily: "Franklin Gothic Regular",
@@ -2027,7 +2032,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).year}",
+                                                                                            text:val.orderList[index]["orders"][i]["cancelled_at"],
+                                                                                          //  text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).year}",
                                                                                             color: greyTextColor,
                                                                                             fontSize: 11,
                                                                                             fontFamily: "Franklin Gothic Regular",

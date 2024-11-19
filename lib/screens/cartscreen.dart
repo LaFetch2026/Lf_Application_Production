@@ -344,9 +344,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             },
                                                                           );
                                                                         },
-                                                                        child: Expanded(
-                                                                            flex: 1,
-                                                                            child: value.orderList[index]["product"] != null
+                                                                        child: value.orderList[index]["product"] != null
                                                                                 ? value.orderList[index]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["images"] != null
                                                                                     ? SizedBox(
                                                                                         height: 78.sp,
@@ -367,11 +365,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                         ),
                                                                                       )
                                                                                     : Image.asset(dummyWishlistImage, height: 78.sp, width: 64.sp, fit: BoxFit.cover)
-                                                                                : Image.asset(dummyWishlistImage, height: 78.sp, width: 64.sp, fit: BoxFit.cover)),
+                                                                                : Image.asset(dummyWishlistImage, height: 78.sp, width: 64.sp, fit: BoxFit.cover),
                                                                       ),
-                                                                      Expanded(
-                                                                        flex: 3,
-                                                                        child:
+                                                                     
                                                                             Padding(
                                                                           padding:
                                                                               EdgeInsets.only(left: 8.sp),
@@ -738,7 +734,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                        ),
+                                                                        
                                                                       ),
                                                                       GestureDetector(
                                                                         onTap:
@@ -811,12 +807,14 @@ class CartScreenState extends State<CartScreen> {
                                                       }),
                                                 ),
                                               )),
-                                        ],
+                                         ],
                                       ),
                                 productController.isProduct.value
                                     ? const DummyProductList(
                                         text: "You may also like")
-                                    : Container(
+                                    :  productController
+                                                                .productList.isNotEmpty?
+                                                                Container(
                                         color: whiteBack,
                                         child: Column(
                                           crossAxisAlignment:
@@ -1024,7 +1022,9 @@ class CartScreenState extends State<CartScreen> {
                                             ),
                                           ],
                                         ),
-                                      ),
+                                      ): SizedBox(
+                                  height: 0,
+                                ),
                                 const SizedBox(
                                   height: 8,
                                 ),

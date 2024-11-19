@@ -40,8 +40,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
           onTap: () {
             // Get.back();
           },
-          child: Expanded(
-            child: Column(
+          child:Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -152,7 +151,6 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                 ),
               ],
             ),
-          ),
         ),
       ),
     );
