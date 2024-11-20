@@ -17,6 +17,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
+import '../../../commonwidget/common_widgets.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -465,13 +466,32 @@ class DiscountScreenState extends State<DiscountScreen> {
                           height: 250.sp,
                           visibleExpress: false,
                           onPressed: (p0, p1) async {
-                            Get.to(
+                            /*   Get.to(
                               ProductDetailsScreen(
                                 productId: p0,
                                 type: "add",
                                 brandName: p1,
                               ),
                             )?.then((value) => setState(
+                                  () {
+                                    productController.tagsHasnextpage.value =
+                                        true;
+                                    productController.tagsLoadMore.value =
+                                        false;
+                                    productController.istagsProduct.value =
+                                        false;
+                                    productController.tagsPage.value = 1;
+                                  },
+                                )); */
+                            Navigator.push(
+                                context,
+                                scaleIn(
+                                  ProductDetailsScreen(
+                                    productId: p0,
+                                    type: "add",
+                                    brandName: p1,
+                                  ),
+                                )).then((value) => setState(
                                   () {
                                     productController.tagsHasnextpage.value =
                                         true;
@@ -524,7 +544,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   homeController.categoryList.length >= 1
                                       ? GestureDetector(
                                           onTap: () async {
-                                            Get.to(CategoryProductScreen(
+                                            /*  Get.to(CategoryProductScreen(
                                                 categoryName: homeController
                                                     .categoryList[0]["name"],
                                                 categoryId: homeController
@@ -532,7 +552,20 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                 brandId: 0,
                                                 genderType: widget.genderType,
                                                 categoryList: [],
-                                                tagIds: const []));
+                                                tagIds: const [])); */
+                                            Navigator.push(
+                                                context,
+                                                scaleIn(CategoryProductScreen(
+                                                    categoryName: homeController
+                                                            .categoryList[0]
+                                                        ["name"],
+                                                    categoryId: homeController
+                                                        .categoryList[0]["id"],
+                                                    brandId: 0,
+                                                    genderType:
+                                                        widget.genderType,
+                                                    categoryList: [],
+                                                    tagIds: const [])));
                                             await analytics.logEvent(
                                               name: 'categories_home_page',
                                               parameters: <String, Object>{

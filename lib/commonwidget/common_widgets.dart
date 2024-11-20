@@ -127,6 +127,25 @@ Widget getSmallButton(
               )));
 }
 
+Route scaleIn(Widget page) {
+  return PageRouteBuilder(
+    transitionDuration: const Duration(milliseconds: 200),
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    reverseTransitionDuration: const Duration(milliseconds: 100),
+    transitionsBuilder: (context, animation, secondaryAnimation, page) {
+      var begin = 0.0;
+      var end = 1.0;
+      var curve = Curves.bounceIn;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      return ScaleTransition(
+        scale: animation.drive(tween),
+        child: page,
+      );
+    },
+  );
+}
+
 Widget showDoubleBtnDailog(
     {Color btncolor = colorPrimary,
     text,
