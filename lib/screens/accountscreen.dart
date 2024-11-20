@@ -20,6 +20,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
+import 'bottomnavscreen.dart';
 
 class AccountScreen extends StatefulWidget {
   final Function? onPressed;
@@ -41,505 +42,518 @@ class AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: whiteTextColor,
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                AppText(
-                  text: "Profile",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: appbarText,
-                  fontSize: 22,
-                ),
-                const Expanded(
-                  child: SizedBox(
-                    height: 0,
+    return WillPopScope(
+      onWillPop: () async {
+        Get.offAll(const BottomNavScreen(
+          index: 0,
+        ));
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: whiteTextColor,
+        body: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AppText(
+                    text: "Profile",
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: appbarText,
+                    fontSize: 22,
                   ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    Get.to(const CartScreen());
-                    await analytics.logEvent(
-                      name: 'cart_page',
-                      parameters: <String, Object>{
-                        'page_name': 'cart_page',
-                      },
-                    );
-                  },
-                  child: SizedBox(
-                    height: 30.sp,
-                    width: 30.sp,
-                    child: CircleAvatar(
-                      backgroundColor: blackColor,
-                      child: ImageIcon(
-                        AssetImage(cartImage),
-                        color: whiteBorderColor,
-                        size: 20.sp,
+                  const Expanded(
+                    child: SizedBox(
+                      height: 0,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      Get.to(const CartScreen());
+                      await analytics.logEvent(
+                        name: 'cart_page',
+                        parameters: <String, Object>{
+                          'page_name': 'cart_page',
+                        },
+                      );
+                    },
+                    child: SizedBox(
+                      height: 30.sp,
+                      width: 30.sp,
+                      child: CircleAvatar(
+                        backgroundColor: blackColor,
+                        child: ImageIcon(
+                          AssetImage(cartImage),
+                          color: whiteBorderColor,
+                          size: 20.sp,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Obx(
-            () => controller.isProfile.value
-                ? DummyAccount()
-                : Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*   controller.profileDetails.isBlank
-                              ? const ProfilePicWidgets()
-                              : */
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.sp, vertical: 20.sp),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        AppText(
-                                          text: controller
-                                                  .profileDetails["name"] ??
-                                              "",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: blackColor,
-                                          fontSize: 28,
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 5.sp),
-                                          child: Row(
-                                            children: [
-                                              ImageIcon(
-                                                AssetImage(phoneImage),
-                                                color: greyTextColor,
-                                                size: 18.sp,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5.sp),
-                                                child: AppText(
-                                                  text:
-                                                      controller.profileDetails[
-                                                              "phone"] ??
-                                                          "",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: greyTextColor,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const Expanded(
-                                      child: SizedBox(
-                                        height: 0,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        EditProfileScreen(
-                                                          name: controller
-                                                                      .profileDetails[
-                                                                  "name"] ??
-                                                              "",
-                                                          email: controller
-                                                                      .profileDetails[
-                                                                  "email"] ??
-                                                              "",
-                                                          number: controller
-                                                                      .profileDetails[
-                                                                  "phone"] ??
-                                                              "",
-                                                          genderId: controller
-                                                                      .profileDetails[
-                                                                  "gender"] ??
-                                                              0,
-                                                        )))
-                                            .then((value) => setState(
-                                                  () {
-                                                    controller.getProfileData();
-                                                    controller.isEditNumber
-                                                        .value = true;
-                                                    controller.isPhoneNumber
-                                                        .value = false;
-                                                  },
-                                                ));
-                                        await analytics.logEvent(
-                                          name: 'edit_profile_page',
-                                          parameters: <String, Object>{
-                                            'page_name': 'edit_profile_page',
-                                          },
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 16.sp),
-                                        child: AppText(
-                                          text: "Edit",
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                          color: colorPrimary,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              /*  const SizedBox(
-                                height: 12,
-                              ),
-                              Container(
-                                color: backWhite,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16, top: 16, bottom: 16),
+            Obx(
+              () => controller.isProfile.value
+                  ? DummyAccount()
+                  : Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /*   controller.profileDetails.isBlank
+                                ? const ProfilePicWidgets()
+                                : */
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 20.sp),
                                   child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      const ImageIcon(
-                                        AssetImage(pointImage),
-                                        color: btnTextColor,
-                                        size: 24,
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          AppText(
+                                            text: controller
+                                                    .profileDetails["name"] ??
+                                                "",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: blackColor,
+                                            fontSize: 28,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 5.sp),
+                                            child: Row(
+                                              children: [
+                                                ImageIcon(
+                                                  AssetImage(phoneImage),
+                                                  color: greyTextColor,
+                                                  size: 18.sp,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 5.sp),
+                                                  child: AppText(
+                                                    text: controller
+                                                                .profileDetails[
+                                                            "phone"] ??
+                                                        "",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: greyTextColor,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        child: AppText(
-                                          text:
-                                              "${controller.profileDetails["reward_points"].toString()} Lafetch points",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: btnTextColor,
-                                          fontSize: 16.sp,
+                                      const Expanded(
+                                        child: SizedBox(
+                                          height: 0,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          EditProfileScreen(
+                                                            name: controller
+                                                                        .profileDetails[
+                                                                    "name"] ??
+                                                                "",
+                                                            email: controller
+                                                                        .profileDetails[
+                                                                    "email"] ??
+                                                                "",
+                                                            number: controller
+                                                                        .profileDetails[
+                                                                    "phone"] ??
+                                                                "",
+                                                            genderId: controller
+                                                                        .profileDetails[
+                                                                    "gender"] ??
+                                                                0,
+                                                          )))
+                                              .then((value) => setState(
+                                                    () {
+                                                      controller
+                                                          .getProfileData();
+                                                      controller.isEditNumber
+                                                          .value = true;
+                                                      controller.isPhoneNumber
+                                                          .value = false;
+                                                    },
+                                                  ));
+                                          await analytics.logEvent(
+                                            name: 'edit_profile_page',
+                                            parameters: <String, Object>{
+                                              'page_name': 'edit_profile_page',
+                                            },
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.only(bottom: 16.sp),
+                                          child: AppText(
+                                            text: "Edit",
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                            color: colorPrimary,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16, right: 16, top: 20, bottom: 20),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: whiteBack,
-                                          border: Border.all(
-                                              color: profileBorder, width: 1)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            top: 10,
-                                            bottom: 10),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(rewardsImage,
-                                                height: 40,
-                                                width: 40,
-                                                fit: BoxFit.cover),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5),
-                                              child: AppText(
-                                                text: "Rewards",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: btnTextColor,
-                                                fontSize: 14.sp,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const Expanded(
-                                      child: SizedBox(
-                                        width: 0,
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: whiteBack,
-                                          border: Border.all(
-                                              color: profileBorder, width: 1)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16,
-                                            right: 16,
-                                            top: 10,
-                                            bottom: 10),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(mysteryBoxImage,
-                                                height: 40,
-                                                width: 40,
-                                                fit: BoxFit.cover),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5),
-                                              child: AppText(
-                                                text: "Mystery Box",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: btnTextColor,
-                                                fontSize: 14.sp,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                /*  const SizedBox(
+                                  height: 12,
                                 ),
-                              ),
-                            */
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: 10.sp, left: 16.sp, right: 16.sp),
-                            child: AppText(
-                              text: "My Account",
-                              fontFamily: "Franklin Gothic Bold",
-                              fontWeight: FontWeight.w700,
-                              color: nameText,
-                              fontSize: 18,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              Get.to(const OrderExchangeScreen());
-                              await analytics.logEvent(
-                                name: 'order_page',
-                                parameters: <String, Object>{
-                                  'page_name': 'order_page',
-                                },
-                              );
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: 20.sp, left: 16.sp, right: 16.sp),
-                              child: AppText(
-                                text: "Orders & Exchanges",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: nameText,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              widget.onPressed?.call();
-                              await analytics.logEvent(
-                                name: 'wishlist_page',
-                                parameters: <String, Object>{
-                                  'page_name': 'wishlist_page',
-                                },
-                              );
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: 20.sp, left: 16.sp, right: 16.sp),
-                              child: AppText(
-                                text: "My Wishlist",
-                                fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
-                                color: nameText,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                          /*  controller.profileDetails.isEmpty
-                              ? const SizedBox(
-                                  height: 0,
-                                )
-                              : */
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Get.to(CustomerCareScreen());
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 20.sp, left: 16.sp, right: 16.sp),
-                                  child: AppText(
-                                    text: "Customer Care",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: nameText,
-                                    fontSize: 14,
+                                Container(
+                                  color: backWhite,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 16, right: 16, top: 16, bottom: 16),
+                                    child: Row(
+                                      children: [
+                                        const ImageIcon(
+                                          AssetImage(pointImage),
+                                          color: btnTextColor,
+                                          size: 24,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          child: AppText(
+                                            text:
+                                                "${controller.profileDetails["reward_points"].toString()} Lafetch points",
+                                            fontFamily: "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: btnTextColor,
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  Get.to(const SavedAddressScreen(
-                                    type: "address",
-                                  ));
-                                  await analytics.logEvent(
-                                    name: 'addresslist_page',
-                                    parameters: <String, Object>{
-                                      'page_name': 'addresslist_page',
-                                    },
-                                  );
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 20.sp, left: 16.sp, right: 16.sp),
-                                  child: AppText(
-                                    text: "Saved Addresses",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: nameText,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              /* GestureDetector(
-                                onTap: () {},
-                                child: Padding(
+                                Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 20, left: 16, right: 16),
-                                  child: AppText(
-                                    text: "Payments & Currencies",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: nameText,
-                                    fontSize: 14.sp,
+                                      left: 16, right: 16, top: 20, bottom: 20),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: whiteBack,
+                                            border: Border.all(
+                                                color: profileBorder, width: 1)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16,
+                                              right: 16,
+                                              top: 10,
+                                              bottom: 10),
+                                          child: Row(
+                                            children: [
+                                              Image.asset(rewardsImage,
+                                                  height: 40,
+                                                  width: 40,
+                                                  fit: BoxFit.cover),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                child: AppText(
+                                                  text: "Rewards",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: btnTextColor,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        child: SizedBox(
+                                          width: 0,
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: whiteBack,
+                                            border: Border.all(
+                                                color: profileBorder, width: 1)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 16,
+                                              right: 16,
+                                              top: 10,
+                                              bottom: 10),
+                                          child: Row(
+                                            children: [
+                                              Image.asset(mysteryBoxImage,
+                                                  height: 40,
+                                                  width: 40,
+                                                  fit: BoxFit.cover),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5),
+                                                child: AppText(
+                                                  text: "Mystery Box",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: btnTextColor,
+                                                  fontSize: 14.sp,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ), */
-                              SettingWidgets(
-                                onPressedNotification: () {
-                                  if (controller.profileDetails[
-                                          "order_notification_enabled"] ==
-                                      0) {
-                                    controller.isOrder.value = false;
-                                    controller.orderValue.value = 0;
-                                  } else {
-                                    controller.isOrder.value = true;
-                                    controller.orderValue.value = 1;
-                                  }
-                                  if (controller.profileDetails[
-                                          "offer_notification_enabled"] ==
-                                      0) {
-                                    controller.isOffer.value = false;
-                                    controller.offerValue.value = 0;
-                                  } else {
-                                    controller.isOffer.value = true;
-                                    controller.offerValue.value = 1;
-                                  }
-                                  if (controller.profileDetails[
-                                          "promotional_notification_enabled"] ==
-                                      0) {
-                                    controller.isPermotion.value = false;
-                                    controller.permotionValue.value = 0;
-                                  } else {
-                                    controller.isPermotion.value = true;
-                                    controller.permotionValue.value = 1;
-                                  }
-                                  Get.to(NotificationSettingScreen());
-                                },
+                              */
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 10.sp, left: 16.sp, right: 16.sp),
+                              child: AppText(
+                                text: "My Account",
+                                fontFamily: "Franklin Gothic Bold",
+                                fontWeight: FontWeight.w700,
+                                color: nameText,
+                                fontSize: 18,
                               ),
-                            ],
-                          ),
-                          SupportWidgets(
-                            visibilty: false,
-                            onPressedAboutUs: () {
-                              launchUrl(
-                                  Uri.parse("https://la-fetch.com/about-us/"));
-                            },
-                            onPressedTC: () {
-                              launchUrl(Uri.parse(
-                                  "https://la-fetch.com/terms-and-conditions/"));
-                            },
-                            onPressedPrivacy: () {
-                              launchUrl(Uri.parse(
-                                  "https://la-fetch.com/privacy-policy/"));
-                            },
-                          ),
-                          /*   controller.profileDetails.isEmpty
-                              ? const SizedBox(
-                                  height: 0,
-                                )
-                              : */
-                          Padding(
-                            padding: EdgeInsets.only(top: 60.sp, bottom: 20.sp),
-                            child: SingleButton(
-                                label: "Logout",
-                                textColor: redColor,
-                                onPressed: () {
-                                  showDialog(
-                                    barrierColor: Colors.black26,
-                                    context: context,
-                                    builder: (context) {
-                                      return showDoubleBtnDailog(
-                                          click1: () {
-                                            Get.back();
-                                          },
-                                          click2: () async {
-                                            controller.callLogout();
-                                            await analytics.logEvent(
-                                              name: 'logout_btnclick',
-                                              parameters: <String, Object>{
-                                                'page_name': 'logout_btnclick',
-                                              },
-                                            );
-                                          },
-                                          btncolor: colorPrimary,
-                                          text:
-                                              "Are you sure you want to logout?",
-                                          btn1Text: "No",
-                                          btn2Text: "Yes");
-                                    },
-                                  );
-                                },
-                                backgroundColor: whiteTextColor,
-                                borderColor: redColor),
-                          ),
-                          const ProfileBottom(
-                            version: " 1.2.1",
-                          )
-                        ],
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                Get.to(const OrderExchangeScreen());
+                                await analytics.logEvent(
+                                  name: 'order_page',
+                                  parameters: <String, Object>{
+                                    'page_name': 'order_page',
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 20.sp, left: 16.sp, right: 16.sp),
+                                child: AppText(
+                                  text: "Orders & Exchanges",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: nameText,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                widget.onPressed?.call();
+                                await analytics.logEvent(
+                                  name: 'wishlist_page',
+                                  parameters: <String, Object>{
+                                    'page_name': 'wishlist_page',
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 20.sp, left: 16.sp, right: 16.sp),
+                                child: AppText(
+                                  text: "My Wishlist",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: nameText,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            /*  controller.profileDetails.isEmpty
+                                ? const SizedBox(
+                                    height: 0,
+                                  )
+                                : */
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(CustomerCareScreen());
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 20.sp, left: 16.sp, right: 16.sp),
+                                    child: AppText(
+                                      text: "Customer Care",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: nameText,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    Get.to(const SavedAddressScreen(
+                                      type: "address",
+                                    ));
+                                    await analytics.logEvent(
+                                      name: 'addresslist_page',
+                                      parameters: <String, Object>{
+                                        'page_name': 'addresslist_page',
+                                      },
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 20.sp, left: 16.sp, right: 16.sp),
+                                    child: AppText(
+                                      text: "Saved Addresses",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: nameText,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                /* GestureDetector(
+                                  onTap: () {},
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 20, left: 16, right: 16),
+                                    child: AppText(
+                                      text: "Payments & Currencies",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: nameText,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ), */
+                                SettingWidgets(
+                                  onPressedNotification: () {
+                                    if (controller.profileDetails[
+                                            "order_notification_enabled"] ==
+                                        0) {
+                                      controller.isOrder.value = false;
+                                      controller.orderValue.value = 0;
+                                    } else {
+                                      controller.isOrder.value = true;
+                                      controller.orderValue.value = 1;
+                                    }
+                                    if (controller.profileDetails[
+                                            "offer_notification_enabled"] ==
+                                        0) {
+                                      controller.isOffer.value = false;
+                                      controller.offerValue.value = 0;
+                                    } else {
+                                      controller.isOffer.value = true;
+                                      controller.offerValue.value = 1;
+                                    }
+                                    if (controller.profileDetails[
+                                            "promotional_notification_enabled"] ==
+                                        0) {
+                                      controller.isPermotion.value = false;
+                                      controller.permotionValue.value = 0;
+                                    } else {
+                                      controller.isPermotion.value = true;
+                                      controller.permotionValue.value = 1;
+                                    }
+                                    Get.to(NotificationSettingScreen());
+                                  },
+                                ),
+                              ],
+                            ),
+                            SupportWidgets(
+                              visibilty: false,
+                              onPressedAboutUs: () {
+                                launchUrl(Uri.parse(
+                                    "https://la-fetch.com/about-us/"));
+                              },
+                              onPressedTC: () {
+                                launchUrl(Uri.parse(
+                                    "https://la-fetch.com/terms-and-conditions/"));
+                              },
+                              onPressedPrivacy: () {
+                                launchUrl(Uri.parse(
+                                    "https://la-fetch.com/privacy-policy/"));
+                              },
+                            ),
+                            /*   controller.profileDetails.isEmpty
+                                ? const SizedBox(
+                                    height: 0,
+                                  )
+                                : */
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(top: 60.sp, bottom: 20.sp),
+                              child: SingleButton(
+                                  label: "Logout",
+                                  textColor: redColor,
+                                  onPressed: () {
+                                    showDialog(
+                                      barrierColor: Colors.black26,
+                                      context: context,
+                                      builder: (context) {
+                                        return showDoubleBtnDailog(
+                                            click1: () {
+                                              Get.back();
+                                            },
+                                            click2: () async {
+                                              controller.callLogout();
+                                              await analytics.logEvent(
+                                                name: 'logout_btnclick',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'logout_btnclick',
+                                                },
+                                              );
+                                            },
+                                            btncolor: colorPrimary,
+                                            text:
+                                                "Are you sure you want to logout?",
+                                            btn1Text: "No",
+                                            btn2Text: "Yes");
+                                      },
+                                    );
+                                  },
+                                  backgroundColor: whiteTextColor,
+                                  borderColor: redColor),
+                            ),
+                            const ProfileBottom(
+                              version: " 1.2.1",
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

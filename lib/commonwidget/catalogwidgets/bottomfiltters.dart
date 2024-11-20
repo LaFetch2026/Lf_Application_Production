@@ -38,8 +38,8 @@ class BottomFiltersState extends State<BottomFilters> {
   List<bool> sizeSelected = List.generate(50, (i) => false);
   String type = "";
   String lowerValue = "500";
-  String UpperValue = "100000";
-  RangeValues values = RangeValues(500, 100000);
+  String UpperValue = "500000";
+  RangeValues values = RangeValues(500, 500000);
 
   @override
   void initState() {
@@ -71,7 +71,7 @@ class BottomFiltersState extends State<BottomFilters> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                      left: 16.sp, right: 16.sp, top: 30.sp, bottom: 20.sp),
+                      left: 16.sp, right: 16.sp, top: 50.sp, bottom: 20.sp),
                   child: Row(
                     children: [
                       Text(
@@ -116,7 +116,7 @@ class BottomFiltersState extends State<BottomFilters> {
                     Container(
                       color: backWhite,
                       width: 150.sp,
-                      height: MediaQuery.of(context).size.height - 120.sp,
+                      height: MediaQuery.of(context).size.height - 140.sp,
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 8.sp),
                         child: SizedBox(
@@ -202,7 +202,7 @@ class BottomFiltersState extends State<BottomFilters> {
                     Container(
                       color: whiteBorderColor,
                       width: MediaQuery.of(context).size.width - 150.sp,
-                      height: MediaQuery.of(context).size.height - 120.sp,
+                      height: MediaQuery.of(context).size.height - 140.sp,
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.sp, vertical: 8.sp),
@@ -243,7 +243,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                               child: RangeSlider(
                                                 values: values,
                                                 min: 500,
-                                                max: 100000,
+                                                max: 500000,
                                                 // divisions: 5,
                                                 inactiveColor: Colors.grey,
                                                 activeColor: btnTextColor,

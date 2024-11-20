@@ -121,7 +121,7 @@ class HomeScreenState extends State<HomeScreen> {
           children: [
             HomeAppbar(
               onPressedSearch: () async {
-                Get.to(const SearchScreen());
+                Navigator.push(context, scaleIn(const SearchScreen()));
                 await analytics.logEvent(
                   name: 'search_page',
                   parameters: <String, Object>{
@@ -130,7 +130,8 @@ class HomeScreenState extends State<HomeScreen> {
                 );
               },
               onPressedCatalog: () async {
-                Get.to(const CatalogScreen());
+                // Get.to(const CatalogScreen());
+                Navigator.push(context, scaleIn(const CatalogScreen()));
                 await analytics.logEvent(
                   name: 'catalog_page',
                   parameters: <String, Object>{
@@ -139,7 +140,8 @@ class HomeScreenState extends State<HomeScreen> {
                 );
               },
               onPressedCart: () async {
-                Get.to(const CartScreen());
+                Navigator.push(context, scaleIn(const CartScreen()));
+                // Get.to(const CartScreen());
                 await analytics.logEvent(
                   name: 'cart_page',
                   parameters: <String, Object>{

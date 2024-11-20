@@ -73,7 +73,7 @@ class ProductController extends BaseController {
   RxBool filterExpressEnable = false.obs;
   RxInt page = 1.obs;
   RxInt lowPrice = 500.obs;
-  RxInt highPrice = 100000.obs;
+  RxInt highPrice = 500000.obs;
   ScrollController listController = ScrollController();
   ScrollController recentListController = ScrollController();
   RxBool expressLoadMore = false.obs;

@@ -45,6 +45,12 @@ class DiscountScreenState extends State<DiscountScreen> {
       homeController.currentPage.value = 0;
       productController.current.value = 0;
     });
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getBannar1Data());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getBannar2Data());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => homeController.getCategoryData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getConfigurationData();
     });
@@ -67,41 +73,19 @@ class DiscountScreenState extends State<DiscountScreen> {
         productController.update();
       });
     });
-    /* WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.discountScreenController.addListener(() {
-        print(homeController
-            .discountScreenController.position.userScrollDirection);
-        if (homeController
-                .discountScreenController.position.userScrollDirection ==
-            ScrollDirection.reverse) {
-          homeController.IsAnimateTag.value = false;
-        }
-        if (homeController
-                .discountScreenController.position.userScrollDirection ==
-            ScrollDirection.forward) {
-          homeController.IsAnimateTag.value = true;
-        }
-      });
-    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;
       //  productController.isExpress.value = false;
       productController.expressPage.value = 1;
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar1Data());
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar2Data());
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => homeController.getCategoryData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.homeTagshasnextpage.value = true;
-        productController.homeTagsloadMore.value = false;
-        // productController.istags.value = false;
-        productController.homeTagsPage.value = 1;
-      });
+      productController.homeTagshasnextpage.value = true;
+      productController.homeTagsloadMore.value = false;
+      // productController.istags.value = false;
+      productController.homeTagsPage.value = 1;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsController.addListener(() {
         productController.fetchMoreTagsData(widget.genderType);
         productController.update();
@@ -127,63 +111,6 @@ class DiscountScreenState extends State<DiscountScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // const SaleCardWidget(),
-            /*   const SizedBox(
-              height: 10,
-            ), */
-            /*     Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: menu.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (ctx, index) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                current = index;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.only(right: 5),
-                              width: 100,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: current == index
-                                    ? btnTextColor
-                                    : whiteTextColor,
-                                borderRadius: current == index
-                                    ? BorderRadius.circular(20)
-                                    : BorderRadius.circular(20),
-                                border: current == index
-                                    ? Border.all(color: btnTextColor, width: 1)
-                                    : Border.all(
-                                        color: textHintColor, width: 1),
-                              ),
-                              child: Center(
-                                child: AppText(
-                                  text: menu[index],
-                                  color: current == index
-                                      ? whiteBorderColor
-                                      : textHintColor,
-                                  fontSize: 12.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-              ),
-            ),
-           */
             Obx(() => productController.istags.value
                 ? Padding(
                     padding: EdgeInsets.only(
@@ -361,7 +288,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                           ["categories"][i]["id"]);
                                 }
                                 print(homeController.bannerTag1Id);
-                                Get.to(CategoryProductScreen(
+                                /*  Get.to(CategoryProductScreen(
                                   categoryName: "Product List",
                                   categoryId: 0,
                                   brandId: 0,
@@ -369,7 +296,20 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   tagIds: homeController.bannerTag1Id,
                                   categoryList:
                                       homeController.bannerCategory1Id,
-                                ));
+                                )); */
+                                Navigator.push(
+                                    context,
+                                    scaleIn(
+                                      CategoryProductScreen(
+                                        categoryName: "Product List",
+                                        categoryId: 0,
+                                        brandId: 0,
+                                        genderType: widget.genderType,
+                                        tagIds: homeController.bannerTag1Id,
+                                        categoryList:
+                                            homeController.bannerCategory1Id,
+                                      ),
+                                    ));
                                 await analytics.logEvent(
                                   name: 'banner_home_page',
                                   parameters: <String, Object>{
@@ -466,23 +406,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                           height: 250.sp,
                           visibleExpress: false,
                           onPressed: (p0, p1) async {
-                            /*   Get.to(
-                              ProductDetailsScreen(
-                                productId: p0,
-                                type: "add",
-                                brandName: p1,
-                              ),
-                            )?.then((value) => setState(
-                                  () {
-                                    productController.tagsHasnextpage.value =
-                                        true;
-                                    productController.tagsLoadMore.value =
-                                        false;
-                                    productController.istagsProduct.value =
-                                        false;
-                                    productController.tagsPage.value = 1;
-                                  },
-                                )); */
                             Navigator.push(
                                 context,
                                 scaleIn(
@@ -657,7 +580,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   homeController.categoryList.length >= 2
                                       ? GestureDetector(
                                           onTap: () async {
-                                            Get.to(CategoryProductScreen(
+                                            /*  Get.to(CategoryProductScreen(
                                                 categoryName: homeController
                                                     .categoryList[1]["name"],
                                                 categoryId: homeController
@@ -665,7 +588,24 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                 brandId: 0,
                                                 categoryList: [],
                                                 genderType: widget.genderType,
-                                                tagIds: const []));
+                                                tagIds: const [])); */
+                                            Navigator.push(
+                                                context,
+                                                scaleIn(
+                                                  CategoryProductScreen(
+                                                      categoryName:
+                                                          homeController
+                                                                  .categoryList[
+                                                              1]["name"],
+                                                      categoryId: homeController
+                                                              .categoryList[1]
+                                                          ["id"],
+                                                      brandId: 0,
+                                                      categoryList: [],
+                                                      genderType:
+                                                          widget.genderType,
+                                                      tagIds: const []),
+                                                ));
                                             await analytics.logEvent(
                                               name: 'categories_home_page',
                                               parameters: <String, Object>{
@@ -777,7 +717,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                               children: [
                                                 GestureDetector(
                                                   onTap: () async {
-                                                    Get.to(CategoryProductScreen(
+                                                    /*  Get.to(CategoryProductScreen(
                                                         categoryName:
                                                             homeController
                                                                     .categoryList[
@@ -790,7 +730,27 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                         categoryList: [],
                                                         genderType:
                                                             widget.genderType,
-                                                        tagIds: const []));
+                                                        tagIds: const [])); */
+                                                    Navigator.push(
+                                                        context,
+                                                        scaleIn(
+                                                          CategoryProductScreen(
+                                                              categoryName:
+                                                                  homeController
+                                                                              .categoryList[
+                                                                          index +
+                                                                              2]
+                                                                      ["name"],
+                                                              categoryId: homeController
+                                                                      .categoryList[
+                                                                  index +
+                                                                      2]["id"],
+                                                              brandId: 0,
+                                                              categoryList: [],
+                                                              genderType: widget
+                                                                  .genderType,
+                                                              tagIds: const []),
+                                                        ));
                                                     await analytics.logEvent(
                                                       name:
                                                           'categories_home_page',
@@ -983,7 +943,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                 ["categories"][i]["id"]);
                                       }
                                       print(homeController.bannerTag2Id);
-                                      Get.to(CategoryProductScreen(
+                                      /*  Get.to(CategoryProductScreen(
                                         categoryName: "Product List",
                                         categoryId: 0,
                                         brandId: 0,
@@ -991,7 +951,21 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         tagIds: homeController.bannerTag2Id,
                                         categoryList:
                                             homeController.bannerCategory2Id,
-                                      ));
+                                      )); */
+                                      Navigator.push(
+                                          context,
+                                          scaleIn(
+                                            CategoryProductScreen(
+                                              categoryName: "Product List",
+                                              categoryId: 0,
+                                              brandId: 0,
+                                              genderType: widget.genderType,
+                                              tagIds:
+                                                  homeController.bannerTag2Id,
+                                              categoryList: homeController
+                                                  .bannerCategory2Id,
+                                            ),
+                                          ));
                                       await analytics.logEvent(
                                         name: 'promotion_home_page',
                                         parameters: <String, Object>{
@@ -1127,7 +1101,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                 text2: "Contact customer service",
                 size: 32.sp,
                 onPressed: () async {
-                  Get.to(CustomerCareScreen());
+                  // Get.to(CustomerCareScreen());
+                  Navigator.push(context, scaleIn(CustomerCareScreen()));
                   await analytics.logEvent(
                     name: 'needhelp_home_page',
                     parameters: <String, Object>{
