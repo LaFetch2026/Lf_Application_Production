@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-
 import '../../utils/constants.dart';
 import '../app_text.dart';
+import '../appbarwidgets/backbutton_appbar.dart';
 
 class BottomCoupon extends StatefulWidget {
   final List list;
@@ -34,9 +33,9 @@ class BottomCouponState extends State<BottomCoupon> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                /*  Padding(
                   padding: EdgeInsets.only(
-                      left: 16.sp, right: 16.sp, top: 30.sp, bottom: 20.sp),
+                      left: 16.sp, right: 16.sp, top: 50.sp, bottom: 20.sp),
                   child: Row(
                     children: [
                       Text(
@@ -72,10 +71,17 @@ class BottomCouponState extends State<BottomCoupon> {
                     ],
                   ),
                 ),
+                */
+                const BackButtonAppbar(
+                  text: "Coupons",
+                  threeDot: false,
+                  backgroundColor: whiteColor,
+                  icon: threeDotImage,
+                ),
                 Container(
                   color: backWhite,
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height - 70.sp,
+                  height: MediaQuery.of(context).size.height - 90.sp,
                   child: Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),

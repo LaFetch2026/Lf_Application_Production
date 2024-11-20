@@ -430,15 +430,18 @@ class CartScreenState extends State<CartScreen> {
                                                                                   },
                                                                                 );
                                                                               },
-                                                                              child: Padding(
-                                                                                padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                                                                child: AppText(
-                                                                                  text: value.orderList[index]["product"]["short_description"] ?? "",
-                                                                                  color: nameText,
-                                                                                  maxLines: 2,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                  fontWeight: FontWeight.w400,
+                                                                              child: Container(
+                                                                                width: MediaQuery.of(context).size.width - 128,
+                                                                                child: Padding(
+                                                                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                  child: AppText(
+                                                                                    text: value.orderList[index]["product"]["short_description"] ?? "",
+                                                                                    color: nameText,
+                                                                                    maxLines: 2,
+                                                                                    fontSize: 12,
+                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),

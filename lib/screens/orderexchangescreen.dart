@@ -20,8 +20,7 @@ import '../commonwidget/common_widgets.dart';
 import '../commonwidget/singlebtn.dart';
 import '../controller/order_controller.dart';
 import '../utils/constants.dart';
-import 'package:intl/intl.dart';
-
+//import 'package:intl/intl.dart';
 import 'orders/delivery_track.dart';
 import 'orders/trackorderscreen.dart';
 
@@ -1054,8 +1053,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
-                                                                                text:  value.orderList[index]["delivered_at"],
-                                                                             // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
+                                                                              text: value.orderList[index]["delivered_at"],
+                                                                              // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
                                                                               color: greyTextColor,
                                                                               fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
@@ -1069,8 +1068,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
-                                                                              text:    value.orderList[index]["estimated_delivery_at"],
-                                                                             // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
+                                                                              text: value.orderList[index]["estimated_delivery_at"],
+                                                                              // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
                                                                               color: greyTextColor,
                                                                               fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
@@ -1084,8 +1083,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                             child:
                                                                                 AppText(
-                                                                                  text:value.orderList[index]["cancelled_at"],
-                                                                            //  text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
+                                                                              text: value.orderList[index]["cancelled_at"],
+                                                                              //  text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
                                                                               color: greyTextColor,
                                                                               fontSize: 11,
                                                                               fontFamily: "Franklin Gothic Regular",
@@ -1414,8 +1413,42 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                   ],
                                                                 ],
                                                               )
-                                                            : const SizedBox(
-                                                                height: 0,
+                                                            : Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        top: 10
+                                                                            .sp,
+                                                                        bottom:
+                                                                            30.sp),
+                                                                child:
+                                                                    SingleButton(
+                                                                        label:
+                                                                            "View details",
+                                                                        height:
+                                                                            40,
+                                                                        textColor:
+                                                                            btnTextColor,
+                                                                        backgroundColor:
+                                                                            whiteColor,
+                                                                        onPressed:
+                                                                            () async {
+                                                                          Get.to(
+                                                                              OrderDetailsScreen(
+                                                                            orderId:
+                                                                                value.orderList[index]["id"],
+                                                                          ));
+                                                                          await analytics
+                                                                              .logEvent(
+                                                                            name:
+                                                                                'order_details',
+                                                                            parameters: <String,
+                                                                                Object>{
+                                                                              'page_name': 'order_details',
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                        borderColor:
+                                                                            btnTextColor),
                                                               ),
                                                         orderController
                                                                 .orderList[
@@ -2008,8 +2041,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text:val.orderList[index]["orders"][i]["delivered_at"],
-                                                                                           // text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]))}",
+                                                                                            text: val.orderList[index]["orders"][i]["delivered_at"],
+                                                                                            // text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(val.orderList[index]["orders"][i]["delivered_at"]))}",
                                                                                             color: greyTextColor,
                                                                                             fontSize: 11,
                                                                                             fontFamily: "Franklin Gothic Regular",
@@ -2020,8 +2053,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text:val.orderList[index]["orders"][i]["estimated_delivery_at"],
-                                                                                           // text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).year}",
+                                                                                            text: val.orderList[index]["orders"][i]["estimated_delivery_at"],
+                                                                                            // text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["estimated_delivery_at"]).year}",
                                                                                             color: greyTextColor,
                                                                                             fontSize: 11,
                                                                                             fontFamily: "Franklin Gothic Regular",
@@ -2032,8 +2065,8 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text:val.orderList[index]["orders"][i]["cancelled_at"],
-                                                                                          //  text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).year}",
+                                                                                            text: val.orderList[index]["orders"][i]["cancelled_at"],
+                                                                                            //  text: "${DateFormat.MMMM().format(DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).day}, ${DateTime.parse(val.orderList[index]["orders"][i]["cancelled_at"]).year}",
                                                                                             color: greyTextColor,
                                                                                             fontSize: 11,
                                                                                             fontFamily: "Franklin Gothic Regular",
