@@ -118,7 +118,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             color: _currentIndex == 0 ? greyback : whiteColor),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 2.0.sp, horizontal: 8.sp),
+                              vertical: 2.0.sp, horizontal: 10.sp),
                           child: ImageIcon(
                             AssetImage(homeNewImage),
                             color:
@@ -170,7 +170,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             color: _currentIndex == 1 ? greyback : whiteColor),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 2.0.sp, horizontal: 8.sp),
+                              vertical: 2.0.sp, horizontal: 10.sp),
                           child: ImageIcon(
                             AssetImage(shopNewImage),
                             color:
@@ -222,7 +222,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             color: _currentIndex == 2 ? greyback : whiteColor),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 2.0.sp, horizontal: 8.sp),
+                              vertical: 2.0.sp, horizontal: 10.sp),
                           child: ImageIcon(
                             AssetImage(wishlistNewImage),
                             color:
@@ -274,7 +274,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             color: _currentIndex == 3 ? greyback : whiteColor),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 2.0.sp, horizontal: 8.sp),
+                              vertical: 2.0.sp, horizontal: 10.sp),
                           child: ImageIcon(
                             AssetImage(accountNewImage),
                             color:
