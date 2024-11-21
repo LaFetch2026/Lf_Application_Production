@@ -31,7 +31,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 410.sp,
+      height: 420.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
@@ -45,7 +45,17 @@ class _BottomWishlistState extends State<BottomWishlist> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+              padding: EdgeInsets.only(top: 10.sp),
+              child: Center(
+                child: Image.asset(
+                  handleImage,
+                  height: 7.sp,
+                  width: 80.sp,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
               child: Row(
                 children: [
                   Expanded(

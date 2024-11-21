@@ -39,7 +39,7 @@ class BottomQuantityState extends State<BottomQuantity> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200.sp,
+      height: 230.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteTextColor,
@@ -48,12 +48,22 @@ class BottomQuantityState extends State<BottomQuantity> {
             topRight: Radius.circular(16.0.sp)),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+              padding: EdgeInsets.only(top: 10.sp),
+              child: Center(
+                child: Image.asset(
+                  handleImage,
+                  height: 7.sp,
+                  width: 80.sp,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
               child: Row(
                 children: [
                   Expanded(

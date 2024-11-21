@@ -42,6 +42,16 @@ class _BottomSortByState extends State<BottomSortBy> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
+              padding: EdgeInsets.only(top: 10.sp),
+              child: Center(
+                child: Image.asset(
+                  handleImage,
+                  height: 7.sp,
+                  width: 80.sp,
+                ),
+              ),
+            ),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
               child: Text(
                 "Sort by",

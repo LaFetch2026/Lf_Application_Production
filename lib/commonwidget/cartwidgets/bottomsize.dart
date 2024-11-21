@@ -40,7 +40,7 @@ class BottomSizeState extends State<BottomSize> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 220.sp,
+        height: 230.sp,
         width: double.infinity,
         decoration: BoxDecoration(
           color: whiteTextColor,
@@ -51,6 +51,16 @@ class BottomSizeState extends State<BottomSize> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10.sp),
+              child: Center(
+                child: Image.asset(
+                  handleImage,
+                  height: 7.sp,
+                  width: 80.sp,
+                ),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 20.sp),
               child: Row(
