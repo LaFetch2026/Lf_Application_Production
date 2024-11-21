@@ -1380,16 +1380,13 @@ class ProductController extends BaseController {
           sizeInventoryList = responseData["new_inventories"];
           colorInventoryList.clear();
           if (sizeInventoryList.length == 1) {
-            print("abc 1");
             if (sizeInventoryList[0]["product_matrix_size_name"] == "") {
-              print("abc 2");
               showSizeList.value = false;
               sizeInventoryId.value = responseData["default_inventory_id"];
               selectedProductSize = sizeInventoryList[0];
               colorInventoryList =
                   sizeInventoryList[0]["product_matrix_available_colors"];
             } else {
-              print("abc 3");
               showSizeList.value = true;
               if (sizeInventoryList[0]["product_matrix_available_colors"]
                       .length ==
@@ -1407,7 +1404,6 @@ class ProductController extends BaseController {
               }
             }
           } else {
-            print("abc 4");
             showSizeList.value = true;
           }
           getProductImage(responseData["default_inventory_id"]);

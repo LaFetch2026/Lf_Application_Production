@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/screens/home/women/discountscreen.dart';
 //import '../../commonwidget/app_text.dart';
 import '../../commonwidget/homewidget/dummy_product_list.dart';
+import '../../controller/home_controller.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 
@@ -20,37 +21,28 @@ class _WomenScreenState extends State<WomenScreen>
     with SingleTickerProviderStateMixin {
   final productController = Get.put(ProductController());
   PageController pageController = PageController();
+  final homeController = Get.put(HomeController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  /*  late AnimationController _controller =
-      AnimationController(vsync: this, duration: Duration(seconds: 2));
-  late Animation<double> _animation; */
-
-  callOnchanged(int index) {
-    productController.current.value = index;
-    productController.update();
-  }
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getTagsData(widget.genderType));
-    /*  WidgetsBinding.instance.addPostFrameCallback((_) {
-      homeController.hasnextpage.value = true;
-      homeController.loadMore.value = false;
-      homeController.istags.value = false;
-      homeController.page.value = 1;
-      homeController.IsAnimateTag.value = true;
-      /*   _animation = Tween<double>(begin: 0.0, end: 0.5).animate(_controller)
-        ..addListener(() {});
-      _controller.forward(); */
-    }); */
-    /* WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.tagsController.addListener(() {
-        homeController.fetchMoreTagsData(widget.genderType);
-        homeController.update();
-      });
-    }); */
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getBannar1Data());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getBannar2Data());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => homeController.getCategoryData(widget.genderType));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      homeController.getConfigurationData();
+    });
     super.initState();
+  }
+
+  callOnchanged(int index) {
+    productController.current.value = index;
+    productController.update();
   }
 
   @override

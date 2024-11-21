@@ -45,15 +45,6 @@ class DiscountScreenState extends State<DiscountScreen> {
       homeController.currentPage.value = 0;
       productController.current.value = 0;
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar1Data());
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar2Data());
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => homeController.getCategoryData(widget.genderType));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getConfigurationData();
-    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
         productController.fetchMoreTagsProductData(
