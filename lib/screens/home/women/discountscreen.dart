@@ -43,7 +43,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.currentPage.value = 0;
-      productController.current.value = 0;
+      productController.current.value = 50;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {

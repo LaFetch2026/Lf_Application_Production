@@ -54,7 +54,7 @@ class ProductController extends BaseController {
   RxInt total = 0.obs;
   RxInt curr = 0.obs;
   RxInt index = 0.obs;
-  RxInt current = 0.obs;
+  RxInt current = 50.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
   List sizeInventoryList = [].obs;
@@ -340,7 +340,7 @@ class ProductController extends BaseController {
       if (genderType != 0) {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&gender_type=$genderType"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=$genderType"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -349,7 +349,7 @@ class ProductController extends BaseController {
       } else {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&brand_id=$brandId"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&brand_id=$brandId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -525,7 +525,7 @@ class ProductController extends BaseController {
       if (genderType != 0) {
         response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&gender_type=$genderType&tag_ids[]=$tagid"),
+                "${ApiConstants.baseUrl}/products?type=express&gender_type=$genderType&tag_ids[]=${tagid == 0 ? "" : tagId}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -533,7 +533,7 @@ class ProductController extends BaseController {
       } else {
         response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&tag_ids[]=$tagid"),
+                "${ApiConstants.baseUrl}/products?type=express&tag_ids[]=${tagid == 0 ? "" : tagId}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1869,8 +1869,8 @@ class ProductController extends BaseController {
             tagId.value = tagsList[0]["id"];
             tagProductList.clear();
             expressProductList.clear();
-            getExpressProductData(tagId.value, genderType);
-            getTagsProductData(tagId.value, genderType, 0);
+            getExpressProductData(0, genderType);
+            getTagsProductData(0, genderType, 0);
           }
         }
       } else if (response.statusCode == 500) {
