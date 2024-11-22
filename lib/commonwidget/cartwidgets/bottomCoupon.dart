@@ -19,6 +19,7 @@ class BottomCoupon extends StatefulWidget {
 }
 
 class BottomCouponState extends State<BottomCoupon> {
+  List<bool> selected = List.generate(50, (i) => false);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -125,49 +126,71 @@ class BottomCouponState extends State<BottomCoupon> {
                                               ),
                                             ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              widget.onPressed.call(
-                                                  widget.list[index]["code"]);
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 14.sp,
-                                              ),
-                                              child: AnimatedContainer(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                margin: EdgeInsets.only(
-                                                    right: 5.sp),
-                                                width: 80.sp,
-                                                height: 30.sp,
-                                                decoration: BoxDecoration(
-                                                  color: btnTextColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.sp),
-                                                  border: Border.all(
-                                                      color: btnTextColor,
-                                                      width: 1.sp),
-                                                ),
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 5.sp),
+                                          selected[index]
+                                              ? Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30.sp,
+                                                      right: 40.sp),
                                                   child: Center(
-                                                    child: AppText(
-                                                      text: "Apply",
-                                                      color: whiteBack,
-                                                      fontSize: 12,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                    child: SizedBox(
+                                                      height: 16.sp,
+                                                      width: 16.sp,
+                                                      child: Center(
+                                                          child:
+                                                              CircularProgressIndicator()),
                                                     ),
                                                   ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
+                                                )
+                                              : GestureDetector(
+                                                  onTap: () {
+                                                    selected[index] =
+                                                        !selected[index];
+                                                    setState(() {});
+                                                    widget.onPressed.call(widget
+                                                        .list[index]["code"]);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 14.sp,
+                                                    ),
+                                                    child: AnimatedContainer(
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      margin: EdgeInsets.only(
+                                                          right: 5.sp),
+                                                      width: 80.sp,
+                                                      height: 30.sp,
+                                                      decoration: BoxDecoration(
+                                                        color: btnTextColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    20.sp),
+                                                        border: Border.all(
+                                                            color: btnTextColor,
+                                                            width: 1.sp),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
+                                                        child: Center(
+                                                          child: AppText(
+                                                            text: "Apply",
+                                                            color: whiteBack,
+                                                            fontSize: 12,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
                                         ],
                                       ),
                                       Padding(
