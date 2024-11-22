@@ -140,7 +140,7 @@ class CartController extends BaseController {
 
   callAddtoCart(int quantity, String page, int inventoryId, int productId,
       int expressValue, int type) async {
-    if (page == "quantity") {
+    if (page == "quantity" || page == "size") {
       showLoading();
     }
     isExpress.value = true;
@@ -212,7 +212,7 @@ class CartController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    if (page == "quantity") {
+    if (page == "quantity" || page == "size") {
       hideLoading();
     }
     isExpress.value = false;

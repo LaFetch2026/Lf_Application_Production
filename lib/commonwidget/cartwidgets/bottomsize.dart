@@ -170,18 +170,20 @@ class BottomSizeState extends State<BottomSize> {
                       fontSize: 11,
                     ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.sp),
-              child: getSingleButton(
-                  label: "Done",
-                  textColor: whiteBorderColor,
-                  backgroundColor: colorPrimary,
-                  controller: widget.controller,
-                  onPressed: () {
-                    widget.onPressed?.call(inventoryId);
-                  },
-                  borderColor: colorPrimary),
-            ),
+            Obx(
+              () => Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.sp),
+                child: getSingleButton(
+                    label: "Done",
+                    textColor: whiteBorderColor,
+                    backgroundColor: colorPrimary,
+                    controller: widget.controller,
+                    onPressed: () {
+                      widget.onPressed?.call(inventoryId);
+                    },
+                    borderColor: colorPrimary),
+              ),
+            )
           ],
         ));
   }

@@ -145,18 +145,20 @@ class BottomQuantityState extends State<BottomQuantity> {
                     }),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.sp),
-              child: getSingleButton(
-                  label: "Done",
-                  textColor: whiteBorderColor,
-                  backgroundColor: colorPrimary,
-                  controller: widget.controller,
-                  onPressed: () {
-                    widget.onPressed?.call(int.parse(text));
-                  },
-                  borderColor: colorPrimary),
-            ),
+            Obx(
+              () => Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.sp),
+                child: getSingleButton(
+                    label: "Done",
+                    textColor: whiteBorderColor,
+                    backgroundColor: colorPrimary,
+                    controller: widget.controller,
+                    onPressed: () {
+                      widget.onPressed?.call(int.parse(text));
+                    },
+                    borderColor: colorPrimary),
+              ),
+            )
           ],
         ),
       ),

@@ -612,7 +612,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       sizeList: value.orderList[index]["product"]["new_inventories"],
                                                                                                       controller: controller,
                                                                                                       onPressed: (p0) {
-                                                                                                        controller.callAddtoCart(1, "size", p0, value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                                        controller.callAddtoCart(value.orderList[index]["quantity"] ?? 1, "size", p0, value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
                                                                                                       },
                                                                                                       selectedSizeId: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["id"] : 0,
                                                                                                     ));
