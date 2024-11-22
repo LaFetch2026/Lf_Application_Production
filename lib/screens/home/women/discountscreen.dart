@@ -238,7 +238,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                             );
                           }),
                     ))
-                : homeController.banner1List.isNotEmpty
+                : homeController.banner1List.isNotEmpty &&
+                        productController.current.value == 50
                     ? Padding(
                         padding: EdgeInsets.only(
                             left: 16.sp, bottom: 10.sp, right: 16.sp),

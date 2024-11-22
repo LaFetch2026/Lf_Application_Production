@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
@@ -7,6 +8,8 @@ import 'package:lafetch/screens/homescreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+
+import '../controller/product_controller.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int? index;
@@ -18,6 +21,7 @@ class BottomNavScreen extends StatefulWidget {
 
 class BottomNavScreenState extends State<BottomNavScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final productController = Get.put(ProductController());
   int _currentIndex = 0;
   var screen = [
     const HomeScreen(),
@@ -98,6 +102,10 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                 onPressed: () async {
                   setState(() {
                     _currentIndex = 0;
+                    /*  productController.current.value = 50;
+                    productController.getExpressProductData(0, 3);
+                    productController.getTagsProductData(0, 3, 0);
+                    productController.update(); */
                   });
                   await analytics.logEvent(
                     name: 'home_page',
