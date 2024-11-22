@@ -105,7 +105,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             Obx(() => productController.istags.value
                 ? Padding(
                     padding: EdgeInsets.only(
-                        left: 16.sp, bottom: 10.sp, right: 16.sp),
+                        left: 16.sp, bottom: 10.sp, right: 16.sp, top: 20.sp),
                     child: SizedBox(
                       height: 30.sp,
                       width: double.infinity,
@@ -126,11 +126,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                           }),
                     ))
                 : Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                    padding: EdgeInsets.only(
+                        left: 16.sp, bottom: 10.sp, right: 16.sp, top: 20.sp),
                     child: Center(
                       child: SizedBox(
                           width: double.infinity,
-                          height: 50.sp,
+                          height: 30.sp,
                           child: GetBuilder<ProductController>(
                             builder: (value) => ListView.builder(
                                 physics: const BouncingScrollPhysics(),

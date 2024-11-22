@@ -42,7 +42,7 @@
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="https" android:host="staging-panel.la-fetch.com" />
+        <data android:scheme="https" android:host="shop.la-fetch.com" />
     </intent-filter>
         </activity>
         <meta-data

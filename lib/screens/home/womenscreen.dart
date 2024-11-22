@@ -1,13 +1,9 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/home/women/discountscreen.dart';
-//import '../../commonwidget/app_text.dart';
-import '../../commonwidget/homewidget/dummy_product_list.dart';
 import '../../controller/home_controller.dart';
 import '../../controller/product_controller.dart';
-import '../../utils/constants.dart';
 
 class WomenScreen extends StatefulWidget {
   final int genderType;
@@ -28,10 +24,20 @@ class _WomenScreenState extends State<WomenScreen>
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getTagsData(widget.genderType));
-    WidgetsBinding.instance
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (widget.genderType == 3) {
+        homeController.getBannar1Data();
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (widget.genderType == 3) {
+        homeController.getBannar2Data();
+      }
+    });
+    /*  WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getBannar1Data());
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar2Data());
+        .addPostFrameCallback((_) => homeController.getBannar2Data()); */
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => homeController.getCategoryData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -49,13 +55,9 @@ class _WomenScreenState extends State<WomenScreen>
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      color: whiteColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 20.sp,
-          ),
           /*  Obx(
             () => homeController.istags.value
                 ? Padding(
@@ -254,8 +256,8 @@ class _WomenScreenState extends State<WomenScreen>
                             )),
                       ),
           ), */
-          Obx(
-            () => productController.istags.value
+          /*  Obx(
+            () => */ /*  productController.istags.value
                 ? Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -310,21 +312,21 @@ class _WomenScreenState extends State<WomenScreen>
                       ),
                     ),
                   )
-                : Expanded(
-                    child: PageView.builder(
-                      // itemCount: homeController.tagsList.length,
-                      controller: pageController,
-                      onPageChanged: callOnchanged,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return DiscountScreen(
-                          tagId: productController.tagId.value,
-                          genderType: widget.genderType,
-                        );
-                      },
-                    ),
-                  ),
-          )
+                : */
+          Expanded(
+            child: PageView.builder(
+              controller: pageController,
+              onPageChanged: callOnchanged,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return DiscountScreen(
+                  tagId: productController.tagId.value,
+                  genderType: widget.genderType,
+                );
+              },
+            ),
+          ),
+          // )
         ],
       ),
     );
