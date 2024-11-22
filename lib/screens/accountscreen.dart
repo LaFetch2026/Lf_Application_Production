@@ -101,78 +101,83 @@ class AccountScreenState extends State<AccountScreen> {
             Obx(
               () => controller.isProfile.value
                   ? DummyAccount()
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /*   controller.profileDetails.isBlank
-                                ? const ProfilePicWidgets()
-                                : */
-                            Column(
+                  : controller.profileDetails != ""
+                      ? Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.sp, vertical: 20.sp),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                /*   controller.profileDetails.isBlank
+                                ? const ProfilePicWidgets()
+                                : */
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.sp, vertical: 20.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
-                                          AppText(
-                                            text: controller
-                                                    .profileDetails["name"] ??
-                                                "",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: blackColor,
-                                            fontSize: 28,
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              AppText(
+                                                text: controller.profileDetails[
+                                                        "name"] ??
+                                                    "",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: blackColor,
+                                                fontSize: 28,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 5.sp),
+                                                child: Row(
+                                                  children: [
+                                                    ImageIcon(
+                                                      AssetImage(phoneImage),
+                                                      color: greyTextColor,
+                                                      size: 18.sp,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 5.sp),
+                                                      child: AppText(
+                                                        text: controller
+                                                                    .profileDetails[
+                                                                "phone"] ??
+                                                            "",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: greyTextColor,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 5.sp),
-                                            child: Row(
-                                              children: [
-                                                ImageIcon(
-                                                  AssetImage(phoneImage),
-                                                  color: greyTextColor,
-                                                  size: 18.sp,
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 5.sp),
-                                                  child: AppText(
-                                                    text: controller
-                                                                .profileDetails[
-                                                            "phone"] ??
-                                                        "",
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                    color: greyTextColor,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ],
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      const Expanded(
-                                        child: SizedBox(
-                                          height: 0,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
                                                           EditProfileScreen(
                                                             name: controller
                                                                         .profileDetails[
@@ -191,39 +196,42 @@ class AccountScreenState extends State<AccountScreen> {
                                                                     "gender"] ??
                                                                 0,
                                                           )))
-                                              .then((value) => setState(
-                                                    () {
-                                                      controller
-                                                          .getProfileData();
-                                                      controller.isEditNumber
-                                                          .value = true;
-                                                      controller.isPhoneNumber
-                                                          .value = false;
-                                                    },
-                                                  ));
-                                          await analytics.logEvent(
-                                            name: 'edit_profile_page',
-                                            parameters: <String, Object>{
-                                              'page_name': 'edit_profile_page',
+                                                  .then((value) => setState(
+                                                        () {
+                                                          controller
+                                                              .getProfileData();
+                                                          controller
+                                                              .isEditNumber
+                                                              .value = true;
+                                                          controller
+                                                              .isPhoneNumber
+                                                              .value = false;
+                                                        },
+                                                      ));
+                                              await analytics.logEvent(
+                                                name: 'edit_profile_page',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'edit_profile_page',
+                                                },
+                                              );
                                             },
-                                          );
-                                        },
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: 16.sp),
-                                          child: AppText(
-                                            text: "Edit",
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
-                                            color: colorPrimary,
-                                            fontSize: 12,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  bottom: 16.sp),
+                                              child: AppText(
+                                                text: "Edit",
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                                color: colorPrimary,
+                                                fontSize: 12,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                /*  const SizedBox(
+                                    ),
+                                    /*  const SizedBox(
                                   height: 12,
                                 ),
                                 Container(
@@ -336,80 +344,34 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                               */
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10.sp, left: 16.sp, right: 16.sp),
-                              child: AppText(
-                                text: "My Account",
-                                fontFamily: "Franklin Gothic Bold",
-                                fontWeight: FontWeight.w700,
-                                color: nameText,
-                                fontSize: 18,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                Get.to(const OrderExchangeScreen());
-                                await analytics.logEvent(
-                                  name: 'order_page',
-                                  parameters: <String, Object>{
-                                    'page_name': 'order_page',
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 20.sp, left: 16.sp, right: 16.sp),
-                                child: AppText(
-                                  text: "Orders & Exchanges",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: nameText,
-                                  fontSize: 14,
+                                  ],
                                 ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () async {
-                                widget.onPressed?.call();
-                                await analytics.logEvent(
-                                  name: 'wishlist_page',
-                                  parameters: <String, Object>{
-                                    'page_name': 'wishlist_page',
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 20.sp, left: 16.sp, right: 16.sp),
-                                child: AppText(
-                                  text: "My Wishlist",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: nameText,
-                                  fontSize: 14,
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.sp, left: 16.sp, right: 16.sp),
+                                  child: AppText(
+                                    text: "My Account",
+                                    fontFamily: "Franklin Gothic Bold",
+                                    fontWeight: FontWeight.w700,
+                                    color: nameText,
+                                    fontSize: 18,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            /*  controller.profileDetails.isEmpty
-                                ? const SizedBox(
-                                    height: 0,
-                                  )
-                                : */
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
                                 GestureDetector(
-                                  onTap: () {
-                                    Get.to(CustomerCareScreen());
+                                  onTap: () async {
+                                    Get.to(const OrderExchangeScreen());
+                                    await analytics.logEvent(
+                                      name: 'order_page',
+                                      parameters: <String, Object>{
+                                        'page_name': 'order_page',
+                                      },
+                                    );
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         top: 20.sp, left: 16.sp, right: 16.sp),
                                     child: AppText(
-                                      text: "Customer Care",
+                                      text: "Orders & Exchanges",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: nameText,
@@ -419,13 +381,11 @@ class AccountScreenState extends State<AccountScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    Get.to(const SavedAddressScreen(
-                                      type: "address",
-                                    ));
+                                    widget.onPressed?.call();
                                     await analytics.logEvent(
-                                      name: 'addresslist_page',
+                                      name: 'wishlist_page',
                                       parameters: <String, Object>{
-                                        'page_name': 'addresslist_page',
+                                        'page_name': 'wishlist_page',
                                       },
                                     );
                                   },
@@ -433,7 +393,7 @@ class AccountScreenState extends State<AccountScreen> {
                                     padding: EdgeInsets.only(
                                         top: 20.sp, left: 16.sp, right: 16.sp),
                                     child: AppText(
-                                      text: "Saved Addresses",
+                                      text: "My Wishlist",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: nameText,
@@ -441,7 +401,59 @@ class AccountScreenState extends State<AccountScreen> {
                                     ),
                                   ),
                                 ),
-                                /* GestureDetector(
+                                /*  controller.profileDetails.isEmpty
+                                ? const SizedBox(
+                                    height: 0,
+                                  )
+                                : */
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Get.to(CustomerCareScreen());
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 20.sp,
+                                            left: 16.sp,
+                                            right: 16.sp),
+                                        child: AppText(
+                                          text: "Customer Care",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: nameText,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Get.to(const SavedAddressScreen(
+                                          type: "address",
+                                        ));
+                                        await analytics.logEvent(
+                                          name: 'addresslist_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'addresslist_page',
+                                          },
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 20.sp,
+                                            left: 16.sp,
+                                            right: 16.sp),
+                                        child: AppText(
+                                          text: "Saved Addresses",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: nameText,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    /* GestureDetector(
                                   onTap: () {},
                                   child: Padding(
                                     padding: const EdgeInsets.only(
@@ -455,103 +467,105 @@ class AccountScreenState extends State<AccountScreen> {
                                     ),
                                   ),
                                 ), */
-                                SettingWidgets(
-                                  onPressedNotification: () {
-                                    if (controller.profileDetails[
-                                            "order_notification_enabled"] ==
-                                        0) {
-                                      controller.isOrder.value = false;
-                                      controller.orderValue.value = 0;
-                                    } else {
-                                      controller.isOrder.value = true;
-                                      controller.orderValue.value = 1;
-                                    }
-                                    if (controller.profileDetails[
-                                            "offer_notification_enabled"] ==
-                                        0) {
-                                      controller.isOffer.value = false;
-                                      controller.offerValue.value = 0;
-                                    } else {
-                                      controller.isOffer.value = true;
-                                      controller.offerValue.value = 1;
-                                    }
-                                    if (controller.profileDetails[
-                                            "promotional_notification_enabled"] ==
-                                        0) {
-                                      controller.isPermotion.value = false;
-                                      controller.permotionValue.value = 0;
-                                    } else {
-                                      controller.isPermotion.value = true;
-                                      controller.permotionValue.value = 1;
-                                    }
-                                    Get.to(NotificationSettingScreen());
+                                    SettingWidgets(
+                                      onPressedNotification: () {
+                                        if (controller.profileDetails[
+                                                "order_notification_enabled"] ==
+                                            0) {
+                                          controller.isOrder.value = false;
+                                          controller.orderValue.value = 0;
+                                        } else {
+                                          controller.isOrder.value = true;
+                                          controller.orderValue.value = 1;
+                                        }
+                                        if (controller.profileDetails[
+                                                "offer_notification_enabled"] ==
+                                            0) {
+                                          controller.isOffer.value = false;
+                                          controller.offerValue.value = 0;
+                                        } else {
+                                          controller.isOffer.value = true;
+                                          controller.offerValue.value = 1;
+                                        }
+                                        if (controller.profileDetails[
+                                                "promotional_notification_enabled"] ==
+                                            0) {
+                                          controller.isPermotion.value = false;
+                                          controller.permotionValue.value = 0;
+                                        } else {
+                                          controller.isPermotion.value = true;
+                                          controller.permotionValue.value = 1;
+                                        }
+                                        Get.to(NotificationSettingScreen());
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SupportWidgets(
+                                  visibilty: false,
+                                  onPressedAboutUs: () {
+                                    launchUrl(Uri.parse(
+                                        "https://la-fetch.com/about-us/"));
+                                  },
+                                  onPressedTC: () {
+                                    launchUrl(Uri.parse(
+                                        "https://la-fetch.com/terms-and-conditions/"));
+                                  },
+                                  onPressedPrivacy: () {
+                                    launchUrl(Uri.parse(
+                                        "https://la-fetch.com/privacy-policy/"));
                                   },
                                 ),
-                              ],
-                            ),
-                            SupportWidgets(
-                              visibilty: false,
-                              onPressedAboutUs: () {
-                                launchUrl(Uri.parse(
-                                    "https://la-fetch.com/about-us/"));
-                              },
-                              onPressedTC: () {
-                                launchUrl(Uri.parse(
-                                    "https://la-fetch.com/terms-and-conditions/"));
-                              },
-                              onPressedPrivacy: () {
-                                launchUrl(Uri.parse(
-                                    "https://la-fetch.com/privacy-policy/"));
-                              },
-                            ),
-                            /*   controller.profileDetails.isEmpty
+                                /*   controller.profileDetails.isEmpty
                                 ? const SizedBox(
                                     height: 0,
                                   )
                                 : */
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: 60.sp, bottom: 20.sp),
-                              child: SingleButton(
-                                  label: "Logout",
-                                  textColor: redColor,
-                                  onPressed: () {
-                                    showDialog(
-                                      barrierColor: Colors.black26,
-                                      context: context,
-                                      builder: (context) {
-                                        return showDoubleBtnDailog(
-                                            click1: () {
-                                              Get.back();
-                                            },
-                                            click2: () async {
-                                              controller.callLogout();
-                                              await analytics.logEvent(
-                                                name: 'logout_btnclick',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'logout_btnclick',
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 60.sp, bottom: 20.sp),
+                                  child: SingleButton(
+                                      label: "Logout",
+                                      textColor: redColor,
+                                      onPressed: () {
+                                        showDialog(
+                                          barrierColor: Colors.black26,
+                                          context: context,
+                                          builder: (context) {
+                                            return showDoubleBtnDailog(
+                                                click1: () {
+                                                  Get.back();
                                                 },
-                                              );
-                                            },
-                                            btncolor: colorPrimary,
-                                            text:
-                                                "Are you sure you want to logout?",
-                                            btn1Text: "No",
-                                            btn2Text: "Yes");
+                                                click2: () async {
+                                                  controller.callLogout();
+                                                  await analytics.logEvent(
+                                                    name: 'logout_btnclick',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'logout_btnclick',
+                                                    },
+                                                  );
+                                                },
+                                                btncolor: colorPrimary,
+                                                text:
+                                                    "Are you sure you want to logout?",
+                                                btn1Text: "No",
+                                                btn2Text: "Yes");
+                                          },
+                                        );
                                       },
-                                    );
-                                  },
-                                  backgroundColor: whiteTextColor,
-                                  borderColor: redColor),
+                                      backgroundColor: whiteTextColor,
+                                      borderColor: redColor),
+                                ),
+                                const ProfileBottom(
+                                  version: " 1.2.1",
+                                )
+                              ],
                             ),
-                            const ProfileBottom(
-                              version: " 1.2.1",
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                          ),
+                        )
+                      : DummyAccount(),
             )
           ],
         ),
