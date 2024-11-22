@@ -67,10 +67,28 @@ class HorizontalHomeList extends StatelessWidget {
                       primary: false,
                       controller: controller,
                       physics: const BouncingScrollPhysics(),
+                      // itemCount: list.length > 5 ? 5 : list.length,
                       itemCount: list.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, index) {
-                        return Column(
+                        return /*  list.length > 5 && index == 4
+                            ? GestureDetector(
+                                onTap: () {},
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 75.sp, right: 16.sp, left: 16.sp),
+                                  child: AppText(
+                                    text: "View All",
+                                    color: blue,
+                                    maxLines: 1,
+                                    fontSize: 12,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              )
+                            : */
+                            Column(
                           children: [
                             GestureDetector(
                               onTap: () {

@@ -44,6 +44,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.currentPage.value = 0;
       productController.current.value = 50;
+      productController.tagname.value = "We think you might also like";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
@@ -148,6 +149,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                           productController.tagId.value =
                                               productController.tagsList[index]
                                                   ["id"];
+                                          productController.tagname.value =
+                                              productController.tagsList[index]
+                                                  ["name"];
                                           productController.tagProductList
                                               .clear();
                                           productController.expressProductList
@@ -342,15 +346,15 @@ class DiscountScreenState extends State<DiscountScreen> {
                     : const SizedBox(
                         height: 0,
                       )),
-            /* Padding(
+            /*  Padding(
               padding: EdgeInsets.symmetric(vertical: 10.sp),
               child: Container(
                 width: double.infinity,
                 color: colorSecondary,
                 height: 1,
               ),
-            ),
-            Obx(() => productController.isExpress.value
+            ), */
+            /*  Obx(() => productController.isExpress.value
                 ? const DummyProductList(text: "Express Delivery")
                 : productController.expressProductList.isNotEmpty
                     ? HorizontalHomeList(
@@ -389,12 +393,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                       )),
            */
             Obx(() => productController.istagsProduct.value
-                ? const DummyProductList(text: "We think you might also like")
+                ? DummyProductList(text: productController.tagname.value)
                 : productController.tagProductList.isNotEmpty
                     ? Padding(
                         padding: EdgeInsets.only(top: 10.sp),
                         child: HorizontalHomeList(
-                          text: "We think you might also like",
+                          text: productController.tagname.value,
                           controller: productController.tagsProductController,
                           height: 250.sp,
                           visibleExpress: false,

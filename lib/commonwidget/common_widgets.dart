@@ -131,7 +131,7 @@ Route scaleIn(Widget page) {
   return PageRouteBuilder(
     transitionDuration: const Duration(milliseconds: 200),
     pageBuilder: (context, animation, secondaryAnimation) => page,
-    reverseTransitionDuration: const Duration(milliseconds: 100),
+    reverseTransitionDuration: Duration.zero,
     transitionsBuilder: (context, animation, secondaryAnimation, page) {
       var begin = 0.0;
       var end = 1.0;

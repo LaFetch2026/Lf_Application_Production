@@ -26,7 +26,7 @@ class DummyProductList extends StatelessWidget {
           ),
         ),
         Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 16.sp),
+            padding: EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
             child: SizedBox(
               height: 250.sp,
               width: double.infinity,

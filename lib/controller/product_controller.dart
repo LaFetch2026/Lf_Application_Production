@@ -47,6 +47,7 @@ class ProductController extends BaseController {
   List tagProductList = [].obs;
   List productList = [].obs;
   List filterList = [].obs;
+  RxString tagname = "We think you might also like".obs;
   List mostSeachList = [].obs;
   List expressProductList = [].obs;
   List productCategoryList = [].obs;
