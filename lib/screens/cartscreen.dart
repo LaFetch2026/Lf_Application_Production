@@ -399,7 +399,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 );
                                                                               },
                                                                               child: Container(
-                                                                                width: MediaQuery.of(context).size.width - 128,
+                                                                                width: MediaQuery.of(context).size.width - 128.sp,
                                                                                 child: AppText(
                                                                                   text: value.orderList[index]["product"]["name"] ?? "",
                                                                                   maxLines: 2,
@@ -431,7 +431,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 );
                                                                               },
                                                                               child: Container(
-                                                                                width: MediaQuery.of(context).size.width - 128,
+                                                                                width: MediaQuery.of(context).size.width - 128.sp,
                                                                                 child: Padding(
                                                                                   padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                   child: AppText(
@@ -446,7 +446,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               ),
                                                                             ),
                                                                             Container(
-                                                                              width: MediaQuery.of(context).size.width - 128,
+                                                                              width: MediaQuery.of(context).size.width - 128.sp,
                                                                               child: AppText(
                                                                                 text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["description"] ?? ""),
                                                                                 color: textHintColor,
