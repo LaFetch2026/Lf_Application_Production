@@ -2513,10 +2513,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                           Obx(
                             () => productController.isDetails.value
-                                ? Padding(
-                                    padding: EdgeInsets.all(40.0.sp),
-                                    child: Center(
-                                        child: CircularProgressIndicator()),
+                                ? SizedBox(
+                                    height: 0,
                                   )
                                 : Padding(
                                     padding: EdgeInsets.symmetric(

@@ -144,62 +144,138 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                 ),
                               ),
                             ), */
-                              Expanded(
-                                flex: 1,
-                                child: SizedBox(
-                                  height: 40.sp,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(right: 10.sp),
-                                    child: RawKeyboardListener(
-                                      focusNode: FocusNode(),
-                                      onKey: (value) {
-                                        print(value);
-                                        if (value is RawKeyDownEvent) {
-                                          orderController.queryText.value = "";
-                                          orderController.getOrderData();
-                                        }
-                                      },
-                                      child: TextField(
-                                        textCapitalization:
-                                            TextCapitalization.words,
-                                        style: TextStyle(
-                                          color: textColor,
-                                          fontSize: 15.sp,
-                                          fontFamily: "Franklin Gothic Regular",
+                              MediaQuery.of(context).size.width < 600
+                                  ? Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                        height: 40.sp,
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 10.sp),
+                                          child: RawKeyboardListener(
+                                            focusNode: FocusNode(),
+                                            onKey: (value) {
+                                              print(value);
+                                              if (value is RawKeyDownEvent) {
+                                                orderController
+                                                    .queryText.value = "";
+                                                orderController.getOrderData();
+                                              }
+                                            },
+                                            child: TextField(
+                                              textCapitalization:
+                                                  TextCapitalization.words,
+                                              style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 15.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                              ),
+                                              onChanged: onSearchChanged,
+                                              controller: orderController
+                                                  .searchController,
+                                              keyboardType: TextInputType.text,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                // isDense: true,
+                                                fillColor: whiteColor,
+                                                prefixIcon: Icon(Icons.search,
+                                                    size: 20.sp,
+                                                    color: Colors.grey),
+                                                focusedBorder:
+                                                    const OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                borderColor)),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          1.sp),
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          1.sp),
+                                                  borderSide: const BorderSide(
+                                                      color: borderColor),
+                                                ),
+                                                contentPadding: EdgeInsets.zero,
+                                                counterText: "",
+                                                hintText: "Search",
+                                                hintStyle:
+                                                    TextStyle(fontSize: 14.sp),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        onChanged: onSearchChanged,
-                                        controller:
-                                            orderController.searchController,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          isDense: true,
-                                          fillColor: whiteColor,
-                                          prefixIcon: Icon(Icons.search,
-                                              size: 20.sp, color: Colors.grey),
-                                          focusedBorder:
-                                              const OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: borderColor)),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(1.sp),
+                                      ),
+                                    )
+                                  : Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                        height: 40.sp,
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 10.sp),
+                                          child: RawKeyboardListener(
+                                            focusNode: FocusNode(),
+                                            onKey: (value) {
+                                              print(value);
+                                              if (value is RawKeyDownEvent) {
+                                                orderController
+                                                    .queryText.value = "";
+                                                orderController.getOrderData();
+                                              }
+                                            },
+                                            child: TextField(
+                                              textCapitalization:
+                                                  TextCapitalization.words,
+                                              style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 15.sp,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                              ),
+                                              onChanged: onSearchChanged,
+                                              controller: orderController
+                                                  .searchController,
+                                              keyboardType: TextInputType.text,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                isDense: true,
+                                                fillColor: whiteColor,
+                                                prefixIcon: Icon(Icons.search,
+                                                    size: 20.sp,
+                                                    color: Colors.grey),
+                                                focusedBorder:
+                                                    const OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                borderColor)),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          1.sp),
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          1.sp),
+                                                  borderSide: const BorderSide(
+                                                      color: borderColor),
+                                                ),
+                                                counterText: "",
+                                                hintText: "Search",
+                                                hintStyle:
+                                                    TextStyle(fontSize: 14.sp),
+                                              ),
+                                            ),
                                           ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(1.sp),
-                                            borderSide: const BorderSide(
-                                                color: borderColor),
-                                          ),
-                                          counterText: "",
-                                          hintText: "Search",
-                                          hintStyle: TextStyle(fontSize: 14.sp),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
                               SizedBox(
                                 height: 40.sp,
                                 width: 130.sp,
@@ -1170,290 +1246,6 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                 .orderList[
                                                                     index]
                                                                     ["orders"]
-                                                                .isEmpty
-                                                            ? Column(
-                                                                children: [
-                                                                  if (value.orderList[
-                                                                              index]
-                                                                          [
-                                                                          "status"] ==
-                                                                      6) ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: 16
-                                                                              .sp,
-                                                                          right: 16
-                                                                              .sp,
-                                                                          bottom:
-                                                                              20.sp),
-                                                                      child: DoubleIconButton(
-                                                                          firstText: "Exchange Item",
-                                                                          secondText: "Rate Order",
-                                                                          firstTextColor: btnTextColor,
-                                                                          secondTextColor: btnTextColor,
-                                                                          firstBackgroundColor: whiteColor,
-                                                                          secondBackgroundColor: whiteColor,
-                                                                          firstBorderColor: btnTextColor,
-                                                                          secondBorderColor: btnTextColor,
-                                                                          firstIcon: exchangeItemImage,
-                                                                          onPressedFirst: () async {
-                                                                            Navigator.of(context)
-                                                                                .push(MaterialPageRoute(
-                                                                                    builder: (BuildContext context) => OrderDetailsScreen(
-                                                                                          orderId: value.orderList[index]["id"],
-                                                                                        )))
-                                                                                .then((value) => setState(
-                                                                                      () {
-                                                                                        orderController.getOrderData();
-                                                                                      },
-                                                                                    ));
-                                                                            await analytics.logEvent(
-                                                                              name: 'order_details',
-                                                                              parameters: <String, Object>{
-                                                                                'page_name': 'order_details',
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                          onPressedSecond: () async {
-                                                                            Navigator.of(context)
-                                                                                .push(MaterialPageRoute(
-                                                                                    builder: (BuildContext context) => OrderDetailsScreen(
-                                                                                          orderId: value.orderList[index]["id"],
-                                                                                        )))
-                                                                                .then((value) => setState(
-                                                                                      () {
-                                                                                        orderController.getOrderData();
-                                                                                      },
-                                                                                    ));
-                                                                            await analytics.logEvent(
-                                                                              name: 'order_details',
-                                                                              parameters: <String, Object>{
-                                                                                'page_name': 'order_details',
-                                                                              },
-                                                                            );
-                                                                            /*  await analytics
-                                                                          .logEvent(
-                                                                        name:
-                                                                            'order_rateOrderClick',
-                                                                        parameters: <String,
-                                                                            Object>{
-                                                                          'page_name':
-                                                                              'order_rateOrderClick',
-                                                                        },
-                                                                      ); */
-                                                                          },
-                                                                          secondIcon: rateOrderImage),
-                                                                    )
-                                                                  ] /* else if (value
-                                                                              .orderList[index]
-                                                                          [
-                                                                          "status"] ==
-                                                                      2) ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: 16
-                                                                              .sp,
-                                                                          right: 16
-                                                                              .sp,
-                                                                          bottom:
-                                                                              20.sp),
-                                                                      child: DoubleIconButton(
-                                                                          firstText: "Cancel Order",
-                                                                          secondText: "Track Order",
-                                                                          firstTextColor: btnTextColor,
-                                                                          secondTextColor: btnTextColor,
-                                                                          firstBackgroundColor: whiteColor,
-                                                                          secondBackgroundColor: whiteColor,
-                                                                          firstBorderColor: btnTextColor,
-                                                                          secondBorderColor: btnTextColor,
-                                                                          firstIcon: blackCrossImage,
-                                                                          onPressedFirst: () async {
-                                                                            showDialog(
-                                                                              barrierColor: Colors.black26,
-                                                                              context: context,
-                                                                              builder: (context) {
-                                                                                return showDoubleBtnDailog(
-                                                                                    click1: () {
-                                                                                      Get.back();
-                                                                                    },
-                                                                                    click2: () async {
-                                                                                      orderController.callCancelOrder(value.orderList[index]["id"]);
-                                                                                      await analytics.logEvent(
-                                                                                        name: 'order_cancelOrderClick',
-                                                                                        parameters: <String, Object>{
-                                                                                          'page_name': 'order_cancelOrderClick',
-                                                                                        },
-                                                                                      );
-                                                                                    },
-                                                                                    btncolor: colorPrimary,
-                                                                                    text: "Are you sure you want to cancel order?",
-                                                                                    btn1Text: "No",
-                                                                                    btn2Text: "Yes");
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                          onPressedSecond: () async {
-                                                                            Get.to(TrackOrderScreen(
-                                                                              orderId: value.orderList[index]["id"],
-                                                                            ));
-                                                                            await analytics.logEvent(
-                                                                              name: 'order_trackOrderClick',
-                                                                              parameters: <String, Object>{
-                                                                                'page_name': 'order_trackOrderClick',
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                          secondIcon: locationIcon),
-                                                                    )
-                                                                  ] */
-                                                                  else if (value
-                                                                              .orderList[index]
-                                                                          [
-                                                                          "status"] ==
-                                                                      5) ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left: 16
-                                                                              .sp,
-                                                                          right: 16
-                                                                              .sp,
-                                                                          top: 10
-                                                                              .sp,
-                                                                          bottom:
-                                                                              30.sp),
-                                                                      child: SingleIconButton(
-                                                                          label: "Track Order",
-                                                                          textColor: btnTextColor,
-                                                                          backgroundColor: whiteColor,
-                                                                          onPressed: () async {
-                                                                            if (value.orderList[index]["express_delivery_charges"] ==
-                                                                                "0.00") {
-                                                                              Get.to(TrackOrderScreen(
-                                                                                orderId: value.orderList[index]["id"],
-                                                                              ));
-                                                                              await analytics.logEvent(
-                                                                                name: 'order_trackOrderClick',
-                                                                                parameters: <String, Object>{
-                                                                                  'page_name': 'order_trackOrderClick',
-                                                                                },
-                                                                              );
-                                                                            } else {
-                                                                              Get.to(DeliverTrackScreen(
-                                                                                orderId: value.orderList[index]["id"],
-                                                                                deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"]),
-                                                                                deliverPartnerLng: double.parse(value.orderList[index]["delivery_partner_longitude"] ?? 77.2185),
-                                                                                dropLat: double.parse(value.orderList[index]["customer_latitude"]),
-                                                                                dropLng: double.parse(value.orderList[index]["customer_longitude"]),
-                                                                              ));
-                                                                              await analytics.logEvent(
-                                                                                name: 'order_trackdeliveryClick',
-                                                                                parameters: <String, Object>{
-                                                                                  'page_name': 'order_trackOrderClick',
-                                                                                },
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                          borderColor: btnTextColor,
-                                                                          icon: locationIcon),
-                                                                    )
-                                                                  ] else if (value
-                                                                              .orderList[index]
-                                                                          [
-                                                                          "status"] ==
-                                                                      7) ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 10
-                                                                              .sp,
-                                                                          bottom:
-                                                                              30.sp),
-                                                                      child: SingleButton(
-                                                                          label: "View details",
-                                                                          height: 40,
-                                                                          textColor: btnTextColor,
-                                                                          backgroundColor: whiteColor,
-                                                                          onPressed: () async {
-                                                                            Get.to(OrderDetailsScreen(
-                                                                              orderId: value.orderList[index]["id"],
-                                                                            ));
-                                                                            await analytics.logEvent(
-                                                                              name: 'order_details',
-                                                                              parameters: <String, Object>{
-                                                                                'page_name': 'order_details',
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                          borderColor: btnTextColor),
-                                                                    )
-                                                                  ] else ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 10
-                                                                              .sp,
-                                                                          bottom:
-                                                                              30.sp),
-                                                                      child: SingleButton(
-                                                                          label: "View details",
-                                                                          height: 40,
-                                                                          textColor: btnTextColor,
-                                                                          backgroundColor: whiteColor,
-                                                                          onPressed: () async {
-                                                                            Get.to(OrderDetailsScreen(
-                                                                              orderId: value.orderList[index]["id"],
-                                                                            ));
-                                                                            await analytics.logEvent(
-                                                                              name: 'order_details',
-                                                                              parameters: <String, Object>{
-                                                                                'page_name': 'order_details',
-                                                                              },
-                                                                            );
-                                                                          },
-                                                                          borderColor: btnTextColor),
-                                                                    )
-                                                                  ],
-                                                                ],
-                                                              )
-                                                            : Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        top: 10
-                                                                            .sp,
-                                                                        bottom:
-                                                                            30.sp),
-                                                                child:
-                                                                    SingleButton(
-                                                                        label:
-                                                                            "View details",
-                                                                        height:
-                                                                            40,
-                                                                        textColor:
-                                                                            btnTextColor,
-                                                                        backgroundColor:
-                                                                            whiteColor,
-                                                                        onPressed:
-                                                                            () async {
-                                                                          Get.to(
-                                                                              OrderDetailsScreen(
-                                                                            orderId:
-                                                                                value.orderList[index]["id"],
-                                                                          ));
-                                                                          await analytics
-                                                                              .logEvent(
-                                                                            name:
-                                                                                'order_details',
-                                                                            parameters: <String,
-                                                                                Object>{
-                                                                              'page_name': 'order_details',
-                                                                            },
-                                                                          );
-                                                                        },
-                                                                        borderColor:
-                                                                            btnTextColor),
-                                                              ),
-                                                        orderController
-                                                                .orderList[
-                                                                    index]
-                                                                    ["orders"]
                                                                 .isNotEmpty
                                                             ? GestureDetector(
                                                                 onTap: () {
@@ -2172,6 +1964,290 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                 ))
                                                             : SizedBox(
                                                                 height: 0,
+                                                              ),
+                                                        orderController
+                                                                .orderList[
+                                                                    index]
+                                                                    ["orders"]
+                                                                .isEmpty
+                                                            ? Column(
+                                                                children: [
+                                                                  if (value.orderList[
+                                                                              index]
+                                                                          [
+                                                                          "status"] ==
+                                                                      6) ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left: 16
+                                                                              .sp,
+                                                                          right: 16
+                                                                              .sp,
+                                                                          bottom:
+                                                                              20.sp),
+                                                                      child: DoubleIconButton(
+                                                                          firstText: "Exchange Item",
+                                                                          secondText: "Rate Order",
+                                                                          firstTextColor: btnTextColor,
+                                                                          secondTextColor: btnTextColor,
+                                                                          firstBackgroundColor: whiteColor,
+                                                                          secondBackgroundColor: whiteColor,
+                                                                          firstBorderColor: btnTextColor,
+                                                                          secondBorderColor: btnTextColor,
+                                                                          firstIcon: exchangeItemImage,
+                                                                          onPressedFirst: () async {
+                                                                            Navigator.of(context)
+                                                                                .push(MaterialPageRoute(
+                                                                                    builder: (BuildContext context) => OrderDetailsScreen(
+                                                                                          orderId: value.orderList[index]["id"],
+                                                                                        )))
+                                                                                .then((value) => setState(
+                                                                                      () {
+                                                                                        orderController.getOrderData();
+                                                                                      },
+                                                                                    ));
+                                                                            await analytics.logEvent(
+                                                                              name: 'order_details',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'order_details',
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          onPressedSecond: () async {
+                                                                            Navigator.of(context)
+                                                                                .push(MaterialPageRoute(
+                                                                                    builder: (BuildContext context) => OrderDetailsScreen(
+                                                                                          orderId: value.orderList[index]["id"],
+                                                                                        )))
+                                                                                .then((value) => setState(
+                                                                                      () {
+                                                                                        orderController.getOrderData();
+                                                                                      },
+                                                                                    ));
+                                                                            await analytics.logEvent(
+                                                                              name: 'order_details',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'order_details',
+                                                                              },
+                                                                            );
+                                                                            /*  await analytics
+                                                                          .logEvent(
+                                                                        name:
+                                                                            'order_rateOrderClick',
+                                                                        parameters: <String,
+                                                                            Object>{
+                                                                          'page_name':
+                                                                              'order_rateOrderClick',
+                                                                        },
+                                                                      ); */
+                                                                          },
+                                                                          secondIcon: rateOrderImage),
+                                                                    )
+                                                                  ] /* else if (value
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "status"] ==
+                                                                      2) ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left: 16
+                                                                              .sp,
+                                                                          right: 16
+                                                                              .sp,
+                                                                          bottom:
+                                                                              20.sp),
+                                                                      child: DoubleIconButton(
+                                                                          firstText: "Cancel Order",
+                                                                          secondText: "Track Order",
+                                                                          firstTextColor: btnTextColor,
+                                                                          secondTextColor: btnTextColor,
+                                                                          firstBackgroundColor: whiteColor,
+                                                                          secondBackgroundColor: whiteColor,
+                                                                          firstBorderColor: btnTextColor,
+                                                                          secondBorderColor: btnTextColor,
+                                                                          firstIcon: blackCrossImage,
+                                                                          onPressedFirst: () async {
+                                                                            showDialog(
+                                                                              barrierColor: Colors.black26,
+                                                                              context: context,
+                                                                              builder: (context) {
+                                                                                return showDoubleBtnDailog(
+                                                                                    click1: () {
+                                                                                      Get.back();
+                                                                                    },
+                                                                                    click2: () async {
+                                                                                      orderController.callCancelOrder(value.orderList[index]["id"]);
+                                                                                      await analytics.logEvent(
+                                                                                        name: 'order_cancelOrderClick',
+                                                                                        parameters: <String, Object>{
+                                                                                          'page_name': 'order_cancelOrderClick',
+                                                                                        },
+                                                                                      );
+                                                                                    },
+                                                                                    btncolor: colorPrimary,
+                                                                                    text: "Are you sure you want to cancel order?",
+                                                                                    btn1Text: "No",
+                                                                                    btn2Text: "Yes");
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          onPressedSecond: () async {
+                                                                            Get.to(TrackOrderScreen(
+                                                                              orderId: value.orderList[index]["id"],
+                                                                            ));
+                                                                            await analytics.logEvent(
+                                                                              name: 'order_trackOrderClick',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'order_trackOrderClick',
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          secondIcon: locationIcon),
+                                                                    )
+                                                                  ] */
+                                                                  else if (value
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "status"] ==
+                                                                      5) ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left: 16
+                                                                              .sp,
+                                                                          right: 16
+                                                                              .sp,
+                                                                          top: 10
+                                                                              .sp,
+                                                                          bottom:
+                                                                              30.sp),
+                                                                      child: SingleIconButton(
+                                                                          label: "Track Order",
+                                                                          textColor: btnTextColor,
+                                                                          backgroundColor: whiteColor,
+                                                                          onPressed: () async {
+                                                                            if (value.orderList[index]["express_delivery_charges"] ==
+                                                                                "0.00") {
+                                                                              Get.to(TrackOrderScreen(
+                                                                                orderId: value.orderList[index]["id"],
+                                                                              ));
+                                                                              await analytics.logEvent(
+                                                                                name: 'order_trackOrderClick',
+                                                                                parameters: <String, Object>{
+                                                                                  'page_name': 'order_trackOrderClick',
+                                                                                },
+                                                                              );
+                                                                            } else {
+                                                                              Get.to(DeliverTrackScreen(
+                                                                                orderId: value.orderList[index]["id"],
+                                                                                deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"]),
+                                                                                deliverPartnerLng: double.parse(value.orderList[index]["delivery_partner_longitude"] ?? 77.2185),
+                                                                                dropLat: double.parse(value.orderList[index]["customer_latitude"]),
+                                                                                dropLng: double.parse(value.orderList[index]["customer_longitude"]),
+                                                                              ));
+                                                                              await analytics.logEvent(
+                                                                                name: 'order_trackdeliveryClick',
+                                                                                parameters: <String, Object>{
+                                                                                  'page_name': 'order_trackOrderClick',
+                                                                                },
+                                                                              );
+                                                                            }
+                                                                          },
+                                                                          borderColor: btnTextColor,
+                                                                          icon: locationIcon),
+                                                                    )
+                                                                  ] else if (value
+                                                                              .orderList[index]
+                                                                          [
+                                                                          "status"] ==
+                                                                      7) ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          top: 10
+                                                                              .sp,
+                                                                          bottom:
+                                                                              30.sp),
+                                                                      child: SingleButton(
+                                                                          label: "View details",
+                                                                          height: 40,
+                                                                          textColor: btnTextColor,
+                                                                          backgroundColor: whiteColor,
+                                                                          onPressed: () async {
+                                                                            Get.to(OrderDetailsScreen(
+                                                                              orderId: value.orderList[index]["id"],
+                                                                            ));
+                                                                            await analytics.logEvent(
+                                                                              name: 'order_details',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'order_details',
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          borderColor: btnTextColor),
+                                                                    )
+                                                                  ] else ...[
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          top: 10
+                                                                              .sp,
+                                                                          bottom:
+                                                                              30.sp),
+                                                                      child: SingleButton(
+                                                                          label: "View details",
+                                                                          height: 40,
+                                                                          textColor: btnTextColor,
+                                                                          backgroundColor: whiteColor,
+                                                                          onPressed: () async {
+                                                                            Get.to(OrderDetailsScreen(
+                                                                              orderId: value.orderList[index]["id"],
+                                                                            ));
+                                                                            await analytics.logEvent(
+                                                                              name: 'order_details',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'order_details',
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          borderColor: btnTextColor),
+                                                                    )
+                                                                  ],
+                                                                ],
+                                                              )
+                                                            : Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        top: 10
+                                                                            .sp,
+                                                                        bottom:
+                                                                            30.sp),
+                                                                child:
+                                                                    SingleButton(
+                                                                        label:
+                                                                            "View details",
+                                                                        height:
+                                                                            40,
+                                                                        textColor:
+                                                                            btnTextColor,
+                                                                        backgroundColor:
+                                                                            whiteColor,
+                                                                        onPressed:
+                                                                            () async {
+                                                                          Get.to(
+                                                                              OrderDetailsScreen(
+                                                                            orderId:
+                                                                                value.orderList[index]["id"],
+                                                                          ));
+                                                                          await analytics
+                                                                              .logEvent(
+                                                                            name:
+                                                                                'order_details',
+                                                                            parameters: <String,
+                                                                                Object>{
+                                                                              'page_name': 'order_details',
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                        borderColor:
+                                                                            btnTextColor),
                                                               ),
                                                       ]),
                                                 ),
