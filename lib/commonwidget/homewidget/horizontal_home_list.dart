@@ -99,6 +99,12 @@ class HorizontalHomeList extends StatelessWidget {
                                                         maxNrOfCacheObjects:
                                                             100)),
                                                 fit: BoxFit.cover,
+                                                /* fadeInCurve: Curves.easeIn,
+                                                fadeInDuration:
+                                                    Duration(milliseconds: 100), */
+                                                fadeOutCurve: Curves.ease,
+                                                fadeOutDuration:
+                                                    Duration(milliseconds: 100),
                                                 imageUrl: isImage(list[index]
                                                         ["images"][0]["name"])
                                                     ? list[index]["images"][0]
