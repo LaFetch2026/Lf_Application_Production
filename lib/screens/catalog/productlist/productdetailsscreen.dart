@@ -3298,46 +3298,48 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           Obx(() => productController.isFrequentlyBought.value
                               ? const DummyProductList(
                                   text: "Frequently bought with")
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    HorizontalHomeList(
-                                      text: "Frequently bought with",
-                                      height: 250.sp,
-                                      leftPadding: 0,
-                                      controller: productController
-                                          .frequentlyBoughtController,
-                                      list: productController
-                                          .frequentlyProductList,
-                                      visibleExpress: true,
-                                      visibleheart: true,
-                                      onPressedHeart: (p0, p1) async {
-                                        if (productController
-                                                .frequentlyProductList[p1]
-                                            ["wishlisted"]) {
-                                          productController
-                                              .callAddProductToWishlist(
-                                                  productController
-                                                          .frequentlyProductList[
-                                                      p1]["wishlist_id"],
-                                                  "frequently",
-                                                  p0,
-                                                  0,
-                                                  0,
-                                                  [],
-                                                  [],
-                                                  widget.productId,
-                                                  0,
-                                                  0);
-                                        } else {
-                                          scaffoldKey.currentState
-                                              ?.showBottomSheet((context) =>
-                                                  BottomWishlist(
-                                                      controller:
-                                                          wishlistController,
-                                                      onPressed: (p0) {
-                                                        productController
-                                                            .callAddProductToWishlist(
+                              : productController
+                                      .frequentlyProductList.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        HorizontalHomeList(
+                                          text: "Frequently bought with",
+                                          height: 250.sp,
+                                          leftPadding: 0,
+                                          controller: productController
+                                              .frequentlyBoughtController,
+                                          list: productController
+                                              .frequentlyProductList,
+                                          visibleExpress: true,
+                                          visibleheart: true,
+                                          onPressedHeart: (p0, p1) async {
+                                            if (productController
+                                                    .frequentlyProductList[p1]
+                                                ["wishlisted"]) {
+                                              productController
+                                                  .callAddProductToWishlist(
+                                                      productController
+                                                              .frequentlyProductList[
+                                                          p1]["wishlist_id"],
+                                                      "frequently",
+                                                      p0,
+                                                      0,
+                                                      0,
+                                                      [],
+                                                      [],
+                                                      widget.productId,
+                                                      0,
+                                                      0);
+                                            } else {
+                                              scaffoldKey.currentState
+                                                  ?.showBottomSheet((context) =>
+                                                      BottomWishlist(
+                                                          controller:
+                                                              wishlistController,
+                                                          onPressed: (p0) {
+                                                            productController.callAddProductToWishlist(
                                                                 p0,
                                                                 "frequently",
                                                                 productController
@@ -3351,42 +3353,48 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                     .productId,
                                                                 0,
                                                                 0);
-                                                      },
-                                                      wishlistList:
-                                                          wishlistController
-                                                              .wishlistList));
-                                        }
-                                        await analytics.logEvent(
-                                          name: 'frequently_product_wishlist',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'frequently_product_wishlist',
+                                                          },
+                                                          wishlistList:
+                                                              wishlistController
+                                                                  .wishlistList));
+                                            }
+                                            await analytics.logEvent(
+                                              name:
+                                                  'frequently_product_wishlist',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'frequently_product_wishlist',
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
-                                      onPressed: (p0, p1) async {
-                                        Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        ProductDetailsScreen(
-                                                            brandName: p1,
-                                                            productId: p0,
-                                                            type: "add")));
-                                        await analytics.logEvent(
-                                          name: 'frequently_product_details',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'frequently_product_details',
+                                          onPressed: (p0, p1) async {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            ProductDetailsScreen(
+                                                                brandName: p1,
+                                                                productId: p0,
+                                                                type: "add")));
+                                            await analytics.logEvent(
+                                              name:
+                                                  'frequently_product_details',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'frequently_product_details',
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
-                                    ),
-                                    const Divider(
-                                      color: colorSecondary,
-                                    ),
-                                  ],
-                                )),
+                                        ),
+                                        const Divider(
+                                          color: colorSecondary,
+                                        ),
+                                      ],
+                                    )
+                                  : SizedBox(
+                                      height: 0,
+                                    )),
                         ],
                       ),
                     )

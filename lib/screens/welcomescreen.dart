@@ -17,8 +17,41 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => WelcomeScreenState();
 }
 
-class WelcomeScreenState extends State<WelcomeScreen> {
+class WelcomeScreenState extends State<WelcomeScreen>
+    with TickerProviderStateMixin {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  /*  late AnimationController _controller;
+  late Animation<Offset> _animation;
+  late AnimationController _longtextcontroller;
+  late Animation<Offset> _longTextanimation; */
+
+  /*  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..forward();
+    _animation = Tween<Offset>(
+      begin: const Offset(-0.9, 0.0),
+      end: const Offset(-0.2, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInCubic,
+    ));
+    _longtextcontroller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..forward();
+    _longTextanimation = Tween<Offset>(
+      begin: const Offset(-0.9, 0.0),
+      end: const Offset(0.0, 0.0),
+    ).animate(CurvedAnimation(
+      parent: _longtextcontroller,
+      curve: Curves.easeInCubic,
+    ));
+  } */
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +89,43 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                       fontSize: 14,
                     ),
                   ),
+                  /*   Builder(
+                      builder: (context) => Center(
+                            child: SlideTransition(
+                              position: _animation,
+                              child: Padding(
+                                padding:
+                                    EdgeInsets.only(top: 20.sp, left: 16.sp),
+                                child: AppText(
+                                  text: "Welcome to Lafetch!",
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                  color: whiteTextColor,
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ),
+                          )),
+                  Builder(
+                      builder: (context) => Center(
+                            child: SlideTransition(
+                              position: _longTextanimation,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 20.sp, left: 16.sp, right: 16.sp),
+                                child: AppText(
+                                  text:
+                                      "In Delhi? Get your order delivered in just 6-hours. Quick, hassle-free checkouts & so much more’s waiting for you on the other side.",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  maxLines: 3,
+                                  fontWeight: FontWeight.w400,
+                                  color: whiteTextColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          )),
+                */
                 ],
               ),
             ),

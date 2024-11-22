@@ -44,11 +44,11 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
             Padding(
               padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
               child: AppText(
-                text: "Explore Catalog",
+                text: "Explore our entire collection",
                 fontFamily: "Franklin Gothic Regular",
                 fontWeight: FontWeight.w400,
                 color: appbarText,
-                fontSize: 25,
+                fontSize: 22,
               ),
             ),
             Padding(
