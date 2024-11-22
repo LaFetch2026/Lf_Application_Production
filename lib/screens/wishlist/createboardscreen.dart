@@ -34,22 +34,26 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
-    wishlistController.addItem.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      wishlistController.addItem.value = 0;
+      wishlistController.pHasnextpage.value = true;
+      wishlistController.pLoadMore.value = false;
+      wishlistController.isDetails.value = false;
+      wishlistController.productPage.value = 1;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      widget.btnText == ""
+          ? WidgetsBinding.instance.addPostFrameCallback((_) =>
+              wishlistController.getWishlistDetails(widget.wishlistId, 2))
+          : WidgetsBinding.instance.addPostFrameCallback(
+              (_) => wishlistController.getProductData("relevant"));
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       wishlistController.productListController.addListener(() {
         wishlistController.fetchProductMoreData("relevant");
         wishlistController.update();
       });
     });
-    wishlistController.pHasnextpage.value = true;
-    wishlistController.pLoadMore.value = false;
-    wishlistController.isDetails.value = false;
-    wishlistController.productPage.value = 1;
-    widget.btnText == ""
-        ? WidgetsBinding.instance.addPostFrameCallback(
-            (_) => wishlistController.getWishlistDetails(widget.wishlistId, 2))
-        : WidgetsBinding.instance.addPostFrameCallback(
-            (_) => wishlistController.getProductData("relevant"));
     super.initState();
   }
 

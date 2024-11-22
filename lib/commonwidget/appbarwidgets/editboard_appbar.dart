@@ -74,7 +74,7 @@ class EditBoardAppbar extends StatelessWidget {
                 child: const ImageIcon(
                   AssetImage(shareImage),
                   color: appbarText,
-                  size: 20.sp,
+                  size: 16.sp,
                 ),
               ), */
             ],

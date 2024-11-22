@@ -73,13 +73,12 @@ class CatalogProductAppbar extends StatelessWidget {
                     height: 28.sp,
                     width: 28.sp,
                     child: CircleAvatar(
-                      backgroundColor: whiteColor,
-                      child: ImageIcon(
-                        AssetImage(cartImage),
-                        color: colorPrimary,
-                        size: 20.sp,
-                      ),
-                    ),
+                        backgroundColor: whiteColor,
+                        child: Image.asset(
+                          cartNewImage,
+                          height: 20.sp,
+                          width: 20.sp,
+                        )),
                   ),
                 ),
               ),

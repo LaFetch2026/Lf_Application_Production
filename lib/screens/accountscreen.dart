@@ -86,10 +86,11 @@ class AccountScreenState extends State<AccountScreen> {
                       width: 30.sp,
                       child: CircleAvatar(
                         backgroundColor: blackColor,
-                        child: ImageIcon(
-                          AssetImage(cartImage),
-                          color: whiteBorderColor,
-                          size: 20.sp,
+                        child: Image.asset(
+                          cartNewImage,
+                          color: whiteColor,
+                          height: 20.sp,
+                          width: 20.sp,
                         ),
                       ),
                     ),

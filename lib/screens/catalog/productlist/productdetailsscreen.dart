@@ -866,9 +866,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       width: 36.sp,
                                                       child: CircleAvatar(
                                                           backgroundColor:
-                                                              colorPrimary,
+                                                              whiteColor,
                                                           child: Image.asset(
-                                                            cartIconWhite,
+                                                            cartNewImage,
                                                             height: 22.sp,
                                                             width: 22.sp,
                                                           )),
@@ -907,8 +907,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 whiteColor,
                                                             child: Image.asset(
                                                               shareImage,
-                                                              height: 24.sp,
-                                                              width: 24.sp,
+                                                              height: 20.sp,
+                                                              width: 20.sp,
                                                             )),
                                                       ),
                                                     ),
