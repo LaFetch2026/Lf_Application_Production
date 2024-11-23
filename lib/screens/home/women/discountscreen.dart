@@ -262,6 +262,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                               GestureDetector(
                             onTap: () async {
                               homeController.bannerTag1Id.clear();
+                              homeController.bannerCategory1Id.clear();
                               if (homeController
                                   .banner1List[itemIndex]["tags"].isNotEmpty) {
                                 for (var i = 0;
@@ -284,7 +285,6 @@ class DiscountScreenState extends State<DiscountScreen> {
                                       homeController.banner1List[itemIndex]
                                           ["categories"][i]["id"]);
                                 }
-                                print(homeController.bannerTag1Id);
                                 /*  Get.to(CategoryProductScreen(
                                   categoryName: "Product List",
                                   categoryId: 0,
@@ -912,6 +912,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     GestureDetector(
                                   onTap: () async {
                                     homeController.bannerTag2Id.clear();
+                                    homeController.bannerCategory2Id.clear();
                                     if (homeController
                                         .banner2List[itemIndex]["tags"]
                                         .isNotEmpty) {

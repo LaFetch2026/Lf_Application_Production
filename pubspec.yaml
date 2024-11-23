@@ -85,6 +85,7 @@ dependencies:
   flutter_background_service: ^5.0.5
   flutter_local_notifications: ^17.1.2
   animate_do: ^2.1.0
+  flutter_staggered_animations: ^1.0.0
 
 dev_dependencies:
   flutter_test:
