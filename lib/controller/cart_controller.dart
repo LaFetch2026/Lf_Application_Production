@@ -30,6 +30,7 @@ class CartController extends BaseController {
   List couponList = [].obs;
   RxBool isExpress = false.obs;
   RxInt expressValue = 0.obs;
+  List<bool> selected = List.generate(50, (i) => false).obs;
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},
     {'id': '73', "coupan": 'AXIS20'},
@@ -182,6 +183,8 @@ class CartController extends BaseController {
           getCartData();
         } else if (page == "express") {
           getCartData();
+          selected.clear();
+          selected = List.generate(50, (i) => false).obs;
         } else {
           Get.close(1);
         }

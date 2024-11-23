@@ -61,7 +61,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: scaffoldKey,
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Obx(() => productController.isBrandExpressProduct.value
             ? const DummyGridList()
             : Stack(

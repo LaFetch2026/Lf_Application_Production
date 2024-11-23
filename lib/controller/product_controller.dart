@@ -137,6 +137,7 @@ class ProductController extends BaseController {
   List imageList = [].obs;
   RxBool isExpressDelivery = false.obs;
   RxInt expressValue = 0.obs;
+  List<bool> reorderSelected = List.generate(50, (i) => false).obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -1729,6 +1730,8 @@ class ProductController extends BaseController {
         addToCart.value = true;
         if (type == "reorder") {
           Get.to(CartScreen());
+          reorderSelected.clear();
+          reorderSelected = List.generate(50, (i) => false).obs;
         } /*  else {
           getSnackBar("Product added to cart");
         } */

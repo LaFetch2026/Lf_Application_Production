@@ -41,6 +41,8 @@ class CartScreenState extends State<CartScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.couponList.clear();
+      controller.selected.clear();
+      controller.selected = List.generate(50, (i) => false).obs;
       controller.getCouponData();
     });
     WidgetsBinding.instance
@@ -523,30 +525,43 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   child: Center(child: CircularProgressIndicator()),
                                                                                                 )
                                                                                               : */
-                                                                                        Padding(
-                                                                                          padding: EdgeInsets.only(left: 12.sp),
-                                                                                          child: Container(
-                                                                                              decoration: BoxDecoration(
-                                                                                                borderRadius: BorderRadius.circular(3.sp),
-                                                                                                border: Border(
-                                                                                                  top: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                  left: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                  right: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                  bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                        value.selected[index]
+                                                                                            ? Padding(
+                                                                                                padding: EdgeInsets.only(left: 12.sp),
+                                                                                                child: Center(
+                                                                                                  child: SizedBox(
+                                                                                                    height: 16.sp,
+                                                                                                    width: 16.sp,
+                                                                                                    child: Center(child: CircularProgressIndicator()),
+                                                                                                  ),
                                                                                                 ),
+                                                                                              )
+                                                                                            : Padding(
+                                                                                                padding: EdgeInsets.only(left: 12.sp),
+                                                                                                child: Container(
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      borderRadius: BorderRadius.circular(3.sp),
+                                                                                                      border: Border(
+                                                                                                        top: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                        left: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                        right: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                        bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    width: 20,
+                                                                                                    height: 20,
+                                                                                                    child: Checkbox(
+                                                                                                      value: value.orderList[index]["express_delivery"],
+                                                                                                      checkColor: btnTextColor,
+                                                                                                      activeColor: whiteBorderColor,
+                                                                                                      side: const BorderSide(color: btnTextColor, width: 0),
+                                                                                                      onChanged: (value) {
+                                                                                                        controller.selected[index] = !controller.selected[index];
+                                                                                                        controller.update();
+                                                                                                        controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["express_delivery"] ? 0 : 1, 1);
+                                                                                                      },
+                                                                                                    )),
                                                                                               ),
-                                                                                              width: 20,
-                                                                                              height: 20,
-                                                                                              child: Checkbox(
-                                                                                                value: value.orderList[index]["express_delivery"],
-                                                                                                checkColor: btnTextColor,
-                                                                                                activeColor: whiteBorderColor,
-                                                                                                side: const BorderSide(color: btnTextColor, width: 0),
-                                                                                                onChanged: (value) {
-                                                                                                  controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["express_delivery"] ? 0 : 1, 1);
-                                                                                                },
-                                                                                              )),
-                                                                                        ),
                                                                                       ],
                                                                                     ),
                                                                                   )

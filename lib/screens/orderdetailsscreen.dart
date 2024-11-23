@@ -66,7 +66,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   @override
   void initState() {
-    getPrefrenceValue();
+    WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
+          getPrefrenceValue();
+          productController.reorderSelected.clear();
+          productController.reorderSelected =
+              List.generate(50, (i) => false).obs;
+        });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => orderController.getOrderDetails(widget.orderId));
     WidgetsBinding.instance.addPostFrameCallback(
@@ -1406,25 +1411,29 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                     orderController.orderDetails["order_lines"][index]["reorder"]
                                                                                         ? GestureDetector(
                                                                                             onTap: () {
+                                                                                              productController.reorderSelected[index] = !productController.reorderSelected[index];
+                                                                                              productController.update();
                                                                                               productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
                                                                                               productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
                                                                                             },
                                                                                             child: Padding(
                                                                                               padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                              child: /*  productController.isReorder.value
-                                                                                            ? const SizedBox(
-                                                                                                height: 10,
-                                                                                                width: 10,
-                                                                                                child: Center(child: CircularProgressIndicator()),
-                                                                                              )
-                                                                                            :  */
-                                                                                                  AppText(
-                                                                                                text: "Reorder",
-                                                                                                color: blue,
-                                                                                                fontSize: 11,
-                                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                                fontWeight: FontWeight.w400,
-                                                                                              ),
+                                                                                              child: productController.reorderSelected[index]
+                                                                                                  ? Padding(
+                                                                                                      padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                                                                                      child: const SizedBox(
+                                                                                                        height: 10,
+                                                                                                        width: 10,
+                                                                                                        child: Center(child: CircularProgressIndicator()),
+                                                                                                      ),
+                                                                                                    )
+                                                                                                  : AppText(
+                                                                                                      text: "Reorder",
+                                                                                                      color: blue,
+                                                                                                      fontSize: 11,
+                                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                                      fontWeight: FontWeight.w400,
+                                                                                                    ),
                                                                                             ),
                                                                                           )
                                                                                         : const SizedBox(

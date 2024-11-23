@@ -69,7 +69,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
