@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/catalogwidgets/bottomfiltters.dart';
 import '../../commonwidget/catalogwidgets/bottomsortby.dart';
@@ -617,7 +618,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                         },
                         onPressedSecond: () async {
                           Get.to(BottomFilters(
-                            btnclearAll: () {
+                            btnclearAll: () async {
                               productController.brand_ids.clear();
                               productController.color_ids.clear();
                               productController.size_ids.clear();
@@ -625,6 +626,13 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                               productController.filterExpressEnable.value =
                                   false;
                               Get.back();
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.remove("brandList");
+                              prefs.remove("colorList");
+                              prefs.remove("sizeList");
+                              prefs.remove("upper");
+                              prefs.remove("lower");
                               productController.getBrandExpressProductData(
                                   widget.brandId,
                                   productController.expressSortBy.value,

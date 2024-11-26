@@ -8,6 +8,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
@@ -63,6 +64,12 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.remove("brandList");
+        prefs.remove("colorList");
+        prefs.remove("sizeList");
+        prefs.remove("upper");
+        prefs.remove("lower");
         Get.offAll(const BottomNavScreen(
           index: 0,
         ));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/constants.dart';
 
@@ -28,8 +29,14 @@ class CatalogProductAppbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   Get.back();
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.remove("brandList");
+                  prefs.remove("colorList");
+                  prefs.remove("sizeList");
+                  prefs.remove("upper");
+                  prefs.remove("lower");
                 },
                 child: Image.asset(
                   arrowBack,

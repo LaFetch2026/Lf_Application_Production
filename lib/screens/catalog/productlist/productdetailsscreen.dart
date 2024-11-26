@@ -866,9 +866,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       width: 36.sp,
                                                       child: CircleAvatar(
                                                           backgroundColor:
-                                                              whiteColor,
+                                                              blackColor,
                                                           child: Image.asset(
                                                             cartNewImage,
+                                                            color: whiteColor,
                                                             height: 22.sp,
                                                             width: 22.sp,
                                                           )),

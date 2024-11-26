@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/filterbutton.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
@@ -37,12 +38,14 @@ class BottomFiltersState extends State<BottomFilters> {
   List<bool> colorSelected = List.generate(50, (i) => false);
   List<bool> sizeSelected = List.generate(50, (i) => false);
   String type = "";
+  bool isPriceLoading = true;
   String lowerValue = "500";
   String UpperValue = "500000";
   RangeValues values = RangeValues(500, 500000);
 
   @override
   void initState() {
+    getPrefrenceValue();
     selected[0] = !selected[0];
     productController.isPrice.value = true;
     productController.size_ids.clear();
@@ -51,6 +54,36 @@ class BottomFiltersState extends State<BottomFilters> {
     productController.filterList.clear();
     setState(() {});
     super.initState();
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getStringList('brandList') != null) {
+      brandSelected.clear();
+      brandSelected =
+          // ignore: sdk_version_since
+          prefs.getStringList('brandList')!.map((i) => bool.parse(i)).toList();
+    }
+    if (prefs.getStringList('colorList') != null) {
+      colorSelected.clear();
+      colorSelected =
+          // ignore: sdk_version_since
+          prefs.getStringList('colorList')!.map((i) => bool.parse(i)).toList();
+    }
+    if (prefs.getStringList('sizeList') != null) {
+      sizeSelected.clear();
+      sizeSelected =
+          // ignore: sdk_version_since
+          prefs.getStringList('sizeList')!.map((i) => bool.parse(i)).toList();
+    }
+    if (prefs.getString('upper') != null) {
+      UpperValue = prefs.getString('upper')!;
+    }
+    if (prefs.getString('lower') != null) {
+      lowerValue = prefs.getString('lower')!;
+    }
+    isPriceLoading = false;
+    setState(() {});
   }
 
   @override
@@ -71,7 +104,7 @@ class BottomFiltersState extends State<BottomFilters> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(
-                      left: 16.sp, right: 16.sp, top: 50.sp, bottom: 20.sp),
+                      left: 16.sp, right: 16.sp, top: 50.sp, bottom: 10.sp),
                   child: Row(
                     children: [
                       Text(
@@ -97,14 +130,20 @@ class BottomFiltersState extends State<BottomFilters> {
                           setState(() {});
                           widget.btnclearAll.call();
                         },
-                        child: Text(
-                          "Clear All",
-                          style: TextStyle(
-                            color: greyTextColor,
-                            decoration: TextDecoration.none,
-                            fontSize: 12.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w500,
+                        child: Container(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.sp, vertical: 5.sp),
+                            child: Text(
+                              "Clear All",
+                              style: TextStyle(
+                                color: greyTextColor,
+                                decoration: TextDecoration.none,
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -208,75 +247,31 @@ class BottomFiltersState extends State<BottomFilters> {
                             horizontal: 16.sp, vertical: 8.sp),
                         child: Obx(
                           () => productController.isPrice.value
-                              ? Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(vertical: 10.sp),
-                                  child: SizedBox(
-                                    height: MediaQuery.of(context).size.height -
-                                        172.sp,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10.sp),
-                                          child: Text(
-                                            "Selected Price Range",
-                                            style: TextStyle(
-                                              color: textColor,
-                                              fontSize: 14.sp,
-                                              decoration: TextDecoration.none,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10.sp),
-                                          child: SizedBox(
-                                            width: double.maxFinite,
-                                            child: Material(
-                                              child: RangeSlider(
-                                                values: values,
-                                                min: 500,
-                                                max: 500000,
-                                                // divisions: 5,
-                                                inactiveColor: Colors.grey,
-                                                activeColor: btnTextColor,
-                                                labels: labels,
-                                                onChanged: (newValue) {
-                                                  productController.pricelist
-                                                      .clear();
-                                                  values = newValue;
-                                                  var l = newValue.start
-                                                      .toString()
-                                                      .split('.');
-                                                  var u = newValue.end
-                                                      .toString()
-                                                      .split('.');
-                                                  lowerValue = l[0];
-                                                  UpperValue = u[0];
-                                                  productController.pricelist =
-                                                      [lowerValue, UpperValue];
-                                                  setState(() {});
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Row(
+                              ? isPriceLoading
+                                  ? SizedBox(
+                                      height: 20.sp,
+                                      width: 20.sp,
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    )
+                                  : Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.sp),
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height -
+                                                172.sp,
+                                        child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10.sp),
                                               child: Text(
-                                                "\u{20B9} ${lowerValue} - \u{20B9} ${UpperValue}",
+                                                "Selected Price Range",
                                                 style: TextStyle(
                                                   color: textColor,
                                                   fontSize: 14.sp,
@@ -287,12 +282,71 @@ class BottomFiltersState extends State<BottomFilters> {
                                                 ),
                                               ),
                                             ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 10.sp),
+                                              child: SizedBox(
+                                                width: double.maxFinite,
+                                                child: Material(
+                                                  child: RangeSlider(
+                                                    values: values,
+                                                    min: 500,
+                                                    max: 500000,
+                                                    // divisions: 5,
+                                                    inactiveColor: Colors.grey,
+                                                    activeColor: btnTextColor,
+                                                    labels: labels,
+                                                    onChanged: (newValue) {
+                                                      productController
+                                                          .pricelist
+                                                          .clear();
+                                                      values = newValue;
+                                                      var l = newValue.start
+                                                          .toString()
+                                                          .split('.');
+                                                      var u = newValue.end
+                                                          .toString()
+                                                          .split('.');
+                                                      lowerValue = l[0];
+                                                      UpperValue = u[0];
+                                                      productController
+                                                          .pricelist = [
+                                                        lowerValue,
+                                                        UpperValue
+                                                      ];
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp),
+                                                  child: Text(
+                                                    "\u{20B9} ${lowerValue} - \u{20B9} ${UpperValue}",
+                                                    style: TextStyle(
+                                                      color: textColor,
+                                                      fontSize: 14.sp,
+                                                      decoration:
+                                                          TextDecoration.none,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                )
+                                      ),
+                                    )
                               : productController.isFilter.value
                                   ? Padding(
                                       padding:
@@ -538,7 +592,19 @@ class BottomFiltersState extends State<BottomFilters> {
             ),
           ),
           FilterButton(
-            onPresedApply: () {
+            onPresedApply: () async {
+              final prefs = await SharedPreferences.getInstance();
+              List<String> brandList =
+                  brandSelected.map((i) => i.toString()).toList();
+              prefs.setStringList("brandList", brandList);
+              List<String> colorList =
+                  colorSelected.map((i) => i.toString()).toList();
+              prefs.setStringList("colorList", colorList);
+              List<String> sizeList =
+                  sizeSelected.map((i) => i.toString()).toList();
+              prefs.setStringList("sizeList", sizeList);
+              prefs.setString("lower", lowerValue);
+              prefs.setString("upper", UpperValue);
               widget.onClick.call(int.parse(lowerValue), int.parse(UpperValue));
             },
           )
