@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/exchange_controller.dart';
-import 'package:lafetch/controller/review_controller.dart';
+//import 'package:lafetch/controller/review_controller.dart';
 import 'package:lafetch/screens/orders/exchangeconfirm.dart';
 import 'package:lafetch/utils/constants.dart';
 import '../../commonwidget/app_text.dart';
@@ -37,7 +37,7 @@ class ExchangeProductScreen extends StatefulWidget {
 }
 
 class ExchangeProductScreenState extends State<ExchangeProductScreen> {
-  final controller = Get.put(ReviewController());
+  //final controller = Get.put(ReviewController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? text1;
   final exchangeController = Get.put(ExchangeController());
@@ -218,7 +218,7 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                                         .productDetails[
                                                                     "new_inventories"],
                                                                 controller:
-                                                                    controller,
+                                                                    exchangeController,
                                                                 onPressedCross:
                                                                     () {
                                                                   Get.back();
@@ -278,7 +278,7 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                                       .productDetails[
                                                                   "new_inventories"],
                                                               controller:
-                                                                  controller,
+                                                                  exchangeController,
                                                               onPressedCross:
                                                                   () {
                                                                 Get.back();

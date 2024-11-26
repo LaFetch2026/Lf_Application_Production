@@ -8,9 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/controller/review_controller.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../../controller/order_controller.dart';
 import '../../utils/constants.dart';
 
 class ReviewProductScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class ReviewProductScreen extends StatefulWidget {
 }
 
 class ReviewProductScreenState extends State<ReviewProductScreen> {
-  final controller = Get.put(ReviewController());
+  final controller = Get.put(OrderController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override

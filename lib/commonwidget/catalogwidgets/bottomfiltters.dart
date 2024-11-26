@@ -300,7 +300,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                       child: SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height -
-                                                172.sp,
+                                                190.sp,
                                         child: ListView.builder(
                                             physics: const ScrollPhysics(),
                                             itemCount: 8,
