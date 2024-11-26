@@ -2,9 +2,9 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,12 +18,14 @@ class OrderController extends BaseController {
   RxBool isDetails = false.obs;
   RxBool isTrack = false.obs;
   RxBool isInvoice = false.obs;
+  RxBool isUpdateLocation = false.obs;
   dynamic orderDetails = "".obs;
   RxString queryText = "".obs;
   List orderList = [].obs;
   List trackList = [].obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
+  Rx<LatLng> deliveryPatnerLatLng = const LatLng(0, 0).obs;
   // List deliveriesList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
@@ -357,6 +359,7 @@ class OrderController extends BaseController {
   }
 
   getLatLng() async {
+    isUpdateLocation.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -369,7 +372,9 @@ class OrderController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        print("hello");
+        lat.value = double.parse(responseData["delivery_partner"]["latitude"]);
+        lng.value = double.parse(responseData["delivery_partner"]["longitude"]);
+        deliveryPatnerLatLng.value = LatLng(lat.value, lng.value);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -385,5 +390,6 @@ class OrderController extends BaseController {
     } catch (e) {
       print("error$e");
     }
+    isUpdateLocation.value = false;
   }
 }

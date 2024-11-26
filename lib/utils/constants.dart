@@ -167,12 +167,13 @@ const expressNewImage = 'assets/images/express_new.png';
 const cartNewImage = 'assets/images/cart_new.png';
 const searchNewImage = 'assets/images/search_new.png';
 const lafetchBlackImage = 'assets/images/lafetch_black.png';
+const refreshImage = 'assets/images/refresh.png';
 
 class ApiConstants {
   ApiConstants._();
-  static const String baseUrl =
-      "https://api.la-fetch.com/customer/api"; //production
-
   // static const String baseUrl =
-  // "https://staging-api.la-fetch.com/customer/api"; //staging
+  //  "https://api.la-fetch.com/customer/api"; //production
+
+  static const String baseUrl =
+      "https://staging-api.la-fetch.com/customer/api"; //staging
 }

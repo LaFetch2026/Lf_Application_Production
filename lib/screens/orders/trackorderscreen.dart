@@ -246,6 +246,32 @@ class TrackOrderScreenState extends State<TrackOrderScreen> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
+                                                        /*  Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 4.sp),
+                                                          child: AppText(
+                                                            text: orderController
+                                                                    .trackList
+                                                                    .any((map) =>
+                                                                        map['status_details'] ==
+                                                                        orderItem[
+                                                                            index])
+                                                                ? orderController
+                                                                            .trackList[
+                                                                        index]
+                                                                    ["created"]
+                                                                : "",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            maxLines: 2,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ), */
                                                       ],
                                                     ),
                                                   )

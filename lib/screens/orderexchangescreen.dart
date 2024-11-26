@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/singleiconbtn.dart';
@@ -1921,10 +1922,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                               },
                                                                                             );
                                                                                           } else {
+                                                                                            orderController.lat.value = double.parse(val.orderList[index]["orders"][i]["delivery_partner_latitude"]);
+                                                                                            orderController.lng.value = double.parse(val.orderList[index]["orders"][i]["delivery_partner_longitude"]);
+                                                                                            orderController.deliveryPatnerLatLng.value = LatLng(orderController.lat.value, orderController.lng.value);
                                                                                             Get.to(DeliverTrackScreen(
                                                                                               orderId: val.orderList[index]["orders"][i]["id"],
-                                                                                              deliverPartnerLat: double.parse(val.orderList[index]["orders"][i]["delivery_partner_latitude"] ?? 28.6263),
-                                                                                              deliverPartnerLng: double.parse(val.orderList[index]["orders"][i]["delivery_partner_longitude"] ?? 77.2185),
                                                                                               dropLat: double.parse(val.orderList[index]["orders"][i]["customer_latitude"]),
                                                                                               dropLng: double.parse(val.orderList[index]["orders"][i]["customer_longitude"]),
                                                                                             ));
@@ -2137,10 +2139,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 },
                                                                               );
                                                                             } else {
+                                                                              orderController.lat.value = double.parse(value.orderList[index]["delivery_partner_latitude"]);
+                                                                              orderController.lng.value = double.parse(value.orderList[index]["delivery_partner_longitude"]);
+                                                                              orderController.deliveryPatnerLatLng.value = LatLng(orderController.lat.value, orderController.lng.value);
                                                                               Get.to(DeliverTrackScreen(
                                                                                 orderId: value.orderList[index]["id"],
-                                                                                deliverPartnerLat: double.parse(value.orderList[index]["delivery_partner_latitude"]),
-                                                                                deliverPartnerLng: double.parse(value.orderList[index]["delivery_partner_longitude"] ?? 77.2185),
                                                                                 dropLat: double.parse(value.orderList[index]["customer_latitude"]),
                                                                                 dropLng: double.parse(value.orderList[index]["customer_longitude"]),
                                                                               ));
