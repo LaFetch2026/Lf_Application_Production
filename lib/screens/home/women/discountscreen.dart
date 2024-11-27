@@ -224,7 +224,7 @@ class DiscountScreenState extends State<DiscountScreen> {
             Obx(() => homeController.isBanner1.value
                 ? Padding(
                     padding: EdgeInsets.only(
-                        left: 16.sp, bottom: 10.sp, right: 16.sp),
+                        left: 16.sp, bottom: 10.sp, right: 16.sp, top: 10.sp),
                     child: SizedBox(
                       height: 210.sp,
                       width: double.infinity,
@@ -249,7 +249,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(
-                                left: 16.sp, bottom: 10.sp, right: 16.sp),
+                                left: 16.sp,
+                                bottom: 10.sp,
+                                right: 16.sp,
+                                top: 10.sp),
                             child: CarouselSlider.builder(
                               itemCount: homeController.banner1List.length,
                               options: CarouselOptions(
@@ -402,7 +405,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                       )),
            */
             Obx(() => productController.istagsProduct.value
-                ? DummyProductList(text: productController.tagname.value)
+                ? Padding(
+                    padding: EdgeInsets.only(top: 10.sp),
+                    child:
+                        DummyProductList(text: productController.tagname.value),
+                  )
                 : productController.tagProductList.isNotEmpty
                     ? Padding(
                         padding: EdgeInsets.only(top: 10.sp),
