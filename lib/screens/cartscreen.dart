@@ -452,17 +452,31 @@ class CartScreenState extends State<CartScreen> {
                                                                               child: AppText(
                                                                                 text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["description"] ?? ""),
                                                                                 color: textHintColor,
-                                                                                fontSize: 10,
+                                                                                fontSize: 11,
                                                                                 maxLines: 1,
                                                                                 fontFamily: "Franklin Gothic Regular",
                                                                                 fontWeight: FontWeight.w400,
                                                                               ),
                                                                             ),
+                                                                            value.orderList[index]["discount"] != "0.00"
+                                                                                ? Padding(
+                                                                                    padding: EdgeInsets.only(left: 1.sp),
+                                                                                    child: AppText(
+                                                                                      text: "Discount : \u{20B9} ${value.orderList[index]["discount"] ?? "0.0"}",
+                                                                                      color: nameText,
+                                                                                      fontSize: 10,
+                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
+                                                                                  )
+                                                                                : SizedBox(
+                                                                                    height: 0,
+                                                                                  ),
                                                                             !value.orderList[index]["express_delivery"]
                                                                                 ? value.orderList[index]["estimated_delivery_by"] != null
                                                                                     ? value.orderList[index]["estimated_delivery_by"]["show_shipping_cost"]
                                                                                         ? Padding(
-                                                                                            padding: EdgeInsets.only(top: 5.sp),
+                                                                                            padding: EdgeInsets.only(top: 2.sp),
                                                                                             child: Column(
                                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                                               children: [
