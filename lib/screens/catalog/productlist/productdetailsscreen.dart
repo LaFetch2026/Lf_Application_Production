@@ -363,31 +363,35 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () async {
-                                  /*  final prefs =
+                                  if (productController.sizeInventoryId == 0) {
+                                    /*  final prefs =
                                     await SharedPreferences.getInstance(); */
-                                  productController.selectedProductSize = i;
-                                  productController.sizeInventoryId.value =
-                                      productController
-                                          .selectedProductSize["id"];
-                                  productController.colorInventoryId.value = 0;
-                                  print(
-                                      productController.sizeInventoryId.value);
-                                  productController.colorInventoryList =
-                                      i["product_matrix_available_colors"];
+                                    productController.selectedProductSize = i;
+                                    productController.sizeInventoryId.value =
+                                        productController
+                                            .selectedProductSize["id"];
+                                    productController.colorInventoryId.value =
+                                        0;
+                                    print(productController
+                                        .sizeInventoryId.value);
+                                    productController.colorInventoryList =
+                                        i["product_matrix_available_colors"];
 
-                                  /*   prefs.setInt("inventorySizeId",
+                                    /*   prefs.setInt("inventorySizeId",
                                     selectedProductSize["id"]); */
-                                  print(productController
-                                      .selectedProductSize["id"]);
-                                  print(i['product_matrix_size_name']);
-                                  // prefs.remove("inventoryColorId");
-                                  setState(() {});
-                                  await analytics.logEvent(
-                                    name: 'productDetails_sizeSelect',
-                                    parameters: <String, Object>{
-                                      'page_name': 'productDetails_sizeSelect',
-                                    },
-                                  );
+                                    print(productController
+                                        .selectedProductSize["id"]);
+                                    print(i['product_matrix_size_name']);
+                                    // prefs.remove("inventoryColorId");
+                                    setState(() {});
+                                    await analytics.logEvent(
+                                      name: 'productDetails_sizeSelect',
+                                      parameters: <String, Object>{
+                                        'page_name':
+                                            'productDetails_sizeSelect',
+                                      },
+                                    );
+                                  }
                                 },
                                 child: Container(
                                     decoration: BoxDecoration(
@@ -1226,76 +1230,100 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 ),
                                 productController.sizeInventoryList.isNotEmpty
-                                    ? productController.showSizeList.value
-                                        ? Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 30.0.sp,
+                                                  bottom: 0.0.sp,
+                                                  left: 12.sp,
+                                                  right: 12.sp),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  AppText(
+                                                    text: 'Select size',
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 16,
+                                                  ),
+                                                  productController
+                                                                  .productDetails[
+                                                              "productSizeChart"] !=
+                                                          null
+                                                      ? GestureDetector(
+                                                          onTap: () {
+                                                            scaffoldKey
+                                                                .currentState
+                                                                ?.showBottomSheet(
+                                                                    (context) =>
+                                                                        BottomSizeChart(
+                                                                          productSizeChart:
+                                                                              productController.productDetails["productSizeChart"]["image"],
+                                                                          productName:
+                                                                              productController.productDetails["name"],
+                                                                        ));
+                                                          },
+                                                          child: AppText(
+                                                            text:
+                                                                'View Size chart',
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: colorPrimary,
+                                                            fontSize: 12,
+                                                          ),
+                                                        )
+                                                      : SizedBox(
+                                                          height: 0,
+                                                        )
+                                                ],
+                                              )),
+                                          productController.showSizeList.value
+                                              ? getListForProductSize()
+                                              : Padding(
                                                   padding: EdgeInsets.only(
-                                                      top: 30.0.sp,
-                                                      bottom: 0.0.sp,
+                                                      top: 12.0.sp,
                                                       left: 12.sp,
                                                       right: 12.sp),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      AppText(
-                                                        text: 'Select size',
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: colorPrimary,
-                                                        fontSize: 16,
-                                                      ),
-                                                      productController
-                                                                      .productDetails[
-                                                                  "productSizeChart"] !=
-                                                              null
-                                                          ? GestureDetector(
-                                                              onTap: () {
-                                                                scaffoldKey
-                                                                    .currentState
-                                                                    ?.showBottomSheet(
-                                                                        (context) =>
-                                                                            BottomSizeChart(
-                                                                              productSizeChart: productController.productDetails["productSizeChart"]["image"],
-                                                                              productName: productController.productDetails["name"],
-                                                                            ));
-                                                              },
-                                                              child: AppText(
-                                                                text:
-                                                                    'View Size chart',
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color:
-                                                                    colorPrimary,
-                                                                fontSize: 12,
-                                                              ),
-                                                            )
-                                                          : SizedBox(
-                                                              height: 0,
-                                                            )
-                                                    ],
-                                                  )),
-                                              getListForProductSize(),
-                                            ],
-                                          )
-                                        : const SizedBox(
-                                            height: 0,
-                                          )
-                                    : SizedBox(
+                                                  child: Container(
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              color:
+                                                                  btnTextColor,
+                                                              width: 1.sp),
+                                                          color: colorPrimary),
+                                                      child: SizedBox(
+                                                        width: 80.sp,
+                                                        height: 30.sp,
+                                                        child: Align(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: AppText(
+                                                            text: "default",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: whiteColor,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      )),
+                                                ),
+                                        ],
+                                      )
+                                    : const SizedBox(
                                         height: 0,
                                       ),
                                 productController.colorInventoryList.isNotEmpty

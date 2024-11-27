@@ -1388,6 +1388,13 @@ class ProductController extends BaseController {
               selectedProductSize = sizeInventoryList[0];
               colorInventoryList =
                   sizeInventoryList[0]["product_matrix_available_colors"];
+              if (sizeInventoryList[0]["product_matrix_available_colors"]
+                      .length ==
+                  1) {
+                selectedProductColor =
+                    sizeInventoryList[0]["product_matrix_available_colors"][0];
+                colorInventoryId.value = responseData["default_inventory_id"];
+              }
             } else {
               showSizeList.value = true;
               if (sizeInventoryList[0]["product_matrix_available_colors"]
