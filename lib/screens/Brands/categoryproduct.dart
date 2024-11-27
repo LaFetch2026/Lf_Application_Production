@@ -45,7 +45,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   @override
   void initState() {
     productController.productCategoryList.clear();
-    wishlistController.getWishlistData();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.categoryProductHasnextpage.value = true;
+      productController.categoryProductLoadMore.value = false;
+      productController.isCategoryProduct.value = false;
+      productController.categoryProductPage.value = 1;
+      productController.bannerTagHasnextpage.value = true;
+      productController.bannerTagLoadMore.value = false;
+      productController.bannerTagPage.value = 1;
+      productController.productCategory = [];
+      productController.productTags = [];
+    });
     if (widget.categoryId != 0) {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
@@ -58,24 +70,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           productController.update();
         });
       });
-      productController.categoryProductHasnextpage.value = true;
-      productController.categoryProductLoadMore.value = false;
-      productController.isCategoryProduct.value = false;
-      productController.categoryProductPage.value = 1;
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => productController
-          .getTagsBannerData(widget.tagIds, widget.categoryList));
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          productController.getTagsBannerData(
+              widget.tagIds, widget.categoryList, widget.genderType));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.bannerTagController.addListener(() {
           productController.fetchMoreBannerTagProductData(
-              widget.tagIds, widget.categoryList);
+              productController.productTags,
+              productController.productCategory,
+              widget.genderType);
           productController.update();
         });
       });
-      productController.bannerTagHasnextpage.value = true;
-      productController.bannerTagLoadMore.value = false;
-      productController.isCategoryProduct.value = false;
-      productController.bannerTagPage.value = 1;
     }
     super.initState();
   }
@@ -101,8 +108,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   : productController.productCategoryList.isNotEmpty
                       ? Expanded(
                           child: SingleChildScrollView(
-                            controller:
-                                productController.brandProductController,
+                            /*  controller: widget.categoryId != 0
+                                ? productController.brandProductController
+                                : productController.bannerTagController, */
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -112,8 +120,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
-                                    controller: productController
-                                        .brandProductController,
+                                    controller: widget.categoryId != 0
+                                        ? productController
+                                            .brandProductController
+                                        : productController.bannerTagController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.5,
@@ -572,7 +582,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     ),
                                   ),
                                 ),
-                                productController.categoryProductLoadMore.value
+                                productController
+                                            .categoryProductLoadMore.value ||
+                                        productController
+                                            .bannerTagLoadMore.value
                                     ? DummyGridList()
                                     : const SizedBox(
                                         height: 0,

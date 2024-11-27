@@ -44,6 +44,7 @@ class DiscountScreenState extends State<DiscountScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.currentPage.value = 0;
       productController.current.value = 50;
+      productController.tagId.value = 0;
       productController.tagname.value = "We think you might also like";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -415,9 +416,33 @@ class DiscountScreenState extends State<DiscountScreen> {
                         padding: EdgeInsets.only(top: 10.sp),
                         child: HorizontalHomeList(
                           text: productController.tagname.value,
+                          visibleViewAll: true,
                           controller: productController.tagsProductController,
                           height: 250.sp,
                           visibleExpress: false,
+                          onPressedViewAll: () {
+                            Navigator.push(
+                                context,
+                                scaleIn(
+                                  CategoryProductScreen(
+                                    categoryName:
+                                        productController.tagId.value == 0
+                                            ? "Product List"
+                                            : productController.tagname.value,
+                                    categoryId: 0,
+                                    brandId: 0,
+                                    genderType: widget.genderType,
+                                    tagIds: productController.tagId.value == 0
+                                        ? []
+                                        : [productController.tagId.value],
+                                    categoryList: [],
+                                  ),
+                                )).then((value) => setState(
+                                  () {
+                                    //  productController.tagId.value = 0;
+                                  },
+                                ));
+                          },
                           onPressed: (p0, p1) async {
                             Navigator.push(
                                 context,

@@ -13,6 +13,7 @@ class HorizontalHomeList extends StatelessWidget {
   final double height;
   final bool visibleExpress;
   final bool visibleheart;
+  final bool visibleViewAll;
   final List list;
   final String fontFamily;
   final Color textColor;
@@ -20,6 +21,7 @@ class HorizontalHomeList extends StatelessWidget {
   final ScrollController controller;
   final Function(int, String)? onPressed;
   final Function? onPressedExpress;
+  final Function? onPressedViewAll;
   final Function(int, int)? onPressedHeart;
 
   const HorizontalHomeList(
@@ -28,12 +30,14 @@ class HorizontalHomeList extends StatelessWidget {
       required this.height,
       required this.visibleExpress,
       required this.list,
+      this.visibleViewAll = false,
       this.textColor = blackColor,
       this.leftPadding = 16,
       this.visibleheart = false,
       this.fontFamily = "Franklin Gothic",
       required this.controller,
       this.onPressed,
+      this.onPressedViewAll,
       this.onPressedHeart,
       this.onPressedExpress})
       : super(key: key);
@@ -67,13 +71,18 @@ class HorizontalHomeList extends StatelessWidget {
                       primary: false,
                       controller: controller,
                       physics: const BouncingScrollPhysics(),
-                      // itemCount: list.length > 5 ? 5 : list.length,
-                      itemCount: list.length,
+                      itemCount: visibleViewAll
+                          ? list.length > 5
+                              ? 5
+                              : list.length
+                          : list.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, index) {
-                        return /*  list.length > 5 && index == 4
+                        return list.length > 5 && index == 4 && visibleViewAll
                             ? GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  onPressedViewAll?.call();
+                                },
                                 child: Padding(
                                   padding: EdgeInsets.only(
                                       top: 75.sp, right: 16.sp, left: 16.sp),
@@ -87,195 +96,219 @@ class HorizontalHomeList extends StatelessWidget {
                                   ),
                                 ),
                               )
-                            : */
-                            Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                onPressed?.call(list[index]["id"],
-                                    list[index]["brand_name"]);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                margin: EdgeInsets.only(right: 5.sp),
-                                width: 122.sp,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Stack(children: [
-                                      list[index]["images"].isNotEmpty &&
-                                              list[index]["images"] != null
-                                          ? SizedBox(
-                                              height: 150.sp,
-                                              width: 122.sp,
-                                              child: CachedNetworkImage(
-                                                cacheManager: CacheManager(
-                                                    Config("customCacheKey",
-                                                        stalePeriod:
-                                                            const Duration(
-                                                                days: 15),
-                                                        maxNrOfCacheObjects:
-                                                            100)),
-                                                fit: BoxFit.cover,
-                                                /* fadeInCurve: Curves.easeIn,
+                            : Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      onPressed?.call(list[index]["id"],
+                                          list[index]["brand_name"]);
+                                    },
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      margin: EdgeInsets.only(right: 5.sp),
+                                      width: 122.sp,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Stack(children: [
+                                            list[index]["images"].isNotEmpty &&
+                                                    list[index]["images"] !=
+                                                        null
+                                                ? SizedBox(
+                                                    height: 150.sp,
+                                                    width: 122.sp,
+                                                    child: CachedNetworkImage(
+                                                      cacheManager:
+                                                          CacheManager(Config(
+                                                              "customCacheKey",
+                                                              stalePeriod:
+                                                                  const Duration(
+                                                                      days: 15),
+                                                              maxNrOfCacheObjects:
+                                                                  100)),
+                                                      fit: BoxFit.cover,
+                                                      /* fadeInCurve: Curves.easeIn,
                                                 fadeInDuration:
                                                     Duration(milliseconds: 100), */
-                                                fadeOutCurve: Curves.ease,
-                                                fadeOutDuration:
-                                                    Duration(milliseconds: 100),
-                                                imageUrl: isImage(list[index]
-                                                        ["images"][0]["name"])
-                                                    ? list[index]["images"][0]
-                                                        ["name"]
-                                                    : list[index]["images"][1]
-                                                        ["name"],
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Image.asset(
-                                                  downloadImage,
-                                                  fit: BoxFit.cover,
-                                                  height: 150.sp,
-                                                  width: 122.sp,
-                                                ),
-                                              ),
-                                            )
-                                          : Image.asset(dummyWishlistImage,
-                                              height: 150.sp,
-                                              width: 122.sp,
-                                              fit: BoxFit.cover),
-                                      GestureDetector(
-                                        onTap: () {
-                                          onPressedHeart?.call(
-                                              list[index]["id"], index);
-                                        },
-                                        child: Visibility(
-                                          visible: visibleheart,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.sp,
-                                                vertical: 10.sp),
-                                            child: Align(
-                                              alignment: Alignment.topRight,
-                                              child: InkWell(
-                                                child: SizedBox(
-                                                  height: 24.sp,
-                                                  width: 24.sp,
-                                                  child: CircleAvatar(
-                                                      // radius: 12.0.sp,
-                                                      backgroundColor:
-                                                          whiteColor,
-                                                      child: list[index]
-                                                              ["wishlisted"]
-                                                          ? Image.asset(
-                                                              wishlistSelectImage,
-                                                              height: 18.sp,
-                                                              width: 18.sp,
-                                                            )
-                                                          : Image.asset(
-                                                              heartImage,
-                                                              height: 18.sp,
-                                                              width: 18.sp,
-                                                            )),
+                                                      fadeOutCurve: Curves.ease,
+                                                      fadeOutDuration: Duration(
+                                                          milliseconds: 100),
+                                                      imageUrl: isImage(
+                                                              list[index]
+                                                                      ["images"]
+                                                                  [0]["name"])
+                                                          ? list[index]
+                                                                  ["images"][0]
+                                                              ["name"]
+                                                          : list[index]
+                                                                  ["images"][1]
+                                                              ["name"],
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Image.asset(
+                                                        downloadImage,
+                                                        fit: BoxFit.cover,
+                                                        height: 150.sp,
+                                                        width: 122.sp,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Image.asset(
+                                                    dummyWishlistImage,
+                                                    height: 150.sp,
+                                                    width: 122.sp,
+                                                    fit: BoxFit.cover),
+                                            GestureDetector(
+                                              onTap: () {
+                                                onPressedHeart?.call(
+                                                    list[index]["id"], index);
+                                              },
+                                              child: Visibility(
+                                                visible: visibleheart,
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.sp,
+                                                      vertical: 10.sp),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    child: InkWell(
+                                                      child: SizedBox(
+                                                        height: 24.sp,
+                                                        width: 24.sp,
+                                                        child: CircleAvatar(
+                                                            // radius: 12.0.sp,
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            child: list[index][
+                                                                    "wishlisted"]
+                                                                ? Image.asset(
+                                                                    wishlistSelectImage,
+                                                                    height:
+                                                                        18.sp,
+                                                                    width:
+                                                                        18.sp,
+                                                                  )
+                                                                : Image.asset(
+                                                                    heartImage,
+                                                                    height:
+                                                                        18.sp,
+                                                                    width:
+                                                                        18.sp,
+                                                                  )),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      ),
-                                    ]),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10.sp, vertical: 5.sp),
-                                      child: AppText(
-                                        text: "${list[index]["name"]}\n",
-                                        color: nameText,
-                                        maxLines: 2,
-                                        fontSize: 11,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 10.sp, left: 10.sp, right: 1.sp),
-                                      child: Row(
-                                        children: [
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${list[index]["price"] ?? ""}",
-                                            color: deepGreytextColor,
-                                            maxLines: 2,
-                                            fontSize: 11,
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
+                                          ]),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.sp,
+                                                vertical: 5.sp),
+                                            child: AppText(
+                                              text: "${list[index]["name"]}\n",
+                                              color: nameText,
+                                              maxLines: 2,
+                                              fontSize: 11,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
                                           Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 5.sp),
-                                            child: Text(
-                                              "\u{20B9} ${list[index]["mrp"] ?? ""}",
-                                              style: TextStyle(
-                                                color: textHintColor,
-                                                fontSize: 11.sp,
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                                            padding: EdgeInsets.only(
+                                                top: 10.sp,
+                                                left: 10.sp,
+                                                right: 1.sp),
+                                            child: Row(
+                                              children: [
+                                                AppText(
+                                                  text:
+                                                      "\u{20B9} ${list[index]["price"] ?? ""}",
+                                                  color: deepGreytextColor,
+                                                  maxLines: 2,
+                                                  fontSize: 11,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 5.sp),
+                                                  child: Text(
+                                                    "\u{20B9} ${list[index]["mrp"] ?? ""}",
+                                                    style: TextStyle(
+                                                      color: textHintColor,
+                                                      fontSize: 11.sp,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
+                                          Visibility(
+                                            visible: visibleExpress,
+                                            child: GestureDetector(
+                                                onTap: () {
+                                                  onPressedExpress?.call();
+                                                },
+                                                child: list[index]
+                                                        ["express_delivery"]
+                                                    ? Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10.sp,
+                                                                left: 10.sp,
+                                                                right: 10.sp),
+                                                        child: Row(
+                                                          children: [
+                                                            ImageIcon(
+                                                              AssetImage(
+                                                                  truckImage),
+                                                              color:
+                                                                  expressText,
+                                                              size: 14.sp,
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          5.sp),
+                                                              child: AppText(
+                                                                text: "Express",
+                                                                color:
+                                                                    expressText,
+                                                                maxLines: 2,
+                                                                fontSize: 11,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    : SizedBox(
+                                                        height: 0,
+                                                      )),
+                                          )
                                         ],
                                       ),
                                     ),
-                                    Visibility(
-                                      visible: visibleExpress,
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            onPressedExpress?.call();
-                                          },
-                                          child: list[index]["express_delivery"]
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 10.sp,
-                                                      left: 10.sp,
-                                                      right: 10.sp),
-                                                  child: Row(
-                                                    children: [
-                                                      ImageIcon(
-                                                        AssetImage(truckImage),
-                                                        color: expressText,
-                                                        size: 14.sp,
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    5.sp),
-                                                        child: AppText(
-                                                          text: "Express",
-                                                          color: expressText,
-                                                          maxLines: 2,
-                                                          fontSize: 11,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : SizedBox(
-                                                  height: 0,
-                                                )),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
+                                  ),
+                                ],
+                              );
                       }),
                 )),
           ),

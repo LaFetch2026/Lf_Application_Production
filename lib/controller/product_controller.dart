@@ -137,6 +137,8 @@ class ProductController extends BaseController {
   List imageList = [].obs;
   RxBool isExpressDelivery = false.obs;
   RxInt expressValue = 0.obs;
+  List productCategory = [].obs;
+  List productTags = [].obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
 
   bool checkPinvalidation(String pin) {
@@ -439,23 +441,38 @@ class ProductController extends BaseController {
     }
   }
 
-  getTagsBannerData(List list, List categoryList) async {
+  getTagsBannerData(List list, List categoryList, int genderType) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-        Uri.parse(
-            "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
+      dynamic response;
+      if (categoryList.isNotEmpty) {
+        response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+        );
+      } else {
+        response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+        );
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productCategoryList = responseData["data"];
         }
+        productCategory = categoryList;
+        productTags = list;
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -474,7 +491,8 @@ class ProductController extends BaseController {
     isCategoryProduct.value = false;
   }
 
-  fetchMoreBannerTagProductData(List list, List categoryList) async {
+  fetchMoreBannerTagProductData(
+      List list, List categoryList, int genderType) async {
     if (bannerTagHasnextpage.value == true &&
         isCategoryProduct.value == false &&
         bannerTagLoadMore.value == false) {
@@ -483,13 +501,27 @@ class ProductController extends BaseController {
       print(bannerTagPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
+        dynamic response;
+        print("abcd $categoryList");
+        if (categoryList.isNotEmpty) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}"),
+                "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&page=${bannerTagPage.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+            },
+          );
+        }
+
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {
@@ -1801,7 +1833,7 @@ class ProductController extends BaseController {
           getBrandExpressProductData(
               brandId, expressSortBy.value, filterExpressEnable.value);
         } else if (type == "bannerTag") {
-          getTagsBannerData(list, categoryList);
+          getTagsBannerData(list, categoryList, 0);
         } else if (type == "frequently") {
           getFrequentlyProductData("frequently-bought", existId);
           getProductRecommendations(existId);
@@ -1877,7 +1909,7 @@ class ProductController extends BaseController {
         if (responseData["data"] != null) {
           tagsList = responseData["data"];
           if (tagsList.isNotEmpty) {
-            tagId.value = tagsList[0]["id"];
+            // tagId.value = tagsList[0]["id"];
             tagProductList.clear();
             expressProductList.clear();
             getExpressProductData(0, genderType);
