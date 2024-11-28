@@ -8,6 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   fl_downloader
   geolocator_windows
+  pasteboard
   share_plus
   url_launcher_windows
 )
