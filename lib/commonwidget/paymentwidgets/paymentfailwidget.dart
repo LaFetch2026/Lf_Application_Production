@@ -33,7 +33,7 @@ class PaymentFailWidget extends StatelessWidget {
             visible: visible,
             child: Center(
               child: Image.asset(image,
-                  height: 180.sp, width: 200.sp, fit: BoxFit.cover),
+                  height: 200.sp, width: 200.sp, fit: BoxFit.cover),
             )),
         Padding(
           padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),

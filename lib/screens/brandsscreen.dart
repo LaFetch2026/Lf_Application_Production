@@ -449,7 +449,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             .update();
                                                                       },
                                                                       child: Image.asset(
-                                                                          upArrowIcon,
+                                                                          value.selected[index]
+                                                                              ? downArrowImage
+                                                                              : upArrowIcon,
                                                                           height: 20
                                                                               .sp,
                                                                           width: 20

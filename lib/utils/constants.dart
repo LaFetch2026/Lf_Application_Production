@@ -168,6 +168,7 @@ const cartNewImage = 'assets/images/cart_new.png';
 const searchNewImage = 'assets/images/search_new.png';
 const lafetchBlackImage = 'assets/images/lafetch_black.png';
 const refreshImage = 'assets/images/refresh.png';
+const downArrowImage = 'assets/images/down_arrow.png';
 
 class ApiConstants {
   ApiConstants._();
