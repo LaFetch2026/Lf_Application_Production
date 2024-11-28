@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
 
-class FilterButton extends StatelessWidget {
+class FilterButton extends StatefulWidget {
   final Function onPresedApply;
   const FilterButton({Key? key, required this.onPresedApply}) : super(key: key);
 
+  @override
+  State<FilterButton> createState() => _FilterButtonState();
+}
+
+class _FilterButtonState extends State<FilterButton> {
+  bool isFilter = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,22 +53,31 @@ class FilterButton extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              onPresedApply.call();
+              setState(() {
+                isFilter = true;
+              });
+              widget.onPresedApply.call();
             },
             child: Container(
               child: Padding(
                 padding:
                     EdgeInsets.symmetric(vertical: 10.sp, horizontal: 50.sp),
-                child: Text(
-                  "Apply",
-                  style: TextStyle(
-                    color: btnTextColor,
-                    decoration: TextDecoration.none,
-                    fontSize: 14.sp,
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                child: isFilter
+                    ? SizedBox(
+                        height: 20.sp,
+                        width: 20.sp,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : Text(
+                        "Apply",
+                        style: TextStyle(
+                          color: btnTextColor,
+                          decoration: TextDecoration.none,
+                          fontSize: 14.sp,
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
               ),
             ),
           ),

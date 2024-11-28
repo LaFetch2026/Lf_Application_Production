@@ -6,6 +6,7 @@ import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../bottomnavscreen.dart';
+import '../userdetails.dart';
 import '../welcomescreen.dart';
 
 class SplashTwoScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class SplashTwoScreen extends StatefulWidget {
 
 class SplashTwoScreenState extends State<SplashTwoScreen> {
   String? token;
+  String? name;
 
   @override
   void initState() {
@@ -28,13 +30,18 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   Future getPrefrenceValue() async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
+    name = prefs.getString('name');
   }
 
   navigateToScreen() {
     if (token != null) {
-      if (token!.isNotEmpty) {
+      if (token!.isNotEmpty && name != null) {
         Get.offAll(
           () => const BottomNavScreen(),
+        );
+      } else {
+        Get.off(
+          () => const UserDetailsScreen(),
         );
       }
     } else {
