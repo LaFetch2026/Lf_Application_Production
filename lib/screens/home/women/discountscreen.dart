@@ -46,6 +46,8 @@ class DiscountScreenState extends State<DiscountScreen> {
       productController.current.value = 50;
       productController.tagId.value = 0;
       productController.tagname.value = "We think you might also like";
+      productController.productCategory = [];
+      productController.productTags = [];
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
@@ -270,6 +272,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 onTap: () async {
                                   homeController.bannerTag1Id.clear();
                                   homeController.bannerCategory1Id.clear();
+                                  productController.productCategory.clear();
+                                  productController.productTags.clear();
                                   if (homeController
                                       .banner1List[itemIndex]["tags"]
                                       .isNotEmpty) {
@@ -303,6 +307,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                                       categoryList:
                                           homeController.bannerCategory1Id,
                                     )); */
+                                    productController.productCategory =
+                                        homeController.bannerTag1Id;
+                                    productController.productTags =
+                                        homeController.bannerCategory1Id;
                                     Navigator.push(
                                         context,
                                         scaleIn(
@@ -421,6 +429,12 @@ class DiscountScreenState extends State<DiscountScreen> {
                           height: 250.sp,
                           visibleExpress: false,
                           onPressedViewAll: () {
+                            productController.productCategory.clear();
+                            productController.productTags.clear();
+                            productController.productTags =
+                                productController.tagId.value == 0
+                                    ? []
+                                    : [productController.tagId.value];
                             Navigator.push(
                                 context,
                                 scaleIn(
@@ -954,6 +968,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   onTap: () async {
                                     homeController.bannerTag2Id.clear();
                                     homeController.bannerCategory2Id.clear();
+                                    productController.productCategory.clear();
+                                    productController.productTags.clear();
                                     if (homeController
                                         .banner2List[itemIndex]["tags"]
                                         .isNotEmpty) {
@@ -991,6 +1007,10 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         categoryList:
                                             homeController.bannerCategory2Id,
                                       )); */
+                                      productController.productCategory =
+                                          homeController.bannerCategory2Id;
+                                      productController.productTags =
+                                          homeController.bannerTag2Id;
                                       Navigator.push(
                                           context,
                                           scaleIn(

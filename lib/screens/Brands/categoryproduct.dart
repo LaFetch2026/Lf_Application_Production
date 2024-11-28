@@ -50,13 +50,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductHasnextpage.value = true;
       productController.categoryProductLoadMore.value = false;
-      productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
+      productController.isCategoryProduct.value = false;
       productController.bannerTagHasnextpage.value = true;
       productController.bannerTagLoadMore.value = false;
       productController.bannerTagPage.value = 1;
-      productController.productCategory = [];
-      productController.productTags = [];
     });
     if (widget.categoryId != 0) {
       productController.category_id.value = widget.categoryId;
@@ -108,9 +106,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   : productController.productCategoryList.isNotEmpty
                       ? Expanded(
                           child: SingleChildScrollView(
-                            /*  controller: widget.categoryId != 0
+                            controller: widget.categoryId != 0
                                 ? productController.brandProductController
-                                : productController.bannerTagController, */
+                                : productController.bannerTagController,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -137,13 +135,38 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         return GestureDetector(
                                           onTap: () async {
                                             Get.to(ProductDetailsScreen(
-                                                brandName: productController
-                                                        .productCategoryList[
-                                                    index]["brand_name"],
-                                                productId: productController
-                                                        .productCategoryList[
-                                                    index]["id"],
-                                                type: "add"));
+                                                    brandName: productController
+                                                            .productCategoryList[
+                                                        index]["brand_name"],
+                                                    productId: productController
+                                                            .productCategoryList[
+                                                        index]["id"],
+                                                    type: "add"))
+                                                ?.then((value) => setState(
+                                                      () {
+                                                        productController
+                                                            .categoryProductHasnextpage
+                                                            .value = true;
+                                                        productController
+                                                            .categoryProductLoadMore
+                                                            .value = false;
+                                                        productController
+                                                            .isCategoryProduct
+                                                            .value = false;
+                                                        productController
+                                                            .categoryProductPage
+                                                            .value = 1;
+                                                        productController
+                                                            .bannerTagHasnextpage
+                                                            .value = true;
+                                                        productController
+                                                            .bannerTagLoadMore
+                                                            .value = false;
+                                                        productController
+                                                            .bannerTagPage
+                                                            .value = 1;
+                                                      },
+                                                    ));
                                             await analytics.logEvent(
                                               name: 'category_product_details',
                                               parameters: <String, Object>{
@@ -309,11 +332,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                   index]["id"],
                                                               widget.categoryId,
                                                               widget.brandId,
-                                                              widget.tagIds,
-                                                              widget
-                                                                  .categoryList,
+                                                              productController
+                                                                  .productTags,
+                                                              productController
+                                                                  .productCategory,
                                                               0,
-                                                              0,
+                                                              widget.genderType,
                                                               0);
                                                         } else {
                                                           scaffoldKey
@@ -330,10 +354,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             0,
-                                                                            widget.tagIds,
-                                                                            widget.categoryList,
+                                                                            productController.productTags,
+                                                                            productController.productCategory,
                                                                             0,
-                                                                            0,
+                                                                            widget.genderType,
                                                                             0);
                                                                       },
                                                                       wishlistList:

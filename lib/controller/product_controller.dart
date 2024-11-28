@@ -470,9 +470,11 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productCategoryList = responseData["data"];
+          isCategoryProduct.value = false;
+          bannerTagHasnextpage.value = true;
+          bannerTagLoadMore.value = false;
+          bannerTagPage.value = 1;
         }
-        productCategory = categoryList;
-        productTags = list;
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -1117,6 +1119,10 @@ class ProductController extends BaseController {
         if (responseData["data"] != null) {
           productCategoryList = responseData["data"];
           total.value = responseData["meta"]["total"];
+          categoryProductHasnextpage.value = true;
+          categoryProductLoadMore.value = false;
+          categoryProductPage.value = 1;
+          isCategoryProduct.value = false;
           if (value == "Product Vertical") {
             List<String> nameList = [];
             List<int> idList = [];
@@ -1833,7 +1839,7 @@ class ProductController extends BaseController {
           getBrandExpressProductData(
               brandId, expressSortBy.value, filterExpressEnable.value);
         } else if (type == "bannerTag") {
-          getTagsBannerData(list, categoryList, 0);
+          getTagsBannerData(list, categoryList, genderType);
         } else if (type == "frequently") {
           getFrequentlyProductData("frequently-bought", existId);
           getProductRecommendations(existId);
