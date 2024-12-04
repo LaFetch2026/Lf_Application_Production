@@ -62,8 +62,8 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   final orderController = Get.put(OrderController());
   final shipController = Get.put(ShipAddressController());
   final Razorpay razorpay = Razorpay();
-  final razorPayKey = "rzp_test_qByVM96GsY8Ydt";
-  final razorPaySecret = "Mo5w1Av5SV84qO0c4k1Uc0Ob";
+  final razorPayKey = "rzp_test_eUuJKYtCTi2iSH";
+  final razorPaySecret = "WWCDs6cgmpSttvaFFdWBWNtd";
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
