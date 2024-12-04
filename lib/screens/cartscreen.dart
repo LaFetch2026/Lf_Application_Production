@@ -1545,6 +1545,42 @@ class CartScreenState extends State<CartScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
+                                                child: AppText(
+                                                  text: "Lafetch service tax",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              const Expanded(
+                                                child: SizedBox(
+                                                  height: 0,
+                                                ),
+                                              ),
+                                              AppText(
+                                                text:
+                                                    "\u{20B9} ${controller.cartDetails["lafetch_service_tax"].toString()}",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: greenText,
+                                                fontSize: 12,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 10.sp),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
                                               Row(
                                                 children: [
                                                   Padding(
@@ -1966,14 +2002,16 @@ class CartScreenState extends State<CartScreen> {
                                     controller.callInitiatePayment(
                                         controller.cartDetails["address"]["id"],
                                         context,
-                                        controller
-                                            .cartDetails["shipping_cost"]);
+                                        controller.cartDetails["shipping_cost"],
+                                        controller.cartDetails[
+                                            "lafetch_service_tax"]);
                                   } else {
                                     controller.callInitiatePayment(
                                         0,
                                         context,
-                                        controller
-                                            .cartDetails["shipping_cost"]);
+                                        controller.cartDetails["shipping_cost"],
+                                        controller.cartDetails[
+                                            "lafetch_service_tax"]);
                                   }
                                   await analytics.logEvent(
                                     name: 'proceed_checkout_btnclick',

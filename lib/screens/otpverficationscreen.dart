@@ -84,7 +84,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
 
         String sms = message.body.toString();
 
-        if (message.body!.contains('La Fetch')) {
+        if (message.body!.contains('Lafetch')) {
           String otpcode = sms.replaceAll(new RegExp(r'[^0-9]'), '');
           String string = '$otpcode';
           print(string.split(''));
@@ -92,10 +92,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
           print("abc $otpcode");
           otpController.controller.value.set(otpcode.split(""));
           setState(() {});
-             if (otpController
-                              .checkOtpvalidation(otpController.otp.value)) {
-                            otpController.callVerifyOtp(widget.phoneMunber);
-                          }
+          if (otpController.checkOtpvalidation(otpController.otp.value)) {
+            otpController.callVerifyOtp(widget.phoneMunber);
+          }
         } else {
           print("error");
         }

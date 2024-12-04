@@ -34,6 +34,7 @@ class CheckoutScreen extends StatefulWidget {
   final int addressId;
   final String total;
   final String ShipCost;
+  final int lafetchtax;
 
   const CheckoutScreen({
     super.key,
@@ -48,6 +49,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.tax,
     required this.addressId,
     required this.total,
+    required this.lafetchtax,
     required this.ShipCost,
   });
 
@@ -796,6 +798,38 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                               : SizedBox(
                                   height: 0,
                                 ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.sp),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 4.sp),
+                                  child: AppText(
+                                    text: "Lafetch service tax",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: textColor,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    height: 0,
+                                  ),
+                                ),
+                                AppText(
+                                  text:
+                                      "\u{20B9} ${widget.lafetchtax.toString()}",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: greenText,
+                                  fontSize: 12,
+                                ),
+                              ],
+                            ),
+                          ),
                           Padding(
                             padding: EdgeInsets.only(top: 10.sp),
                             child: Row(
