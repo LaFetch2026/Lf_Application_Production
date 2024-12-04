@@ -807,7 +807,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 Padding(
                                   padding: EdgeInsets.only(right: 4.sp),
                                   child: AppText(
-                                    text: "Lafetch service tax",
+                                    text: "Service tax",
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: textColor,

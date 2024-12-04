@@ -172,9 +172,9 @@ const downArrowImage = 'assets/images/down_arrow.png';
 
 class ApiConstants {
   ApiConstants._();
-  // static const String baseUrl =
-  // "https://api.la-fetch.com/customer/api"; //production
-
   static const String baseUrl =
-      "https://staging-api.la-fetch.com/customer/api"; //staging
+      "https://api.la-fetch.com/customer/api"; //production
+
+  // static const String baseUrl =
+  // "https://staging-api.la-fetch.com/customer/api"; //staging
 }

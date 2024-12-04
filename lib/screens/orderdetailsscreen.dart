@@ -13,18 +13,21 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_address.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderpayment.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
+//import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
 //import 'package:lafetch/screens/orders/delivery_track.dart';
 import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
+import '../commonwidget/cartwidgets/bottomCharges.dart';
+import '../commonwidget/doubleiconbtn.dart';
 import '../commonwidget/homewidget/dummy_estimatedelivery.dart';
 import '../controller/order_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 import 'orders/reviewproducts.dart';
+import 'orders/trackorderscreen.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final int orderId;
@@ -38,6 +41,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final orderController = Get.put(OrderController());
   final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   // double _rating = 0;
   String email = "";
   List<String> items = [
@@ -143,6 +147,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteTextColor,
+      key: scaffoldKey,
       body: Column(
         children: [
           const BackButtonAppbar(
@@ -316,7 +321,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 : const SizedBox(
                                     height: 0,
                                   )),
-                        Padding(
+                        /*  Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 16.sp, vertical: 10.sp),
                           child: AppText(
@@ -327,13 +332,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             fontSize: 18,
                             color: loginText,
                           ),
-                        ),
-                        Obx(
+                        ), */
+                        /*  Obx(
                           () => orderController.isDetails.value
                               ? const DummyOrderDetails()
                               : Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 16.sp, vertical: 5.sp),
+                                      horizontal: 16.sp, vertical: 10.sp),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -503,7 +508,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     ],
                                   ),
                                 ),
-                        ),
+                        ), */
                         Obx(() => orderController.isTrack.value
                             ? const SizedBox(
                                 height: 0,
@@ -688,6 +693,844 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ),
                     ),
                   ), */
+
+                  Obx(
+                    () => orderController.isDetails.value
+                        ? const DummyEstimateDelivery()
+                        : orderController.orderDetails["orders"].isNotEmpty
+                            ? Container(
+                                color: whiteColor,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: 20.sp,
+                                    top: 10.sp,
+                                  ),
+                                  child: ListView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      physics: const ScrollPhysics(),
+                                      itemCount: orderController
+                                          .orderDetails["orders"].length,
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (ctx, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 5.sp),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp, right: 16.sp),
+                                                child: AppText(
+                                                  text: "Order ${index + 1}",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: loginText,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp, right: 16.sp),
+                                                child: ListView.builder(
+                                                    primary: false,
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        const ScrollPhysics(),
+                                                    itemCount: orderController
+                                                        .orderDetails["orders"]
+                                                            [index]
+                                                            ["order_lines"]
+                                                        .length,
+                                                    padding: EdgeInsets.zero,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    itemBuilder: (ctx, i) {
+                                                      return Column(
+                                                        children: [
+                                                          Container(
+                                                            color: whiteColor,
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 10
+                                                                          .sp),
+                                                              child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          flex:
+                                                                              1,
+                                                                          child: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null
+                                                                              ? SizedBox(
+                                                                                  height: 85.sp,
+                                                                                  width: 70.sp,
+                                                                                  child: CachedNetworkImage(
+                                                                                    cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                    fit: BoxFit.cover,
+                                                                                    imageUrl: isImage(orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"]) ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"] : orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][1]["name"],
+                                                                                    errorWidget: (context, url, error) => Image.asset(
+                                                                                      downloadImage,
+                                                                                      fit: BoxFit.cover,
+                                                                                      height: 85.sp,
+                                                                                      width: 70.sp,
+                                                                                    ),
+                                                                                  ),
+                                                                                )
+                                                                              : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.cover),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex:
+                                                                              3,
+                                                                          child:
+                                                                              Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            children: [
+                                                                              Padding(
+                                                                                padding: EdgeInsets.symmetric(
+                                                                                  horizontal: 5.sp,
+                                                                                ),
+                                                                                child: AppText(
+                                                                                  text: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
+                                                                                  maxLines: 1,
+                                                                                  fontFamily: "Franklin Gothic Regular",
+                                                                                  fontWeight: FontWeight.w400,
+                                                                                  fontSize: 14,
+                                                                                  color: nameText,
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                                                                                child: AppText(
+                                                                                  text: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["short_description"] : "",
+                                                                                  color: greyTextColor,
+                                                                                  maxLines: 2,
+                                                                                  fontSize: 12,
+                                                                                  fontFamily: "Franklin Gothic Regular",
+                                                                                  fontWeight: FontWeight.w400,
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"] != null
+                                                                                        ? Padding(
+                                                                                            padding: EdgeInsets.only(right: 10.sp),
+                                                                                            child: AppText(
+                                                                                              // text: "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
+                                                                                              text: "Size : ${orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["product_matrix_name_size"] ?? ""}",
+                                                                                              color: greyTextColor,
+                                                                                              maxLines: 2,
+                                                                                              fontSize: 12,
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                            ),
+                                                                                          )
+                                                                                        : const SizedBox(
+                                                                                            height: 0,
+                                                                                          ),
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.only(right: 10.sp),
+                                                                                      child: AppText(
+                                                                                        text: "Qty :${orderController.orderDetails["orders"][index]["order_lines"][i]["quantity"].toString()}",
+                                                                                        color: greyTextColor,
+                                                                                        maxLines: 2,
+                                                                                        fontSize: 12,
+                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                              orderController.orderDetails["orders"][index]["status_details"] == "DELIVERED" || orderController.orderDetails["orders"][index]["status_details"] == "COMPLETED" || orderController.orderDetails["orders"][index]["status_details"] == "EXCHANGE_REQUESTED"
+                                                                                  ? Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                      mainAxisSize: MainAxisSize.max,
+                                                                                      children: [
+                                                                                        orderController.orderDetails["order_lines"][index]["review"]
+                                                                                            ? GestureDetector(
+                                                                                                onTap: () async {
+                                                                                                  Get.to(ReviewProductScreen(
+                                                                                                    orderId: orderController.orderDetails["orders"][index]["id"],
+                                                                                                    productId: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["id"] : 0,
+                                                                                                    productName: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
+                                                                                                    productimage: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null
+                                                                                                        ? isImage(orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"])
+                                                                                                            ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"]
+                                                                                                            : orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][1]["name"]
+                                                                                                        : "",
+                                                                                                  ));
+                                                                                                  await analytics.logEvent(
+                                                                                                    name: 'order_reviewClick',
+                                                                                                    parameters: <String, Object>{
+                                                                                                      'page_name': 'order_reviewClick',
+                                                                                                    },
+                                                                                                  );
+                                                                                                },
+                                                                                                child: Padding(
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                  child: AppText(
+                                                                                                    text: "Write a Review",
+                                                                                                    color: blue,
+                                                                                                    fontSize: 11,
+                                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                                    fontWeight: FontWeight.w400,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              )
+                                                                                            : SizedBox(
+                                                                                                height: 0,
+                                                                                              ),
+                                                                                        orderController.orderDetails["orders"][index]["order_lines"][i]["exchange"]
+                                                                                            ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["has_exchange"]
+                                                                                                ? GestureDetector(
+                                                                                                    onTap: () async {
+                                                                                                      Get.to(ExchangeProductScreen(
+                                                                                                          productId: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["id"] : 0,
+                                                                                                          productName: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
+                                                                                                          productimage: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null
+                                                                                                              ? isImage(orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"])
+                                                                                                                  ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"]
+                                                                                                                  : orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][1]["name"]
+                                                                                                              : "",
+                                                                                                          orderId: orderController.orderDetails["orders"][index]["id"],
+                                                                                                          sizeId: orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["id"] ?? 0,
+                                                                                                          productDescription: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["short_description"] : ""));
+                                                                                                      await analytics.logEvent(
+                                                                                                        name: 'order_exchangeClick',
+                                                                                                        parameters: <String, Object>{
+                                                                                                          'page_name': 'order_exchangeClick',
+                                                                                                        },
+                                                                                                      );
+                                                                                                    },
+                                                                                                    child: Padding(
+                                                                                                      padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                      child: AppText(
+                                                                                                        text: "Exchange",
+                                                                                                        color: blue,
+                                                                                                        fontSize: 11,
+                                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                                        fontWeight: FontWeight.w400,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  )
+                                                                                                : Padding(
+                                                                                                    padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                    child: AppText(
+                                                                                                      text: "No Exchange",
+                                                                                                      color: greyTextColor,
+                                                                                                      fontSize: 11,
+                                                                                                      fontFamily: "Franklin Gothic Regular",
+                                                                                                      fontWeight: FontWeight.w400,
+                                                                                                    ),
+                                                                                                  )
+                                                                                            : SizedBox(
+                                                                                                height: 0,
+                                                                                              ),
+                                                                                        orderController.orderDetails["orders"][index]["order_lines"][i]["reorder"]
+                                                                                            ? GestureDetector(
+                                                                                                onTap: () {
+                                                                                                  productController.reorderSelected[index] = !productController.reorderSelected[index];
+                                                                                                  productController.update();
+                                                                                                  productController.sizeInventoryId.value = orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["id"];
+                                                                                                  productController.callAddtoCart(orderController.orderDetails["orders"][index]["order_lines"][i]["quantity"], "reorder");
+                                                                                                },
+                                                                                                child: Padding(
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                  child: productController.reorderSelected[index]
+                                                                                                      ? Padding(
+                                                                                                          padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                                                                                          child: const SizedBox(
+                                                                                                            height: 10,
+                                                                                                            width: 10,
+                                                                                                            child: Center(child: CircularProgressIndicator()),
+                                                                                                          ),
+                                                                                                        )
+                                                                                                      : AppText(
+                                                                                                          text: "Reorder",
+                                                                                                          color: blue,
+                                                                                                          fontSize: 11,
+                                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                                          fontWeight: FontWeight.w400,
+                                                                                                        ),
+                                                                                                ),
+                                                                                              )
+                                                                                            : const SizedBox(
+                                                                                                height: 0,
+                                                                                              ),
+                                                                                      ],
+                                                                                    )
+                                                                                  : const SizedBox(
+                                                                                      height: 0,
+                                                                                    ),
+                                                                            ],
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ]),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      );
+                                                    }),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp,
+                                                    right: 16.sp,
+                                                    top: 10,
+                                                    bottom: 10.sp),
+                                                child: DoubleIconButton(
+                                                    firstText: "Cancel Order",
+                                                    secondText: "Track Order",
+                                                    firstTextColor:
+                                                        btnTextColor,
+                                                    secondTextColor:
+                                                        btnTextColor,
+                                                    firstBackgroundColor:
+                                                        whiteColor,
+                                                    secondBackgroundColor:
+                                                        whiteColor,
+                                                    firstBorderColor:
+                                                        btnTextColor,
+                                                    secondBorderColor:
+                                                        btnTextColor,
+                                                    firstIcon: blackCrossImage,
+                                                    onPressedFirst: () async {
+                                                      showDialog(
+                                                        barrierColor:
+                                                            Colors.black26,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return showDoubleBtnDailog(
+                                                              click1: () {
+                                                                Get.back();
+                                                              },
+                                                              click2: () async {
+                                                                orderController.callCancelOrder(
+                                                                    orderController.orderDetails["orders"]
+                                                                            [
+                                                                            index]
+                                                                        ["id"]);
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'order_cancelOrderClick',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'order_cancelOrderClick',
+                                                                  },
+                                                                );
+                                                              },
+                                                              btncolor:
+                                                                  colorPrimary,
+                                                              text:
+                                                                  "Are you sure you want to cancel order?",
+                                                              btn1Text: "No",
+                                                              btn2Text: "Yes");
+                                                        },
+                                                      );
+                                                    },
+                                                    onPressedSecond: () async {
+                                                      Get.to(TrackOrderScreen(
+                                                        orderId: orderController
+                                                                    .orderDetails[
+                                                                "orders"][index]
+                                                            ["id"],
+                                                      ));
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            'order_trackOrderClick',
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'order_trackOrderClick',
+                                                        },
+                                                      );
+                                                    },
+                                                    secondIcon: locationIcon),
+                                              ),
+                                              /*   Container(
+                                                color: whiteTextColor,
+                                                height: 8.sp,
+                                              ), */
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10.sp),
+                                child: Container(
+                                  color: whiteColor,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.sp, horizontal: 16.sp),
+                                    child: Obx(
+                                      () => orderController.isDetails.value
+                                          ? const DummyEstimateDelivery()
+                                          : Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 16.sp),
+                                                  child: AppText(
+                                                    text:
+                                                        "Other items in this order",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: loginText,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 5.sp),
+                                                  child: AppText(
+                                                    text:
+                                                        "Order ID ${orderController.orderDetails["payment"] != null ? orderController.orderDetails["payment"]["transaction_id"] : ""} ",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: greyTextColor,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 20.sp,
+                                                      top: 10.sp),
+                                                  child: ListView.builder(
+                                                      primary: false,
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                          const ScrollPhysics(),
+                                                      itemCount: orderController
+                                                          .orderDetails[
+                                                              "order_lines"]
+                                                          .length,
+                                                      padding: EdgeInsets.zero,
+                                                      scrollDirection:
+                                                          Axis.vertical,
+                                                      itemBuilder:
+                                                          (ctx, index) {
+                                                        return Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      5.sp),
+                                                          child: Column(
+                                                            children: [
+                                                              GestureDetector(
+                                                                onTap: () {},
+                                                                child:
+                                                                    Container(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 10
+                                                                            .sp),
+                                                                    child: Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment
+                                                                                .start,
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              Expanded(
+                                                                                flex: 1,
+                                                                                child: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                    ? SizedBox(
+                                                                                        height: 85.sp,
+                                                                                        width: 70.sp,
+                                                                                        child: CachedNetworkImage(
+                                                                                          cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                          fit: BoxFit.cover,
+                                                                                          imageUrl: isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]) ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"] : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"],
+                                                                                          errorWidget: (context, url, error) => Image.asset(
+                                                                                            downloadImage,
+                                                                                            fit: BoxFit.cover,
+                                                                                            height: 85.sp,
+                                                                                            width: 70.sp,
+                                                                                          ),
+                                                                                        ),
+                                                                                      )
+                                                                                    : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.cover),
+                                                                              ),
+                                                                              Expanded(
+                                                                                flex: 3,
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.symmetric(
+                                                                                        horizontal: 5.sp,
+                                                                                      ),
+                                                                                      child: AppText(
+                                                                                        text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                        maxLines: 1,
+                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        fontSize: 14,
+                                                                                        color: nameText,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                                                                                      child: AppText(
+                                                                                        text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : "",
+                                                                                        color: greyTextColor,
+                                                                                        maxLines: 2,
+                                                                                        fontSize: 12,
+                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                                                                                      child: Row(
+                                                                                        children: [
+                                                                                          orderController.orderDetails["order_lines"][index]["inventory"] != null
+                                                                                              ? Padding(
+                                                                                                  padding: EdgeInsets.only(right: 10.sp),
+                                                                                                  child: AppText(
+                                                                                                    // text: "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
+                                                                                                    text: "Size : ${orderController.orderDetails["order_lines"][index]["inventory"]["product_matrix_name_size"] ?? ""}",
+                                                                                                    color: greyTextColor,
+                                                                                                    maxLines: 2,
+                                                                                                    fontSize: 12,
+                                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                                    fontWeight: FontWeight.w400,
+                                                                                                  ),
+                                                                                                )
+                                                                                              : const SizedBox(
+                                                                                                  height: 0,
+                                                                                                ),
+                                                                                          Padding(
+                                                                                            padding: EdgeInsets.only(right: 10.sp),
+                                                                                            child: AppText(
+                                                                                              text: "Qty :${orderController.orderDetails["order_lines"][index]["quantity"].toString()}",
+                                                                                              color: greyTextColor,
+                                                                                              maxLines: 2,
+                                                                                              fontSize: 12,
+                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                    orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED" || orderController.orderDetails["status_details"] == "EXCHANGE_REQUESTED"
+                                                                                        ? Row(
+                                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                            mainAxisSize: MainAxisSize.max,
+                                                                                            children: [
+                                                                                              /*  orderController.orderDetails["order_lines"][index]["quantity"] == 1
+                                                                                        ? */
+                                                                                              /*  Row(
+                                                                                      mainAxisSize: MainAxisSize.min,
+                                                                                      children: [ */
+                                                                                              orderController.orderDetails["order_lines"][index]["review"]
+                                                                                                  ? GestureDetector(
+                                                                                                      onTap: () async {
+                                                                                                        Get.to(ReviewProductScreen(
+                                                                                                          orderId: orderController.orderDetails["id"],
+                                                                                                          productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                                          productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                                          productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                              ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                                  ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                                  : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                              : "",
+                                                                                                        ));
+                                                                                                        await analytics.logEvent(
+                                                                                                          name: 'order_reviewClick',
+                                                                                                          parameters: <String, Object>{
+                                                                                                            'page_name': 'order_reviewClick',
+                                                                                                          },
+                                                                                                        );
+                                                                                                      },
+                                                                                                      child: Padding(
+                                                                                                        padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                        child: AppText(
+                                                                                                          text: "Write a Review",
+                                                                                                          color: blue,
+                                                                                                          fontSize: 11,
+                                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                                          fontWeight: FontWeight.w400,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    )
+                                                                                                  : SizedBox(
+                                                                                                      height: 0,
+                                                                                                    ),
+                                                                                              orderController.orderDetails["order_lines"][index]["exchange"]
+                                                                                                  ? orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
+                                                                                                      ? GestureDetector(
+                                                                                                          onTap: () async {
+                                                                                                            Get.to(ExchangeProductScreen(
+                                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                                    : "",
+                                                                                                                orderId: orderController.orderDetails["id"],
+                                                                                                                sizeId: orderController.orderDetails["order_lines"][index]["inventory"]["id"] ?? 0,
+                                                                                                                productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : ""));
+                                                                                                            await analytics.logEvent(
+                                                                                                              name: 'order_exchangeClick',
+                                                                                                              parameters: <String, Object>{
+                                                                                                                'page_name': 'order_exchangeClick',
+                                                                                                              },
+                                                                                                            );
+                                                                                                          },
+                                                                                                          child: Padding(
+                                                                                                            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                            child: AppText(
+                                                                                                              text: "Exchange",
+                                                                                                              color: blue,
+                                                                                                              fontSize: 11,
+                                                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                                                              fontWeight: FontWeight.w400,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        )
+                                                                                                      : Padding(
+                                                                                                          padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                          child: AppText(
+                                                                                                            text: "No Exchange",
+                                                                                                            color: greyTextColor,
+                                                                                                            fontSize: 11,
+                                                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                                                            fontWeight: FontWeight.w400,
+                                                                                                          ),
+                                                                                                        )
+                                                                                                  : SizedBox(
+                                                                                                      height: 0,
+                                                                                                    ),
+                                                                                              /*     ],
+                                                                                    ) */
+                                                                                              /*  : SizedBox(
+                                                                                            height: 0,
+                                                                                          ) */
+                                                                                              orderController.orderDetails["order_lines"][index]["reorder"]
+                                                                                                  ? GestureDetector(
+                                                                                                      onTap: () {
+                                                                                                        productController.reorderSelected[index] = !productController.reorderSelected[index];
+                                                                                                        productController.update();
+                                                                                                        productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
+                                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
+                                                                                                      },
+                                                                                                      child: Padding(
+                                                                                                        padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                        child: productController.reorderSelected[index]
+                                                                                                            ? Padding(
+                                                                                                                padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                                                                                                child: const SizedBox(
+                                                                                                                  height: 10,
+                                                                                                                  width: 10,
+                                                                                                                  child: Center(child: CircularProgressIndicator()),
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : AppText(
+                                                                                                                text: "Reorder",
+                                                                                                                color: blue,
+                                                                                                                fontSize: 11,
+                                                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                                                                fontWeight: FontWeight.w400,
+                                                                                                              ),
+                                                                                                      ),
+                                                                                                    )
+                                                                                                  : const SizedBox(
+                                                                                                      height: 0,
+                                                                                                    ),
+                                                                                            ],
+                                                                                          )
+                                                                                        : const SizedBox(
+                                                                                            height: 0,
+                                                                                          ),
+                                                                                  ],
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                          /* orderController.orderDetails["order_lines"]
+                                                                            [
+                                                                            index]
+                                                                        [
+                                                                        "review"]
+                                                                    ? GestureDetector(
+                                                                        onTap:
+                                                                            () async {
+                                                                          /*  Get.to(ReviewProductScreen(
+                                                                                                orderId: orderController.orderDetails["id"],
+                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                    : "",
+                                                                                              ));
+                                                                                              await analytics.logEvent(
+                                                                                                name: 'order_reviewClick',
+                                                                                                parameters: <String, Object>{
+                                                                                                  'page_name': 'order_reviewClick',
+                                                                                                },
+                                                                                              ); */
+                                                                        },
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: EdgeInsets.symmetric(
+                                                                              horizontal: 5.sp,
+                                                                              vertical: 2.sp),
+                                                                          child:
+                                                                              AppText(
+                                                                            text:
+                                                                                "Track Product",
+                                                                            color:
+                                                                                blue,
+                                                                            fontSize:
+                                                                                11,
+                                                                            fontFamily:
+                                                                                "Franklin Gothic Regular",
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : SizedBox(
+                                                                        height:
+                                                                            0,
+                                                                      ), */
+                                                                        ]),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 5.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: AppText(
+                                                          text:
+                                                              "Total Order Price",
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: loginText,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
+                                                        child: AppText(
+                                                          text:
+                                                              "\u{20B9} ${orderController.orderDetails["total"] ?? "0"}",
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: loginText,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      AppText(
+                                                        text: "You saved",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: greyTextColor,
+                                                        fontSize: 12,
+                                                      ),
+                                                      AppText(
+                                                        text:
+                                                            " \u{20B9} ${orderController.orderDetails["saved_total"] ?? ""}",
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: greenText,
+                                                        fontSize: 12,
+                                                      ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: AppText(
+                                                          text: " on this item",
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: greyTextColor,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                      /*  AppText(
+                                              text: "View Breakup",
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: blackColor,
+                                              fontSize: 12.sp,
+                                            ), */
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                    ),
+                                  ),
+                                )),
+                  ),
                   Obx(() => orderController.isTrack.value
                       ? const DummyOrderTrack()
                       : orderController.trackList.isNotEmpty
@@ -697,24 +1540,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 16.sp, vertical: 16.sp),
-                                  child: /* OrderTracker(
-                        status: Status.order,
-                        subTitleTextStyle: TextStyle(
-                            color: textHintColor,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontSize: 14.sp),
-                        headingTitleStyle: TextStyle(
-                            color: loginText,
-                            fontFamily: "Franklin Gothic",
-                            fontSize: 14.sp),
-                        activeColor: Colors.green,
-                        inActiveColor: Colors.grey[300],
-                        orderTitleAndDateList: orderList,
-                        shippedTitleAndDateList: shippedList,
-                        outOfDeliveryTitleAndDateList: outOfDeliveryList,
-                        deliveredTitleAndDateList: deliveredList,
-                      ), */
-                                      Column(
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1143,449 +1969,432 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 height: 0,
                               ),
                   ),
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.sp),
-                      child: Container(
-                        color: whiteColor,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10.sp, horizontal: 16.sp),
-                          child: Obx(
-                            () => orderController.isDetails.value
-                                ? const DummyEstimateDelivery()
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 16.sp),
-                                        child: AppText(
-                                          text: "Other items in this order",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: loginText,
-                                          fontSize: 18,
+                  Obx(() => orderController.isDetails.value
+                      ? SizedBox(
+                          height: 0,
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.sp),
+                          child: Container(
+                            color: whiteColor,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.sp, horizontal: 16.sp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 20.sp),
+                                    child: AppText(
+                                      text: "Price Details",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: colorPrimary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 16.sp),
+                                    child: Container(
+                                      width: double.infinity,
+                                      color: colorSecondary,
+                                      height: 1.sp,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 4.sp),
+                                          child: AppText(
+                                            text: "Total MRP",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textColor,
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 5.sp),
-                                        child: AppText(
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
                                           text:
-                                              "Order ID ${orderController.orderDetails["payment"] != null ? orderController.orderDetails["payment"]["transaction_id"] : ""} ",
+                                              "\u{20B9} ${orderController.orderDetails["total_mrp"] ?? "0"}",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
-                                          color: greyTextColor,
-                                          fontSize: 14,
+                                          color: textColor,
+                                          fontSize: 12,
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: 20.sp, top: 10.sp),
-                                        child: ListView.builder(
-                                            primary: false,
-                                            shrinkWrap: true,
-                                            physics: const ScrollPhysics(),
-                                            itemCount: orderController
-                                                .orderDetails["order_lines"]
-                                                .length,
-                                            padding: EdgeInsets.zero,
-                                            scrollDirection: Axis.vertical,
-                                            itemBuilder: (ctx, index) {
-                                              return Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5.sp),
-                                                child: Column(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {},
-                                                      child: Container(
-                                                        color: whiteColor,
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 10.sp),
-                                                          child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      flex: 1,
-                                                                      child: orderController.orderDetails["order_lines"][index]["product"] !=
-                                                                              null
-                                                                          ? SizedBox(
-                                                                              height: 85.sp,
-                                                                              width: 70.sp,
-                                                                              child: CachedNetworkImage(
-                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                fit: BoxFit.cover,
-                                                                                imageUrl: isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]) ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"] : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"],
-                                                                                errorWidget: (context, url, error) => Image.asset(
-                                                                                  downloadImage,
-                                                                                  fit: BoxFit.cover,
-                                                                                  height: 85.sp,
-                                                                                  width: 70.sp,
-                                                                                ),
-                                                                              ),
-                                                                            )
-                                                                          : Image.asset(
-                                                                              dummyWishlistImage,
-                                                                              height: 85.sp,
-                                                                              width: 70.sp,
-                                                                              fit: BoxFit.cover),
-                                                                    ),
-                                                                    Expanded(
-                                                                      flex: 3,
-                                                                      child:
-                                                                          Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        children: [
-                                                                          Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(
-                                                                              horizontal: 5.sp,
-                                                                            ),
-                                                                            child:
-                                                                                AppText(
-                                                                              text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                              maxLines: 1,
-                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 14,
-                                                                              color: nameText,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                            child:
-                                                                                AppText(
-                                                                              text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : "",
-                                                                              color: greyTextColor,
-                                                                              maxLines: 2,
-                                                                              fontSize: 12,
-                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                              fontWeight: FontWeight.w400,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                orderController.orderDetails["order_lines"][index]["inventory"] != null
-                                                                                    ? Padding(
-                                                                                        padding: EdgeInsets.only(right: 10.sp),
-                                                                                        child: AppText(
-                                                                                          // text: "Size :${orderController.orderDetails["order_lines"][0]["product"]["inventories"][orderController.orderDetails["order_lines"][0]["product"]["inventories"].indexWhere((f) => f['product_matrix']['product_matrix_group']["name"] == "Size")]['product_matrix']["name"]}",
-                                                                                          text: "Size : ${orderController.orderDetails["order_lines"][index]["inventory"]["product_matrix_name_size"] ?? ""}",
-                                                                                          color: greyTextColor,
-                                                                                          maxLines: 2,
-                                                                                          fontSize: 12,
-                                                                                          fontFamily: "Franklin Gothic Regular",
-                                                                                          fontWeight: FontWeight.w400,
-                                                                                        ),
-                                                                                      )
-                                                                                    : const SizedBox(
-                                                                                        height: 0,
-                                                                                      ),
-                                                                                Padding(
-                                                                                  padding: EdgeInsets.only(right: 10.sp),
-                                                                                  child: AppText(
-                                                                                    text: "Qty :${orderController.orderDetails["order_lines"][index]["quantity"].toString()}",
-                                                                                    color: greyTextColor,
-                                                                                    maxLines: 2,
-                                                                                    fontSize: 12,
-                                                                                    fontFamily: "Franklin Gothic Regular",
-                                                                                    fontWeight: FontWeight.w400,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                          orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED" || orderController.orderDetails["status_details"] == "EXCHANGE_REQUESTED"
-                                                                              ? Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                  mainAxisSize: MainAxisSize.max,
-                                                                                  children: [
-                                                                                    /*  orderController.orderDetails["order_lines"][index]["quantity"] == 1
-                                                                                        ? */
-                                                                                    /*  Row(
-                                                                                      mainAxisSize: MainAxisSize.min,
-                                                                                      children: [ */
-                                                                                    orderController.orderDetails["order_lines"][index]["review"]
-                                                                                        ? GestureDetector(
-                                                                                            onTap: () async {
-                                                                                              Get.to(ReviewProductScreen(
-                                                                                                orderId: orderController.orderDetails["id"],
-                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
-                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
-                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
-                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
-                                                                                                    : "",
-                                                                                              ));
-                                                                                              await analytics.logEvent(
-                                                                                                name: 'order_reviewClick',
-                                                                                                parameters: <String, Object>{
-                                                                                                  'page_name': 'order_reviewClick',
-                                                                                                },
-                                                                                              );
-                                                                                            },
-                                                                                            child: Padding(
-                                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                              child: AppText(
-                                                                                                text: "Write a Review",
-                                                                                                color: blue,
-                                                                                                fontSize: 11,
-                                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                                fontWeight: FontWeight.w400,
-                                                                                              ),
-                                                                                            ),
-                                                                                          )
-                                                                                        : SizedBox(
-                                                                                            height: 0,
-                                                                                          ),
-                                                                                    orderController.orderDetails["order_lines"][index]["exchange"]
-                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
-                                                                                            ? GestureDetector(
-                                                                                                onTap: () async {
-                                                                                                  Get.to(ExchangeProductScreen(
-                                                                                                      productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
-                                                                                                      productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                                                      productimage: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                                          ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
-                                                                                                              ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
-                                                                                                              : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
-                                                                                                          : "",
-                                                                                                      orderId: orderController.orderDetails["id"],
-                                                                                                      sizeId: orderController.orderDetails["order_lines"][index]["inventory"]["id"] ?? 0,
-                                                                                                      productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : ""));
-                                                                                                  await analytics.logEvent(
-                                                                                                    name: 'order_exchangeClick',
-                                                                                                    parameters: <String, Object>{
-                                                                                                      'page_name': 'order_exchangeClick',
-                                                                                                    },
-                                                                                                  );
-                                                                                                },
-                                                                                                child: Padding(
-                                                                                                  padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                                  child: AppText(
-                                                                                                    text: "Exchange",
-                                                                                                    color: blue,
-                                                                                                    fontSize: 11,
-                                                                                                    fontFamily: "Franklin Gothic Regular",
-                                                                                                    fontWeight: FontWeight.w400,
-                                                                                                  ),
-                                                                                                ),
-                                                                                              )
-                                                                                            : Padding(
-                                                                                                padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                                child: AppText(
-                                                                                                  text: "No Exchange",
-                                                                                                  color: greyTextColor,
-                                                                                                  fontSize: 11,
-                                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                                  fontWeight: FontWeight.w400,
-                                                                                                ),
-                                                                                              )
-                                                                                        : SizedBox(
-                                                                                            height: 0,
-                                                                                          ),
-                                                                                    /*     ],
-                                                                                    ) */
-                                                                                    /*  : SizedBox(
-                                                                                            height: 0,
-                                                                                          ) */
-                                                                                    orderController.orderDetails["order_lines"][index]["reorder"]
-                                                                                        ? GestureDetector(
-                                                                                            onTap: () {
-                                                                                              productController.reorderSelected[index] = !productController.reorderSelected[index];
-                                                                                              productController.update();
-                                                                                              productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
-                                                                                              productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder");
-                                                                                            },
-                                                                                            child: Padding(
-                                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                              child: productController.reorderSelected[index]
-                                                                                                  ? Padding(
-                                                                                                      padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                                                                                                      child: const SizedBox(
-                                                                                                        height: 10,
-                                                                                                        width: 10,
-                                                                                                        child: Center(child: CircularProgressIndicator()),
-                                                                                                      ),
-                                                                                                    )
-                                                                                                  : AppText(
-                                                                                                      text: "Reorder",
-                                                                                                      color: blue,
-                                                                                                      fontSize: 11,
-                                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                                      fontWeight: FontWeight.w400,
-                                                                                                    ),
-                                                                                            ),
-                                                                                          )
-                                                                                        : const SizedBox(
-                                                                                            height: 0,
-                                                                                          ),
-                                                                                  ],
-                                                                                )
-                                                                              : const SizedBox(
-                                                                                  height: 0,
-                                                                                ),
-                                                                        ],
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                /* orderController.orderDetails["order_lines"]
-                                                                            [
-                                                                            index]
-                                                                        [
-                                                                        "review"]
-                                                                    ? GestureDetector(
-                                                                        onTap:
-                                                                            () async {
-                                                                          /*  Get.to(ReviewProductScreen(
-                                                                                                orderId: orderController.orderDetails["id"],
-                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
-                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
-                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
-                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
-                                                                                                    : "",
-                                                                                              ));
-                                                                                              await analytics.logEvent(
-                                                                                                name: 'order_reviewClick',
-                                                                                                parameters: <String, Object>{
-                                                                                                  'page_name': 'order_reviewClick',
-                                                                                                },
-                                                                                              ); */
-                                                                        },
-                                                                        child:
-                                                                            Padding(
-                                                                          padding: EdgeInsets.symmetric(
-                                                                              horizontal: 5.sp,
-                                                                              vertical: 2.sp),
-                                                                          child:
-                                                                              AppText(
-                                                                            text:
-                                                                                "Track Product",
-                                                                            color:
-                                                                                blue,
-                                                                            fontSize:
-                                                                                11,
-                                                                            fontFamily:
-                                                                                "Franklin Gothic Regular",
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                          ),
-                                                                        ),
-                                                                      )
-                                                                    : SizedBox(
-                                                                        height:
-                                                                            0,
-                                                                      ), */
-                                                              ]),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
+                                      ],
+                                    ),
+                                  ),
+                                  orderController.orderDetails[
+                                              "express_delivery_charges"] ==
+                                          "0.00"
+                                      ? SizedBox(
+                                          height: 0,
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.only(top: 10.sp),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "Express Delivery Charges",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
                                                 ),
-                                              );
-                                            }),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 5.sp),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: AppText(
-                                                text: "Total Order Price",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: loginText,
-                                                fontSize: 14,
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 5.sp),
-                                              child: AppText(
+                                              const Expanded(
+                                                child: SizedBox(
+                                                  height: 0,
+                                                ),
+                                              ),
+                                              AppText(
                                                 text:
-                                                    "\u{20B9} ${orderController.orderDetails["total"] ?? "0"}",
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                                color: loginText,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10.sp),
-                                        child: Row(
-                                          children: [
-                                            AppText(
-                                              text: "You saved",
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: greyTextColor,
-                                              fontSize: 12,
-                                            ),
-                                            AppText(
-                                              text:
-                                                  " \u{20B9} ${orderController.orderDetails["saved_total"] ?? ""}",
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                              color: greenText,
-                                              fontSize: 12,
-                                            ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: AppText(
-                                                text: " on this item",
+                                                    "\u{20B9} ${orderController.orderDetails["express_delivery_charges"] ?? "0"}",
                                                 fontFamily:
                                                     "Franklin Gothic Regular",
                                                 fontWeight: FontWeight.w400,
-                                                color: greyTextColor,
+                                                color: textColor,
+                                                fontSize: 12,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 4.sp),
+                                          child: AppText(
+                                            text: "Discount on MRP",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textColor,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              "\u{20B9} ${orderController.orderDetails["discount_on_mrp"] ?? "0"}",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: greenText,
+                                          fontSize: 12,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  orderController.orderDetails[
+                                              "coupon_discount"] ==
+                                          "0.00"
+                                      ? SizedBox(
+                                          height: 0,
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.only(top: 10.sp),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
+                                                child: AppText(
+                                                  text: "Coupon Discount",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              const Expanded(
+                                                child: SizedBox(
+                                                  height: 0,
+                                                ),
+                                              ),
+                                              AppText(
+                                                text:
+                                                    "\u{20B9} ${orderController.orderDetails["coupon_discount"] ?? "0"}",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: greenText,
+                                                fontSize: 12,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                  orderController
+                                              .orderDetails["shipping_cost"] !=
+                                          "0.00"
+                                      ? Padding(
+                                          padding: EdgeInsets.only(top: 10.sp),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
+                                                child: AppText(
+                                                  text: "Shipping Cost",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              const Expanded(
+                                                child: SizedBox(
+                                                  height: 0,
+                                                ),
+                                              ),
+                                              AppText(
+                                                text:
+                                                    "\u{20B9} ${orderController.orderDetails["shipping_cost"]}",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: greenText,
+                                                fontSize: 12,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          height: 0,
+                                        ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 4.sp),
+                                          child: AppText(
+                                            text: "Service tax",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textColor,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              "\u{20B9} ${orderController.orderDetails["lafetch_service_tax"].toString()}",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: greenText,
+                                          fontSize: 12,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 4.sp),
+                                              child: AppText(
+                                                text: "Convenience Fee",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: textColor,
                                                 fontSize: 12,
                                               ),
                                             ),
-                                            /*  AppText(
-                                              text: "View Breakup",
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                              color: blackColor,
-                                              fontSize: 12.sp,
-                                            ), */
+                                            GestureDetector(
+                                              onTap: () {
+                                                scaffoldKey.currentState
+                                                    ?.showBottomSheet(
+                                                        (context) =>
+                                                            BottomCharges(
+                                                              text:
+                                                                  "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
+                                                              title:
+                                                                  "Convenience Fee",
+                                                            ));
+                                              },
+                                              child: Image.asset(questionIcon,
+                                                  height: 16.sp,
+                                                  width: 16.sp,
+                                                  fit: BoxFit.cover),
+                                            )
                                           ],
                                         ),
-                                      ),
-                                    ],
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              "\u{20B9} ${orderController.orderDetails["convenience_fee"] ?? "Free"}",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: greenText,
+                                          fontSize: 12,
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 4.sp),
+                                              child: AppText(
+                                                text: "Tax & Charges",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: textColor,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                scaffoldKey.currentState
+                                                    ?.showBottomSheet(
+                                                        (context) =>
+                                                            BottomCharges(
+                                                              text:
+                                                                  "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
+                                                              title:
+                                                                  "Tax & Charges",
+                                                            ));
+                                              },
+                                              child: Image.asset(questionIcon,
+                                                  height: 16.sp,
+                                                  width: 16.sp,
+                                                  fit: BoxFit.cover),
+                                            )
+                                          ],
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              "\u{20B9} ${orderController.orderDetails["total_tax"].toString()}",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor,
+                                          fontSize: 12,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 20.sp),
+                                    child: Container(
+                                      width: double.infinity,
+                                      color: colorSecondary,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 6.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 4.sp),
+                                          child: AppText(
+                                            text: "Bill total",
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                            color: colorPrimary,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              "\u{20B9} ${orderController.orderDetails["total"] ?? "0"}",
+                                          fontFamily: "Franklin Gothic Bold",
+                                          fontWeight: FontWeight.w700,
+                                          color: colorPrimary,
+                                          fontSize: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20.sp,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      )),
+                        )),
                   Obx(() => Padding(
-                        padding: EdgeInsets.only(top: 20.sp, bottom: 30.sp),
+                        padding: EdgeInsets.only(top: 10.sp, bottom: 20.sp),
                         child: getSingleButton(
                             label: "Download Invoice",
                             controller: orderController,
