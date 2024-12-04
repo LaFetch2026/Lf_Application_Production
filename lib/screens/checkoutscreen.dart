@@ -34,7 +34,7 @@ class CheckoutScreen extends StatefulWidget {
   final int addressId;
   final String total;
   final String ShipCost;
-  final int lafetchtax;
+  final String lafetchtax;
 
   const CheckoutScreen({
     super.key,

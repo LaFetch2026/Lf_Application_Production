@@ -221,7 +221,8 @@ class CartController extends BaseController {
     isExpress.value = false;
   }
 
-  callInitiatePayment(int addressId, dynamic context, String shipCost,int lafetchTax) async {
+  callInitiatePayment(int addressId, dynamic context, String shipCost,
+      String lafetchTax) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -251,20 +252,19 @@ class CartController extends BaseController {
         Navigator.of(context)
             .push(MaterialPageRoute(
                 builder: (BuildContext context) => CheckoutScreen(
-                      orderId: responseData["payment"]["transaction_id"],
-                      amount: responseData["payment"]["amount"],
-                      cartId: responseData["id"],
-                      mrp: mrp.value,
-                      expressDelivery: expressDelivery.value,
-                      convenienceFee: convenienceFee.value,
-                      coupanDiscount: coupanDiscount.value,
-                      discount: discount.value,
-                      tax: tax.value,
-                      total: total.value,
-                      addressId: addressId,
-                      ShipCost: shipCost,
-                      lafetchtax:lafetchTax
-                    )))
+                    orderId: responseData["payment"]["transaction_id"],
+                    amount: responseData["payment"]["amount"],
+                    cartId: responseData["id"],
+                    mrp: mrp.value,
+                    expressDelivery: expressDelivery.value,
+                    convenienceFee: convenienceFee.value,
+                    coupanDiscount: coupanDiscount.value,
+                    discount: discount.value,
+                    tax: tax.value,
+                    total: total.value,
+                    addressId: addressId,
+                    ShipCost: shipCost,
+                    lafetchtax: lafetchTax)))
             .then((value) => (value) {
                   getCartData();
                 });

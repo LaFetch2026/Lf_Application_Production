@@ -13,6 +13,7 @@ import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
 import 'package:lafetch/utils/constants.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/app_text.dart';
 import '../controller/login_controller.dart';
@@ -39,8 +40,16 @@ class LoginScreenState extends State<LoginScreen> {
     } else {
       appbarColor = btnTextColor;
     }
-    setState(() {});
+    requestNotificationPermission();
     super.initState();
+  }
+
+  requestNotificationPermission() async {
+    PermissionStatus status = await Permission.notification.status;
+    if (!status.isGranted) {
+      print("permission not granted");
+      Permission.notification.request();
+    }
   }
 
   facebooklogin(String type) async {

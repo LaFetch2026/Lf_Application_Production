@@ -2003,15 +2003,17 @@ class CartScreenState extends State<CartScreen> {
                                         controller.cartDetails["address"]["id"],
                                         context,
                                         controller.cartDetails["shipping_cost"],
-                                        controller.cartDetails[
-                                            "lafetch_service_tax"]);
+                                        controller
+                                            .cartDetails["lafetch_service_tax"]
+                                            .toString());
                                   } else {
                                     controller.callInitiatePayment(
                                         0,
                                         context,
                                         controller.cartDetails["shipping_cost"],
-                                        controller.cartDetails[
-                                            "lafetch_service_tax"]);
+                                        controller
+                                            .cartDetails["lafetch_service_tax"]
+                                            .toString());
                                   }
                                   await analytics.logEvent(
                                     name: 'proceed_checkout_btnclick',
