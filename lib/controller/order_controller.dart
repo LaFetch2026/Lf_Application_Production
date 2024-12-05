@@ -308,7 +308,7 @@ class OrderController extends BaseController {
     hideLoading();
   }
 
-  void callCancelOrder(int orderId) async {
+  void callCancelOrder(int orderId, int parentOrderId) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -320,7 +320,7 @@ class OrderController extends BaseController {
       if (response.statusCode == 200) {
         Get.close(1);
         getSnackBar("Order Cancelled");
-        getOrderData();
+        getOrderDetails(parentOrderId);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

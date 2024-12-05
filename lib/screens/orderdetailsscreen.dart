@@ -22,8 +22,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/cartwidgets/bottomCharges.dart';
-import '../commonwidget/doubleiconbtn.dart';
 import '../commonwidget/homewidget/dummy_order_list.dart';
+import '../commonwidget/singlebtn.dart';
 import '../controller/order_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -1682,9 +1682,134 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     }),
                                               ),
                                               orderController
-                                                      .orderDetails["orders"]
-                                                          [index]["deliveries"]
-                                                      .isNotEmpty
+                                                          .orderDetails[
+                                                              "orders"][index]
+                                                              ["deliveries"]
+                                                          .isNotEmpty &&
+                                                      orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["status"] !=
+                                                          7
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 14.sp,
+                                                          right: 14.sp,
+                                                          top: 10.sp,
+                                                          bottom: 10.sp),
+                                                      child: SizedBox(
+                                                        width: double.infinity,
+                                                        height: 30.sp,
+                                                        child: ListView.builder(
+                                                            shrinkWrap: true,
+                                                            primary: false,
+                                                            physics:
+                                                                const BouncingScrollPhysics(),
+                                                            itemCount: orderItem
+                                                                .length,
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemBuilder:
+                                                                (ctx, index) {
+                                                              return Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            2.sp),
+                                                                    child: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
+                                                                            map['status_details'] ==
+                                                                            orderItem[
+                                                                                index])
+                                                                        ? Image
+                                                                            .asset(
+                                                                            greenDotImage,
+                                                                            height:
+                                                                                8.sp,
+                                                                            width:
+                                                                                8.sp,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          )
+                                                                        : Image
+                                                                            .asset(
+                                                                            greyDotImage,
+                                                                            height:
+                                                                                8.sp,
+                                                                            width:
+                                                                                8.sp,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            4.sp),
+                                                                    child:
+                                                                        AppText(
+                                                                      text: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
+                                                                              map['status_details'] ==
+                                                                              orderItem[
+                                                                                  index])
+                                                                          ? trackOrderItem[
+                                                                              index]
+                                                                          : trackOrderItem[
+                                                                              index],
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      fontSize:
+                                                                          10,
+                                                                      color: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
+                                                                              map['status_details'] ==
+                                                                              orderItem[index])
+                                                                          ? color5StartReview
+                                                                          : greyDotColor,
+                                                                    ),
+                                                                  ),
+                                                                  index == 3
+                                                                      ? const SizedBox(
+                                                                          width:
+                                                                              0,
+                                                                        )
+                                                                      : Padding(
+                                                                          padding:
+                                                                              EdgeInsets.symmetric(horizontal: 2.sp),
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                20.sp,
+                                                                            height:
+                                                                                2.sp,
+                                                                            color: index < 1
+                                                                                ? color5StartReview
+                                                                                : greyDotColor,
+                                                                          ),
+                                                                        )
+                                                                ],
+                                                              );
+                                                            }),
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 0,
+                                                    ),
+                                              orderController
+                                                          .orderDetails[
+                                                              "orders"][index]
+                                                              ["deliveries"]
+                                                          .isNotEmpty &&
+                                                      orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["status"] !=
+                                                          7
                                                   ? Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
@@ -1839,73 +1964,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           5
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
-                                                          left: 16.sp,
-                                                          right: 16.sp,
                                                           top: 10,
                                                           bottom: 10.sp),
-                                                      child: DoubleIconButton(
-                                                          firstText:
-                                                              "Cancel Order",
-                                                          secondText:
-                                                              "Track Order",
-                                                          firstTextColor:
+                                                      child: SingleButton(
+                                                          label: "Track Order",
+                                                          height: 40,
+                                                          textColor:
                                                               btnTextColor,
-                                                          secondTextColor:
-                                                              btnTextColor,
-                                                          firstBackgroundColor:
+                                                          backgroundColor:
                                                               whiteColor,
-                                                          secondBackgroundColor:
-                                                              whiteColor,
-                                                          firstBorderColor:
-                                                              btnTextColor,
-                                                          secondBorderColor:
-                                                              btnTextColor,
-                                                          firstIcon:
-                                                              blackCrossImage,
-                                                          onPressedFirst:
-                                                              () async {
-                                                            showDialog(
-                                                              barrierColor:
-                                                                  Colors
-                                                                      .black26,
-                                                              context: context,
-                                                              builder:
-                                                                  (context) {
-                                                                return showDoubleBtnDailog(
-                                                                    click1: () {
-                                                                      Get.back();
-                                                                    },
-                                                                    click2:
-                                                                        () async {
-                                                                      orderController.callCancelOrder(orderController.orderDetails["orders"]
-                                                                              [
-                                                                              index]
-                                                                          [
-                                                                          "id"]);
-                                                                      await analytics
-                                                                          .logEvent(
-                                                                        name:
-                                                                            'order_cancelOrderClick',
-                                                                        parameters: <String,
-                                                                            Object>{
-                                                                          'page_name':
-                                                                              'order_cancelOrderClick',
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    btncolor:
-                                                                        colorPrimary,
-                                                                    text:
-                                                                        "Are you sure you want to cancel order?",
-                                                                    btn1Text:
-                                                                        "No",
-                                                                    btn2Text:
-                                                                        "Yes");
-                                                              },
-                                                            );
-                                                          },
-                                                          onPressedSecond:
-                                                              () async {
+                                                          onPressed: () async {
                                                             if (orderController.orderDetails[
                                                                             "orders"]
                                                                         [index][
@@ -1993,11 +2061,74 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               );
                                                             }
                                                           },
-                                                          secondIcon:
-                                                              locationIcon),
+                                                          borderColor:
+                                                              btnTextColor),
                                                     )
                                                   : SizedBox(
-                                                      height: 20.sp,
+                                                      height: 5.sp,
+                                                    ),
+                                              orderController.orderDetails[
+                                                              "orders"][index]
+                                                          ["status"] ==
+                                                      2
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10.sp),
+                                                      child: SingleButton(
+                                                          label: "Cancel Order",
+                                                          height: 40,
+                                                          textColor:
+                                                              btnTextColor,
+                                                          backgroundColor:
+                                                              whiteColor,
+                                                          onPressed: () async {
+                                                            showDialog(
+                                                              barrierColor:
+                                                                  Colors
+                                                                      .black26,
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return showDoubleBtnDailog(
+                                                                    click1: () {
+                                                                      Get.back();
+                                                                    },
+                                                                    click2:
+                                                                        () async {
+                                                                      orderController.callCancelOrder(
+                                                                          orderController.orderDetails["orders"][index]
+                                                                              [
+                                                                              "id"],
+                                                                          widget
+                                                                              .orderId);
+                                                                      await analytics
+                                                                          .logEvent(
+                                                                        name:
+                                                                            'order_cancelOrderClick',
+                                                                        parameters: <String,
+                                                                            Object>{
+                                                                          'page_name':
+                                                                              'order_cancelOrderClick',
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    btncolor:
+                                                                        colorPrimary,
+                                                                    text:
+                                                                        "Are you sure you want to cancel order?",
+                                                                    btn1Text:
+                                                                        "No",
+                                                                    btn2Text:
+                                                                        "Yes");
+                                                              },
+                                                            );
+                                                          },
+                                                          borderColor:
+                                                              btnTextColor),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 5.sp,
                                                     ),
                                               index <
                                                       orderController
@@ -2023,8 +2154,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 child: Container(
                                   color: whiteColor,
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10.sp, horizontal: 16.sp),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.sp),
                                     child: Obx(
                                       () => orderController.isDetails.value
                                           ? const DummyOrderList(
@@ -2038,7 +2169,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                               children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      top: 16.sp),
+                                                      top: 16.sp,
+                                                      left: 16.sp,
+                                                      right: 16.sp),
                                                   child: AppText(
                                                     text: "Items in this order",
                                                     fontFamily:
@@ -2050,7 +2183,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      top: 5.sp),
+                                                      top: 5.sp,
+                                                      left: 16.sp,
+                                                      right: 16.sp),
                                                   child: AppText(
                                                     text:
                                                         "Order ID ${orderController.orderDetails["reference"] ?? ""} ",
@@ -2063,8 +2198,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      bottom: 20.sp,
-                                                      top: 10.sp),
+                                                      top: 10.sp,
+                                                      left: 16.sp,
+                                                      right: 16.sp),
                                                   child: ListView.builder(
                                                       primary: false,
                                                       shrinkWrap: true,
@@ -2398,9 +2534,178 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         );
                                                       }),
                                                 ),
+                                                orderController.orderDetails[
+                                                                "status"] ==
+                                                            4 ||
+                                                        orderController
+                                                                    .orderDetails[
+                                                                "status"] ==
+                                                            5
+                                                    ? Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10,
+                                                                bottom: 10.sp),
+                                                        child: SingleButton(
+                                                            label:
+                                                                "Track Order",
+                                                            height: 40,
+                                                            textColor:
+                                                                btnTextColor,
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            onPressed:
+                                                                () async {
+                                                              if (orderController
+                                                                          .orderDetails[
+                                                                      "express_delivery_charges"] ==
+                                                                  "0.00") {
+                                                                Get.to(
+                                                                    TrackOrderScreen(
+                                                                  orderId:
+                                                                      orderController
+                                                                              .orderDetails[
+                                                                          "id"],
+                                                                ));
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'order_trackOrderClick',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'order_trackOrderClick',
+                                                                  },
+                                                                );
+                                                              } else {
+                                                                orderController
+                                                                    .lat
+                                                                    .value = double.parse(orderController
+                                                                            .orderDetails[
+                                                                        "delivery_partner"]
+                                                                    [
+                                                                    "latitude"]);
+                                                                orderController
+                                                                    .lng
+                                                                    .value = double.parse(orderController
+                                                                            .orderDetails[
+                                                                        "delivery_partner"]
+                                                                    [
+                                                                    "longitude"]);
+                                                                orderController
+                                                                        .deliveryPatnerLatLng
+                                                                        .value =
+                                                                    LatLng(
+                                                                        orderController
+                                                                            .lat
+                                                                            .value,
+                                                                        orderController
+                                                                            .lng
+                                                                            .value);
+                                                                Get.to(
+                                                                    DeliverTrackScreen(
+                                                                  orderId:
+                                                                      orderController
+                                                                              .orderDetails[
+                                                                          "id"],
+                                                                  dropLat: double.parse(
+                                                                      orderController
+                                                                              .orderDetails["address"]
+                                                                          [
+                                                                          "latitude"]),
+                                                                  dropLng: double.parse(
+                                                                      orderController
+                                                                              .orderDetails["address"]
+                                                                          [
+                                                                          "longitude"]),
+                                                                ));
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'order_trackdeliveryClick',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'order_trackOrderClick',
+                                                                  },
+                                                                );
+                                                              }
+                                                            },
+                                                            borderColor:
+                                                                btnTextColor),
+                                                      )
+                                                    : SizedBox(
+                                                        height: 5.sp,
+                                                      ),
+                                                orderController.orderDetails[
+                                                            "status"] ==
+                                                        2
+                                                    ? Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10,
+                                                                bottom: 10.sp),
+                                                        child: SingleButton(
+                                                            label:
+                                                                "Cancel Order",
+                                                            height: 40,
+                                                            textColor:
+                                                                btnTextColor,
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            onPressed:
+                                                                () async {
+                                                              showDialog(
+                                                                barrierColor:
+                                                                    Colors
+                                                                        .black26,
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return showDoubleBtnDailog(
+                                                                      click1:
+                                                                          () {
+                                                                        Get.back();
+                                                                      },
+                                                                      click2:
+                                                                          () async {
+                                                                        orderController.callCancelOrder(
+                                                                            orderController.orderDetails["id"],
+                                                                            widget.orderId);
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_cancelOrderClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_cancelOrderClick',
+                                                                          },
+                                                                        );
+                                                                      },
+                                                                      btncolor:
+                                                                          colorPrimary,
+                                                                      text:
+                                                                          "Are you sure you want to cancel order?",
+                                                                      btn1Text:
+                                                                          "No",
+                                                                      btn2Text:
+                                                                          "Yes");
+                                                                },
+                                                              );
+                                                            },
+                                                            borderColor:
+                                                                btnTextColor),
+                                                      )
+                                                    : SizedBox(
+                                                        height: 5.sp,
+                                                      ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
-                                                      top: 5.sp),
+                                                      top: 5.sp,
+                                                      left: 16.sp,
+                                                      right: 16.sp),
                                                   child: Row(
                                                     children: [
                                                       Expanded(
@@ -2420,7 +2725,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         padding: EdgeInsets
                                                             .symmetric(
                                                                 horizontal:
-                                                                    5.sp),
+                                                                    16.sp),
                                                         child: AppText(
                                                           text:
                                                               "\u{20B9} ${orderController.orderDetails["total"] ?? "0"}",
@@ -2437,7 +2742,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      vertical: 10.sp),
+                                                      vertical: 10.sp,
+                                                      horizontal: 16.sp),
                                                   child: Row(
                                                     children: [
                                                       AppText(
