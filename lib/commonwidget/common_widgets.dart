@@ -180,14 +180,17 @@ Widget showDoubleBtnDailog(
           ),
         ),
         SizedBox(height: 25.sp),
-        Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14.0.sp,
-            color: colorPrimary,
-            fontFamily: "Franklin Gothic Regular",
-            fontWeight: FontWeight.bold,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.sp),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14.0.sp,
+              color: colorPrimary,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         SizedBox(height: 20.sp),

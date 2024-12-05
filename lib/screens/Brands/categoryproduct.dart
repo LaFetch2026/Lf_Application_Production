@@ -153,18 +153,18 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                         productController
                                                             .isCategoryProduct
                                                             .value = false;
-                                                        productController
+                                                        /*  productController
                                                             .categoryProductPage
-                                                            .value = 1;
+                                                            .value = 1; */
                                                         productController
                                                             .bannerTagHasnextpage
                                                             .value = true;
                                                         productController
                                                             .bannerTagLoadMore
                                                             .value = false;
-                                                        productController
+                                                        /*  productController
                                                             .bannerTagPage
-                                                            .value = 1;
+                                                            .value = 1; */
                                                       },
                                                     ));
                                             await analytics.logEvent(

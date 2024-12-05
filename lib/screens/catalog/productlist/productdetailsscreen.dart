@@ -678,6 +678,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.imageList.clear();
       productController.selectedProductSize = "";
       productController.selectedProductColor = "";
+      productController.isExpressDelivery.value = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));
@@ -1855,8 +1856,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 children: [
                                   productController.getItBy != "" &&
                                           productController.getItBy != null
-                                      ? productController
-                                              .getItBy["show_shipping_cost"]
+                                      ? productController.getItBy[
+                                                  "show_shipping_cost"] &&
+                                              !productController
+                                                  .isExpressDelivery.value
                                           ? Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
