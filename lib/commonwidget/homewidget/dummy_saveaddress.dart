@@ -58,24 +58,35 @@ class DummySaveAddress extends StatelessWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 14.sp, vertical: 2.sp),
-                      child: DummyContainer(height: 10, width: 50),
+                          horizontal: 14.sp, vertical: 5.sp),
+                      child: DummyContainer(height: 10, width: 100),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 14.sp, vertical: 2.sp),
-                      child: DummyContainer(height: 10, width: 50),
+                          horizontal: 14.sp, vertical: 5.sp),
+                      child: DummyContainer(height: 10, width: 100),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 14.sp, vertical: 2.sp),
-                      child: DummyContainer(height: 10, width: 50),
+                          horizontal: 14.sp, vertical: 5.sp),
+                      child: DummyContainer(height: 10, width: 100),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 14.sp, vertical: 2.sp),
-                      child: DummyContainer(height: 10, width: 50),
+                          horizontal: 14.sp, vertical: 5.sp),
+                      child: DummyContainer(height: 10, width: 80),
                     ),
+                    size == 1
+                        ? SizedBox(
+                            height: 0,
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14.sp, vertical: 5.sp),
+                            child: DummyContainer(
+                                height: 40,
+                                width: MediaQuery.of(context).size.width),
+                          ),
                   ],
                 ),
               ),

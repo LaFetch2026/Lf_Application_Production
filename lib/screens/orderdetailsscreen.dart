@@ -14,7 +14,7 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_address.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_orderpayment.dart';
 //import 'package:lafetch/commonwidget/homewidget/dummy_orderdetails.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
+//import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
 //import 'package:lafetch/screens/orders/delivery_track.dart';
 import 'package:lafetch/screens/orders/exchangeproductscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,10 +22,11 @@ import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../commonwidget/cartwidgets/bottomCharges.dart';
 import '../commonwidget/doubleiconbtn.dart';
-import '../commonwidget/homewidget/dummy_estimatedelivery.dart';
+import '../commonwidget/homewidget/dummy_order_list.dart';
 import '../controller/order_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
+import 'orders/delivery_track.dart';
 import 'orders/reviewproducts.dart';
 import 'orders/trackorderscreen.dart';
 
@@ -72,14 +73,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
           getPrefrenceValue();
+          orderController.trackList.clear();
           productController.reorderSelected.clear();
           productController.reorderSelected =
               List.generate(50, (i) => false).obs;
         });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => orderController.getOrderDetails(widget.orderId));
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => orderController.getTrackorder(widget.orderId));
+    /*  WidgetsBinding.instance.addPostFrameCallback(
+        (_) => orderController.getTrackorder(widget.orderId)); */
     FlDownloader.initialize();
     /*    progressStream = FlDownloader.progressStream.listen((event) {
       if (event.status == DownloadStatus.successful) {
@@ -166,11 +168,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(() => orderController.isTrack.value
+                        Obx(() => orderController.isDetails.value
                             ? DummyContainer(
                                 height: 250,
                                 width: MediaQuery.of(context).size.width)
-                            : orderController.trackList.isNotEmpty
+                            : orderController.trackList.isNotEmpty &&
+                                    orderController
+                                        .orderDetails["orders"].isEmpty
                                 ? Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -509,14 +513,19 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   ),
                                 ),
                         ), */
-                        Obx(() => orderController.isTrack.value
+                        Obx(() => orderController.isDetails.value
                             ? const SizedBox(
                                 height: 0,
                               )
-                            : orderController.trackList.isNotEmpty
+                            : orderController.trackList.isNotEmpty &&
+                                    orderController
+                                        .orderDetails["orders"].isEmpty
                                 ? Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.sp, vertical: 10.sp),
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                        bottom: 30.sp,
+                                        top: 10.sp),
                                     child: Container(
                                       color: orderController.trackList[
                                                   orderController
@@ -610,9 +619,6 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 : const SizedBox(
                                     height: 0,
                                   )),
-                        SizedBox(
-                          height: 20.sp,
-                        ),
                       ],
                     ),
                   ),
@@ -696,7 +702,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
                   Obx(
                     () => orderController.isDetails.value
-                        ? const DummyEstimateDelivery()
+                        ? const DummyOrderList(
+                            size: 1,
+                          )
                         : orderController.orderDetails["orders"].isNotEmpty
                             ? Container(
                                 color: whiteColor,
@@ -715,8 +723,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       scrollDirection: Axis.vertical,
                                       itemBuilder: (ctx, index) {
                                         return Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.sp),
+                                          padding: EdgeInsets.only(
+                                              bottom: 5.sp, top: 5.sp),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -1672,6 +1680,152 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       );
                                                     }),
                                               ),
+                                              orderController
+                                                      .orderDetails["orders"]
+                                                          [index]["deliveries"]
+                                                      .isNotEmpty
+                                                  ? Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 10.sp),
+                                                      child: Container(
+                                                        color: orderController.orderDetails[
+                                                                            "orders"]
+                                                                        [index][
+                                                                    "deliveries"][orderController
+                                                                        .orderDetails[
+                                                                            "orders"]
+                                                                            [index]
+                                                                            [
+                                                                            "deliveries"]
+                                                                        .length -
+                                                                    1]["status"] ==
+                                                                4
+                                                            ? lightGreen
+                                                            : whiteBack,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 16.sp,
+                                                                  right: 16.sp,
+                                                                  top: 16.sp,
+                                                                  bottom:
+                                                                      16.sp),
+                                                          child: Row(
+                                                            children: [
+                                                              if (orderController.orderDetails["orders"][index]["deliveries"][orderController.orderDetails["orders"][index]["deliveries"].length - 1]["status"] ==
+                                                                  4) ...[
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Delivered",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        deepGreen,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController.orderDetails["orders"][index]["deliveries"]
+                                                                          [orderController.orderDetails["orders"][index]["deliveries"].length - 1][
+                                                                      "status"] ==
+                                                                  3) ...[
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Order Shipped",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        deepGreen,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController.orderDetails["orders"]
+                                                                          [index]["deliveries"][orderController.orderDetails["orders"][index]["deliveries"].length - 1][
+                                                                      "status"] ==
+                                                                  2) ...[
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Order Packed",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        deepGreen,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ] else if (orderController.orderDetails["orders"]
+                                                                          [index]["deliveries"][orderController.orderDetails["orders"][index]["deliveries"].length - 1]
+                                                                      ["status"] ==
+                                                                  1) ...[
+                                                                Expanded(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Order Confirmed",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        deepGreen,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                              AppText(
+                                                                text: orderController
+                                                                    .orderDetails[
+                                                                        "orders"]
+                                                                        [index][
+                                                                        "deliveries"]
+                                                                        [
+                                                                        orderController.orderDetails["orders"][index]["deliveries"].length -
+                                                                            1][
+                                                                        "created"]
+                                                                    .split(",")
+                                                                    .last,
+                                                                fontFamily:
+                                                                    "Franklin Gothic",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color:
+                                                                    deepGreen,
+                                                                fontSize: 15,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : const SizedBox(
+                                                      height: 0,
+                                                    ),
                                               orderController.orderDetails[
                                                                       "orders"]
                                                                   [index]
@@ -1751,23 +1905,61 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           },
                                                           onPressedSecond:
                                                               () async {
-                                                            Get.to(
-                                                                TrackOrderScreen(
-                                                              orderId: orderController
-                                                                          .orderDetails[
-                                                                      "orders"]
-                                                                  [index]["id"],
-                                                            ));
-                                                            await analytics
-                                                                .logEvent(
-                                                              name:
-                                                                  'order_trackOrderClick',
-                                                              parameters: <String,
-                                                                  Object>{
-                                                                'page_name':
-                                                                    'order_trackOrderClick',
-                                                              },
-                                                            );
+                                                            /*   if (value.orderList[index]
+                                                                              [
+                                                                              "express_delivery_charges"] ==
+                                                                          "0.00") {
+                                                                        Get.to(
+                                                                            TrackOrderScreen(
+                                                                          orderId:
+                                                                              value.orderList[index]["id"],
+                                                                        ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_trackOrderClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_trackOrderClick',
+                                                                          },
+                                                                        );
+                                                                      } else {
+                                                                        orderController
+                                                                            .lat
+                                                                            .value = double.parse(value
+                                                                                .orderList[index]
+                                                                            [
+                                                                            "delivery_partner_latitude"]);
+                                                                        orderController
+                                                                            .lng
+                                                                            .value = double.parse(value
+                                                                                .orderList[index]
+                                                                            [
+                                                                            "delivery_partner_longitude"]);
+                                                                        orderController.deliveryPatnerLatLng.value = LatLng(
+                                                                            orderController.lat.value,
+                                                                            orderController.lng.value);
+                                                                        Get.to(
+                                                                            DeliverTrackScreen(
+                                                                          orderId:
+                                                                              value.orderList[index]["id"],
+                                                                          dropLat:
+                                                                              double.parse(value.orderList[index]["customer_latitude"]),
+                                                                          dropLng:
+                                                                              double.parse(value.orderList[index]["customer_longitude"]),
+                                                                        ));
+                                                                        await analytics
+                                                                            .logEvent(
+                                                                          name:
+                                                                              'order_trackdeliveryClick',
+                                                                          parameters: <String,
+                                                                              Object>{
+                                                                            'page_name':
+                                                                                'order_trackOrderClick',
+                                                                          },
+                                                                        );
+                                                                      } */
                                                           },
                                                           secondIcon:
                                                               locationIcon),
@@ -1803,7 +1995,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         vertical: 10.sp, horizontal: 16.sp),
                                     child: Obx(
                                       () => orderController.isDetails.value
-                                          ? const DummyEstimateDelivery()
+                                          ? const DummyOrderList(
+                                              size: 1,
+                                            )
                                           : Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
@@ -2261,7 +2455,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   ),
                                 )),
                   ),
-                  Obx(() => orderController.isTrack.value
+                  /*  Obx(() => orderController.isDetails.value
                       ? const DummyOrderTrack()
                       : orderController.trackList.isNotEmpty
                           ? Container(
@@ -2396,7 +2590,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             )
                           : const SizedBox(
                               height: 0,
-                            )),
+                            )), */
                   Obx(
                     () => orderController.isDetails.value
                         ? DummyOrderAddress()
@@ -2720,7 +2914,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: colorPrimary,
-                                      fontSize: 12,
+                                      fontSize: 14,
                                     ),
                                   ),
                                   Padding(

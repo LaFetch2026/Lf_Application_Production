@@ -193,9 +193,9 @@ class OrderController extends BaseController {
         print(responseData);
         if (responseData != null) {
           orderDetails = responseData;
-          /*  if (responseData["deliveries"] != null) {
-            deliveriesList = responseData["deliveries"];
-          } */
+          if (responseData["deliveries"] != null) {
+            trackList = responseData["deliveries"];
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
