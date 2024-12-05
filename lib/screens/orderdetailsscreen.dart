@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 //import 'package:getwidget/getwidget.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
@@ -1905,61 +1906,92 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                           },
                                                           onPressedSecond:
                                                               () async {
-                                                            /*   if (value.orderList[index]
-                                                                              [
-                                                                              "express_delivery_charges"] ==
-                                                                          "0.00") {
-                                                                        Get.to(
-                                                                            TrackOrderScreen(
-                                                                          orderId:
-                                                                              value.orderList[index]["id"],
-                                                                        ));
-                                                                        await analytics
-                                                                            .logEvent(
-                                                                          name:
-                                                                              'order_trackOrderClick',
-                                                                          parameters: <String,
-                                                                              Object>{
-                                                                            'page_name':
-                                                                                'order_trackOrderClick',
-                                                                          },
-                                                                        );
-                                                                      } else {
-                                                                        orderController
-                                                                            .lat
-                                                                            .value = double.parse(value
-                                                                                .orderList[index]
+                                                            if (orderController.orderDetails[
+                                                                            "orders"]
+                                                                        [index][
+                                                                    "express_delivery_charges"] ==
+                                                                "0.00") {
+                                                              Get.to(
+                                                                  TrackOrderScreen(
+                                                                orderId: orderController
+                                                                            .orderDetails[
+                                                                        "orders"]
+                                                                    [
+                                                                    index]["id"],
+                                                              ));
+                                                              await analytics
+                                                                  .logEvent(
+                                                                name:
+                                                                    'order_trackOrderClick',
+                                                                parameters: <String,
+                                                                    Object>{
+                                                                  'page_name':
+                                                                      'order_trackOrderClick',
+                                                                },
+                                                              );
+                                                            } else {
+                                                              orderController
+                                                                  .lat
+                                                                  .value = double.parse(orderController
+                                                                              .orderDetails["orders"]
+                                                                          [
+                                                                          index]
+                                                                      [
+                                                                      "delivery_partner"]
+                                                                  ["latitude"]);
+                                                              orderController
+                                                                  .lng
+                                                                  .value = double.parse(orderController
+                                                                              .orderDetails["orders"]
+                                                                          [
+                                                                          index]
+                                                                      [
+                                                                      "delivery_partner"]
+                                                                  [
+                                                                  "longitude"]);
+                                                              orderController
+                                                                      .deliveryPatnerLatLng
+                                                                      .value =
+                                                                  LatLng(
+                                                                      orderController
+                                                                          .lat
+                                                                          .value,
+                                                                      orderController
+                                                                          .lng
+                                                                          .value);
+                                                              Get.to(
+                                                                  DeliverTrackScreen(
+                                                                orderId: orderController
+                                                                            .orderDetails[
+                                                                        "orders"]
+                                                                    [
+                                                                    index]["id"],
+                                                                dropLat: double.parse(orderController.orderDetails["orders"]
                                                                             [
-                                                                            "delivery_partner_latitude"]);
-                                                                        orderController
-                                                                            .lng
-                                                                            .value = double.parse(value
-                                                                                .orderList[index]
+                                                                            index]
+                                                                        [
+                                                                        "address"]
+                                                                    [
+                                                                    "latitude"]),
+                                                                dropLng: double.parse(orderController.orderDetails["orders"]
                                                                             [
-                                                                            "delivery_partner_longitude"]);
-                                                                        orderController.deliveryPatnerLatLng.value = LatLng(
-                                                                            orderController.lat.value,
-                                                                            orderController.lng.value);
-                                                                        Get.to(
-                                                                            DeliverTrackScreen(
-                                                                          orderId:
-                                                                              value.orderList[index]["id"],
-                                                                          dropLat:
-                                                                              double.parse(value.orderList[index]["customer_latitude"]),
-                                                                          dropLng:
-                                                                              double.parse(value.orderList[index]["customer_longitude"]),
-                                                                        ));
-                                                                        await analytics
-                                                                            .logEvent(
-                                                                          name:
-                                                                              'order_trackdeliveryClick',
-                                                                          parameters: <String,
-                                                                              Object>{
-                                                                            'page_name':
-                                                                                'order_trackOrderClick',
-                                                                          },
-                                                                        );
-                                                                      } */
+                                                                            index]
+                                                                        [
+                                                                        "address"]
+                                                                    [
+                                                                    "longitude"]),
+                                                              ));
+                                                              await analytics
+                                                                  .logEvent(
+                                                                name:
+                                                                    'order_trackdeliveryClick',
+                                                                parameters: <String,
+                                                                    Object>{
+                                                                  'page_name':
+                                                                      'order_trackOrderClick',
+                                                                },
+                                                              );
+                                                            }
                                                           },
                                                           secondIcon:
                                                               locationIcon),
