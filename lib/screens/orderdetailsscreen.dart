@@ -1067,10 +1067,19 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     },
                                                     secondIcon: locationIcon),
                                               ),
-                                              /*   Container(
-                                                color: whiteTextColor,
-                                                height: 8.sp,
-                                              ), */
+                                              index <
+                                                      orderController
+                                                              .orderDetails[
+                                                                  "orders"]
+                                                              .length -
+                                                          1
+                                                  ? Container(
+                                                      color: whiteTextColor,
+                                                      height: 8.sp,
+                                                    )
+                                                  : SizedBox(
+                                                      height: 0,
+                                                    ),
                                             ],
                                           ),
                                         );

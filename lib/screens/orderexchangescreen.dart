@@ -1187,6 +1187,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                               );
                                             }),
                                       )),
+                                  orderController.loadMore.value
+                                      ? DummyOrderList()
+                                      : const SizedBox(
+                                          height: 0,
+                                        ),
                                 ],
                               )
                             : Padding(
