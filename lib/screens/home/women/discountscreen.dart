@@ -62,12 +62,12 @@ class DiscountScreenState extends State<DiscountScreen> {
       //  productController.istagsProduct.value = false;
       productController.tagsPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressListController.addListener(() {
         productController.fetchExpressMoreData(widget.tagId, widget.genderType);
         productController.update();
       });
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;

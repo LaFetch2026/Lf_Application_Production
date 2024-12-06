@@ -714,75 +714,90 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                     child: Padding(
                       padding: EdgeInsets.only(
                           bottom: 30.sp, top: 20.sp, left: 4.sp, right: 12.sp),
-                      child: DoubleButton(
-                        firstText: "Sort By",
-                        secondText: "Filters",
-                        firstTextColor: deepGreytextColor,
-                        secondTextColor: deepGreytextColor,
-                        firstBackgroundColor: backWhite,
-                        secondBackgroundColor: backWhite,
-                        firstBorderColor: deepGreytextColor,
-                        secondBorderColor: deepGreytextColor,
-                        onPressedFirst: () async {
-                          scaffoldKey.currentState?.showBottomSheet((context) =>
-                              BottomSortBy(
-                                onPressedButton: (p0) {
-                                  productController.expressSortBy.value = p0;
-                                  productController.getBrandExpressProductData(
-                                      widget.brandId,
-                                      productController.expressSortBy.value,
-                                      productController
-                                          .filterExpressEnable.value);
-                                },
-                              ));
-                          await analytics.logEvent(
-                            name: 'express_page_sortby',
-                            parameters: <String, Object>{
-                              'page_name': 'express_page_sortby',
-                            },
-                          );
-                        },
-                        onPressedSecond: () async {
-                          Get.to(BottomFilters(
-                            btnclearAll: () async {
-                              productController.brand_ids.clear();
-                              productController.color_ids.clear();
-                              productController.size_ids.clear();
-                              productController.expressSortBy.value = "";
-                              productController.filterExpressEnable.value =
-                                  false;
-                              Get.back();
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove("brandList");
-                              prefs.remove("colorList");
-                              prefs.remove("sizeList");
-                              prefs.remove("upper");
-                              prefs.remove("lower");
-                              productController.getBrandExpressProductData(
-                                  widget.brandId,
-                                  productController.expressSortBy.value,
-                                  productController.filterExpressEnable.value);
-                            },
-                            onClick: (p0, p1) {
-                              productController.filterExpressEnable.value =
-                                  true;
-                              productController.lowPrice.value = p0;
-                              productController.highPrice.value = p1;
-                              productController.getBrandExpressProductData(
-                                  widget.brandId,
-                                  productController.expressSortBy.value,
-                                  productController.filterExpressEnable.value);
-                            },
-                          ));
-                          await analytics.logEvent(
-                            name: 'express_page_filter',
-                            parameters: <String, Object>{
-                              'page_name': 'express_page_filter',
-                            },
-                          );
-                        },
-                      ),
+                      child: productController
+                              .productExpressBrandList.isNotEmpty
+                          ? DoubleButton(
+                              firstText: "Sort By",
+                              secondText: "Filters",
+                              firstTextColor: deepGreytextColor,
+                              secondTextColor: deepGreytextColor,
+                              firstBackgroundColor: backWhite,
+                              secondBackgroundColor: backWhite,
+                              firstBorderColor: deepGreytextColor,
+                              secondBorderColor: deepGreytextColor,
+                              onPressedFirst: () async {
+                                scaffoldKey.currentState
+                                    ?.showBottomSheet((context) => BottomSortBy(
+                                          onPressedButton: (p0) {
+                                            productController
+                                                .expressSortBy.value = p0;
+                                            productController
+                                                .getBrandExpressProductData(
+                                                    widget.brandId,
+                                                    productController
+                                                        .expressSortBy.value,
+                                                    productController
+                                                        .filterExpressEnable
+                                                        .value);
+                                          },
+                                        ));
+                                await analytics.logEvent(
+                                  name: 'express_page_sortby',
+                                  parameters: <String, Object>{
+                                    'page_name': 'express_page_sortby',
+                                  },
+                                );
+                              },
+                              onPressedSecond: () async {
+                                Get.to(BottomFilters(
+                                  btnclearAll: () async {
+                                    productController.brand_ids.clear();
+                                    productController.color_ids.clear();
+                                    productController.size_ids.clear();
+                                    productController.expressSortBy.value = "";
+                                    productController
+                                        .filterExpressEnable.value = false;
+                                    Get.back();
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.remove("brandList");
+                                    prefs.remove("colorList");
+                                    prefs.remove("sizeList");
+                                    prefs.remove("upper");
+                                    prefs.remove("lower");
+                                    productController
+                                        .getBrandExpressProductData(
+                                            widget.brandId,
+                                            productController
+                                                .expressSortBy.value,
+                                            productController
+                                                .filterExpressEnable.value);
+                                  },
+                                  onClick: (p0, p1) {
+                                    productController
+                                        .filterExpressEnable.value = true;
+                                    productController.lowPrice.value = p0;
+                                    productController.highPrice.value = p1;
+                                    productController
+                                        .getBrandExpressProductData(
+                                            widget.brandId,
+                                            productController
+                                                .expressSortBy.value,
+                                            productController
+                                                .filterExpressEnable.value);
+                                  },
+                                ));
+                                await analytics.logEvent(
+                                  name: 'express_page_filter',
+                                  parameters: <String, Object>{
+                                    'page_name': 'express_page_filter',
+                                  },
+                                );
+                              },
+                            )
+                          : SizedBox(
+                              height: 0,
+                            ),
                     ),
                   ),
                 ],
