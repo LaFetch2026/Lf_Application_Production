@@ -24,11 +24,11 @@ class OrderController extends BaseController {
   dynamic orderDetails = "".obs;
   RxString queryText = "".obs;
   List orderList = [].obs;
-  List trackList = [].obs;
+  dynamic shipmentDetails = "".obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
   Rx<LatLng> deliveryPatnerLatLng = const LatLng(0, 0).obs;
-  // List deliveriesList = [].obs;
+  List trackList = [].obs;
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
@@ -229,7 +229,7 @@ class OrderController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         if (responseData != null) {
-          trackList = responseData;
+          shipmentDetails = responseData;
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

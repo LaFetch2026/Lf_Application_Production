@@ -627,15 +627,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ? const SizedBox(
                           height: 0,
                         )
-                      : orderController.orderDetails["status_details"] ==
-                                  "CANCELLED" &&
+                      : orderController.orderDetails["cancellation_note"] !=
+                                  null &&
                               orderController.orderDetails["orders"].isEmpty
                           ? Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16.sp, vertical: 5.sp),
                               child: AppText(
-                                text:
-                                    "Note: Your order was cancelled due to unavailability.The product amount will be refunded, Platform and Delivery fees will be retained.",
+                                text: orderController
+                                    .orderDetails["cancellation_note"],
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
                                 color: deepRed,
@@ -1836,7 +1836,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                 20.sp,
                                                                             height:
                                                                                 2.sp,
-                                                                            color: index < 1
+                                                                            color: i < 1
                                                                                 ? color5StartReview
                                                                                 : greyDotColor,
                                                                           ),
@@ -2180,17 +2180,26 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       height: 5.sp,
                                                     ),
                                               orderController.orderDetails[
-                                                              "orders"][index]
-                                                          ["status"] ==
-                                                      7
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["status"] ==
+                                                          7 &&
+                                                      orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index][
+                                                              "cancellation_note"] !=
+                                                          null
                                                   ? Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 16.sp,
                                                               vertical: 5.sp),
                                                       child: AppText(
-                                                        text:
-                                                            "Note: Your order was cancelled due to unavailability.The product amount will be refunded, Platform and Delivery fees will be retained.",
+                                                        text: orderController
+                                                                    .orderDetails[
+                                                                "orders"][index]
+                                                            [
+                                                            "cancellation_note"],
                                                         fontFamily:
                                                             "Franklin Gothic",
                                                         fontWeight:
