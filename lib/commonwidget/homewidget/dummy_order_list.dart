@@ -116,6 +116,14 @@ class DummyOrderList extends StatelessWidget {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
+                                        horizontal: 20.sp, vertical: 5.sp),
+                                    child: DummyContainer(
+                                      height: 10,
+                                      width: 50,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
                                         vertical: 10.sp, horizontal: 16.sp),
                                     child: AnimatedContainer(
                                       duration:
@@ -127,14 +135,6 @@ class DummyOrderList extends StatelessWidget {
                                         borderRadius:
                                             BorderRadius.circular(20.sp),
                                       ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20.sp, vertical: 5.sp),
-                                    child: DummyContainer(
-                                      height: 10,
-                                      width: 50,
                                     ),
                                   ),
                                 ]),

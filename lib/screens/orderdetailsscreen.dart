@@ -1710,7 +1710,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             scrollDirection:
                                                                 Axis.horizontal,
                                                             itemBuilder:
-                                                                (ctx, index) {
+                                                                (ctx, i) {
                                                               return Row(
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
@@ -1723,7 +1723,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                     child: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
                                                                             map['status_details'] ==
                                                                             orderItem[
-                                                                                index])
+                                                                                i])
                                                                         ? Image
                                                                             .asset(
                                                                             greenDotImage,
@@ -1754,11 +1754,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                       text: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
                                                                               map['status_details'] ==
                                                                               orderItem[
-                                                                                  index])
+                                                                                  i])
                                                                           ? trackOrderItem[
-                                                                              index]
+                                                                              i]
                                                                           : trackOrderItem[
-                                                                              index],
+                                                                              i],
                                                                       fontFamily:
                                                                           "Franklin Gothic Regular",
                                                                       fontWeight:
@@ -1768,12 +1768,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                           10,
                                                                       color: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
                                                                               map['status_details'] ==
-                                                                              orderItem[index])
+                                                                              orderItem[i])
                                                                           ? color5StartReview
                                                                           : greyDotColor,
                                                                     ),
                                                                   ),
-                                                                  index == 3
+                                                                  i == 3
                                                                       ? const SizedBox(
                                                                           width:
                                                                               0,

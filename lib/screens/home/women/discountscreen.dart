@@ -315,7 +315,8 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         context,
                                         scaleIn(
                                           CategoryProductScreen(
-                                            categoryName: "Product List",
+                                            categoryName: homeController
+                                                .banner1List[itemIndex]["name"],
                                             categoryId: 0,
                                             brandId: 0,
                                             genderType: widget.genderType,
@@ -441,7 +442,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   CategoryProductScreen(
                                     categoryName:
                                         productController.tagId.value == 0
-                                            ? "Product List"
+                                            ? "We think you might also like"
                                             : productController.tagname.value,
                                     categoryId: 0,
                                     brandId: 0,
@@ -1015,7 +1016,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                           context,
                                           scaleIn(
                                             CategoryProductScreen(
-                                              categoryName: "Product List",
+                                              categoryName: homeController
+                                                      .banner2List[itemIndex]
+                                                  ["name"],
                                               categoryId: 0,
                                               brandId: 0,
                                               genderType: widget.genderType,

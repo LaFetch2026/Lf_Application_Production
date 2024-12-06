@@ -1187,8 +1187,38 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                               );
                                             }),
                                       )),
-                                  orderController.loadMore.value
+                                  /*  orderController.loadMore.value
                                       ? DummyOrderList()
+                                      : GestureDetector(
+                                          onTap: () {
+                                            orderController.orderListController
+                                                .addListener(() {
+                                              orderController.fetchMoreData();
+                                              orderController.update();
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 10.sp, bottom: 10.sp),
+                                            child: Center(
+                                              child: AppText(
+                                                text: "load more",
+                                                textAlign: TextAlign.center,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                color: blue,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ), */
+                                  orderController.loadMore.value
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                        )
                                       : const SizedBox(
                                           height: 0,
                                         ),
