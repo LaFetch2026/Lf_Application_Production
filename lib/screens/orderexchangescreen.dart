@@ -593,7 +593,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Delivered",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Delivered
                                                                                 color: deepGreen,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -640,7 +640,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Shipped",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Shipped
                                                                                 color: deeptYellow,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -687,7 +687,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Order Confirmed",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Order Confirmed
                                                                                 color: deepPurple,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -734,7 +734,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Pending",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Pending
                                                                                 color: deepPurple,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -781,7 +781,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Processing",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Processing
                                                                                 color: deepPurple,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -830,7 +830,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Cancelled",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Cancelled
                                                                                 color: deepRed,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -879,7 +879,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Completed",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Completed
                                                                                 color: deepPurple,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -928,7 +928,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Exchange",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Exchange
                                                                                 color: deepPurple,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -977,7 +977,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Rejected",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Rejected
                                                                                 color: deepRed,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",
@@ -1025,7 +1025,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             Padding(
                                                                               padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
                                                                               child: AppText(
-                                                                                text: "Approved",
+                                                                                text: "${value.orderList[index]["status_details"]}".capitalize!, //Approved
                                                                                 color: deepGreen,
                                                                                 fontSize: 12,
                                                                                 fontFamily: "Franklin Gothic",

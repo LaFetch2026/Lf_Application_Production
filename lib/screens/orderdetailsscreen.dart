@@ -628,13 +628,62 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           height: 0,
                         )
                       : orderController.orderDetails["status_details"] ==
-                              "CANCELLED"
+                                  "CANCELLED" &&
+                              orderController.orderDetails["orders"].isEmpty
                           ? Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16.sp, vertical: 5.sp),
                               child: AppText(
                                 text:
                                     "Note: Your order was cancelled due to unavailability.The product amount will be refunded, Platform and Delivery fees will be retained.",
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                                color: deepRed,
+                                maxLines: 4,
+                                fontSize: 14,
+                              ),
+                            )
+                          : SizedBox(
+                              height: 0,
+                            )),
+                  Obx(() => orderController.isDetails.value
+                      ? const SizedBox(
+                          height: 0,
+                        )
+                      : orderController.orderDetails["status"] == 7 &&
+                              orderController.orderDetails["refund_id"] !=
+                                  null &&
+                              orderController.orderDetails["orders"].isEmpty
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.sp, vertical: 2.sp),
+                              child: AppText(
+                                text:
+                                    "Refund id: ${orderController.orderDetails["refund_id"] ?? ""}",
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                                color: deepRed,
+                                maxLines: 4,
+                                fontSize: 14,
+                              ),
+                            )
+                          : SizedBox(
+                              height: 0,
+                            )),
+                  Obx(() => orderController.isDetails.value
+                      ? const SizedBox(
+                          height: 0,
+                        )
+                      : orderController.orderDetails["status"] == 7 &&
+                              orderController.orderDetails["refund_amount"] !=
+                                  0 &&
+                              orderController.orderDetails["orders"].isEmpty
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.sp, vertical: 2.sp),
+                              child: AppText(
+                                text:
+                                    "Refund amount: \u{20B9}${orderController.orderDetails["refund_amount"].toString()}",
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
                                 color: deepRed,
@@ -2129,6 +2178,90 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                     )
                                                   : SizedBox(
                                                       height: 5.sp,
+                                                    ),
+                                              orderController.orderDetails[
+                                                              "orders"][index]
+                                                          ["status"] ==
+                                                      7
+                                                  ? Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 5.sp),
+                                                      child: AppText(
+                                                        text:
+                                                            "Note: Your order was cancelled due to unavailability.The product amount will be refunded, Platform and Delivery fees will be retained.",
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: deepRed,
+                                                        maxLines: 4,
+                                                        fontSize: 14,
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 0,
+                                                    ),
+                                              orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["status"] ==
+                                                          7 &&
+                                                      orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["refund_id"] !=
+                                                          null
+                                                  ? Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 2.sp),
+                                                      child: AppText(
+                                                        text:
+                                                            "Refund id: ${orderController.orderDetails["orders"][index]["refund_id"] ?? ""}",
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: deepRed,
+                                                        maxLines: 4,
+                                                        fontSize: 14,
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 0,
+                                                    ),
+                                              orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["status"] ==
+                                                          7 &&
+                                                      orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index][
+                                                              "refund_amount"] !=
+                                                          0
+                                                  ? Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 2.sp),
+                                                      child: AppText(
+                                                        text:
+                                                            "Refund amount: \u{20B9}${orderController.orderDetails["orders"][index]["refund_amount"].toString()}",
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: deepRed,
+                                                        maxLines: 4,
+                                                        fontSize: 14,
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 0,
                                                     ),
                                               index <
                                                       orderController
