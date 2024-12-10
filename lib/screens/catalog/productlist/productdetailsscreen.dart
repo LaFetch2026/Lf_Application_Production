@@ -2043,7 +2043,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                     ),
-                    /*  Obx(() => productController.isDetails.value
+                    Obx(() => productController.isDetails.value
                         ? SizedBox(
                             height: 0,
                           )
@@ -2074,7 +2074,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         Expanded(
                                           flex: 1,
                                           child: AppText(
-                                            text: "hello",
+                                            text: productController
+                                                        .productDetails[
+                                                    "express_delivery_estimation"] ??
+                                                "",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w500,
@@ -2090,7 +2093,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               )
                             : SizedBox(
                                 height: 0,
-                              )), */
+                              )),
                     Obx(
                       () => productController.isDetails.value
                           ? SizedBox(

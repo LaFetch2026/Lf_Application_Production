@@ -7,10 +7,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
+//import 'package:lafetch/commonwidget/smallbtn.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
+//import '../commonwidget/common_widgets.dart';
 import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -366,16 +368,50 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                         },
                       ),
                     )
-                  : Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 30.sp, left: 16.sp, right: 16.sp),
-                        child: Text("$locationText",
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black,
-                                fontFamily: "Franklin Gothic Regular")),
-                      ),
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: 30.sp, left: 16.sp, right: 16.sp),
+                            child: Text("$locationText",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontFamily: "Franklin Gothic Regular")),
+                          ),
+                        ),
+                        /* Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 16.sp),
+                          child: Center(
+                            child: SmallButton(
+                                label: "Turn on Location",
+                                textColor: whiteColor,
+                                onPressed: () {
+                                  showDialog(
+                                    barrierColor: Colors.black26,
+                                    context: context,
+                                    builder: (context) {
+                                      return showSingleBtnNonCancelableDailog(
+                                          click1: () {
+                                            Geolocator.openLocationSettings()
+                                                .then((value) => Get.back());
+                                          },
+                                          btncolor: colorPrimary,
+                                          text:
+                                              "Location services are disabled. Please enable the services",
+                                          btn1Text: "Open Location Settings");
+                                    },
+                                  );
+                                },
+                                backgroundColor: colorPrimary,
+                                borderColor: borderColor,
+                                width: 150.sp),
+                          ),
+                        ) */
+                      ],
                     ),
             )
           ],

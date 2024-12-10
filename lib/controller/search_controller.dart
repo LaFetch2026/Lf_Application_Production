@@ -16,6 +16,8 @@ class SearchScreenController extends BaseController {
   List searchList = [].obs;
   RxBool isRecentSearch = false.obs;
   List recentSearchList = [].obs;
+  RxDouble lat = 0.0.obs;
+  RxDouble lng = 0.0.obs;
   RxString searchText = "Search for products".obs;
 
   getSearchData() async {
@@ -24,7 +26,7 @@ class SearchScreenController extends BaseController {
     try {
       var response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/search?q=${searchController.text.toString().trim()}"),
+              "${ApiConstants.baseUrl}/search?q=${searchController.text.toString().trim()}&latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -62,7 +64,8 @@ class SearchScreenController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/recent-searches"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/recent-searches?latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

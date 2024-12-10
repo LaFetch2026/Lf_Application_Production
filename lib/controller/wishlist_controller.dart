@@ -35,6 +35,8 @@ class WishlistController extends BaseController {
   RxBool pLoadMore = false.obs;
   RxBool pHasnextpage = true.obs;
   RxInt productPage = 1.obs;
+  RxDouble lat = 0.0.obs;
+  RxDouble lng = 0.0.obs;
   ScrollController productListController = ScrollController();
 
   /*  final List<Map<String, String>> wishlistList = [
@@ -154,7 +156,8 @@ class WishlistController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=$type"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?type=$type&latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -196,7 +199,7 @@ class WishlistController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=$type&page=${productPage.value}"),
+                "${ApiConstants.baseUrl}/products?type=$type&page=${productPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -238,7 +241,8 @@ class WishlistController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/wishlists/$wishlistId"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/wishlists/$wishlistId?latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

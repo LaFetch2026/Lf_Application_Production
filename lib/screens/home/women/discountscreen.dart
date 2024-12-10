@@ -15,6 +15,8 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/common_widgets.dart';
+import '../../../controller/search_controller.dart';
+import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -33,6 +35,8 @@ class DiscountScreen extends StatefulWidget {
 class DiscountScreenState extends State<DiscountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
+  final wishlistController = Get.put(WishlistController());
+  final searchController = Get.put(SearchScreenController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -59,12 +63,12 @@ class DiscountScreenState extends State<DiscountScreen> {
       //  productController.istagsProduct.value = false;
       productController.tagsPage.value = 1;
     });
-    /*   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressListController.addListener(() {
         productController.fetchExpressMoreData(widget.tagId, widget.genderType);
         productController.update();
       });
-    }); */
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;
@@ -93,6 +97,10 @@ class DiscountScreenState extends State<DiscountScreen> {
     if (prefs.getDouble('latitude') != null) {
       productController.lat.value = prefs.getDouble('latitude')!;
       productController.lng.value = prefs.getDouble('longitude')!;
+      wishlistController.lat.value = prefs.getDouble('latitude')!;
+      wishlistController.lng.value = prefs.getDouble('longitude')!;
+      searchController.lat.value = prefs.getDouble('latitude')!;
+      searchController.lng.value = prefs.getDouble('longitude')!;
     }
   }
 

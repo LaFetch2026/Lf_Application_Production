@@ -146,6 +146,69 @@ Route scaleIn(Widget page) {
   );
 }
 
+Widget showSingleBtnNonCancelableDailog({
+  Color btncolor = colorPrimary,
+  text,
+  btn1Text,
+  Function? click1,
+}) {
+  return Dialog(
+    elevation: 0,
+    backgroundColor: colorSecondary,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15.0),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 15),
+        const SizedBox(height: 5),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 14.0,
+              color: colorPrimary,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 25),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100))),
+                    side: MaterialStateProperty.all(
+                      BorderSide(width: 1, color: btncolor),
+                    ),
+                    backgroundColor: MaterialStateProperty.all(btncolor),
+                    textStyle: MaterialStateProperty.all(const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ))),
+                onPressed: () {
+                  click1!.call();
+                },
+                child: Text(
+                  btn1Text,
+                  style: const TextStyle(color: colorSecondary, fontSize: 12),
+                )),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+      ],
+    ),
+  );
+}
+
 Widget showDoubleBtnDailog(
     {Color btncolor = colorPrimary,
     text,
