@@ -4,6 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
@@ -88,7 +89,7 @@ class DiscountScreenState extends State<DiscountScreen> {
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getPrefrenceValue();
+      determinePosition();
     });
   }
 
@@ -101,6 +102,26 @@ class DiscountScreenState extends State<DiscountScreen> {
       wishlistController.lng.value = prefs.getDouble('longitude')!;
       searchController.lat.value = prefs.getDouble('latitude')!;
       searchController.lng.value = prefs.getDouble('longitude')!;
+    }
+  }
+
+  determinePosition() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      print("Location not enable");
+      getPrefrenceValue();
+    } else {
+      setState(() {});
+      Position position = await Geolocator.getCurrentPosition();
+      productController.lat.value = position.latitude;
+      productController.lng.value = position.longitude;
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setDouble("latitude", productController.lat.value);
+      prefs.setDouble("longitude", productController.lng.value);
+      print("Location enable ${position.latitude}");
     }
   }
 
