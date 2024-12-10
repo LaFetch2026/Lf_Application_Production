@@ -165,7 +165,7 @@ class LoginController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        // getSnackBar(responseData['message']);
         prefs.setString('token', responseData['meta']['access_token']);
         prefs.setInt('userId', responseData['data']['id']);
         if (responseData['data']['phone'] != null) {
@@ -189,7 +189,7 @@ class LoginController extends BaseController {
         }
       } else if (response.statusCode == 201) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        //  getSnackBar(responseData['message']);
         prefs.setString('token', responseData['meta']['access_token']);
         prefs.setInt('userId', responseData['data']['id']);
         if (responseData['data']['phone'] != null) {
@@ -242,7 +242,7 @@ class LoginController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        // getSnackBar(responseData['message']);
         prefs.setString('token', responseData['meta']['access_token']);
         prefs.setInt('userId', responseData['data']['id']);
         if (responseData['data']['phone'] != null) {
@@ -266,7 +266,7 @@ class LoginController extends BaseController {
         }
       } else if (response.statusCode == 201) {
         print(responseData);
-        getSnackBar(responseData['message']);
+        //  getSnackBar(responseData['message']);
         prefs.setString('token', responseData['meta']['access_token']);
         prefs.setInt('userId', responseData['data']['id']);
         if (responseData['data']['phone'] != null) {

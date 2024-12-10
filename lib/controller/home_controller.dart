@@ -265,9 +265,6 @@ class HomeController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           banner1List = responseData;
-          if (banner1List.isNotEmpty) {
-            prefs.setString("bannerImage", jsonEncode(banner1List));
-          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

@@ -33,16 +33,17 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   PageController pageController = PageController();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   late GoogleMapController googleMapController;
+  String locationText = "";
 
   @override
   void initState() {
+    getCurrentLocation();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandListController.addListener(() {
         brandController.fetchMoreData("express");
         brandController.update();
       });
     });
-    getCurrentLocation();
     brandController.hasnextpage.value = true;
     brandController.loadMore.value = false;
     brandController.isBrand.value = false;
@@ -66,6 +67,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     Position position = await _determinePosition();
     productController.lat.value = position.latitude;
     productController.lng.value = position.longitude;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble("latitude", productController.lat.value);
+    prefs.setDouble("longitude", productController.lng.value);
     setState(() {});
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
@@ -88,7 +92,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
       permission = await Geolocator.requestPermission();
 
       if (permission == LocationPermission.denied) {
-        return Future.error("Location permission denied");
+        return Future.error("Please enable the location to view the products");
       }
     }
 
@@ -96,6 +100,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
       return Future.error('Location permissions are permanently denied');
     }
 
+    locationText = "Fetching Location";
+    setState(() {});
     Position position = await Geolocator.getCurrentPosition();
 
     return position;
@@ -356,8 +362,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             top: 30.sp, left: 16.sp, right: 16.sp),
-                        child: Text(
-                            "Please enable the location to view the products",
+                        child: Text(locationText,
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,

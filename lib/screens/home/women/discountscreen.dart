@@ -1,7 +1,4 @@
 // ignore_for_file: avoid_print
-
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -86,13 +83,16 @@ class DiscountScreenState extends State<DiscountScreen> {
         productController.update();
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getPrefrenceValue();
+    });
   }
 
   Future getPrefrenceValue() async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('bannerImage') != null) {
-      var list = prefs.getString('bannerImage');
-      homeController.banners = jsonDecode(list!);
+    if (prefs.getDouble('latitude') != null) {
+      productController.lat.value = prefs.getDouble('latitude')!;
+      productController.lng.value = prefs.getDouble('longitude')!;
     }
   }
 
