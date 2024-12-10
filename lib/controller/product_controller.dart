@@ -141,6 +141,7 @@ class ProductController extends BaseController {
   List productTags = [].obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
+  RxBool isBrandProduct = false.obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
 
   bool checkPinvalidation(String pin) {

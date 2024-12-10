@@ -7,7 +7,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +32,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
   PageController pageController = PageController();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   late GoogleMapController googleMapController;
-  String locationText = "";
+  String locationText = "Please enable the location to view the products";
 
   @override
   void initState() {
@@ -48,6 +47,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     brandController.loadMore.value = false;
     brandController.isBrand.value = false;
     brandController.page.value = 1;
+    productController.isBrandProduct.value = false;
     productController.brand_id.value = 0;
     productController.brandExpressHasnextpage.value = true;
     productController.brandExpressLoadMore.value = false;
@@ -67,9 +67,12 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     Position position = await _determinePosition();
     productController.lat.value = position.latitude;
     productController.lng.value = position.longitude;
+    //productController.lat.value = 12.9029224;
+    // productController.lng.value = 77.6330036;
     final prefs = await SharedPreferences.getInstance();
     prefs.setDouble("latitude", productController.lat.value);
     prefs.setDouble("longitude", productController.lng.value);
+    productController.isBrandProduct.value = true;
     setState(() {});
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
@@ -262,6 +265,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                                   productController
                                                       .brandExpressPage
                                                       .value = 1;
+                                                  productController
+                                                      .isBrandProduct
+                                                      .value = true;
                                                   productController.update();
                                                   setState(() {});
                                                   pageController.animateToPage(
@@ -342,27 +348,28 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                     ),
             ),
             Obx(
-              () => productController.lat.value != 0
-                  ? brandController.isBrand.value
-                      ? const Expanded(child: DummyGridList())
-                      : Expanded(
-                          child: PageView.builder(
-                            //  itemCount: brandController.brandList.length + 1,
-                            controller: pageController,
-                            onPageChanged: callOnchanged,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return ViewAllScreen(
-                                brandId: productController.brand_id.value,
-                              );
-                            },
-                          ),
-                        )
+              () => productController.lat.value != 0 &&
+                      productController.isBrandProduct.value
+                  ? /* brandController.isBrand.value
+                      //  ? const Expanded(child: DummyGridList())
+                      : */
+                  Expanded(
+                      child: PageView.builder(
+                        controller: pageController,
+                        onPageChanged: callOnchanged,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return ViewAllScreen(
+                            brandId: productController.brand_id.value,
+                          );
+                        },
+                      ),
+                    )
                   : Center(
                       child: Padding(
                         padding: EdgeInsets.only(
                             top: 30.sp, left: 16.sp, right: 16.sp),
-                        child: Text(locationText,
+                        child: Text("$locationText",
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
