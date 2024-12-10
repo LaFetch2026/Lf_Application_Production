@@ -43,6 +43,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
         brandController.update();
       });
     });
+    productController.productExpressBrandList.clear();
     brandController.hasnextpage.value = true;
     brandController.loadMore.value = false;
     brandController.isBrand.value = false;

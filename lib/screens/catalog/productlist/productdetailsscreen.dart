@@ -2043,6 +2043,54 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                     ),
+                    /*  Obx(() => productController.isDetails.value
+                        ? SizedBox(
+                            height: 0,
+                          )
+                        : productController.productDetails["express_delivery"]
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 12.0.sp),
+                                          child: Image.asset(
+                                            getItByIcon,
+                                            height: 18.sp,
+                                            width: 18.sp,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: AppText(
+                                            text: "hello",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w500,
+                                            color: blackColor,
+                                            maxLines: 2,
+                                            fontSize: 14,
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
+                            : SizedBox(
+                                height: 0,
+                              )), */
                     Obx(
                       () => productController.isDetails.value
                           ? SizedBox(
