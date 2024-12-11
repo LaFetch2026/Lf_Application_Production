@@ -641,7 +641,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
                                 color: deepRed,
-                                maxLines: 4,
+                                maxLines: 8,
                                 fontSize: 14,
                               ),
                             )
@@ -2233,7 +2233,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: deepRed,
-                                                        maxLines: 4,
+                                                        maxLines: 8,
                                                         fontSize: 14,
                                                       ),
                                                     )
