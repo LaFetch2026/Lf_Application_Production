@@ -327,14 +327,17 @@ class HomeController extends BaseController {
         "fcm_token": fcmToken.value,
         "platform": platform,
       };
-      var response =
-          await http.put(Uri.parse("${ApiConstants.baseUrl}/device-tokens"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                'Content-Type': 'application/json;charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              },
-              body: json.encode(sendData));
+      dynamic response;
+      if (prefs.getString('token') != null) {
+        response =
+            await http.put(Uri.parse("${ApiConstants.baseUrl}/device-tokens"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                },
+                body: json.encode(sendData));
+      }
       if (response.statusCode == 201) {
         print("device token sent");
       } else if (response.statusCode == 500) {
