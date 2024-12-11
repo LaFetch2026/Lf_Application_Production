@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
@@ -303,32 +304,52 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 left: 16.sp, right: 16.sp, top: 10.sp),
                             child: SizedBox(
                               height: 44.sp,
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                maxLength: 6,
-                                style: TextStyle(
-                                  color: textColor,
-                                  fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                ),
-                                controller: shipController.pincodeController,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: whiteTextColor,
-                                  focusedBorder: const OutlineInputBorder(
+                              child: RawKeyboardListener(
+                                focusNode: FocusNode(),
+                                onKey: (value) {
+                                  print(value);
+                                  if (value is RawKeyDownEvent) {
+                                    shipController.stateController.clear();
+                                    shipController.cityId.value = 0;
+                                  }
+                                },
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 6,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 14.sp,
+                                    fontFamily: "Franklin Gothic Regular",
+                                  ),
+                                  controller: shipController.pincodeController,
+                                  onChanged: (value) {
+                                    if (value.length == 6) {
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      shipController.getCitiesData();
+                                    } else {
+                                      shipController.stateController.clear();
+                                      shipController.cityId.value = 0;
+                                    }
+                                  },
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: whiteTextColor,
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: borderColor)),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1.sp),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(1.sp),
                                       borderSide:
-                                          BorderSide(color: borderColor)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1.sp),
+                                          const BorderSide(color: borderColor),
+                                    ),
+                                    hintText: "Pin Code",
+                                    counterText: "",
+                                    hintStyle: TextStyle(fontSize: 14.sp),
                                   ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1.sp),
-                                    borderSide:
-                                        const BorderSide(color: borderColor),
-                                  ),
-                                  hintText: "Pin Code",
-                                  counterText: "",
-                                  hintStyle: TextStyle(fontSize: 14.sp),
                                 ),
                               ),
                             ),
@@ -749,6 +770,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             textColor: whiteBorderColor,
                             backgroundColor: colorPrimary,
                             onPressed: () async {
+                              FocusScope.of(context).requestFocus(FocusNode());
                               if (widget.addressId != 0) {
                                 if (shipController.checkvalidation()) {
                                   shipController.callUpdateAddress(

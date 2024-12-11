@@ -112,15 +112,37 @@ class ShipAddressController extends BaseController {
   getCitiesData() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/cities"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (pincodeController.text.length == 6) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/cities?zip=${pincodeController.text.toString().trim()}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(Uri.parse("${ApiConstants.baseUrl}/cities"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          cityList = responseData["data"];
+        if (pincodeController.text.isNotEmpty) {
+          cityId.value = responseData["id"];
+          stateController.text = responseData["name"];
+          update();
+        } else {
+          if (responseData["data"] != null) {
+            cityList = responseData["data"];
+          }
+        }
+      } else if (response.statusCode == 400) {
+        print(responseData);
+        if (responseData["errors"] != null) {
+          getSnackBar(responseData["errors"]["zip"][0]);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
