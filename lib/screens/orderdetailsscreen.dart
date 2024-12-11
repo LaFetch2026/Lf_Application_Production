@@ -75,6 +75,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
           getPrefrenceValue();
           orderController.trackList.clear();
+          orderController.selected.clear();
+          orderController.selected = List.generate(50, (i) => false);
           productController.reorderSelected.clear();
           productController.reorderSelected =
               List.generate(50, (i) => false).obs;
@@ -2124,57 +2126,83 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                       padding: EdgeInsets.only(
                                                           top: 10,
                                                           bottom: 10.sp),
-                                                      child: SingleButton(
-                                                          label: "Cancel Order",
-                                                          height: 40,
-                                                          textColor:
-                                                              btnTextColor,
-                                                          backgroundColor:
-                                                              whiteColor,
-                                                          onPressed: () async {
-                                                            showDialog(
-                                                              barrierColor:
-                                                                  Colors
-                                                                      .black26,
-                                                              context: context,
-                                                              builder:
-                                                                  (context) {
-                                                                return showDoubleBtnDailog(
-                                                                    click1: () {
-                                                                      Get.back();
-                                                                    },
-                                                                    click2:
-                                                                        () async {
-                                                                      orderController.callCancelOrder(
-                                                                          orderController.orderDetails["orders"][index]
-                                                                              [
-                                                                              "id"],
-                                                                          widget
-                                                                              .orderId);
-                                                                      await analytics
-                                                                          .logEvent(
-                                                                        name:
-                                                                            'order_cancelOrderClick',
-                                                                        parameters: <String,
-                                                                            Object>{
-                                                                          'page_name':
-                                                                              'order_cancelOrderClick',
+                                                      child: orderController
+                                                              .selected[index]
+                                                          ? Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          12.sp),
+                                                              child: Center(
+                                                                child:
+                                                                    const SizedBox(
+                                                                  height: 10,
+                                                                  width: 10,
+                                                                  child: Center(
+                                                                      child:
+                                                                          CircularProgressIndicator()),
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : SingleButton(
+                                                              label:
+                                                                  "Cancel Order",
+                                                              height: 40,
+                                                              textColor:
+                                                                  btnTextColor,
+                                                              backgroundColor:
+                                                                  whiteColor,
+                                                              onPressed:
+                                                                  () async {
+                                                                showDialog(
+                                                                  barrierColor:
+                                                                      Colors
+                                                                          .black26,
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return showDoubleBtnDailog(
+                                                                        click1:
+                                                                            () {
+                                                                          Get.back();
                                                                         },
-                                                                      );
-                                                                    },
-                                                                    btncolor:
-                                                                        colorPrimary,
-                                                                    text:
-                                                                        "Are you sure you want to cancel order?",
-                                                                    btn1Text:
-                                                                        "No",
-                                                                    btn2Text:
-                                                                        "Yes");
+                                                                        click2:
+                                                                            () async {
+                                                                          Get.close(
+                                                                              1);
+                                                                          orderController.selected[index] =
+                                                                              !orderController.selected[index];
+                                                                          orderController
+                                                                              .update();
+                                                                          setState(
+                                                                              () {});
+                                                                          orderController.callCancelOrder(
+                                                                              orderController.orderDetails["orders"][index]["id"],
+                                                                              widget.orderId);
+                                                                          await analytics
+                                                                              .logEvent(
+                                                                            name:
+                                                                                'order_cancelOrderClick',
+                                                                            parameters: <String,
+                                                                                Object>{
+                                                                              'page_name': 'order_cancelOrderClick',
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                        btncolor:
+                                                                            colorPrimary,
+                                                                        text:
+                                                                            "Are you sure you want to cancel order?",
+                                                                        btn1Text:
+                                                                            "No",
+                                                                        btn2Text:
+                                                                            "Yes");
+                                                                  },
+                                                                );
                                                               },
-                                                            );
-                                                          },
-                                                          borderColor:
-                                                              btnTextColor),
+                                                              borderColor:
+                                                                  btnTextColor),
                                                     )
                                                   : SizedBox(
                                                       height: 5.sp,
@@ -2812,6 +2840,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                       },
                                                                       click2:
                                                                           () async {
+                                                                        Get.close(
+                                                                            1);
                                                                         orderController.callCancelOrder(
                                                                             orderController.orderDetails["id"],
                                                                             widget.orderId);

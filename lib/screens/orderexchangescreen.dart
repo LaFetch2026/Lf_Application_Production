@@ -40,8 +40,6 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
       orderController.loadMore.value = false;
       orderController.isOrder.value = false;
       orderController.page.value = 1;
-      orderController.selected.clear();
-      orderController.selected = List.generate(50, (i) => false);
       orderController.lat.value = 0.0;
       orderController.lng.value = 0.0;
     });
@@ -412,7 +410,13 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               .orderList[index]
                                                                           [
                                                                           "id"],
-                                                                    ));
+                                                                    ))?.then(
+                                                                        (value) =>
+                                                                            setState(
+                                                                              () {
+                                                                                orderController.getOrderData();
+                                                                              },
+                                                                            ));
                                                                     await analytics
                                                                         .logEvent(
                                                                       name:

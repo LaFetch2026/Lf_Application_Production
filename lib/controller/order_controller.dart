@@ -318,11 +318,16 @@ class OrderController extends BaseController {
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       if (response.statusCode == 200) {
-        Get.close(1);
-        getSnackBar("Order Cancelled");
         getOrderDetails(parentOrderId);
+        getSnackBar("Order Cancelled");
+        selected.clear();
+        selected = List.generate(50, (i) => false);
+        update();
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
+        selected.clear();
+        selected = List.generate(50, (i) => false);
+        update();
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
