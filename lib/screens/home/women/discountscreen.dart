@@ -337,9 +337,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                           homeController.bannerCategory1Id,
                                     )); */
                                     productController.productCategory =
-                                        homeController.bannerTag1Id;
-                                    productController.productTags =
                                         homeController.bannerCategory1Id;
+                                    productController.productTags =
+                                        homeController.bannerTag1Id;
                                     Navigator.push(
                                         context,
                                         scaleIn(

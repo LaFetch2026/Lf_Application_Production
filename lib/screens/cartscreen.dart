@@ -55,12 +55,12 @@ class CartScreenState extends State<CartScreen> {
       productController.isProduct.value = false;
       productController.page.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /* WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.listController.addListener(() {
         productController.fetchMoreData("relevant");
         productController.update();
       });
-    });
+    }); */
     super.initState();
   }
 
