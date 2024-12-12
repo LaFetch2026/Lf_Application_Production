@@ -919,7 +919,7 @@ class SearchScreenState extends State<SearchScreen> {
             isSearch
                 ? Container(
                     color: whiteColor,
-                    height: 300.sp,
+                    height: 350.sp,
                     child: Padding(
                       padding: EdgeInsets.only(
                           top: 50.sp, left: 16.sp, right: 16.sp, bottom: 0.sp),
@@ -1108,15 +1108,16 @@ class SearchScreenState extends State<SearchScreen> {
                             ],
                           ),
                           Obx(() => controller.isSearchItem.value
-                              ? Padding(
-                                  padding:
-                                      EdgeInsets.only(bottom: 7.sp, top: 8.sp),
-                                  child: SizedBox(
-                                    height: 190.sp,
+                              ? SizedBox(
+                                  height: 260.sp,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: 5.sp, top: 5.sp),
                                     child: ListView.builder(
                                         primary: false,
                                         shrinkWrap: true,
-                                        physics: const ScrollPhysics(),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         itemCount: 5,
                                         padding: EdgeInsets.zero,
                                         scrollDirection: Axis.vertical,
@@ -1164,30 +1165,33 @@ class SearchScreenState extends State<SearchScreen> {
                                   ),
                                 )
                               : controller.searchList.isNotEmpty
-                                  ? Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: 7.sp, top: 8.sp),
-                                      child: SizedBox(
-                                        height: 190.sp,
-                                        child: ListView.builder(
-                                            primary: false,
-                                            shrinkWrap: true,
-                                            physics: const ScrollPhysics(),
-                                            itemCount:
-                                                controller.searchList.length,
-                                            padding: EdgeInsets.zero,
-                                            scrollDirection: Axis.vertical,
-                                            itemBuilder: (ctx, index) {
-                                              return Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 4.sp),
-                                                child: GestureDetector(
-                                                  onTap: () async {
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                ProductDetailsScreen(
+                                  ? SizedBox(
+                                      height: 260.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: 5.sp, top: 5.sp),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ListView.builder(
+                                                primary: false,
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount: controller
+                                                    .searchList.length,
+                                                padding: EdgeInsets.zero,
+                                                itemBuilder: (ctx, index) {
+                                                  return Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.sp),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        Navigator.of(context)
+                                                            .push(MaterialPageRoute(
+                                                                builder: (BuildContext context) => ProductDetailsScreen(
                                                                     brandName: controller
                                                                             .searchList[index]
                                                                         [
@@ -1198,8 +1202,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             "id"],
                                                                     type:
                                                                         "add")))
-                                                        .then(
-                                                            (value) => setState(
+                                                            .then((value) =>
+                                                                setState(
                                                                   () {
                                                                     controller
                                                                         .isRecentSearch
@@ -1213,98 +1217,246 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         .getSearchData();
                                                                   },
                                                                 ));
-                                                    controller.callRecentSearch(
-                                                        controller.searchList[
-                                                            index]["id"],
-                                                        controller.searchList[
-                                                            index]["name"]);
-                                                    setState(() {
-                                                      isSearch = false;
-                                                      controller.searchText
-                                                              .value =
-                                                          "Search for products";
-                                                    });
-                                                    await analytics.logEvent(
-                                                      name:
-                                                          "search_page_searchproductdetails",
-                                                      parameters: <String,
-                                                          Object>{
-                                                        'page_name':
-                                                            'search_page_searchproductdetails',
+                                                        controller.callRecentSearch(
+                                                            controller
+                                                                    .searchList[
+                                                                index]["id"],
+                                                            controller
+                                                                    .searchList[
+                                                                index]["name"]);
+                                                        setState(() {
+                                                          isSearch = false;
+                                                          controller.searchText
+                                                                  .value =
+                                                              "Search for products";
+                                                        });
+                                                        await analytics
+                                                            .logEvent(
+                                                          name:
+                                                              "search_page_searchproductdetails",
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'search_page_searchproductdetails',
+                                                          },
+                                                        );
                                                       },
-                                                    );
-                                                  },
-                                                  child: Padding(
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 6.sp),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Icon(Icons.search,
+                                                                size: 20.sp,
+                                                                color: Colors
+                                                                    .grey),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            12.sp),
+                                                                child: AppText(
+                                                                  text: controller
+                                                                              .searchList[index]
+                                                                          [
+                                                                          "name"] ??
+                                                                      "",
+                                                                  maxLines: 1,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize: 14,
+                                                                  color:
+                                                                      loginText,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          8.sp),
+                                                              child: AppText(
+                                                                text: controller
+                                                                    .searchList[
+                                                                        index]
+                                                                        ["hits"]
+                                                                    .toString(),
+                                                                maxLines: 1,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 14,
+                                                                color:
+                                                                    greyTextColor,
+                                                              ),
+                                                            ),
+                                                            Image.asset(
+                                                                curveArrowImage,
+                                                                height: 14.sp,
+                                                                width: 14.sp,
+                                                                fit: BoxFit
+                                                                    .cover),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                            ListView.builder(
+                                                primary: false,
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount: controller
+                                                    .categoryList.length,
+                                                padding: EdgeInsets.zero,
+                                                //  scrollDirection: Axis.vertical,
+                                                itemBuilder: (ctx, i) {
+                                                  return Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
-                                                            vertical: 6.sp),
-                                                    child: Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Icon(Icons.search,
-                                                            size: 20.sp,
-                                                            color: Colors.grey),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        12.sp),
-                                                            child: AppText(
-                                                              text: controller.searchList[
-                                                                          index]
-                                                                      [
-                                                                      "name"] ??
-                                                                  "",
-                                                              maxLines: 1,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 14,
-                                                              color: loginText,
+                                                            vertical: 4.sp),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                                MaterialPageRoute(
+                                                                    builder: (BuildContext
+                                                                            context) =>
+                                                                        CategoryProductScreen(
+                                                                          categoryName:
+                                                                              controller.categoryList[i]["name"],
+                                                                          categoryId:
+                                                                              controller.categoryList[i]["id"],
+                                                                          brandId:
+                                                                              0,
+                                                                          genderType:
+                                                                              0,
+                                                                          tagIds: const [],
+                                                                          categoryList: [],
+                                                                        )))
+                                                            .then((value) =>
+                                                                setState(
+                                                                  () {
+                                                                    controller
+                                                                        .searchController
+                                                                        .clear();
+                                                                    controller
+                                                                        .getSearchData();
+                                                                    isSearch =
+                                                                        false;
+                                                                    controller
+                                                                            .searchText
+                                                                            .value =
+                                                                        "Search for products";
+                                                                  },
+                                                                ));
+
+                                                        /*  setState(() {
+                                                          isSearch = false;
+                                                          controller.searchText
+                                                                  .value =
+                                                              "Search for products";
+                                                        }); */
+                                                        await analytics
+                                                            .logEvent(
+                                                          name:
+                                                              "search_page_searchcategory",
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'search_page_searchcategory',
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 6.sp),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SizedBox(
+                                                              height: 20.sp,
+                                                              width: 20.sp,
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                cacheManager: CacheManager(Config(
+                                                                    "customCacheKey",
+                                                                    stalePeriod:
+                                                                        const Duration(
+                                                                            days:
+                                                                                15),
+                                                                    maxNrOfCacheObjects:
+                                                                        100)),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                imageUrl: controller
+                                                                        .categoryList[i]
+                                                                    [
+                                                                    "thumbnail"],
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                                  downloadImage,
+                                                                  height: 20.sp,
+                                                                  width: 20.sp,
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            12.sp),
+                                                                child: AppText(
+                                                                  text: controller
+                                                                              .categoryList[i]
+                                                                          [
+                                                                          "name"] ??
+                                                                      "",
+                                                                  maxLines: 1,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize: 14,
+                                                                  color:
+                                                                      loginText,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      8.sp),
-                                                          child: AppText(
-                                                            text: controller
-                                                                .searchList[
-                                                                    index]
-                                                                    ["hits"]
-                                                                .toString(),
-                                                            maxLines: 1,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 14,
-                                                            color:
-                                                                greyTextColor,
-                                                          ),
-                                                        ),
-                                                        Image.asset(
-                                                            curveArrowImage,
-                                                            height: 14.sp,
-                                                            width: 14.sp,
-                                                            fit: BoxFit.cover),
-                                                      ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              );
-                                            }),
+                                                  );
+                                                }),
+                                          ],
+                                        ),
                                       ),
                                     )
                                   : Container(

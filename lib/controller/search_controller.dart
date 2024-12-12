@@ -14,6 +14,7 @@ class SearchScreenController extends BaseController {
   TextEditingController searchController = TextEditingController();
   RxBool isSearchItem = false.obs;
   List searchList = [].obs;
+  List categoryList = [].obs;
   RxBool isRecentSearch = false.obs;
   List recentSearchList = [].obs;
   RxDouble lat = 0.0.obs;
@@ -40,6 +41,14 @@ class SearchScreenController extends BaseController {
         } else {
           searchText.value = "No product found";
           searchList.clear();
+        }
+        if (responseData["categories"] != null &&
+            responseData["categories"].isNotEmpty) {
+          categoryList = responseData["categories"];
+          searchText.value = "Search for products";
+        } else {
+          searchText.value = "No product found";
+          categoryList.clear();
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

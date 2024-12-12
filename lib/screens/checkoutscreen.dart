@@ -16,7 +16,6 @@ import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
-import '../commonwidget/singlebtn.dart';
 import '../controller/cart_controller.dart';
 import '../controller/order_controller.dart';
 import '../utils/constants.dart';
@@ -1009,46 +1008,47 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     ],
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 30.sp, bottom: 16.sp),
-                    child: SingleButton(
-                        label: "Pay Now",
-                        textColor: whiteColor,
-                        backgroundColor: colorPrimary,
-                        onPressed: () async {
-                          if (shipController.addressId.value != 0) {
-                            var options = {
-                              'key': razorPayKey,
-                              'amount': double.parse(widget.amount) * 100,
-                              'name': 'Lafetch',
-                              'order_id': widget.orderId,
-                              'description': 'Lafetch Customer',
-                              'timeout': 60,
-                              'theme': {
-                                'color': '#070707',
-                              },
-                              'fullscreen': true,
-                              'prefill': {
-                                'contact': '9002973232',
-                                'email': 'sonamagrahari11@gmail.com'
+                Obx(() => Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 30.sp, bottom: 16.sp),
+                        child: getSingleButton(
+                            label: "Pay Now",
+                            textColor: whiteColor,
+                            backgroundColor: colorPrimary,
+                            controller: controller,
+                            onPressed: () async {
+                              if (shipController.addressId.value != 0) {
+                                var options = {
+                                  'key': razorPayKey,
+                                  'amount': double.parse(widget.amount) * 100,
+                                  'name': 'Lafetch',
+                                  'order_id': widget.orderId,
+                                  'description': 'Lafetch Customer',
+                                  'timeout': 60,
+                                  'theme': {
+                                    'color': '#070707',
+                                  },
+                                  'fullscreen': true,
+                                  'prefill': {
+                                    'contact': '9002973232',
+                                    'email': 'sonamagrahari11@gmail.com'
+                                  }
+                                };
+                                razorpay.open(options);
+                              } else {
+                                getSnackBar("Add Address");
                               }
-                            };
-                            razorpay.open(options);
-                          } else {
-                            getSnackBar("Add Address");
-                          }
-                          await analytics.logEvent(
-                            name: 'checkoutPage_btnpaynow',
-                            parameters: <String, Object>{
-                              'page_name': 'checkoutPage_btnpaynow',
+                              await analytics.logEvent(
+                                name: 'checkoutPage_btnpaynow',
+                                parameters: <String, Object>{
+                                  'page_name': 'checkoutPage_btnpaynow',
+                                },
+                              );
                             },
-                          );
-                        },
-                        borderColor: colorPrimary),
-                  ),
-                ),
+                            borderColor: colorPrimary),
+                      ),
+                    )),
               ],
             ),
           )
