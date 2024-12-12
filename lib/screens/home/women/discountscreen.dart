@@ -13,6 +13,7 @@ import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/common_widgets.dart';
@@ -1179,6 +1180,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                 text2: "Your questions answered",
                 size: 26.sp,
                 onPressed: () async {
+                  Navigator.push(context, scaleIn(FAQScreen()));
                   await analytics.logEvent(
                     name: 'FAQ_home_page',
                     parameters: <String, Object>{

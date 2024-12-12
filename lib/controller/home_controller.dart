@@ -14,7 +14,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 class HomeController extends BaseController {
   RxBool isBanner1 = false.obs;
   RxBool isCity = false.obs;
-  // RxBool istags = false.obs;
+  RxBool isFaqs = false.obs;
   RxBool isBanner2 = false.obs;
   RxBool isCategory = false.obs;
   RxString playerId = "".obs;
@@ -22,7 +22,7 @@ class HomeController extends BaseController {
   String devicename = "";
   String platform = "";
   RxInt gender_Type = 0.obs;
-  // List tagsList = [].obs;
+  List FaqsList = [].obs;
   List banner2List = [].obs;
   List cityList = [].obs;
   List banner1List = [].obs;
@@ -355,5 +355,37 @@ class HomeController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  getFaqData() async {
+    isFaqs.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(Uri.parse("${ApiConstants.baseUrl}/faqs"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          FaqsList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get faqs failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isFaqs.value = false;
   }
 }

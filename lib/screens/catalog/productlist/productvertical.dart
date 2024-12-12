@@ -823,7 +823,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                   productController.size_ids.clear();
                                   productController.sortBy.value = "";
                                   productController.filterEnable.value = false;
-                                  Get.back();
+                                  //  Get.back();
                                   final prefs =
                                       await SharedPreferences.getInstance();
                                   prefs.remove("brandList");

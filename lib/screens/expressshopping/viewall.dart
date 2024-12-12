@@ -757,7 +757,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                     productController.expressSortBy.value = "";
                                     productController
                                         .filterExpressEnable.value = false;
-                                    Get.back();
+                                    // Get.back();
                                     final prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.remove("brandList");
