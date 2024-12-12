@@ -679,6 +679,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.selectedProductSize = "";
       productController.selectedProductColor = "";
       productController.isExpressDelivery.value = false;
+      productController.expressValue.value = 0;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));

@@ -44,6 +44,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => controller.getCategoryData(widget.genderType, widget.catalogId));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.id.value = 0);
     super.initState();
   }
 
@@ -175,6 +177,10 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                             onTap: () async {
                                               productController.catalogIndex
                                                   .value = index + 1;
+                                              productController.id.value =
+                                                  controller.categoryList[index]
+                                                      ["id"];
+                                              setState(() {});
                                               productController
                                                   .getProductByCategoryData(
                                                       controller.categoryList[
@@ -199,25 +205,38 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                             },
                                             child: Padding(
                                               padding: EdgeInsets.only(
-                                                  bottom: 25.sp),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  AppText(
-                                                    text: controller
-                                                                .categoryList[
-                                                            index]["name"] ??
-                                                        "",
-                                                    color: greyTextColor,
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ],
+                                                  bottom: 10.sp),
+                                              child: Container(
+                                                color: productController
+                                                            .id.value ==
+                                                        controller.categoryList[
+                                                            index]["id"]
+                                                    ? whiteTextColor
+                                                    : whiteColor,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.all(6.sp),
+                                                      child: AppText(
+                                                        text: controller
+                                                                    .categoryList[
+                                                                index]["name"] ??
+                                                            "",
+                                                        color: greyTextColor,
+                                                        fontSize: 14,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             )),
                                       ],

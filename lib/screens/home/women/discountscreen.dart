@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
 import 'package:lafetch/commonwidget/homewidget/question_card.dart';
+import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
@@ -39,6 +40,7 @@ class DiscountScreenState extends State<DiscountScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
   final searchController = Get.put(SearchScreenController());
+  final cartController = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -103,6 +105,8 @@ class DiscountScreenState extends State<DiscountScreen> {
       wishlistController.lng.value = prefs.getDouble('longitude')!;
       searchController.lat.value = prefs.getDouble('latitude')!;
       searchController.lng.value = prefs.getDouble('longitude')!;
+      cartController.lat.value = prefs.getDouble('latitude')!;
+      cartController.lng.value = prefs.getDouble('longitude')!;
     }
   }
 

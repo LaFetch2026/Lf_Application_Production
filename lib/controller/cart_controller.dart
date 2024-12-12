@@ -30,6 +30,8 @@ class CartController extends BaseController {
   List couponList = [].obs;
   RxBool isExpress = false.obs;
   RxInt expressValue = 0.obs;
+  RxDouble lat = 0.0.obs;
+  RxDouble lng = 0.0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},
@@ -42,7 +44,8 @@ class CartController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/orders/cart"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/orders/cart?latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

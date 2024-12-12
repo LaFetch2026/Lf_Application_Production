@@ -29,7 +29,7 @@ class BackButtonAppbar extends StatelessWidget {
       decoration: BoxDecoration(color: backgroundColor),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 16.sp),
+          padding: EdgeInsets.only(left: 2.sp, right: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,11 +39,14 @@ class BackButtonAppbar extends StatelessWidget {
                 onTap: () {
                   Get.back();
                 },
-                child: Padding(
-                  padding:
-                      EdgeInsets.only(left: 10.sp, right: 10.sp, top: 40.sp),
-                  child: Image.asset(backArrowImage,
-                      height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                child: Container(
+                  color: backgroundColor,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: 16.sp, right: 16.sp, top: 48.sp, bottom: 10.sp),
+                    child: Image.asset(backArrowImage,
+                        height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                  ),
                 ),
               ),
               Padding(

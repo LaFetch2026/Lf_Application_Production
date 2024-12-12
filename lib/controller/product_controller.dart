@@ -142,6 +142,7 @@ class ProductController extends BaseController {
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
   RxBool isBrandProduct = false.obs;
+  RxInt id = 0.obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
 
   bool checkPinvalidation(String pin) {
@@ -1238,7 +1239,10 @@ class ProductController extends BaseController {
               genderType: gendertype,
               catalogId: catalogId,
               initailIndex: catalogIndex.value,
-            ));
+            ))?.then((value) {
+              id.value = 0;
+              update();
+            });
           }
           if (filterButton) {
             Get.back();

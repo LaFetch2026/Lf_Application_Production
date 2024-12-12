@@ -25,7 +25,7 @@ class CatalogAppbar extends StatelessWidget {
       color: whiteColor,
       child: Column(children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
+          padding: EdgeInsets.only(left: 6.sp, top: 40.sp, right: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -34,11 +34,15 @@ class CatalogAppbar extends StatelessWidget {
                 onTap: () {
                   Get.back();
                 },
-                child: Image.asset(backArrowImage,
-                    height: 16.sp, width: 10.sp, fit: BoxFit.cover),
-              ),
-              SizedBox(
-                width: 10.sp,
+                child: Container(
+                  color: whiteColor,
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 2.sp),
+                    child: Image.asset(backArrowImage,
+                        height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                  ),
+                ),
               ),
               AppText(
                 text: text,
