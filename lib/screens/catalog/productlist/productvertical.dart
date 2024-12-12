@@ -62,7 +62,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
             widget.genderType,
             productController.filterEnable.value,
             widget.catalogId,
-            false));
+            false,
+            "catalog"));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -71,7 +72,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
             0,
             productController.sortBy.value,
             widget.genderType,
-            productController.filterEnable.value);
+            productController.filterEnable.value,
+            "catalog");
         productController.update();
       });
     });
@@ -808,7 +810,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                   productController
                                                       .filterEnable.value,
                                                   widget.catalogId,
-                                                  false);
+                                                  false,
+                                                  "catalog");
                                         },
                                       ));
                             },
@@ -837,7 +840,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       widget.genderType,
                                       productController.filterEnable.value,
                                       widget.catalogId,
-                                      false);
+                                      false,
+                                      "catalog");
                                 },
                                 onClick: (p0, p1) {
                                   productController.filterEnable.value = true;
@@ -852,7 +856,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       widget.genderType,
                                       productController.filterEnable.value,
                                       widget.catalogId,
-                                      true);
+                                      true,
+                                      "catalog");
                                 },
                               ));
                             },

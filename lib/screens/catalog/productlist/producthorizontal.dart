@@ -59,7 +59,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
             widget.genderType,
             productController.filterEnable.value,
             widget.catalogId,
-            false));
+            false,
+            "catalog"));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -68,7 +69,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
             0,
             productController.sortBy.value,
             widget.genderType,
-            productController.filterEnable.value);
+            productController.filterEnable.value,
+            "catalog");
         productController.update();
       });
     });
@@ -165,7 +167,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                   .filterEnable
                                                                   .value,
                                                               widget.catalogId,
-                                                              false);
+                                                              false,
+                                                              "catalog");
                                                         },
                                                       ));
                                               await analytics.logEvent(
@@ -621,7 +624,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                 productController
                                                     .filterEnable.value,
                                                 widget.catalogId,
-                                                false);
+                                                false,
+                                                "catalog");
                                       },
                                     ));
                           },
@@ -650,7 +654,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                     widget.genderType,
                                     productController.filterEnable.value,
                                     widget.catalogId,
-                                    false);
+                                    false,
+                                    "catalog");
                               },
                               onClick: (p0, p1) {
                                 productController.filterEnable.value = true;
@@ -665,7 +670,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                     widget.genderType,
                                     productController.filterEnable.value,
                                     widget.catalogId,
-                                    true);
+                                    true,
+                                    "catalog");
                               },
                             ));
                           },

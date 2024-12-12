@@ -186,7 +186,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                       widget.genderType,
                                                       false,
                                                       widget.catalogId,
-                                                      false);
+                                                      false,
+                                                      "catalog");
                                               await analytics.logEvent(
                                                 name:
                                                     "catalog_details_${widget.genderType}",

@@ -3571,47 +3571,60 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           )
                         : Expanded(
                             flex: 1,
-                            child: getSingleButton(
-                                label: widget.type == "add"
-                                    ? "Add to bag"
-                                    : "Move to bag",
-                                textColor: whiteBorderColor,
-                                right: productController
-                                        .productDetails["added_to_cart"]
-                                    ? 8
-                                    : 16,
-                                left: 16,
-                                backgroundColor: colorPrimary,
-                                controller: productController,
-                                onPressed: () async {
-                                  if (widget.type == "add") {
-                                    if (productController
-                                        .checkDetailsValidation()) {
-                                      productController.callAddtoCart(1, "");
-                                      //  listClick(widgetKey);
-                                    }
-                                  } else {
-                                    if (productController
-                                        .checkDetailsValidation()) {
-                                      wishlistController.callMovetoCart(
-                                          widget.boardId,
-                                          widget.wishlistProductId,
-                                          productController
-                                              .sizeInventoryId.value,
-                                          1);
-                                      productController.addToCart.value = true;
-                                      //  listClick(widgetKey);
-                                    }
-                                  }
-                                  await analytics.logEvent(
-                                    name: 'productDetails_btnaddtocart',
-                                    parameters: <String, Object>{
-                                      'page_name':
-                                          'productDetails_btnaddtocart',
+                            child: productController
+                                        .productDetails["total_stock_count"] ==
+                                    0
+                                ? getSingleButton(
+                                    label: "Out of Stock",
+                                    textColor: whiteBorderColor,
+                                    right: 16,
+                                    left: 16,
+                                    backgroundColor: colorPrimary,
+                                    controller: productController,
+                                    borderColor: colorPrimary)
+                                : getSingleButton(
+                                    label: widget.type == "add"
+                                        ? "Add to bag"
+                                        : "Move to bag",
+                                    textColor: whiteBorderColor,
+                                    right: productController
+                                            .productDetails["added_to_cart"]
+                                        ? 8
+                                        : 16,
+                                    left: 16,
+                                    backgroundColor: colorPrimary,
+                                    controller: productController,
+                                    onPressed: () async {
+                                      if (widget.type == "add") {
+                                        if (productController
+                                            .checkDetailsValidation()) {
+                                          productController.callAddtoCart(
+                                              1, "");
+                                          //  listClick(widgetKey);
+                                        }
+                                      } else {
+                                        if (productController
+                                            .checkDetailsValidation()) {
+                                          wishlistController.callMovetoCart(
+                                              widget.boardId,
+                                              widget.wishlistProductId,
+                                              productController
+                                                  .sizeInventoryId.value,
+                                              1);
+                                          productController.addToCart.value =
+                                              true;
+                                          //  listClick(widgetKey);
+                                        }
+                                      }
+                                      await analytics.logEvent(
+                                        name: 'productDetails_btnaddtocart',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'productDetails_btnaddtocart',
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                borderColor: colorPrimary),
+                                    borderColor: colorPrimary),
                           ),
                   ),
                   Obx(

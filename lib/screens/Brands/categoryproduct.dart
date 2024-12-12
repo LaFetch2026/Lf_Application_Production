@@ -59,12 +59,21 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     if (widget.categoryId != 0) {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
-          productController.getProductByCategoryData(widget.categoryId,
-              widget.brandId, "", [], "", widget.genderType, false, 0, false));
+          productController.getProductByCategoryData(
+              widget.categoryId,
+              widget.brandId,
+              "",
+              [],
+              "",
+              widget.genderType,
+              false,
+              0,
+              false,
+              ""));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
           productController.fetchCategoryProductMoreData(
-              widget.brandId, "", widget.genderType, false);
+              widget.brandId, "", widget.genderType, false, "");
           productController.update();
         });
       });
@@ -281,7 +290,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                           .productCategoryList[
                                                                       index][
                                                                   "wishlist_id"],
-                                                              "category",
+                                                              "category product",
                                                               productController
                                                                       .productCategoryList[
                                                                   index]["id"],
@@ -303,7 +312,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                           (p0) {
                                                                         productController.callAddProductToWishlist(
                                                                             p0,
-                                                                            "category",
+                                                                            "category product",
                                                                             productController.productCategoryList[index]["id"],
                                                                             widget.categoryId,
                                                                             widget.brandId,
