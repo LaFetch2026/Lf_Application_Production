@@ -51,9 +51,17 @@ class BrandController extends BaseController {
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
-      } else {
+      } else if (type == "brand") {
         response = await http.get(
             Uri.parse("${ApiConstants.baseUrl}/brands?q=${queryText.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&type=recently-viewed"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",

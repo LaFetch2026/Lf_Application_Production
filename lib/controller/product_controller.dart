@@ -453,7 +453,7 @@ class ProductController extends BaseController {
       if (categoryList.isNotEmpty) {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -462,7 +462,7 @@ class ProductController extends BaseController {
       } else {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -512,7 +512,7 @@ class ProductController extends BaseController {
         if (categoryList.isNotEmpty) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -520,7 +520,7 @@ class ProductController extends BaseController {
         } else {
           response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&page=${bannerTagPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&page=${bannerTagPage.value}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
