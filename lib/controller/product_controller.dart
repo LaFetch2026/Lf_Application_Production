@@ -121,6 +121,7 @@ class ProductController extends BaseController {
   List brand_ids = [].obs;
   List color_ids = [].obs;
   List size_ids = [].obs;
+  List addressList = [].obs;
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
   RxInt category_id = 0.obs;
@@ -143,6 +144,8 @@ class ProductController extends BaseController {
   RxDouble lng = 0.0.obs;
   RxBool isBrandProduct = false.obs;
   RxInt id = 0.obs;
+  RxBool showAddressList = false.obs;
+  RxString addressText = "".obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
 
   bool checkPinvalidation(String pin) {
@@ -1736,7 +1739,7 @@ class ProductController extends BaseController {
     isDetails.value = false;
   }
 
-  getAddressData(int id) async {
+  getDefaultAddressData(int id) async {
     isAddress.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -1753,9 +1756,12 @@ class ProductController extends BaseController {
             for (var i = 0; i < responseData.length; i++) {
               if (responseData[i]["default_shipping"]) {
                 defaultAddress = responseData[i];
+                addressText.value = responseData[i]["address"];
               }
             }
-            getEstimateDate(id, defaultAddress["zip"]);
+            if (id != 0) {
+              getEstimateDate(id, defaultAddress["zip"]);
+            }
           }
         }
       } else if (response.statusCode == 500) {
@@ -2194,6 +2200,38 @@ class ProductController extends BaseController {
         print("error$e");
       }
       homeTagsloadMore.value = false;
+    }
+  }
+
+  getAddressData() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/addresses"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          addressList = responseData;
+          print(addressList);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get address failed");
+      }
+    } catch (e) {
+      print("error$e");
     }
   }
 }

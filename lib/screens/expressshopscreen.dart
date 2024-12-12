@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 //import 'package:lafetch/commonwidget/smallbtn.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -19,6 +20,7 @@ import '../utils/constants.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
 import 'catalogscreen.dart';
+import 'mapscreen.dart';
 
 class ExpressShoppingScreen extends StatefulWidget {
   const ExpressShoppingScreen({super.key});
@@ -45,6 +47,10 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
         brandController.update();
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getDefaultAddressData(0));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.getAddressData());
     productController.productExpressBrandList.clear();
     brandController.hasnextpage.value = true;
     brandController.loadMore.value = false;
@@ -57,6 +63,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     productController.isBrandExpressProduct.value = false;
     productController.brandExpressPage.value = 1;
     productController.filterExpressEnable.value = false;
+    productController.showAddressList.value = false;
+    productController.addressText.value = "";
     super.initState();
   }
 
@@ -197,158 +205,370 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                 fontSize: 25,
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Obx(
-              () => productController.lat.value != 0
-                  ? brandController.isBrand.value
-                      ? Padding(
+            Obx(() => productController.isAddress.value
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        top: 10.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
+                    child: DummyContainer(height: 20, width: double.infinity),
+                  )
+                : productController.addressText.value == ""
+                    ? GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const MapScreen(
+                                        addressId: 0,
+                                        cartId: 0,
+                                      )))
+                              .then((value) => setState(
+                                    () {
+                                      productController
+                                          .getDefaultAddressData(0);
+                                    },
+                                  ));
+                        },
+                        child: Padding(
                           padding: EdgeInsets.only(
-                              left: 16.sp, bottom: 10.sp, right: 16.sp),
-                          child: SizedBox(
-                            height: 30.sp,
-                            width: double.infinity,
-                            child: ListView.builder(
-                                physics: BouncingScrollPhysics(),
-                                itemCount: 5,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (ctx, index) {
-                                  return Container(
-                                    margin: EdgeInsets.only(right: 5.sp),
-                                    width: 100.sp,
-                                    height: 30.sp,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.04),
-                                      borderRadius:
-                                          BorderRadius.circular(20.sp),
-                                    ),
-                                  );
-                                }),
-                          ))
-                      : Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                              top: 10.sp,
+                              left: 16.sp,
+                              right: 16.sp,
+                              bottom: 5.sp),
+                          child: Row(
+                            children: [
+                              AppText(
+                                text: "",
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: textHintColor,
+                                fontSize: 12,
+                              ),
+                              const Expanded(
+                                child: SizedBox(
+                                  width: 0,
+                                ),
+                              ),
+                              Icon(
+                                Icons.add,
+                                color: blackColor,
+                                size: 16.sp,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5.sp),
+                                child: AppText(
+                                  text: "Add Address",
+                                  color: blackColor,
+                                  fontSize: 12,
+                                  fontFamily: "Franklin Gothic Bold",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          if (productController.showAddressList.value) {
+                            productController.showAddressList.value = false;
+                          } else {
+                            productController.showAddressList.value = true;
+                          }
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 10.sp,
+                              left: 16.sp,
+                              right: 16.sp,
+                              bottom: 5.sp),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 16.sp),
+                                  child: AppText(
+                                    text: productController.addressText.value,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    maxLines: 1,
+                                    fontWeight: FontWeight.w500,
+                                    color: blackColor,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: 2.sp, right: 16.sp, left: 5.sp),
+                                child: ImageIcon(
+                                  AssetImage(downArrowImage),
+                                  color: blackColor,
+                                  size: 16.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )),
+            Stack(
+              children: [
+                Obx(
+                  () => productController.lat.value != 0
+                      ? brandController.isBrand.value
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  bottom: 10.sp,
+                                  right: 16.sp,
+                                  top: 10.sp),
                               child: SizedBox(
-                                  width: double.infinity,
-                                  height: 50.sp,
-                                  child: GetBuilder<BrandController>(
-                                    builder: (value) => ListView.builder(
-                                        physics: const BouncingScrollPhysics(),
-                                        itemCount: value.brandList.length + 1,
-                                        scrollDirection: Axis.horizontal,
-                                        controller: value.brandListController,
-                                        itemBuilder: (ctx, index) {
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  current = index;
-                                                  if (index == 0) {
-                                                    productController
-                                                        .brand_id.value = 0;
-                                                  } else {
-                                                    productController
-                                                            .brand_id.value =
-                                                        value.brandList[
+                                height: 30.sp,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    physics: BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 5.sp),
+                                        width: 100.sp,
+                                        height: 30.sp,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.04),
+                                          borderRadius:
+                                              BorderRadius.circular(20.sp),
+                                        ),
+                                      );
+                                    }),
+                              ))
+                          : Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.sp),
+                                  child: SizedBox(
+                                      width: double.infinity,
+                                      height: 50.sp,
+                                      child: GetBuilder<BrandController>(
+                                        builder: (value) => ListView.builder(
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            itemCount:
+                                                value.brandList.length + 1,
+                                            scrollDirection: Axis.horizontal,
+                                            controller:
+                                                value.brandListController,
+                                            itemBuilder: (ctx, index) {
+                                              return Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () async {
+                                                      current = index;
+                                                      if (index == 0) {
+                                                        productController
+                                                            .brand_id.value = 0;
+                                                      } else {
+                                                        productController
+                                                            .brand_id
+                                                            .value = value
+                                                                .brandList[
                                                             index - 1]["id"];
-                                                  }
-                                                  productController
-                                                      .brandExpressHasnextpage
-                                                      .value = true;
-                                                  productController
-                                                      .brandExpressLoadMore
-                                                      .value = false;
-                                                  productController
-                                                      .isBrandExpressProduct
-                                                      .value = false;
-                                                  productController
-                                                      .brandExpressPage
-                                                      .value = 1;
-                                                  productController
-                                                      .isBrandProduct
-                                                      .value = true;
-                                                  productController.update();
-                                                  setState(() {});
-                                                  pageController.animateToPage(
-                                                    current,
-                                                    duration: const Duration(
-                                                        milliseconds: 200),
-                                                    curve: Curves.ease,
-                                                  );
-                                                  await analytics.logEvent(
-                                                    name:
-                                                        'express_page_brandtabclick',
-                                                    parameters: <String,
-                                                        Object>{
-                                                      'page_name':
-                                                          'express_page_brandtabclick',
+                                                      }
+                                                      productController
+                                                          .brandExpressHasnextpage
+                                                          .value = true;
+                                                      productController
+                                                          .brandExpressLoadMore
+                                                          .value = false;
+                                                      productController
+                                                          .isBrandExpressProduct
+                                                          .value = false;
+                                                      productController
+                                                          .brandExpressPage
+                                                          .value = 1;
+                                                      productController
+                                                          .isBrandProduct
+                                                          .value = true;
+                                                      productController
+                                                          .update();
+                                                      setState(() {});
+                                                      pageController
+                                                          .animateToPage(
+                                                        current,
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    200),
+                                                        curve: Curves.ease,
+                                                      );
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            'express_page_brandtabclick',
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'express_page_brandtabclick',
+                                                        },
+                                                      );
                                                     },
-                                                  );
-                                                },
-                                                child: AnimatedContainer(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  margin: EdgeInsets.only(
-                                                      right: 5.sp),
-                                                  width: 100.sp,
-                                                  height: 30.sp,
-                                                  decoration: BoxDecoration(
-                                                    color: current == index
-                                                        ? btnTextColor
-                                                        : whiteBorderColor,
-                                                    borderRadius: current ==
-                                                            index
-                                                        ? BorderRadius.circular(
-                                                            20)
-                                                        : BorderRadius.circular(
-                                                            20),
-                                                    border: current == index
-                                                        ? Border.all(
-                                                            color: btnTextColor,
-                                                            width: 1)
-                                                        : Border.all(
-                                                            color:
-                                                                textHintColor,
-                                                            width: 1),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 5.sp),
-                                                    child: Center(
-                                                      child: AppText(
-                                                        text: index == 0
-                                                            ? "View All"
-                                                            : value.brandList[
-                                                                    index - 1]
-                                                                ["name"],
+                                                    child: AnimatedContainer(
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      margin: EdgeInsets.only(
+                                                          right: 5.sp),
+                                                      width: 100.sp,
+                                                      height: 30.sp,
+                                                      decoration: BoxDecoration(
                                                         color: current == index
-                                                            ? whiteBorderColor
-                                                            : textHintColor,
-                                                        fontSize: 12,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w500,
+                                                            ? btnTextColor
+                                                            : whiteBorderColor,
+                                                        borderRadius: current ==
+                                                                index
+                                                            ? BorderRadius
+                                                                .circular(20)
+                                                            : BorderRadius
+                                                                .circular(20),
+                                                        border: current == index
+                                                            ? Border.all(
+                                                                color:
+                                                                    btnTextColor,
+                                                                width: 1)
+                                                            : Border.all(
+                                                                color:
+                                                                    textHintColor,
+                                                                width: 1),
                                                       ),
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
+                                                        child: Center(
+                                                          child: AppText(
+                                                            text: index == 0
+                                                                ? "View All"
+                                                                : value.brandList[
+                                                                        index -
+                                                                            1]
+                                                                    ["name"],
+                                                            color: current ==
+                                                                    index
+                                                                ? whiteBorderColor
+                                                                : textHintColor,
+                                                            fontSize: 12,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            }),
+                                      )),
+                                ),
+                              ],
+                            )
+                      : SizedBox(
+                          height: 0,
+                        ),
+                ),
+                Obx(
+                  () => productController.showAddressList.value
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
+                          child: SizedBox(
+                            height: 100.sp,
+                            child: ListView.builder(
+                                primary: false,
+                                shrinkWrap: true,
+                                physics: const ScrollPhysics(),
+                                itemCount: productController.addressList.length,
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (ctx, index) {
+                                  return Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          productController.addressText.value =
+                                              productController
+                                                      .addressList[index]
+                                                  ["address"];
+                                          productController
+                                              .showAddressList.value = false;
+                                        },
+                                        child: Container(
+                                          color: whiteTextColor,
+                                          width: double.infinity,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: double.infinity,
+                                                alignment: Alignment.center,
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.sp,
+                                                      horizontal: 10.sp),
+                                                  child: Text(
+                                                    productController
+                                                            .addressList[index]
+                                                        ["address"],
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 14.sp,
+                                                      color: nameText,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
                                                     ),
                                                   ),
                                                 ),
                                               ),
+                                              index ==
+                                                      productController
+                                                              .addressList
+                                                              .length -
+                                                          1
+                                                  ? SizedBox(
+                                                      width: double.infinity,
+                                                      height: 5.sp,
+                                                    )
+                                                  : Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16.sp,
+                                                              vertical: 2.sp),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        color: colorSecondary,
+                                                        height: 1.sp,
+                                                      ),
+                                                    ),
                                             ],
-                                          );
-                                        }),
-                                  )),
-                            ),
-                          ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                          ),
                         )
-                  : SizedBox(
-                      height: 0,
-                    ),
+                      : const SizedBox(
+                          height: 0,
+                        ),
+                ),
+              ],
             ),
             Obx(
               () => productController.lat.value != 0 &&

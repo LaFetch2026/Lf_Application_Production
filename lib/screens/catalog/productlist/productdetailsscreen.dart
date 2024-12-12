@@ -721,7 +721,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       WidgetsBinding.instance.addPostFrameCallback(
-          (_) => productController.getAddressData(widget.productId));
+          (_) => productController.getDefaultAddressData(widget.productId));
     });
     super.initState();
   }
@@ -1695,7 +1695,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   .then((value) => setState(
                                                         () {
                                                           productController
-                                                              .getAddressData(
+                                                              .getDefaultAddressData(
                                                                   widget
                                                                       .productId);
                                                         },
@@ -1799,7 +1799,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             .then((value) => setState(
                                                   () {
                                                     productController
-                                                        .getAddressData(
+                                                        .getDefaultAddressData(
                                                             widget.productId);
                                                   },
                                                 ));
