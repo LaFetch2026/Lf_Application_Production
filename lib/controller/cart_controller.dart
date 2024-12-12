@@ -125,7 +125,7 @@ class CartController extends BaseController {
       );
       if (response.statusCode == 200) {
         Get.close(1);
-        getSnackBar("Cart cleared");
+        // getSnackBar("Cart cleared");
         orderList.clear();
         getCartData();
       } else if (response.statusCode == 400) {

@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -225,6 +224,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                     () {
                                       productController
                                           .getDefaultAddressData(0);
+                                      productController.addressList.clear();
+                                      productController.getAddressData();
                                     },
                                   ));
                         },
@@ -485,7 +486,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                       ? Padding(
                           padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
                           child: SizedBox(
-                            height: 100.sp,
+                            height: 120.sp,
                             child: ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
@@ -497,13 +498,39 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                   return Column(
                                     children: [
                                       GestureDetector(
-                                        onTap: () {
+                                        onTap: () async {
                                           productController.addressText.value =
                                               productController
                                                       .addressList[index]
                                                   ["address"];
                                           productController
                                               .showAddressList.value = false;
+                                          productController
+                                              .getBrandExpressProductData(
+                                                  productController
+                                                      .brand_id.value,
+                                                  productController
+                                                      .expressSortBy.value,
+                                                  productController
+                                                      .filterExpressEnable
+                                                      .value);
+                                          productController.lat.value =
+                                              double.parse(productController
+                                                      .addressList[index]
+                                                  ["latitude"]);
+                                          productController.lng.value =
+                                              double.parse(productController
+                                                      .addressList[index]
+                                                  ["longitude"]);
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          prefs.setDouble("latitude",
+                                              productController.lat.value);
+                                          prefs.setDouble("longitude",
+                                              productController.lng.value);
+                                          productController
+                                              .isBrandProduct.value = true;
+                                          setState(() {});
                                         },
                                         child: Container(
                                           color: whiteTextColor,

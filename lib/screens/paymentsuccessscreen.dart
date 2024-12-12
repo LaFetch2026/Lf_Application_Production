@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/paymentwidgets/paymentfailwidget.dart';
+import 'package:lafetch/screens/orderexchangescreen.dart';
+import '../controller/cart_controller.dart';
 import '../utils/constants.dart';
 import 'bottomnavscreen.dart';
 
@@ -21,6 +23,8 @@ class PaymentSuccessScreen extends StatefulWidget {
 }
 
 class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
+  final controller = Get.put(CartController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,20 +32,21 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
         body: PaymentFailWidget(
           text1: widget.text1,
           text2: widget.text2,
-          btntext: "Back Home",
+          btntext: widget.text1 == "Order Placed Successfully"
+              ? "View Order"
+              : "Back Home",
           image: widget.image,
           onPressed: () {
-            Get.offAll(
-              () => const BottomNavScreen(),
-            );
-            /*  Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => const BottomNavScreen(),
-              ),
-              (route) => false,
-            ); */
-            // Get.close(3);
+            if (widget.text1 == "Order Placed Successfully") {
+              Get.close(1);
+              Get.off(OrderExchangeScreen());
+              controller.orderList.clear();
+              controller.getCartData();
+            } else {
+              Get.offAll(
+                () => const BottomNavScreen(),
+              );
+            }
           },
           visible: true,
         ));
