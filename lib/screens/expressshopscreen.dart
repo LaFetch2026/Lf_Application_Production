@@ -46,10 +46,6 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
         brandController.update();
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getDefaultAddressData(0));
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getAddressData());
     productController.productExpressBrandList.clear();
     brandController.hasnextpage.value = true;
     brandController.loadMore.value = false;
@@ -64,6 +60,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     productController.filterExpressEnable.value = false;
     productController.showAddressList.value = false;
     productController.addressText.value = "";
+    productController.addressTypeValue.value = "";
     super.initState();
   }
 
@@ -84,6 +81,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     prefs.setDouble("longitude", productController.lng.value);
     productController.isBrandProduct.value = true;
     setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getDefaultAddressData(0));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
@@ -193,15 +192,17 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                 ],
               ),
             ), */
-            Padding(
-              padding: EdgeInsets.only(
-                  top: 20.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
-              child: AppText(
-                text: "Express Shop",
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
-                color: blackColor,
-                fontSize: 25,
+            Center(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: 20.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
+                child: AppText(
+                  text: "XPRESS DELIVERY",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: blackColor,
+                  fontSize: 22,
+                ),
               ),
             ),
             Obx(() => productController.isAddress.value
@@ -225,7 +226,6 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                       productController
                                           .getDefaultAddressData(0);
                                       productController.addressList.clear();
-                                      productController.getAddressData();
                                     },
                                   ));
                         },
@@ -283,20 +283,32 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                               right: 16.sp,
                               bottom: 5.sp),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                            //  mainAxisSize: MainAxisSize.min,
                             children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 16.sp),
+                                child: AppText(
+                                  text:
+                                      "${productController.addressTypeValue.value} -",
+                                  fontFamily: "Franklin Gothic",
+                                  maxLines: 1,
+                                  fontWeight: FontWeight.w500,
+                                  color: blackColor,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 16.sp),
+                                  padding: EdgeInsets.only(left: 2.sp),
                                   child: AppText(
                                     text: productController.addressText.value,
                                     fontFamily: "Franklin Gothic Regular",
                                     maxLines: 1,
                                     fontWeight: FontWeight.w500,
                                     color: blackColor,
-                                    fontSize: 14.sp,
+                                    fontSize: 12.sp,
                                   ),
                                 ),
                               ),
@@ -484,9 +496,10 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                 Obx(
                   () => productController.showAddressList.value
                       ? Padding(
-                          padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
+                          padding: EdgeInsets.only(
+                              left: 16.sp, right: 16.sp, bottom: 10.sp),
                           child: SizedBox(
-                            height: 120.sp,
+                            height: 180.sp,
                             child: ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
@@ -500,9 +513,11 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                       GestureDetector(
                                         onTap: () async {
                                           productController.addressText.value =
+                                              "${productController.addressList[index]["zip"]}, ${productController.addressList[index]["address"]}";
+                                          productController
+                                                  .addressTypeValue.value =
                                               productController
-                                                      .addressList[index]
-                                                  ["address"];
+                                                  .addressList[index]["type"];
                                           productController
                                               .showAddressList.value = false;
                                           productController
@@ -546,19 +561,104 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.sp,
                                                       horizontal: 10.sp),
-                                                  child: Text(
-                                                    productController
-                                                            .addressList[index]
-                                                        ["address"],
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 14.sp,
-                                                      color: nameText,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                    ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        productController
+                                                                .addressList[
+                                                            index]["name"],
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          fontSize: 12.sp,
+                                                          color: nameText,
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 2.sp),
+                                                        child: Text(
+                                                          productController
+                                                                  .addressList[
+                                                              index]["address"],
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: nameText,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 2.sp),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(
+                                                              "${productController.addressList[index]["zip"]},",
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                fontSize: 12.sp,
+                                                                color: nameText,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              productController
+                                                                          .addressList[
+                                                                      index]
+                                                                  ["locality"],
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                fontSize: 12.sp,
+                                                                color: nameText,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 2.sp),
+                                                        child: Text(
+                                                          productController
+                                                                  .addressList[
+                                                              index]["type"],
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: nameText,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),

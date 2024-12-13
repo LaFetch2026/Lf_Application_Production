@@ -43,47 +43,62 @@ class ShipAddressController extends BaseController {
   final cityController = TextEditingController();
   final addressController = TextEditingController();
   final localityController = TextEditingController();
+  RxString nameError = "".obs;
+  RxString phoneError = "".obs;
+  RxString pincodeError = "".obs;
+  RxString addressError = "".obs;
+  RxString localityError = "".obs;
+  RxString cityError = "".obs;
+  RxString addressTypeError = "".obs;
   bool checkvalidation() {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
     if (nameController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Name");
+      // nameError.value = "Enter Name";
       return false;
     }
     if (phoneController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Phone Number");
+      // phoneError.value = "Enter Phone Number";
       return false;
     }
     if (phoneController.text.toString().trim().length < 10) {
       getSnackBar(
         "Enter 10 digit Phone Number",
       );
+      //phoneError.value = "Enter 10 digit Phone Number";
       return false;
     }
     if (!regExp.hasMatch(phoneController.text.toString().trim())) {
       getSnackBar(
         "Enter valid Phone Number",
       );
+      // phoneError.value = "Enter valid Phone Number";
       return false;
     }
     if (pincodeController.text.toString().trim().isEmpty) {
       getSnackBar(
         "Enter Pincode",
       );
+      //phoneError.value = "Enter valid Phone Number";
       return false;
     }
     if (pincodeController.text.toString().trim().length < 6) {
       getSnackBar(
         "The pincode must be 6 digit.",
       );
+      //pincodeError.value = "The pincode must be 6 digit.";
       return false;
     }
     if (addressController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Address");
+      // addressError.value = "Enter Address";
       return false;
     }
     if (localityController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Locality");
+      //localityError.value = "Enter Locality";
       return false;
     }
     /*   if (cityController.text.toString().trim().isEmpty) {
@@ -92,10 +107,12 @@ class ShipAddressController extends BaseController {
     } */
     if (stateController.text.toString().trim().isEmpty) {
       getSnackBar("Select City");
+      //cityError.value = "Select City";
       return false;
     }
     if (type.value.isEmpty) {
       getSnackBar("Select Address Type");
+      // addressTypeError.value = "Select Address Type";
       return false;
     }
     return true;

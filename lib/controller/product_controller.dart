@@ -146,6 +146,7 @@ class ProductController extends BaseController {
   RxInt id = 0.obs;
   RxBool showAddressList = false.obs;
   RxString addressText = "".obs;
+  RxString addressTypeValue = "".obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
 
   bool checkPinvalidation(String pin) {
@@ -1743,20 +1744,34 @@ class ProductController extends BaseController {
     isAddress.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/addresses"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (id == 0) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/addresses?latitude=${lat.value}&longitude=${lng.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/addresses"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
           if (responseData.isNotEmpty) {
+            addressList = responseData;
             for (var i = 0; i < responseData.length; i++) {
               if (responseData[i]["default_shipping"]) {
                 defaultAddress = responseData[i];
-                addressText.value = responseData[i]["address"];
+                addressText.value =
+                    "${responseData[i]["zip"]}, ${responseData[i]["address"]}";
+                addressTypeValue.value = responseData[i]["type"];
               }
             }
             if (id != 0) {
@@ -2200,38 +2215,6 @@ class ProductController extends BaseController {
         print("error$e");
       }
       homeTagsloadMore.value = false;
-    }
-  }
-
-  getAddressData() async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/addresses"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          addressList = responseData;
-          print(addressList);
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get address failed");
-      }
-    } catch (e) {
-      print("error$e");
     }
   }
 }

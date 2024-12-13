@@ -291,6 +291,24 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: shipController.nameController,
                             ),
                           ),
+                          /*  shipController.checkvalidation()
+                              ? SizedBox(
+                                  height: 0,
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 20.sp,
+                                    right: 20.sp,
+                                    top: 2.sp,
+                                  ),
+                                  child: AppText(
+                                    text: shipController.nameError.value,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: redColor,
+                                    fontSize: 12,
+                                  ),
+                                ), */
                           Padding(
                             padding: EdgeInsets.only(top: 10.sp),
                             child: NumberWidget(
