@@ -2217,4 +2217,57 @@ class ProductController extends BaseController {
       homeTagsloadMore.value = false;
     }
   }
+
+  callSaveAddress(
+      String name,
+      String phone,
+      int cityId,
+      String type,
+      String address,
+      String zip,
+      String locality,
+      bool defaultbilling,
+      double lat,
+      double lng) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final Map<String, dynamic> sendData = {
+        "name": name,
+        "phone": phone,
+        "city_id": cityId,
+        "type": type,
+        "address": address,
+        "zip": zip,
+        "locality": locality,
+        "default_billing": defaultbilling ? 1 : 0,
+        "default_shipping": 1,
+        "latitude": lat,
+        "longitude": lng
+      };
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+      } else if (response.statusCode == 201) {
+        print(responseData);
+      } else if (response.statusCode == 400) {
+        print(response.body);
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

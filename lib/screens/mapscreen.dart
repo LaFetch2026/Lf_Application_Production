@@ -10,6 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
@@ -35,6 +36,7 @@ class MapScreenState extends State<MapScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String draggedAddress = "";
   late String mapStyle;
+  bool showAddress = false;
   Placemark? address;
   List<Placemark>? placeMarks;
 
@@ -52,6 +54,7 @@ class MapScreenState extends State<MapScreen> {
   }
 
   _init() {
+    showAddress = true;
     _gotoUserCurrentPosition();
     shipController.cameraPosition.value =
         CameraPosition(target: shipController.defaultLatLng.value, zoom: 15);
@@ -170,15 +173,17 @@ class MapScreenState extends State<MapScreen> {
                       enabled: false,
                       baseColor: Colors.black,
                       highlightColor: Colors.grey,
-                      child: Text(draggedAddress,
-                          maxLines: 2,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            fontFamily: "Gilroy",
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                          )),
+                      child: showAddress
+                          ? DummyContainer(height: 20, width: double.infinity)
+                          : Text(draggedAddress,
+                              maxLines: 2,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontFamily: "Gilroy",
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                              )),
                     ),
                   ],
                 ),
@@ -269,6 +274,7 @@ class MapScreenState extends State<MapScreen> {
     String addressString =
         "${address!.street},${address!.locality},${address!.administrativeArea}, ${address!.country}";
     setState(() {
+      showAddress = false;
       draggedAddress = addressString;
     });
   }

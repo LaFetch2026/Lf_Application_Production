@@ -545,6 +545,28 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
                                               productController.lng.value);
                                           productController
                                               .isBrandProduct.value = true;
+                                          productController.callSaveAddress(
+                                              productController
+                                                  .addressList[index]["name"],
+                                              productController
+                                                  .addressList[index]["phone"],
+                                              productController.addressList[index]
+                                                  ["city"]["id"],
+                                              productController
+                                                  .addressList[index]["type"],
+                                              productController.addressList[index]
+                                                  ["address"],
+                                              productController
+                                                  .addressList[index]["zip"]
+                                                  .toString(),
+                                              productController.addressList[index]
+                                                  ["locality"],
+                                              productController.addressList[index]
+                                                  ["default_billing"],
+                                              double.parse(productController
+                                                      .addressList[index]
+                                                  ["latitude"]),
+                                              double.parse(productController.addressList[index]["longitude"]));
                                           setState(() {});
                                         },
                                         child: Container(
