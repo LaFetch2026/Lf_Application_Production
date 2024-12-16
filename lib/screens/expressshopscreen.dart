@@ -626,10 +626,12 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                           productController
                                               .isBrandProduct.value = true;
                                           productController.callSaveAddress(
-                                              productController
-                                                  .addressList[index]["name"],
-                                              productController
-                                                  .addressList[index]["phone"],
+                                              productController.addressList[index]
+                                                  ["id"],
+                                              productController.addressList[index]
+                                                  ["name"],
+                                              productController.addressList[index]
+                                                  ["phone"],
                                               productController.addressList[index]
                                                   ["city"]["id"],
                                               productController

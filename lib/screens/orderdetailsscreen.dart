@@ -46,15 +46,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   // double _rating = 0;
   String email = "";
-  List<String> items = [
+  /* List<String> items = [
     "1",
     "2",
-  ];
+  ]; */
   List<String> trackOrderItem2 = [
     "Order Confirmed",
     "Packed",
     "Shipped",
-    "Delivered"
+    "Cancelled"
   ];
   List<String> trackOrderItem = ["Confirmed", "Packed", "Shipped", "Delivered"];
   List<String> orderItem = ["CONFIRMED", "PACKED", "SHIPPED", "DELIVERED"];
@@ -265,6 +265,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                               fit: BoxFit.cover,
                                                             )
                                                           : Image.asset(
+                                                              color: orderController
+                                                                      .trackList
+                                                                      .any((map) =>
+                                                                          map['status_details'] ==
+                                                                          "CANCELLED")
+                                                                  ? deepRed
+                                                                  : greyDotColor,
                                                               greyDotImage,
                                                               height: 8.sp,
                                                               width: 8.sp,
@@ -284,8 +291,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                         index])
                                                             ? trackOrderItem[
                                                                 index]
-                                                            : trackOrderItem[
-                                                                index],
+                                                            : orderController
+                                                                    .trackList
+                                                                    .any((map) =>
+                                                                        map['status_details'] ==
+                                                                        "CANCELLED")
+                                                                ? trackOrderItem2[
+                                                                    index]
+                                                                : trackOrderItem[
+                                                                    index],
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         fontWeight:
@@ -298,7 +312,13 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                     orderItem[
                                                                         index])
                                                             ? color5StartReview
-                                                            : greyDotColor,
+                                                            : orderController
+                                                                    .trackList
+                                                                    .any((map) =>
+                                                                        map['status_details'] ==
+                                                                        "CANCELLED")
+                                                                ? deepRed
+                                                                : greyDotColor,
                                                       ),
                                                     ),
                                                     index == 3
@@ -313,7 +333,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                             child: Container(
                                                               width: 20.sp,
                                                               height: 2.sp,
-                                                              color: index < 1
+                                                              color: orderController
+                                                                      .trackList
+                                                                      .any((map) =>
+                                                                          map['status_details'] ==
+                                                                          orderItem[
+                                                                              index])
                                                                   ? color5StartReview
                                                                   : greyDotColor,
                                                             ),
@@ -1788,6 +1813,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                         : Image
                                                                             .asset(
                                                                             greyDotImage,
+                                                                            color: orderController.orderDetails["orders"][index]["deliveries"].any((map) => map['status_details'] == "CANCELLED")
+                                                                                ? deepRed
+                                                                                : greyDotColor,
                                                                             height:
                                                                                 8.sp,
                                                                             width:
@@ -1804,12 +1832,11 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                         AppText(
                                                                       text: orderController.orderDetails["orders"][index]["deliveries"].any((map) =>
                                                                               map['status_details'] ==
-                                                                              orderItem[
-                                                                                  i])
-                                                                          ? trackOrderItem[
-                                                                              i]
-                                                                          : trackOrderItem[
-                                                                              i],
+                                                                              orderItem[i])
+                                                                          ? trackOrderItem[i]
+                                                                          : orderController.orderDetails["orders"][index]["deliveries"].any((map) => map['status_details'] == "CANCELLED")
+                                                                              ? trackOrderItem2[i]
+                                                                              : trackOrderItem[i],
                                                                       fontFamily:
                                                                           "Franklin Gothic Regular",
                                                                       fontWeight:
@@ -1821,7 +1848,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               map['status_details'] ==
                                                                               orderItem[i])
                                                                           ? color5StartReview
-                                                                          : greyDotColor,
+                                                                          : orderController.orderDetails["orders"][index]["deliveries"].any((map) => map['status_details'] == "CANCELLED")
+                                                                              ? deepRed
+                                                                              : greyDotColor,
                                                                     ),
                                                                   ),
                                                                   i == 3
@@ -1838,7 +1867,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                 20.sp,
                                                                             height:
                                                                                 2.sp,
-                                                                            color: i < 1
+                                                                            color: orderController.orderDetails["orders"][index]["deliveries"].any((map) => map['status_details'] == orderItem[i])
                                                                                 ? color5StartReview
                                                                                 : greyDotColor,
                                                                           ),

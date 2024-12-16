@@ -2219,6 +2219,7 @@ class ProductController extends BaseController {
   }
 
   callSaveAddress(
+      int addressId,
       String name,
       String phone,
       int cityId,
@@ -2244,14 +2245,14 @@ class ProductController extends BaseController {
         "latitude": lat,
         "longitude": lng
       };
-      var response =
-          await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                'Content-Type': 'application/json;charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              },
-              body: json.encode(sendData));
+      var response = await http.post(
+          Uri.parse("${ApiConstants.baseUrl}/addresses/$addressId"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);

@@ -217,7 +217,7 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen>
             zoomControlsEnabled: false,
             polylines: Set<Polyline>.of(polylines.values),
             initialCameraPosition: CameraPosition(
-              target: dropLatLng,
+              target: orderController.deliveryPatnerLatLng.value,
               zoom: 15.0,
             ),
             markers: getmarkers(),
