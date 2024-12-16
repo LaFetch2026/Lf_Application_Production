@@ -124,13 +124,16 @@ class MapScreenState extends State<MapScreen> {
                             ),
                           ), */
                           Padding(
-                            padding: EdgeInsets.only(top: 30.sp),
+                            padding: EdgeInsets.only(top: 28.sp),
                             child: Container(
-                              height: 60.sp,
+                              height: 70.sp,
                               color: colorPrimary,
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    left: 16.sp, right: 16.sp, bottom: 5.sp),
+                                    left: 16.sp,
+                                    right: 16.sp,
+                                    bottom: 5.sp,
+                                    top: 5.sp),
                                 child: Row(
                                   children: [
                                     GestureDetector(
