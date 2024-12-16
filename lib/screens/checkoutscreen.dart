@@ -61,7 +61,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   final orderController = Get.put(OrderController());
   final shipController = Get.put(ShipAddressController());
   final Razorpay razorpay = Razorpay();
-  final razorPayKey = "rzp_test_eUuJKYtCTi2iSH";
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -1127,7 +1126,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                         if (shipController.addressId.value !=
                                             0) {
                                           var options = {
-                                            'key': razorPayKey,
+                                            'key': ApiConstants.razorPayKey,
                                             'amount':
                                                 double.parse(widget.amount) *
                                                     100,

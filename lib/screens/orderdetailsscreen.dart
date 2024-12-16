@@ -570,9 +570,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             bottom: 16.sp),
                                         child: Row(
                                           children: [
-                                            if (orderController.trackList[
-                                                    orderController.trackList.length -
-                                                        1]["status"] ==
+                                            if (orderController.trackList[orderController.trackList.length - 1]
+                                                    ["status"] ==
                                                 4) ...[
                                               Expanded(
                                                 flex: 1,
@@ -585,8 +584,8 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 ),
                                               ),
                                             ] else if (orderController.trackList[
-                                                    orderController.trackList.length -
-                                                        1]["status"] ==
+                                                        orderController.trackList.length - 1]
+                                                    ["status"] ==
                                                 3) ...[
                                               Expanded(
                                                 flex: 1,
@@ -620,6 +619,20 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                 flex: 1,
                                                 child: AppText(
                                                   text: "Order Confirmed",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: deepGreen,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ] else if (orderController
+                                                        .trackList[orderController.trackList.length - 1]
+                                                    ["status"] ==
+                                                7) ...[
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: "Order Return",
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                   color: deepGreen,

@@ -88,6 +88,7 @@ dependencies:
   flutter_staggered_animations: ^1.0.0
   flutter_quill: ^7.2.0
   permission_handler: ^10.2.0
+  flutter_google_places: ^0.3.0
 
 dev_dependencies:
   flutter_test:
