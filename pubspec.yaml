@@ -65,7 +65,7 @@ dependencies:
   video_player: ^2.7.0
   mime: ^1.0.4
   add_to_cart_animation: ^2.0.3
-  carousel_slider: ^4.2.1
+  #carousel_slider: ^4.2.1
   google_maps_flutter: ^2.3.1
   geolocator: ^9.0.2
   flutter_facebook_auth: ^4.1.1
@@ -88,7 +88,7 @@ dependencies:
   flutter_staggered_animations: ^1.0.0
   flutter_quill: ^7.2.0
   permission_handler: ^10.2.0
-  flutter_google_places: ^0.3.0
+  carousel_slider_plus: ^7.1.0
 
 dev_dependencies:
   flutter_test:
