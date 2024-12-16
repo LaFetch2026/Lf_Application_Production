@@ -3102,10 +3102,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           Obx(() => productController.isRecommendations.value
                               ? const DummyProductList(
                                   text: "Recommended for you")
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    /* Padding(
+                              : productController.recommendedList.isNotEmpty
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        /* Padding(
                                       padding: const EdgeInsets.only(top: 16.0),
                                       child: AppText(
                                         text: "Recommended for you",
@@ -3292,42 +3294,42 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     ),
                                     */
-                                    HorizontalHomeList(
-                                      text: "Recommended for you",
-                                      height: 250.sp,
-                                      controller: productController
-                                          .recommendedController,
-                                      leftPadding: 0,
-                                      list: productController.recommendedList,
-                                      visibleExpress: true,
-                                      visibleheart: true,
-                                      onPressedHeart: (p0, p1) async {
-                                        if (productController
-                                                .recommendedList[p1]
-                                            ["wishlisted"]) {
-                                          productController
-                                              .callAddProductToWishlist(
-                                                  productController
-                                                          .recommendedList[p1]
-                                                      ["wishlist_id"],
-                                                  "recommended",
-                                                  p0,
-                                                  0,
-                                                  0,
-                                                  [],
-                                                  [],
-                                                  widget.productId,
-                                                  0,
-                                                  0);
-                                        } else {
-                                          scaffoldKey.currentState
-                                              ?.showBottomSheet((context) =>
-                                                  BottomWishlist(
-                                                      controller:
-                                                          wishlistController,
-                                                      onPressed: (p0) {
-                                                        productController
-                                                            .callAddProductToWishlist(
+                                        HorizontalHomeList(
+                                          text: "Recommended for you",
+                                          height: 250.sp,
+                                          controller: productController
+                                              .recommendedController,
+                                          leftPadding: 0,
+                                          list:
+                                              productController.recommendedList,
+                                          visibleExpress: true,
+                                          visibleheart: true,
+                                          onPressedHeart: (p0, p1) async {
+                                            if (productController
+                                                    .recommendedList[p1]
+                                                ["wishlisted"]) {
+                                              productController
+                                                  .callAddProductToWishlist(
+                                                      productController
+                                                              .recommendedList[
+                                                          p1]["wishlist_id"],
+                                                      "recommended",
+                                                      p0,
+                                                      0,
+                                                      0,
+                                                      [],
+                                                      [],
+                                                      widget.productId,
+                                                      0,
+                                                      0);
+                                            } else {
+                                              scaffoldKey.currentState
+                                                  ?.showBottomSheet((context) =>
+                                                      BottomWishlist(
+                                                          controller:
+                                                              wishlistController,
+                                                          onPressed: (p0) {
+                                                            productController.callAddProductToWishlist(
                                                                 p0,
                                                                 "recommended",
                                                                 productController
@@ -3341,42 +3343,48 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                     .productId,
                                                                 0,
                                                                 0);
-                                                      },
-                                                      wishlistList:
-                                                          wishlistController
-                                                              .wishlistList));
-                                        }
-                                        await analytics.logEvent(
-                                          name: 'recommended_product_wishlist',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'recommended_product_wishlist',
+                                                          },
+                                                          wishlistList:
+                                                              wishlistController
+                                                                  .wishlistList));
+                                            }
+                                            await analytics.logEvent(
+                                              name:
+                                                  'recommended_product_wishlist',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'recommended_product_wishlist',
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
-                                      onPressed: (p0, p1) async {
-                                        Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        ProductDetailsScreen(
-                                                            brandName: p1,
-                                                            productId: p0,
-                                                            type: "add")));
-                                        await analytics.logEvent(
-                                          name: 'recommended_productdetails',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'recommended_productdetails',
+                                          onPressed: (p0, p1) async {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            ProductDetailsScreen(
+                                                                brandName: p1,
+                                                                productId: p0,
+                                                                type: "add")));
+                                            await analytics.logEvent(
+                                              name:
+                                                  'recommended_productdetails',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'recommended_productdetails',
+                                              },
+                                            );
                                           },
-                                        );
-                                      },
-                                    ),
-                                    const Divider(
-                                      color: colorSecondary,
-                                    ),
-                                  ],
-                                )),
+                                        ),
+                                        const Divider(
+                                          color: colorSecondary,
+                                        ),
+                                      ],
+                                    )
+                                  : SizedBox(
+                                      height: 0,
+                                    )),
                           Obx(() => productController.isFrequentlyBought.value
                               ? const DummyProductList(
                                   text: "Frequently bought with")

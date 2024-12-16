@@ -120,239 +120,280 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
-      body: Column(
-        children: [
-          BackButtonAppbar(
-            text: "Checkout",
-            threeDot: false,
-            icon: threeDotImage,
-            backgroundColor: whiteColor,
-            onPressedThreeDot: () {},
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Obx(() => shipController.isDetails.value
-                      ? const DummySaveAddress(
-                          size: 1,
-                        )
-                      : shipController.addressDetails != null &&
-                              shipController.addressDetails != ""
-                          ? Container(
-                              color: whiteColor,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  top: 10.sp,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 14.sp,
-                                                vertical: 5.sp),
-                                            child: AppText(
-                                              text: shipController
-                                                      .addressDetails["name"] ??
-                                                  "",
-                                              color: loginText,
-                                              fontSize: 16,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                            ),
+        backgroundColor: whiteColor,
+        body: Obx(
+          () => controller.isPayment.value
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    BackButtonAppbar(
+                      text: "Checkout",
+                      threeDot: false,
+                      icon: threeDotImage,
+                      backgroundColor: whiteColor,
+                      onPressedThreeDot: () {},
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Obx(() => shipController.isDetails.value
+                                ? const DummySaveAddress(
+                                    size: 1,
+                                  )
+                                : shipController.addressDetails != null &&
+                                        shipController.addressDetails != ""
+                                    ? Container(
+                                        color: whiteColor,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 10.sp,
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 14.sp,
-                                          ),
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            margin:
-                                                EdgeInsets.only(right: 5.sp),
-                                            width: 80.sp,
-                                            height: 20.sp,
-                                            decoration: BoxDecoration(
-                                              color: whiteColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(20.sp),
-                                              border: Border.all(
-                                                  color: btnTextColor,
-                                                  width: 1.sp),
-                                            ),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                Navigator.of(context)
-                                                    .push(MaterialPageRoute(
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            ChangeAddressScreen(
-                                                              cartId:
-                                                                  widget.cartId,
-                                                            )))
-                                                    .then((value) => setState(
-                                                          () {},
-                                                        ));
-                                                await analytics.logEvent(
-                                                  name:
-                                                      'checkoutPage_changeAddressclick',
-                                                  parameters: <String, Object>{
-                                                    'page_name':
-                                                        'checkoutPage_changeAddressclick',
-                                                  },
-                                                );
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5.sp),
-                                                child: Center(
-                                                  child: AppText(
-                                                    text: "Change",
-                                                    color: btnTextColor,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 14.sp, vertical: 2.sp),
-                                      child: AppText(
-                                        text: shipController
-                                                .addressDetails["address"] ??
-                                            "",
-                                        color: greyTextColor,
-                                        fontSize: 12,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 14.sp, vertical: 2.sp),
-                                      child: AppText(
-                                        text:
-                                            "${shipController.addressDetails["locality"] ?? ""} ,${shipController.addressDetails["city"] != null ? shipController.addressDetails["city"]["name"] : ""}",
-                                        color: greyTextColor,
-                                        fontSize: 12,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 14.sp, vertical: 2.sp),
-                                      child: AppText(
-                                        text: shipController
-                                                .addressDetails["type"] ??
-                                            "",
-                                        color: loginText,
-                                        fontSize: 12,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 14.sp, vertical: 2.sp),
-                                      child: AppText(
-                                        text: shipController
-                                            .addressDetails["zip"]
-                                            .toString(),
-                                        color: loginText,
-                                        fontSize: 12,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10.sp,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 4.sp),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Get.to(MapScreen(
-                                        addressId: widget.addressId,
-                                        cartId: widget.cartId,
-                                      ));
-                                    },
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.sp),
-                                                child: AppText(
-                                                  text: "Shipping Address",
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: loginText,
-                                                  fontSize: 16,
-                                                ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 14.sp,
+                                                              vertical: 5.sp),
+                                                      child: AppText(
+                                                        text: shipController
+                                                                    .addressDetails[
+                                                                "name"] ??
+                                                            "",
+                                                        color: loginText,
+                                                        fontSize: 16,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: 14.sp,
+                                                    ),
+                                                    child: AnimatedContainer(
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      margin: EdgeInsets.only(
+                                                          right: 5.sp),
+                                                      width: 80.sp,
+                                                      height: 20.sp,
+                                                      decoration: BoxDecoration(
+                                                        color: whiteColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    20.sp),
+                                                        border: Border.all(
+                                                            color: btnTextColor,
+                                                            width: 1.sp),
+                                                      ),
+                                                      child: GestureDetector(
+                                                        onTap: () async {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                                  MaterialPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          ChangeAddressScreen(
+                                                                            cartId:
+                                                                                widget.cartId,
+                                                                          )))
+                                                              .then((value) =>
+                                                                  setState(
+                                                                    () {},
+                                                                  ));
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'checkoutPage_changeAddressclick',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'checkoutPage_changeAddressclick',
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      5.sp),
+                                                          child: Center(
+                                                            child: AppText(
+                                                              text: "Change",
+                                                              color:
+                                                                  btnTextColor,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                                  "Franklin Gothic",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 16.sp, top: 2.sp),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 14.sp,
+                                                    vertical: 2.sp),
                                                 child: AppText(
-                                                  text:
-                                                      "Add a shipping address",
+                                                  text: shipController
+                                                              .addressDetails[
+                                                          "address"] ??
+                                                      "",
+                                                  color: greyTextColor,
+                                                  fontSize: 12,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
-                                                  color: greyTextColor,
-                                                  fontSize: 14,
                                                 ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 14.sp,
+                                                    vertical: 2.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "${shipController.addressDetails["locality"] ?? ""} ,${shipController.addressDetails["city"] != null ? shipController.addressDetails["city"]["name"] : ""}",
+                                                  color: greyTextColor,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 14.sp,
+                                                    vertical: 2.sp),
+                                                child: AppText(
+                                                  text: shipController
+                                                              .addressDetails[
+                                                          "type"] ??
+                                                      "",
+                                                  color: loginText,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 14.sp,
+                                                    vertical: 2.sp),
+                                                child: AppText(
+                                                  text: shipController
+                                                      .addressDetails["zip"]
+                                                      .toString(),
+                                                  color: loginText,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10.sp,
                                               ),
                                             ],
                                           ),
                                         ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(right: 22.sp),
-                                          child: Image.asset(rightArrowImage,
-                                              color: loginText,
-                                              height: 18.sp,
-                                              width: 18.sp,
-                                              fit: BoxFit.cover),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                /*  Padding(
+                                      )
+                                    : Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 4.sp),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Get.to(MapScreen(
+                                                  addressId: widget.addressId,
+                                                  cartId: widget.cartId,
+                                                ));
+                                              },
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      16.sp),
+                                                          child: AppText(
+                                                            text:
+                                                                "Shipping Address",
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: loginText,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 16.sp,
+                                                                  top: 2.sp),
+                                                          child: AppText(
+                                                            text:
+                                                                "Add a shipping address",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color:
+                                                                greyTextColor,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        right: 22.sp),
+                                                    child: Image.asset(
+                                                        rightArrowImage,
+                                                        color: loginText,
+                                                        height: 18.sp,
+                                                        width: 18.sp,
+                                                        fit: BoxFit.cover),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          /*  Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 16, horizontal: 16),
                                   child: Container(
@@ -361,9 +402,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                     height: 1,
                                   ),
                                 ), */
-                              ],
-                            )),
-                  /*   Padding(
+                                        ],
+                                      )),
+                            /*   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: GestureDetector(
                       onTap: () {
@@ -415,7 +456,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   */
-                  /*  Padding(
+                            /*  Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 16),
                     child: Container(
@@ -424,140 +465,160 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       height: 1,
                     ),
                   ), */
-                  Obx(() => shipController.isDelivery.value
-                      ? const DummyEstimateDelivery()
-                      : shipController.estimateDeliveryList.isNotEmpty
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 16.sp, top: 20.sp),
-                                  child: AppText(
-                                    text: "Delivery Estimates",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: blackColor,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(bottom: 8.sp, top: 5.sp),
-                                  child: ListView.builder(
-                                      primary: false,
-                                      shrinkWrap: true,
-                                      physics: const ScrollPhysics(),
-                                      itemCount: shipController
-                                          .estimateDeliveryList.length,
-                                      padding: EdgeInsets.zero,
-                                      scrollDirection: Axis.vertical,
-                                      itemBuilder: (ctx, index) {
-                                        return Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.sp),
-                                          child: Padding(
+                            Obx(() => shipController.isDelivery.value
+                                ? const DummyEstimateDelivery()
+                                : shipController.estimateDeliveryList.isNotEmpty
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
                                             padding: EdgeInsets.only(
-                                                top: 8.sp,
-                                                left: 16.sp,
-                                                right: 16.sp),
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                shipController
-                                                            .estimateDeliveryList[
-                                                                index]["image"]
-                                                            .isNotEmpty &&
-                                                        shipController.estimateDeliveryList[
-                                                                    index]
-                                                                ["image"] !=
-                                                            null
-                                                    ? SizedBox(
-                                                        height: 60.sp,
-                                                        width: 50.sp,
-                                                        child:
-                                                            CachedNetworkImage(
-                                                          cacheManager: CacheManager(Config(
-                                                              "customCacheKey",
-                                                              stalePeriod:
-                                                                  const Duration(
-                                                                      days: 15),
-                                                              maxNrOfCacheObjects:
-                                                                  100)),
-                                                          fit: BoxFit.cover,
-                                                          imageUrl: isImage(shipController
-                                                                          .estimateDeliveryList[index]
-                                                                      ["image"]
-                                                                  [0]["name"])
-                                                              ? shipController
-                                                                          .estimateDeliveryList[index]
-                                                                      ["image"]
-                                                                  [0]["name"]
-                                                              : shipController
-                                                                          .estimateDeliveryList[index]
-                                                                      ["image"]
-                                                                  [1]["name"],
-                                                          errorWidget: (context,
-                                                                  url, error) =>
-                                                              Image.asset(
-                                                            downloadImage,
-                                                            fit: BoxFit.cover,
-                                                            height: 60.sp,
-                                                            width: 50.sp,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : Image.asset(
-                                                        dummyWishlistImage,
-                                                        height: 60.sp,
-                                                        width: 50.sp,
-                                                        fit: BoxFit.cover),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 16.sp),
-                                                  child: AppText(
-                                                    text:
-                                                        " Estimated delivery :",
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                    color: blackColor,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                AppText(
-                                                  text: shipController
-                                                          .estimateDeliveryList[
-                                                      index]["estimated_delivery"],
-                                                  fontFamily:
-                                                      "Franklin Gothic Bold",
-                                                  fontWeight: FontWeight.w700,
-                                                  color: blackColor,
-                                                  fontSize: 12,
-                                                ),
-                                              ],
+                                                left: 16.sp, top: 20.sp),
+                                            child: AppText(
+                                              text: "Delivery Estimates",
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: blackColor,
+                                              fontSize: 16,
                                             ),
                                           ),
-                                        );
-                                      }),
-                                ),
-                              ],
-                            )
-                          : const SizedBox(
-                              height: 0,
-                            )),
-                  Container(
-                    color: whiteColor,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16.sp, vertical: 20.sp),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          /*      Padding(
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: 8.sp, top: 5.sp),
+                                            child: ListView.builder(
+                                                primary: false,
+                                                shrinkWrap: true,
+                                                physics: const ScrollPhysics(),
+                                                itemCount: shipController
+                                                    .estimateDeliveryList
+                                                    .length,
+                                                padding: EdgeInsets.zero,
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder: (ctx, index) {
+                                                  return Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 5.sp),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 8.sp,
+                                                          left: 16.sp,
+                                                          right: 16.sp),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          shipController
+                                                                      .estimateDeliveryList[
+                                                                          index]
+                                                                          [
+                                                                          "image"]
+                                                                      .isNotEmpty &&
+                                                                  shipController
+                                                                              .estimateDeliveryList[index]
+                                                                          [
+                                                                          "image"] !=
+                                                                      null
+                                                              ? SizedBox(
+                                                                  height: 60.sp,
+                                                                  width: 50.sp,
+                                                                  child:
+                                                                      CachedNetworkImage(
+                                                                    cacheManager: CacheManager(Config(
+                                                                        "customCacheKey",
+                                                                        stalePeriod: const Duration(
+                                                                            days:
+                                                                                15),
+                                                                        maxNrOfCacheObjects:
+                                                                            100)),
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    imageUrl: isImage(shipController
+                                                                                .estimateDeliveryList[index]["image"][0]
+                                                                            [
+                                                                            "name"])
+                                                                        ? shipController.estimateDeliveryList[index]["image"][0]
+                                                                            [
+                                                                            "name"]
+                                                                        : shipController.estimateDeliveryList[index]["image"][1]
+                                                                            [
+                                                                            "name"],
+                                                                    errorWidget: (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Image
+                                                                            .asset(
+                                                                      downloadImage,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      height:
+                                                                          60.sp,
+                                                                      width:
+                                                                          50.sp,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : Image.asset(
+                                                                  dummyWishlistImage,
+                                                                  height: 60.sp,
+                                                                  width: 50.sp,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left:
+                                                                        16.sp),
+                                                            child: AppText(
+                                                              text:
+                                                                  " Estimated delivery :",
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: blackColor,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text: shipController
+                                                                        .estimateDeliveryList[
+                                                                    index][
+                                                                "estimated_delivery"],
+                                                            fontFamily:
+                                                                "Franklin Gothic Bold",
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: blackColor,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox(
+                                        height: 0,
+                                      )),
+                            Container(
+                              color: whiteColor,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 20.sp),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /*      Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             child: Container(
                               decoration: BoxDecoration(
@@ -609,350 +670,392 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                             ),
                           ),
                         */
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: AppText(
-                              text: "Price Details",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: colorPrimary,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.sp),
-                            child: Container(
-                              width: double.infinity,
-                              color: colorSecondary,
-                              height: 1.sp,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4.sp),
-                                  child: AppText(
-                                    text: "Total MRP",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: textColor,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.mrp}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: textColor,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
-                          widget.expressDelivery != "0.00"
-                              ? Padding(
-                                  padding: EdgeInsets.only(top: 10.sp),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 4.sp),
-                                        child: AppText(
-                                          text: "Express Delivery Charges",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: textColor,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const Expanded(
-                                        child: SizedBox(
-                                          height: 0,
-                                        ),
-                                      ),
-                                      AppText(
-                                        text:
-                                            "\u{20B9} ${widget.expressDelivery}",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: textColor,
-                                        fontSize: 12,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : SizedBox(
-                                  height: 0,
-                                ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4.sp),
-                                  child: AppText(
-                                    text: "Discount on MRP",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: textColor,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.discount}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: greenText,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
-                          widget.coupanDiscount != "0.00"
-                              ? Padding(
-                                  padding: EdgeInsets.only(top: 10.sp),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 4.sp),
-                                        child: AppText(
-                                          text: "Coupon Discount",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: textColor,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const Expanded(
-                                        child: SizedBox(
-                                          height: 0,
-                                        ),
-                                      ),
-                                      AppText(
-                                        text:
-                                            "\u{20B9} ${widget.coupanDiscount}",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: greenText,
-                                        fontSize: 12,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : SizedBox(
-                                  height: 0,
-                                ),
-                          widget.ShipCost != "0.00"
-                              ? Padding(
-                                  padding: EdgeInsets.only(top: 10.sp),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 4.sp),
-                                        child: AppText(
-                                          text: "Shipping Cost",
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: textColor,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const Expanded(
-                                        child: SizedBox(
-                                          height: 0,
-                                        ),
-                                      ),
-                                      AppText(
-                                        text: "\u{20B9} ${widget.ShipCost}",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: greenText,
-                                        fontSize: 12,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : SizedBox(
-                                  height: 0,
-                                ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4.sp),
-                                  child: AppText(
-                                    text: "Service tax",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: textColor,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text:
-                                      "\u{20B9} ${widget.lafetchtax.toString()}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: greenText,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
                                     Padding(
-                                      padding: EdgeInsets.only(right: 4.sp),
+                                      padding: EdgeInsets.only(top: 10.sp),
                                       child: AppText(
-                                        text: "Convenience Fee",
+                                        text: "Price Details",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        color: textColor,
+                                        color: colorPrimary,
                                         fontSize: 12,
                                       ),
                                     ),
-                                    Image.asset(questionIcon,
-                                        height: 16.sp,
-                                        width: 16.sp,
-                                        fit: BoxFit.cover)
-                                  ],
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.convenienceFee}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: greenText,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
                                     Padding(
-                                      padding: EdgeInsets.only(right: 4.sp),
-                                      child: AppText(
-                                        text: "Tax & Charges",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: textColor,
-                                        fontSize: 12,
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 16.sp),
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: colorSecondary,
+                                        height: 1.sp,
                                       ),
                                     ),
-                                    Image.asset(questionIcon,
-                                        height: 16.sp,
-                                        width: 16.sp,
-                                        fit: BoxFit.cover)
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 4.sp),
+                                            child: AppText(
+                                              text: "Total MRP",
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: textColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
+                                            ),
+                                          ),
+                                          AppText(
+                                            text: "\u{20B9} ${widget.mrp}",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textColor,
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    widget.expressDelivery != "0.00"
+                                        ? Padding(
+                                            padding:
+                                                EdgeInsets.only(top: 10.sp),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 4.sp),
+                                                  child: AppText(
+                                                    text:
+                                                        "Express Delivery Charges",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: textColor,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                const Expanded(
+                                                  child: SizedBox(
+                                                    height: 0,
+                                                  ),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      "\u{20B9} ${widget.expressDelivery}",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 0,
+                                          ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 4.sp),
+                                            child: AppText(
+                                              text: "Discount on MRP",
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: textColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
+                                            ),
+                                          ),
+                                          AppText(
+                                            text: "\u{20B9} ${widget.discount}",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: greenText,
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    widget.coupanDiscount != "0.00"
+                                        ? Padding(
+                                            padding:
+                                                EdgeInsets.only(top: 10.sp),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 4.sp),
+                                                  child: AppText(
+                                                    text: "Coupon Discount",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: textColor,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                const Expanded(
+                                                  child: SizedBox(
+                                                    height: 0,
+                                                  ),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      "\u{20B9} ${widget.coupanDiscount}",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: greenText,
+                                                  fontSize: 12,
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 0,
+                                          ),
+                                    widget.ShipCost != "0.00"
+                                        ? Padding(
+                                            padding:
+                                                EdgeInsets.only(top: 10.sp),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 4.sp),
+                                                  child: AppText(
+                                                    text: "Shipping Cost",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: textColor,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                const Expanded(
+                                                  child: SizedBox(
+                                                    height: 0,
+                                                  ),
+                                                ),
+                                                AppText(
+                                                  text:
+                                                      "\u{20B9} ${widget.ShipCost}",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: greenText,
+                                                  fontSize: 12,
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 0,
+                                          ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 4.sp),
+                                            child: AppText(
+                                              text: "Service tax",
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: textColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
+                                            ),
+                                          ),
+                                          AppText(
+                                            text:
+                                                "\u{20B9} ${widget.lafetchtax.toString()}",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: greenText,
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
+                                                child: AppText(
+                                                  text: "Convenience Fee",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Image.asset(questionIcon,
+                                                  height: 16.sp,
+                                                  width: 16.sp,
+                                                  fit: BoxFit.cover)
+                                            ],
+                                          ),
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
+                                            ),
+                                          ),
+                                          AppText(
+                                            text:
+                                                "\u{20B9} ${widget.convenienceFee}",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: greenText,
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 4.sp),
+                                                child: AppText(
+                                                  text: "Tax & Charges",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: textColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Image.asset(questionIcon,
+                                                  height: 16.sp,
+                                                  width: 16.sp,
+                                                  fit: BoxFit.cover)
+                                            ],
+                                          ),
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
+                                            ),
+                                          ),
+                                          AppText(
+                                            text: "\u{20B9} ${widget.tax}",
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: textColor,
+                                            fontSize: 12,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 20.sp),
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: colorSecondary,
+                                        height: 1.5.sp,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 6.sp),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 4.sp),
+                                            child: AppText(
+                                              text: "Bill total",
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                              color: colorPrimary,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const Expanded(
+                                            child: SizedBox(
+                                              height: 0,
+                                            ),
+                                          ),
+                                          AppText(
+                                            text: "\u{20B9} ${widget.total}",
+                                            fontFamily: "Franklin Gothic Bold",
+                                            fontWeight: FontWeight.w700,
+                                            color: colorPrimary,
+                                            fontSize: 18,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 18.sp,
+                                    ),
                                   ],
                                 ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.tax}",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: textColor,
-                                  fontSize: 12,
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.sp),
-                            child: Container(
-                              width: double.infinity,
-                              color: colorSecondary,
-                              height: 1.5.sp,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 6.sp),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(right: 4.sp),
-                                  child: AppText(
-                                    text: "Bill total",
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: colorPrimary,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    height: 0,
-                                  ),
-                                ),
-                                AppText(
-                                  text: "\u{20B9} ${widget.total}",
-                                  fontFamily: "Franklin Gothic Bold",
-                                  fontWeight: FontWeight.w700,
-                                  color: colorPrimary,
-                                  fontSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 18.sp,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  /*   Container(
+                            /*   Container(
                     color: backWhite,
                     height: 34,
                     child: Padding(
@@ -970,30 +1073,33 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                   ), */
-                ],
-              ),
-            ),
-          ),
-          Container(
-            color: whiteColor,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: 30.sp, left: 20.sp, right: 8.sp, bottom: 16.sp),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(
-                        text: "INR ${widget.amount}",
-                        textAlign: TextAlign.center,
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: blackColor,
-                        fontSize: 16,
+                          ],
+                        ),
                       ),
-                      /* const SizedBox(
+                    ),
+                    Container(
+                      color: whiteColor,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 30.sp,
+                                left: 20.sp,
+                                right: 8.sp,
+                                bottom: 16.sp),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  text: "INR ${widget.amount}",
+                                  textAlign: TextAlign.center,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: blackColor,
+                                  fontSize: 16,
+                                ),
+                                /* const SizedBox(
                         height: 2,
                       ),
                       AppText(
@@ -1004,55 +1110,61 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         color: textColor,
                         fontSize: 12.sp,
                       ), */
-                    ],
-                  ),
-                ),
-                Obx(() => Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 30.sp, bottom: 16.sp),
-                        child: getSingleButton(
-                            label: "Pay Now",
-                            textColor: whiteColor,
-                            backgroundColor: colorPrimary,
-                            controller: controller,
-                            onPressed: () async {
-                              if (shipController.addressId.value != 0) {
-                                var options = {
-                                  'key': razorPayKey,
-                                  'amount': double.parse(widget.amount) * 100,
-                                  'name': 'Lafetch',
-                                  'order_id': widget.orderId,
-                                  'description': 'Lafetch Customer',
-                                  'timeout': 60,
-                                  'theme': {
-                                    'color': '#070707',
-                                  },
-                                  'fullscreen': true,
-                                  'prefill': {
-                                    'contact': '9002973232',
-                                    'email': 'sonamagrahari11@gmail.com'
-                                  }
-                                };
-                                razorpay.open(options);
-                              } else {
-                                getSnackBar("Add Address");
-                              }
-                              await analytics.logEvent(
-                                name: 'checkoutPage_btnpaynow',
-                                parameters: <String, Object>{
-                                  'page_name': 'checkoutPage_btnpaynow',
-                                },
-                              );
-                            },
-                            borderColor: colorPrimary),
+                              ],
+                            ),
+                          ),
+                          Obx(() => Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 30.sp, bottom: 16.sp),
+                                  child: getSingleButton(
+                                      label: "Pay Now",
+                                      textColor: whiteColor,
+                                      backgroundColor: colorPrimary,
+                                      controller: controller,
+                                      onPressed: () async {
+                                        if (shipController.addressId.value !=
+                                            0) {
+                                          var options = {
+                                            'key': razorPayKey,
+                                            'amount':
+                                                double.parse(widget.amount) *
+                                                    100,
+                                            'name': 'Lafetch',
+                                            'order_id': widget.orderId,
+                                            'description': 'Lafetch Customer',
+                                            'timeout': 60,
+                                            'theme': {
+                                              'color': '#070707',
+                                            },
+                                            'fullscreen': true,
+                                            'prefill': {
+                                              'contact': '9002973232',
+                                              'email':
+                                                  'sonamagrahari11@gmail.com'
+                                            }
+                                          };
+                                          razorpay.open(options);
+                                        } else {
+                                          getSnackBar("Add Address");
+                                        }
+                                        await analytics.logEvent(
+                                          name: 'checkoutPage_btnpaynow',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'checkoutPage_btnpaynow',
+                                          },
+                                        );
+                                      },
+                                      borderColor: colorPrimary),
+                                ),
+                              )),
+                        ],
                       ),
-                    )),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                    )
+                  ],
+                ),
+        ));
   }
 }

@@ -458,7 +458,7 @@ class ProductController extends BaseController {
       if (categoryList.isNotEmpty) {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -517,7 +517,7 @@ class ProductController extends BaseController {
         if (categoryList.isNotEmpty) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
+                  "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&latitude=${lat.value}&longitude=${lng.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1589,7 +1589,7 @@ class ProductController extends BaseController {
       if (productId != 0) {
         response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products/$productId?type=relevant&latitude=${lat.value}&longitude=${lng.value}"),
+                "${ApiConstants.baseUrl}/products/$productId?type=relevant&latitude=${lat.value}&longitude=${lng.value}&count=1"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -1597,7 +1597,7 @@ class ProductController extends BaseController {
       } else {
         response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/products/$slug?type=relevant&latitude=${lat.value}&longitude=${lng.value}"),
+                "${ApiConstants.baseUrl}/products/$slug?type=relevant&latitude=${lat.value}&longitude=${lng.value}&count=1"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",

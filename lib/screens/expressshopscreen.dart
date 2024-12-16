@@ -13,6 +13,7 @@ import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 //import '../commonwidget/common_widgets.dart';
+import '../commonwidget/common_widgets.dart';
 import '../controller/brand_controller.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -28,7 +29,8 @@ class ExpressShoppingScreen extends StatefulWidget {
   State<ExpressShoppingScreen> createState() => ExpressShoppingScreenState();
 }
 
-class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
+class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
+    with WidgetsBindingObserver {
   final brandController = Get.put(BrandController());
   final productController = Get.put(ProductController());
   int current = 0;
@@ -61,6 +63,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
     productController.showAddressList.value = false;
     productController.addressText.value = "";
     productController.addressTypeValue.value = "";
+    // WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
@@ -104,12 +107,32 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
       permission = await Geolocator.requestPermission();
 
       if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
         return Future.error("Please enable the location to view the products");
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied');
+      showDialog(
+        barrierColor: Colors.black26,
+        context: context,
+        builder: (context) {
+          return showSingleBtnNonCancelableDailog(
+              click1: () {
+                Geolocator.openLocationSettings().then((value) {
+                  Get.back();
+                });
+              },
+              btncolor: colorPrimary,
+              text:
+                  "Location services are disabled. Please enable the services",
+              btn1Text: "Open Location Settings");
+        },
+      );
+
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error('Location permissions are permanently denied');
+      }
     }
 
     locationText = "Fetching Location";
@@ -118,6 +141,63 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen> {
 
     return position;
   }
+
+  /*  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        deniedLocationCheck();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  } */
+
+  /* deniedLocationCheck() async {
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      print("check1");
+      showDialog(
+        barrierColor: Colors.black26,
+        context: context,
+        builder: (context) {
+          return showSingleBtnNonCancelableDailog(
+              click1: () {
+                Geolocator.openLocationSettings().then((value) => Get.back());
+              },
+              btncolor: colorPrimary,
+              text:
+                  "Location services are disabled. Please enable the services",
+              btn1Text: "Open Location Settings");
+        },
+      );
+    } else {
+      print("check2");
+      getCurrentLocation();
+    }
+  } */
+
+  /*  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  } */
+
+  /*  AppLifecycleState _notification = AppLifecycleState.paused;
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      _notification = state;
+      getSnackBar(_notification.toString());
+    });
+  } */
 
   @override
   Widget build(BuildContext context) {

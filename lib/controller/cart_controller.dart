@@ -15,6 +15,7 @@ import '../utils/constants.dart';
 class CartController extends BaseController {
   RxBool isOrder = false.obs;
   RxBool isCoupan = false.obs;
+  RxBool isPayment = false.obs;
   RxBool isRemoveCoupan = false.obs;
   List orderList = [].obs;
   RxInt cartId = 0.obs;
@@ -273,6 +274,9 @@ class CartController extends BaseController {
                 });
       } else if (response.statusCode == 400) {
         print(response.body);
+        if (responseData["errors"].isNotEmpty) {
+          getSnackBar(responseData["errors"][0]);
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -355,7 +359,7 @@ class CartController extends BaseController {
 
   callProcessPayment(
       int cartId, String paymentId, String orderId, String signature) async {
-    showLoading();
+    isPayment.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -394,7 +398,7 @@ class CartController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    hideLoading();
+    isPayment.value = false;
   }
 
   callEnableExpressDelivery() async {
