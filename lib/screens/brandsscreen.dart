@@ -534,9 +534,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         Padding(
                                                                                           padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                           child: AppText(
-                                                                                            text: value.brandList[index]["categories"][i]["name"] ?? "",
+                                                                                            text: "${value.brandList[index]["categories"][i]["catalog"]["type_detail"]} ${value.brandList[index]["categories"][i]["name"]}",
                                                                                             color: greyTextColor,
-                                                                                            fontSize: 10,
+                                                                                            fontSize: 8,
                                                                                             maxLines: 2,
                                                                                             fontFamily: "Franklin Gothic Regular",
                                                                                             fontWeight: FontWeight.w400,

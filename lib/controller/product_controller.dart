@@ -2055,7 +2055,7 @@ class ProductController extends BaseController {
           Get.close(1);
           getSnackBar("product added to the wishlist");
         } else {
-          getSnackBar("product removed to the wishlist");
+          getSnackBar("product removed from the wishlist");
         }
         if (type == "product") {
           getProductData("relevant");
