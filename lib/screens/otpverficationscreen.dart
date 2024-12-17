@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   @override
   void initState() {
     otpController.showButton.value = false;
-    callReceiveMsg();
+    if (Platform.isAndroid) {
+      callReceiveMsg();
+    }
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (otpController.secondsRemaining.value != 0) {
         otpController.secondsRemaining.value--;
@@ -261,7 +264,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                                     otpController.showButton.value = true;
                                     setState(() {});
                                     otpController.update();
-                                    callReceiveMsg();
+                                    if (Platform.isAndroid) {
+                                      callReceiveMsg();
+                                    }
                                   }
                                 },
                                 child: AppText(
