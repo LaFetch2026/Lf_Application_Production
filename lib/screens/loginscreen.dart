@@ -150,6 +150,8 @@ class LoginScreenState extends State<LoginScreen> {
                         indicatorColor: whiteTextColor,
                         unselectedLabelColor: textHintColor,
                         labelColor: whiteBorderColor,
+                        tabAlignment: TabAlignment.start,
+                        dividerColor: Colors.transparent,
                         indicatorSize: TabBarIndicatorSize.label,
                         indicatorWeight: 2,
                         tabs: [

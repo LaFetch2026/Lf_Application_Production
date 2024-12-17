@@ -62,6 +62,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                     isScrollable: false,
                     physics: const NeverScrollableScrollPhysics(),
                     indicatorColor: btnTextColor,
+                    dividerColor: Colors.transparent,
                     unselectedLabelColor: textHintColor,
                     labelColor: btnTextColor,
                     onTap: (value) async {

@@ -297,6 +297,7 @@ class HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.topCenter,
                     child: TabBar(
                         isScrollable: false,
+                        dividerColor: Colors.transparent,
                         indicatorColor: btnTextColor,
                         unselectedLabelColor: textHintColor,
                         labelColor: btnTextColor,

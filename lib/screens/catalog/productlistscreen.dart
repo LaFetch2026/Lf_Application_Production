@@ -100,8 +100,10 @@ class ProductListScreenState extends State<ProductListScreen> {
                 child: TabBar(
                     isScrollable: true,
                     indicatorColor: btnTextColor,
+                    tabAlignment: TabAlignment.start,
                     unselectedLabelColor: textHintColor,
                     labelColor: btnTextColor,
+                    dividerColor: Colors.transparent,
                     onTap: (index) async {
                       categoryId = widget.idList[index];
                       if (index == 0) {

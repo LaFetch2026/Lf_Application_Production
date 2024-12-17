@@ -185,7 +185,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                                       "",
                                                                   color:
                                                                       whiteColor,
-                                                                  fontSize: 16,
+                                                                  fontSize: 14,
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
