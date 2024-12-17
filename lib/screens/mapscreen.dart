@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
 
@@ -16,6 +16,8 @@ import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import '../controller/shipaddress_controller.dart';
 import '../utils/constants.dart';
+/* import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_webservice/places.dart'; */
 
 class MapScreen extends StatefulWidget {
   final int addressId;
@@ -40,6 +42,8 @@ class MapScreenState extends State<MapScreen> {
   Placemark? address;
   List<Placemark>? placeMarks;
   Timer? debounce;
+  static const kGoogleApiKey = "AIzaSyDXRJ6LB081NKtUjCSryOAj_NVt0BTyy0s";
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
@@ -82,6 +86,26 @@ class MapScreenState extends State<MapScreen> {
     });
   }
 
+  /* Future<void> searchPlaces() async {
+    Prediction? p = await PlacesAutocomplete.show(
+      context: context,
+      apiKey: kGoogleApiKey,
+      components: [Component(Component.country, 'in')],
+      mode: Mode.overlay,
+      radius: 10000000,
+      types: [],
+      language: "en",
+    );
+
+    if (p != null) {
+      // Safely handle the nullable Prediction
+      Prediction prediction = p; // This is safe because we checked for null.
+      print("Selected place: ${prediction.description}");
+    } else {
+      print("No place selected");
+    }
+  } */
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,8 +122,8 @@ class MapScreenState extends State<MapScreen> {
                       child: Stack(
                         children: [
                           _getMap(),
-                          /* Padding(
-                            padding: EdgeInsets.only(top: 40.0.sp, left: 10.sp),
+                          /*  Padding(
+                            padding: EdgeInsets.only(top: 50.0.sp, left: 10.sp),
                             child: InkWell(
                                 onTap: () {
                                   Get.back();
@@ -111,18 +135,29 @@ class MapScreenState extends State<MapScreen> {
                                   color: colorPrimary,
                                 )),
                           ),
-                          Container(
-                            padding: EdgeInsets.only(top: 30.sp),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Search location...',
-                                prefixIcon: Icon(Icons.search),
-                              ),
-                              onSubmitted: (value) {
-                                searchLocation(value);
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: 100.0.sp, left: 10.sp),
+                            child: GestureDetector(
+                              onTap: () {
+                                searchPlaces();
                               },
+                              child: SizedBox(
+                                height: 30.sp,
+                                width: 30.sp,
+                                child: CircleAvatar(
+                                  backgroundColor: blackColor,
+                                  child: Image.asset(
+                                    searchImage,
+                                    color: whiteBack,
+                                    height: 20.sp,
+                                    width: 20.sp,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ), */
+                          ),
+                          */
                           Padding(
                             padding: EdgeInsets.only(top: 28.sp),
                             child: Container(
@@ -314,6 +349,37 @@ class MapScreenState extends State<MapScreen> {
                               ),
                             ),
                           ),
+                          /*    Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.sp, vertical: 40.sp),
+                            child: GooglePlaceAutoCompleteFlutterTextField(
+                                textEditingController: controller,
+                                googleAPIKey:
+                                    "AIzaSyDXRJ6LB081NKtUjCSryOAj_NVt0BTyy0s",
+                                inputDecoration: InputDecoration(
+                                    hintText: "Search your location"),
+                                debounceTime: 800,
+                                countries: ["in", "fr"],
+                                types: ['country'],
+                                language: 'en',
+                                textStyle: TextStyle(color: textColor),
+                                isLatLngRequired: true,
+                                getPlaceDetailWithLatLng:
+                                    (Prediction prediction) {
+                                  print("placeDetails" +
+                                      prediction.lng.toString());
+                                },
+                                itmClick: (Prediction prediction) {
+                                  controller.text = prediction.description!;
+
+                                  controller.selection =
+                                      TextSelection.fromPosition(TextPosition(
+                                          offset:
+                                              prediction.description!.length));
+                                  setState(() {});
+                                }),
+                          ),
+                          */
                           Align(
                             alignment: Alignment.bottomRight,
                             child: InkWell(

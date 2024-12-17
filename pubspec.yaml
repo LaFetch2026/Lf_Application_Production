@@ -89,6 +89,9 @@ dependencies:
   flutter_quill: ^7.2.0
   permission_handler: ^10.2.0
   carousel_slider_plus: ^7.1.0
+  flutter_google_places: ^0.3.0
+  google_maps_webservice: ^0.0.18
+ # google_places_autocomplete_flutter: ^1.0.6
 
 dev_dependencies:
   flutter_test:
