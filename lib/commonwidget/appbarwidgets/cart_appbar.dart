@@ -36,11 +36,15 @@ class CartAppbar extends StatelessWidget {
                 onTap: () {
                   Get.back();
                 },
-                child: Image.asset(backArrowImage,
-                    height: 16.sp, width: 10.sp, fit: BoxFit.cover),
-              ),
-              SizedBox(
-                width: 10.sp,
+                child: Container(
+                  color: whiteColor,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        right: 10.sp, left: 5.sp, top: 2.sp, bottom: 2.sp),
+                    child: Image.asset(backArrowImage,
+                        height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                  ),
+                ),
               ),
               AppText(
                 text: text,
