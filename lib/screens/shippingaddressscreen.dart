@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+import 'dart:async';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +34,7 @@ class ShippingAddressScreen extends StatefulWidget {
 class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   final shipController = Get.put(ShipAddressController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  Timer? debounce;
   /*  late GoogleMapController googleMapController;
   static const CameraPosition initialCameraPosition = CameraPosition(
       target: LatLng(37.42796133580664, -122.085749655962), zoom: 14);
@@ -42,6 +45,13 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
     "Home",
     "Work",
   ];
+
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      shipController.getCitiesData();
+    });
+  }
 
   @override
   void initState() {
@@ -58,6 +68,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
       shipController.addressController.clear();
       shipController.localityController.clear();
       shipController.stateController.clear();
+      shipController.searchController.clear();
       shipController.defaultBilling.value = 0;
       shipController.defaultBilling.value = 0;
       shipController.type.value = "";
@@ -65,6 +76,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
       shipController.current.value = 3;
       shipController.onButton.value = false;
       shipController.isCheck.value = false;
+      shipController.showList.value = false;
     }
     if (widget.cartId != 0) {
       shipController.cartId.value = widget.cartId;
@@ -410,6 +422,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     shipController.showList.value = false;
                                   } else {
                                     shipController.showList.value = true;
+                                    shipController.getCitiesData();
+                                    shipController.searchController.clear();
                                   }
                                 },
                                 style: TextStyle(
@@ -450,93 +464,302 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 ? Padding(
                                     padding: EdgeInsets.only(
                                         left: 16.sp, right: 16.sp),
-                                    child: ListView.builder(
-                                        primary: false,
-                                        shrinkWrap: true,
-                                        physics: const ScrollPhysics(),
-                                        itemCount:
-                                            shipController.cityList.length,
-                                        padding: EdgeInsets.zero,
-                                        scrollDirection: Axis.vertical,
-                                        itemBuilder: (ctx, index) {
-                                          return Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  shipController.stateController
-                                                          .text =
-                                                      shipController
-                                                              .cityList[index]
-                                                          ["name"];
-                                                  shipController.cityId.value =
-                                                      shipController
-                                                              .cityList[index]
-                                                          ["id"];
-                                                  shipController
-                                                      .showList.value = false;
-                                                },
-                                                child: Container(
-                                                  color: whiteTextColor,
-                                                  width: double.infinity,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Container(
-                                                        width: double.infinity,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical:
-                                                                      10.sp),
-                                                          child: Text(
-                                                            shipController
-                                                                    .cityList[
-                                                                index]["name"],
-                                                            style: TextStyle(
-                                                              fontSize: 14.sp,
-                                                              color: nameText,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                            ),
-                                                          ),
+                                    child: Container(
+                                      color: greyback,
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 10.sp,
+                                          ),
+                                          MediaQuery.of(context).size.width <
+                                                  600
+                                              ? SizedBox(
+                                                  height: 30.sp,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 16.sp,
+                                                        right: 16.sp),
+                                                    child: RawKeyboardListener(
+                                                      focusNode: FocusNode(),
+                                                      onKey: (value) {
+                                                        print(value);
+                                                        if (value
+                                                            is RawKeyDownEvent) {
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: TextField(
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .words,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                          color: textColor,
+                                                          fontSize: 14.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
                                                         ),
-                                                      ),
-                                                      index ==
-                                                              shipController
-                                                                      .cityList
-                                                                      .length -
-                                                                  1
-                                                          ? SizedBox(
-                                                              width: double
-                                                                  .infinity,
-                                                              height: 5.sp,
-                                                            )
-                                                          : Padding(
-                                                              padding: EdgeInsets
+                                                        controller: shipController
+                                                            .searchController,
+                                                        onChanged:
+                                                            onSearchChanged,
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          filled: true,
+                                                          isDense: true,
+                                                          fillColor: whiteColor,
+                                                          prefixIcon: Icon(
+                                                              Icons.search,
+                                                              size: 20.sp,
+                                                              color:
+                                                                  Colors.grey),
+                                                          focusedBorder:
+                                                              const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              borderColor)),
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        1),
+                                                          ),
+                                                          enabledBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        1),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        borderColor),
+                                                          ),
+                                                          counterText: "",
+                                                          contentPadding:
+                                                              EdgeInsets
                                                                   .symmetric(
                                                                       horizontal:
-                                                                          16.sp,
-                                                                      vertical:
-                                                                          2.sp),
-                                                              child: Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                color:
-                                                                    colorSecondary,
-                                                                height: 1.sp,
-                                                              ),
+                                                                          10.sp),
+                                                          hintText: "Search",
+                                                          hintStyle: TextStyle(
+                                                              fontSize: 14.sp),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox(
+                                                  height: 30.sp,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 16.sp,
+                                                        right: 16.sp),
+                                                    child: RawKeyboardListener(
+                                                      focusNode: FocusNode(),
+                                                      onKey: (value) {
+                                                        print(value);
+                                                        if (value
+                                                            is RawKeyDownEvent) {
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      child: TextField(
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .words,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                          color: textColor,
+                                                          fontSize: 14.sp,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                        ),
+                                                        controller: shipController
+                                                            .searchController,
+                                                        onChanged:
+                                                            onSearchChanged,
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          filled: true,
+                                                          isDense: true,
+                                                          fillColor: whiteColor,
+                                                          suffixIcon: InkWell(
+                                                            onTap: () {},
+                                                            child: ImageIcon(
+                                                              AssetImage(
+                                                                  greyCrossImage),
+                                                              size: 14.sp,
                                                             ),
-                                                    ],
+                                                          ),
+                                                          prefixIcon: Icon(
+                                                              Icons.search,
+                                                              size: 20.sp,
+                                                              color:
+                                                                  Colors.grey),
+                                                          focusedBorder:
+                                                              const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              borderColor)),
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        1),
+                                                          ),
+                                                          enabledBorder:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        1),
+                                                            borderSide:
+                                                                const BorderSide(
+                                                                    color:
+                                                                        borderColor),
+                                                          ),
+                                                          counterText: "",
+                                                          hintText: "Search",
+                                                          hintStyle: TextStyle(
+                                                              fontSize: 14.sp),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          );
-                                        }),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(top: 10.sp),
+                                            child: Container(
+                                              height: 200.sp,
+                                              child: shipController.isCity.value
+                                                  ? Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : shipController
+                                                          .cityList.isNotEmpty
+                                                      ? ListView.builder(
+                                                          primary: false,
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              const ScrollPhysics(),
+                                                          itemCount:
+                                                              shipController
+                                                                  .cityList
+                                                                  .length,
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          scrollDirection:
+                                                              Axis.vertical,
+                                                          itemBuilder:
+                                                              (ctx, index) {
+                                                            return Column(
+                                                              children: [
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    shipController
+                                                                        .stateController
+                                                                        .text = shipController
+                                                                            .cityList[index]
+                                                                        [
+                                                                        "name"];
+                                                                    shipController
+                                                                        .cityId
+                                                                        .value = shipController
+                                                                            .cityList[
+                                                                        index]["id"];
+                                                                    shipController
+                                                                        .showList
+                                                                        .value = false;
+                                                                    shipController
+                                                                        .searchController
+                                                                        .clear();
+                                                                    FocusScope.of(
+                                                                            context)
+                                                                        .requestFocus(
+                                                                            FocusNode());
+                                                                    shipController
+                                                                        .getCitiesData();
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    color:
+                                                                        greyback,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      children: [
+                                                                        Container(
+                                                                          width:
+                                                                              double.infinity,
+                                                                          alignment:
+                                                                              Alignment.center,
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(vertical: 10.sp),
+                                                                            child:
+                                                                                Text(
+                                                                              shipController.cityList[index]["name"],
+                                                                              style: TextStyle(
+                                                                                fontSize: 14.sp,
+                                                                                color: nameText,
+                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        index ==
+                                                                                shipController.cityList.length - 1
+                                                                            ? SizedBox(
+                                                                                width: double.infinity,
+                                                                                height: 5.sp,
+                                                                              )
+                                                                            : Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 2.sp),
+                                                                                child: Container(
+                                                                                  width: double.infinity,
+                                                                                  color: colorSecondary,
+                                                                                  height: 1.sp,
+                                                                                ),
+                                                                              ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          })
+                                                      : Center(
+                                                          child: AppText(
+                                                            text:
+                                                                "No city found",
+                                                            color: loginText,
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   )
                                 : const SizedBox(
                                     height: 0,

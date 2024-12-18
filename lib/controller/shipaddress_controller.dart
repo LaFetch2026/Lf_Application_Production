@@ -17,6 +17,7 @@ class ShipAddressController extends BaseController {
   RxBool isUpdateAddress = false.obs;
   RxBool onButton = false.obs;
   RxBool isCheck = false.obs;
+  RxBool isCity = false.obs;
   RxInt defaultBilling = 0.obs;
   RxInt defaultShipping = 0.obs;
   RxBool isDetails = false.obs;
@@ -43,6 +44,7 @@ class ShipAddressController extends BaseController {
   final cityController = TextEditingController();
   final addressController = TextEditingController();
   final localityController = TextEditingController();
+  final searchController = TextEditingController();
   RxString nameError = "".obs;
   RxString phoneError = "".obs;
   RxString pincodeError = "".obs;
@@ -127,19 +129,22 @@ class ShipAddressController extends BaseController {
   }
 
   getCitiesData() async {
+    isCity.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic response;
       if (pincodeController.text.length == 6) {
         response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/cities?zip=${pincodeController.text.toString().trim()}"),
+                "${ApiConstants.baseUrl}/cities?zip=${pincodeController.text.toString().trim()}&q=${searchController.text.toString().trim()}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
       } else {
-        response = await http.get(Uri.parse("${ApiConstants.baseUrl}/cities"),
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/cities?q=${searchController.text.toString().trim()}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -171,11 +176,12 @@ class ShipAddressController extends BaseController {
         );
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get wishlist failed");
+        getSnackBar("get cities failed");
       }
     } catch (e) {
       print("error$e");
     }
+    isCity.value = false;
   }
 
   callSaveAddress(double lat, double lng) async {
