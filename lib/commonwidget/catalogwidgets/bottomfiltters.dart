@@ -82,6 +82,9 @@ class BottomFiltersState extends State<BottomFilters> {
     if (prefs.getString('lower') != null) {
       lowerValue = prefs.getString('lower')!;
     }
+    if (prefs.getString('lower') != null && prefs.getString('upper') != null) {
+      values = RangeValues(double.parse(lowerValue), double.parse(UpperValue));
+    }
     isPriceLoading = false;
     setState(() {});
   }
@@ -127,6 +130,9 @@ class BottomFiltersState extends State<BottomFilters> {
                           brandSelected = List.generate(50, (i) => false);
                           sizeSelected = List.generate(50, (i) => false);
                           colorSelected = List.generate(50, (i) => false);
+                          lowerValue = "500";
+                          UpperValue = "500000";
+                          values = RangeValues(500, 500000);
                           setState(() {});
                           widget.btnclearAll.call();
                         },
