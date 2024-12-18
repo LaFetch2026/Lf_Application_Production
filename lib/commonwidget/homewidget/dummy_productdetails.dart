@@ -17,7 +17,7 @@ class DummyProductDetails extends StatelessWidget {
           padding: EdgeInsets.only(left: 12.0.sp, top: 12.sp),
           child: DummyContainer(
             width: 50,
-            height: 10,
+            height: 20,
           ),
         ),
         Padding(
@@ -31,40 +31,40 @@ class DummyProductDetails extends StatelessWidget {
                 Expanded(
                   child: DummyContainer(
                     width: 50,
-                    height: 10,
+                    height: 20,
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 10.sp),
                   child: DummyContainer(
                     width: 50,
-                    height: 10,
+                    height: 20,
                   ),
                 )
               ],
             )),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.sp),
+          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 2.sp),
           child: DummyContainer(
             width: 50,
-            height: 10,
+            height: 20,
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
+          padding: EdgeInsets.only(top: 16.0.sp, left: 12.sp, right: 12.sp),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
               const DummyContainer(
                 width: 50,
-                height: 10,
+                height: 20,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.0.sp),
                 child: DummyContainer(
                   width: 50,
-                  height: 10,
+                  height: 20,
                 ),
               ),
               Container(
@@ -77,7 +77,7 @@ class DummyProductDetails extends StatelessWidget {
                       top: 6.sp, bottom: 6.sp, left: 8.sp, right: 8.sp),
                   child: DummyContainer(
                     width: 50,
-                    height: 10,
+                    height: 20,
                   ),
                 ),
               )
@@ -89,7 +89,7 @@ class DummyProductDetails extends StatelessWidget {
           children: [
             Padding(
                 padding: EdgeInsets.only(
-                    top: 30.0.sp, bottom: 0.0.sp, left: 12.sp, right: 12.sp),
+                    top: 30.0.sp, bottom: 5.0.sp, left: 12.sp, right: 12.sp),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
@@ -97,14 +97,43 @@ class DummyProductDetails extends StatelessWidget {
                   children: [
                     DummyContainer(
                       width: 50,
-                      height: 10,
+                      height: 20,
                     ),
                     DummyContainer(
                       width: 50,
-                      height: 10,
+                      height: 20,
                     ),
                   ],
                 )),
+            Padding(
+              padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
+              child: DummyContainer(height: 40.sp, width: 50.sp),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 14.sp, horizontal: 12.sp),
+              child: DummyContainer(
+                height: 2.sp,
+                width: MediaQuery.of(context).size.width,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
+              child: DummyContainer(height: 40.sp, width: 50.sp),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 20.sp),
+              child: DummyContainer(
+                width: 200.sp,
+                height: 20.sp,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 20.sp),
+              child: DummyContainer(
+                width: 50,
+                height: 50.sp,
+              ),
+            ),
           ],
         ),
       ],

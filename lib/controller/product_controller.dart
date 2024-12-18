@@ -1721,6 +1721,10 @@ class ProductController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         getItBy = responseData;
+      } else if (response.statusCode == 400) {
+        if (responseData["errors"]["zip"].isNotEmpty) {
+          getSnackBar("Invalid Pincode");
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -1731,7 +1735,7 @@ class ProductController extends BaseController {
         );
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get product failed");
+        getSnackBar("get estimate delivery failed");
       }
     } catch (e) {
       print("error$e");

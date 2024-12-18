@@ -1844,8 +1844,78 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               )),
                     Obx(
                       () => productController.isEstimateDate.value
-                          ? SizedBox(
-                              height: 0,
+                          ? Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(right: 12.0.sp),
+                                        child: DummyContainer(
+                                          height: 18.sp,
+                                          width: 18.sp,
+                                        ),
+                                      ),
+                                      DummyContainer(
+                                        height: 18.sp,
+                                        width: 150.sp,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(right: 12.0.sp),
+                                        child: DummyContainer(
+                                          height: 18.sp,
+                                          width: 18.sp,
+                                        ),
+                                      ),
+                                      DummyContainer(
+                                        height: 18.sp,
+                                        width: 150.sp,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.only(right: 12.0.sp),
+                                        child: DummyContainer(
+                                          height: 18.sp,
+                                          width: 18.sp,
+                                        ),
+                                      ),
+                                      DummyContainer(
+                                        height: 18.sp,
+                                        width: 150.sp,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
                             )
                           : Padding(
                               padding: EdgeInsets.only(
