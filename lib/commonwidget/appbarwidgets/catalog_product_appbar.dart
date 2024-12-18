@@ -37,6 +37,7 @@ class CatalogProductAppbar extends StatelessWidget {
                   prefs.remove("sizeList");
                   prefs.remove("upper");
                   prefs.remove("lower");
+                  prefs.remove("sortby");
                 },
                 child: Image.asset(
                   arrowBack,

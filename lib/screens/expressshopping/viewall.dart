@@ -765,6 +765,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                     prefs.remove("sizeList");
                                     prefs.remove("upper");
                                     prefs.remove("lower");
+                                    prefs.remove("sortby");
                                     productController
                                         .getBrandExpressProductData(
                                             widget.brandId,

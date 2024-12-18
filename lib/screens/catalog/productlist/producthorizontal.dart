@@ -87,6 +87,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
         prefs.remove("sizeList");
         prefs.remove("upper");
         prefs.remove("lower");
+        prefs.remove("sortby");
         return true;
       },
       child: Scaffold(
@@ -645,6 +646,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                 prefs.remove("sizeList");
                                 prefs.remove("upper");
                                 prefs.remove("lower");
+                                prefs.remove("sortby");
                                 productController.getProductByCategoryData(
                                     widget.categoryId,
                                     0,

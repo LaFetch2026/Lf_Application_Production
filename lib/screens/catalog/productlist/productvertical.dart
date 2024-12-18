@@ -188,6 +188,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
         prefs.remove("sizeList");
         prefs.remove("upper");
         prefs.remove("lower");
+        prefs.remove("sortby");
         return true;
       },
       child: Scaffold(
@@ -831,6 +832,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                   prefs.remove("sizeList");
                                   prefs.remove("upper");
                                   prefs.remove("lower");
+                                  prefs.remove("sortby");
                                   productController.getProductByCategoryData(
                                       widget.categoryId,
                                       0,

@@ -388,13 +388,14 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/order/$orderId/generate-invoice"),
+          Uri.parse("${ApiConstants.baseUrl}/order/$orderId/mail-invoice"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
+      var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (Platform.isAndroid) {
+        /* if (Platform.isAndroid) {
           const downloadsFolderPath = '/storage/emulated/0/Download/';
           Directory dir = Directory(downloadsFolderPath);
           final file = File('${dir.path}/OrderId${orderId}_invoice.pdf');
@@ -404,8 +405,8 @@ class OrderController extends BaseController {
           final dir = await getApplicationDocumentsDirectory();
           final file = File('${dir.path}/invoice.pdf');
           await file.writeAsBytes(response.bodyBytes);
-        }
-        getSnackBar("Invoice downloaded");
+        } */
+        getSnackBar(responseData["message"]);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

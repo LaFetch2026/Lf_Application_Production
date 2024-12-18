@@ -3877,7 +3877,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             textColor: whiteTextColor,
                             backgroundColor: btnTextColor,
                             onPressed: () async {
-                              final permission =
+                              /*  final permission =
                                   await FlDownloader.requestPermission();
                               if (permission ==
                                   StoragePermissionStatus.granted) {
@@ -3890,7 +3890,9 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     .getDownloadInvoice(widget.orderId);
                               } else {
                                 debugPrint('Permission denied =(');
-                              }
+                              } */
+                              orderController
+                                  .getDownloadInvoice(widget.orderId);
                               await analytics.logEvent(
                                 name: 'download_invoice',
                                 parameters: <String, Object>{

@@ -209,6 +209,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
         prefs.remove("sizeList");
         prefs.remove("upper");
         prefs.remove("lower");
+        prefs.remove("sortby");
         Get.offAll(const BottomNavScreen(
           index: 0,
         ));

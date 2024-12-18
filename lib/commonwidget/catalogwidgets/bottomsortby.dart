@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/constants.dart';
 
 class BottomSortBy extends StatefulWidget {
@@ -24,6 +25,20 @@ class _BottomSortByState extends State<BottomSortBy> {
     Timer(Duration(seconds: 1), () {
       Navigator.pop(context);
     });
+  }
+
+  @override
+  void initState() {
+    getPrefrenceValue();
+    super.initState();
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('sortby') != null) {
+      text1 = prefs.getString('sortby');
+    }
+    setState(() {});
   }
 
   @override
@@ -70,15 +85,19 @@ class _BottomSortByState extends State<BottomSortBy> {
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) {
-                      setState(() {
+                      setState(() async {
                         text1 = value.toString();
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setString("sortby", text1!);
                         widget.onPressedButton.call(text1!);
                       });
                       closeSheet();
                     }),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     text1 = "";
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setString("sortby", text1!);
                     widget.onPressedButton.call(text1!);
                     setState(() {});
                     closeSheet();
@@ -101,15 +120,19 @@ class _BottomSortByState extends State<BottomSortBy> {
                     value: "low-to-high",
                     activeColor: colorPrimary,
                     groupValue: text1,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       text1 = value.toString();
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString("sortby", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
                       closeSheet();
                     }),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     text1 = "low-to-high";
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setString("sortby", text1!);
                     setState(() {});
                     widget.onPressedButton.call(text1!);
                     closeSheet();
@@ -132,15 +155,19 @@ class _BottomSortByState extends State<BottomSortBy> {
                     value: "whats-new",
                     activeColor: colorPrimary,
                     groupValue: text1,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       text1 = value.toString();
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString("sortby", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
                       closeSheet();
                     }),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     text1 = "whats-new";
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setString("sortby", text1!);
                     setState(() {});
                     widget.onPressedButton.call(text1!);
                     closeSheet();
@@ -163,15 +190,19 @@ class _BottomSortByState extends State<BottomSortBy> {
                     value: "high-to-low",
                     activeColor: colorPrimary,
                     groupValue: text1,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       text1 = value.toString();
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString("sortby", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
                       closeSheet();
                     }),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     text1 = "high-to-low";
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setString("sortby", text1!);
                     setState(() {});
                     widget.onPressedButton.call(text1!);
                     closeSheet();
@@ -194,15 +225,19 @@ class _BottomSortByState extends State<BottomSortBy> {
                     value: "customer-rating",
                     activeColor: colorPrimary,
                     groupValue: text1,
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       text1 = value.toString();
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString("sortby", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
                       closeSheet();
                     }),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     text1 = "customer-rating";
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setString("sortby", text1!);
                     setState(() {});
                     widget.onPressedButton.call(text1!);
                     closeSheet();
