@@ -377,14 +377,16 @@ class CartController extends BaseController {
           body: json.encode(sendData));
       if (response.statusCode == 200) {
         print(response.body);
-        Get.to(const PaymentSuccessScreen(
+        Get.to(PaymentSuccessScreen(
             text1: "Order Placed Successfully",
+            orderId: cartId,
             text2: "Thank you for placing your order",
             image: orderSucessImage));
       } else if (response.statusCode == 400) {
         print(response.body);
         Get.to(const PaymentSuccessScreen(
             text1: "Payment Failed",
+            orderId: 0,
             text2: "Thank you for placing your order",
             image: paymentFailImage));
       } else if (response.statusCode == 500) {

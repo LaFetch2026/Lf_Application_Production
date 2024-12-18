@@ -97,6 +97,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     Get.to(const PaymentSuccessScreen(
         text1: "Payment Failed",
         text2: "Thank you for placing your order",
+        orderId: 0,
         image: paymentFailImage));
     // Do something when payment fails
   }
@@ -105,6 +106,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     print("Wallet ${response.walletName}");
     Get.to(const PaymentSuccessScreen(
         text1: "Uh-oh something went wrong!",
+        orderId: 0,
         text2: "Thank you for placing your order",
         image: errorImage));
     // Do something when an external wallet is selected

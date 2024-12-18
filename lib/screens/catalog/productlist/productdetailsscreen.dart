@@ -3586,8 +3586,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ? getSingleButton(
                                     label: "Out of Stock",
                                     textColor: whiteBorderColor,
-                                    right: 16,
-                                    left: 16,
+                                    right: 12,
+                                    left: 12,
                                     backgroundColor: colorPrimary,
                                     controller: productController,
                                     borderColor: colorPrimary)
@@ -3600,7 +3600,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             .productDetails["added_to_cart"]
                                         ? 8
                                         : 16,
-                                    left: 16,
+                                    left: 8,
                                     backgroundColor: colorPrimary,
                                     controller: productController,
                                     onPressed: () async {
