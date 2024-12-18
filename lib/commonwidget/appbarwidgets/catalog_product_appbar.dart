@@ -65,7 +65,7 @@ class CatalogProductAppbar extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   child: ImageIcon(
                     AssetImage(searchImage),
-                    color: textHintColor,
+                    color: whiteColor,
                     size: 20.sp,
                   ),
                 ),
@@ -76,16 +76,11 @@ class CatalogProductAppbar extends StatelessWidget {
                 },
                 child: Padding(
                   padding: EdgeInsets.only(left: 10.sp),
-                  child: SizedBox(
-                    height: 28.sp,
-                    width: 28.sp,
-                    child: CircleAvatar(
-                        backgroundColor: whiteColor,
-                        child: Image.asset(
-                          cartNewImage,
-                          height: 20.sp,
-                          width: 20.sp,
-                        )),
+                  child: Image.asset(
+                    cartNewImage,
+                    color: whiteColor,
+                    height: 20.sp,
+                    width: 20.sp,
                   ),
                 ),
               ),

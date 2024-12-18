@@ -353,7 +353,7 @@ class ProductController extends BaseController {
       if (genderType != 0) {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -362,7 +362,7 @@ class ProductController extends BaseController {
       } else {
         response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
+              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -406,7 +406,7 @@ class ProductController extends BaseController {
         if (genderType != 0) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -414,7 +414,7 @@ class ProductController extends BaseController {
         } else {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
