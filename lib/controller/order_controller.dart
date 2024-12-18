@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../utils/constants.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 
 class OrderController extends BaseController {
   RxBool isOrder = false.obs;

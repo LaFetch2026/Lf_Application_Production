@@ -42,6 +42,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
       orderController.page.value = 1;
       orderController.lat.value = 0.0;
       orderController.lng.value = 0.0;
+      orderController.queryText.value = "";
     });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => orderController.getOrderData());
