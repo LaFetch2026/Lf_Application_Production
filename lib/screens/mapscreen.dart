@@ -10,14 +10,13 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import '../controller/shipaddress_controller.dart';
 import '../utils/constants.dart';
-/* import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart'; */
 
 class MapScreen extends StatefulWidget {
   final int addressId;
@@ -42,11 +41,15 @@ class MapScreenState extends State<MapScreen> {
   Placemark? address;
   List<Placemark>? placeMarks;
   Timer? debounce;
-  static const kGoogleApiKey = "AIzaSyDXRJ6LB081NKtUjCSryOAj_NVt0BTyy0s";
+  static const kGoogleApiKey = "AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc";
   TextEditingController controller = TextEditingController();
+  final places =
+      GoogleMapsPlaces(apiKey: 'AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc');
 
   @override
   void initState() {
+    shipController.locationList.clear();
+    shipController.locationController.clear();
     if (widget.addressId != 0) {
       shipController.getAddressDetails(widget.addressId, 2, widget.cartId);
     } else {
@@ -65,7 +68,7 @@ class MapScreenState extends State<MapScreen> {
         CameraPosition(target: shipController.defaultLatLng.value, zoom: 15);
   }
 
-  void searchLocation(String value) async {
+  /*  void searchLocation(String value) async {
     List<Location> locations = await locationFromAddress(value);
     if (locations.isNotEmpty) {
       onLocationSelected(
@@ -76,17 +79,17 @@ class MapScreenState extends State<MapScreen> {
   void onLocationSelected(LatLng location) async {
     GoogleMapController mapController = await googleMapController.future;
     mapController.animateCamera(CameraUpdate.newLatLng(location));
-  }
+  } */
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 500), () {
-      // FocusScope.of(context).requestFocus(FocusNode());
-      searchLocation(query);
+    debounce = Timer(const Duration(milliseconds: 100), () {
+      // searchLocation(query);
+      shipController.getSearchLocation(query);
     });
   }
 
-  /* Future<void> searchPlaces() async {
+  /*  Future<void> searchPlaces() async {
     Prediction? p = await PlacesAutocomplete.show(
       context: context,
       apiKey: kGoogleApiKey,
@@ -122,7 +125,7 @@ class MapScreenState extends State<MapScreen> {
                       child: Stack(
                         children: [
                           _getMap(),
-                          /*  Padding(
+                          Padding(
                             padding: EdgeInsets.only(top: 50.0.sp, left: 10.sp),
                             child: InkWell(
                                 onTap: () {
@@ -135,7 +138,7 @@ class MapScreenState extends State<MapScreen> {
                                   color: colorPrimary,
                                 )),
                           ),
-                          Padding(
+                          /*  Padding(
                             padding:
                                 EdgeInsets.only(top: 100.0.sp, left: 10.sp),
                             child: GestureDetector(
@@ -156,8 +159,8 @@ class MapScreenState extends State<MapScreen> {
                                 ),
                               ),
                             ),
-                          ),
-                          */
+                          ), */
+                          _getCustomPin(),
                           Padding(
                             padding: EdgeInsets.only(top: 28.sp),
                             child: Container(
@@ -197,6 +200,8 @@ class MapScreenState extends State<MapScreen> {
                                                         is RawKeyDownEvent) {}
                                                   },
                                                   child: TextField(
+                                                    controller: shipController
+                                                        .locationController,
                                                     textCapitalization:
                                                         TextCapitalization
                                                             .words,
@@ -215,14 +220,6 @@ class MapScreenState extends State<MapScreen> {
                                                       filled: true,
                                                       isDense: true,
                                                       fillColor: whiteColor,
-                                                      /* suffixIcon: InkWell(
-                                                        onTap: () {},
-                                                        child: ImageIcon(
-                                                          AssetImage(
-                                                              searchNewImage),
-                                                          size: 14.sp,
-                                                        ),
-                                                      ), */
                                                       prefixIcon: Icon(
                                                           Icons.search,
                                                           size: 20.sp,
@@ -279,6 +276,8 @@ class MapScreenState extends State<MapScreen> {
                                                         is RawKeyDownEvent) {}
                                                   },
                                                   child: TextField(
+                                                    controller: shipController
+                                                        .locationController,
                                                     textCapitalization:
                                                         TextCapitalization
                                                             .words,
@@ -349,37 +348,148 @@ class MapScreenState extends State<MapScreen> {
                               ),
                             ),
                           ),
-                          /*    Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20.sp, vertical: 40.sp),
-                            child: GooglePlaceAutoCompleteFlutterTextField(
-                                textEditingController: controller,
-                                googleAPIKey:
-                                    "AIzaSyDXRJ6LB081NKtUjCSryOAj_NVt0BTyy0s",
-                                inputDecoration: InputDecoration(
-                                    hintText: "Search your location"),
-                                debounceTime: 800,
-                                countries: ["in", "fr"],
-                                types: ['country'],
-                                language: 'en',
-                                textStyle: TextStyle(color: textColor),
-                                isLatLngRequired: true,
-                                getPlaceDetailWithLatLng:
-                                    (Prediction prediction) {
-                                  print("placeDetails" +
-                                      prediction.lng.toString());
-                                },
-                                itmClick: (Prediction prediction) {
-                                  controller.text = prediction.description!;
-
-                                  controller.selection =
-                                      TextSelection.fromPosition(TextPosition(
-                                          offset:
-                                              prediction.description!.length));
-                                  setState(() {});
-                                }),
+                          Padding(
+                            padding: EdgeInsets.only(top: 98.sp),
+                            child: Container(
+                              // height: 200.sp,
+                              child: shipController.isLocation.value
+                                  ? Container(
+                                      color: whiteColor,
+                                      child: Center(
+                                          child: CircularProgressIndicator()))
+                                  : ListView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      physics: const ScrollPhysics(),
+                                      itemCount:
+                                          shipController.locationList.length,
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (ctx, index) {
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () async {
+                                                shipController
+                                                    .locationController
+                                                    .clear();
+                                                PlacesDetailsResponse details =
+                                                    await places.getDetailsByPlaceId(
+                                                        shipController
+                                                                .locationList[
+                                                            index]["place_id"]);
+                                                double latitude = details.result
+                                                    .geometry!.location.lat;
+                                                double longitude = details
+                                                    .result
+                                                    .geometry!
+                                                    .location
+                                                    .lng;
+                                                shipController.locationList
+                                                    .clear();
+                                                print(" $latitude  $longitude");
+                                                GoogleMapController
+                                                    mapController =
+                                                    await googleMapController
+                                                        .future;
+                                                mapController.animateCamera(
+                                                    CameraUpdate
+                                                        .newCameraPosition(
+                                                            CameraPosition(
+                                                                target: LatLng(
+                                                                    latitude,
+                                                                    longitude),
+                                                                zoom: 15)));
+                                                FocusScope.of(context)
+                                                    .requestFocus(FocusNode());
+                                              },
+                                              child: Container(
+                                                color: whiteColor,
+                                                width: double.infinity,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 10.sp,
+                                                                horizontal:
+                                                                    16.sp),
+                                                        child: Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right:
+                                                                          6.sp),
+                                                              child: ImageIcon(
+                                                                AssetImage(
+                                                                    locationIcon),
+                                                                color: nameText,
+                                                                size: 20.sp,
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              child: Text(
+                                                                shipController
+                                                                            .locationList[
+                                                                        index][
+                                                                    "description"],
+                                                                maxLines: 5,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      14.sp,
+                                                                  color:
+                                                                      nameText,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    index ==
+                                                            shipController
+                                                                    .locationList
+                                                                    .length -
+                                                                1
+                                                        ? SizedBox(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 5.sp,
+                                                          )
+                                                        : Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        16.sp,
+                                                                    vertical:
+                                                                        2.sp),
+                                                            child: Container(
+                                                              width: double
+                                                                  .infinity,
+                                                              color:
+                                                                  colorSecondary,
+                                                              height: 1.sp,
+                                                            ),
+                                                          ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
+                            ),
                           ),
-                          */
                           Align(
                             alignment: Alignment.bottomRight,
                             child: InkWell(
@@ -397,7 +507,6 @@ class MapScreenState extends State<MapScreen> {
                               ),
                             ),
                           ),
-                          _getCustomPin(),
                         ],
                       )),
                   Expanded(

@@ -18,6 +18,7 @@ class ShipAddressController extends BaseController {
   RxBool onButton = false.obs;
   RxBool isCheck = false.obs;
   RxBool isCity = false.obs;
+  RxBool isLocation = false.obs;
   RxInt defaultBilling = 0.obs;
   RxInt defaultShipping = 0.obs;
   RxBool isDetails = false.obs;
@@ -26,6 +27,7 @@ class ShipAddressController extends BaseController {
   RxString type = "".obs;
   List cityList = [].obs;
   List estimateDeliveryList = [].obs;
+  List locationList = [].obs;
   RxInt current = 3.obs;
   RxInt cityId = 0.obs;
   RxInt cartId = 0.obs;
@@ -45,6 +47,7 @@ class ShipAddressController extends BaseController {
   final addressController = TextEditingController();
   final localityController = TextEditingController();
   final searchController = TextEditingController();
+  final locationController = TextEditingController();
   RxString nameError = "".obs;
   RxString phoneError = "".obs;
   RxString pincodeError = "".obs;
@@ -448,5 +451,37 @@ class ShipAddressController extends BaseController {
       print("error$e");
     }
     isDelivery.value = false;
+  }
+
+  getSearchLocation(String query) async {
+    isLocation.value = true;
+    try {
+      Map<String, dynamic> querys = {
+        'input': query,
+        'key': "AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc"
+      };
+      final url = Uri.https(
+          "maps.googleapis.com", "maps/api/place/autocomplete/json", querys);
+      final response = await http.get(url);
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print("Search location $responseData");
+        locationList = responseData["predictions"];
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get Location failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isLocation.value = false;
   }
 }
