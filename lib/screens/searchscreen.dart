@@ -615,7 +615,14 @@ class SearchScreenState extends State<SearchScreen> {
                                                               brandController
                                                                       .brandList[
                                                                   index]["id"],
-                                                        ));
+                                                        ))?.then(
+                                                            (value) => setState(
+                                                                  () {
+                                                                    brandController
+                                                                        .getBrandData(
+                                                                            "brand search");
+                                                                  },
+                                                                ));
                                                       }
                                                       await analytics.logEvent(
                                                         name:
