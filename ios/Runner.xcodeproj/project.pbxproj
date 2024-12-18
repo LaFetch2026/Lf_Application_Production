@@ -382,6 +382,7 @@
 				DEVELOPMENT_TEAM = FQLY4F47UM;
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLUTTER_BUILD_NUMBER = 15;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Lafetch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
@@ -519,6 +520,7 @@
 				DEVELOPMENT_TEAM = FQLY4F47UM;
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLUTTER_BUILD_NUMBER = 15;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Lafetch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
@@ -548,6 +550,7 @@
 				DEVELOPMENT_TEAM = FQLY4F47UM;
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FLUTTER_BUILD_NUMBER = 15;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Lafetch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
