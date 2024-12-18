@@ -181,27 +181,56 @@ class DiscountScreenState extends State<DiscountScreen> {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
-                                          productController.current.value =
-                                              index;
-                                          productController.tagId.value =
-                                              productController.tagsList[index]
-                                                  ["id"];
-                                          productController.tagname.value =
-                                              productController.tagsList[index]
-                                                  ["name"];
-                                          productController.tagProductList
-                                              .clear();
-                                          productController.expressProductList
-                                              .clear();
-                                          productController
-                                              .getExpressProductData(
-                                                  productController.tagId.value,
-                                                  widget.genderType);
-                                          productController.getTagsProductData(
-                                              productController.tagId.value,
-                                              widget.genderType,
-                                              0);
-                                          productController.update();
+                                          if (productController.current.value ==
+                                              index) {
+                                            productController.current.value =
+                                                50;
+                                            productController.tagId.value = 0;
+                                            productController.tagname.value =
+                                                "We think you might also like";
+                                            productController.tagProductList
+                                                .clear();
+                                            productController.expressProductList
+                                                .clear();
+                                            productController
+                                                .getExpressProductData(
+                                                    productController
+                                                        .tagId.value,
+                                                    widget.genderType);
+                                            productController
+                                                .getTagsProductData(
+                                                    productController
+                                                        .tagId.value,
+                                                    widget.genderType,
+                                                    0);
+                                            productController.update();
+                                          } else {
+                                            productController.current.value =
+                                                index;
+                                            productController.tagId.value =
+                                                productController
+                                                    .tagsList[index]["id"];
+                                            productController.tagname.value =
+                                                productController
+                                                    .tagsList[index]["name"];
+                                            productController.tagProductList
+                                                .clear();
+                                            productController.expressProductList
+                                                .clear();
+                                            productController
+                                                .getExpressProductData(
+                                                    productController
+                                                        .tagId.value,
+                                                    widget.genderType);
+                                            productController
+                                                .getTagsProductData(
+                                                    productController
+                                                        .tagId.value,
+                                                    widget.genderType,
+                                                    0);
+                                            productController.update();
+                                          }
+
                                           await analytics.logEvent(
                                             name: 'tabclick_home_page',
                                             parameters: <String, Object>{
