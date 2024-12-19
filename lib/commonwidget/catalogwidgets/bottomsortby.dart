@@ -81,21 +81,21 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "",
+                    value: "recommended",
                     activeColor: colorPrimary,
                     groupValue: text1,
-                    onChanged: (value) {
-                      setState(() async {
-                        text1 = value.toString();
-                        final prefs = await SharedPreferences.getInstance();
-                        prefs.setString("sortby", text1!);
-                        widget.onPressedButton.call(text1!);
-                      });
+                    onChanged: (value) async {
+                      text1 = value.toString();
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString("sortby", text1!);
+                      setState(() {});
+                      widget.onPressedButton.call(text1!);
+
                       closeSheet();
                     }),
                 GestureDetector(
                   onTap: () async {
-                    text1 = "";
+                    text1 = "recommended";
                     final prefs = await SharedPreferences.getInstance();
                     prefs.setString("sortby", text1!);
                     widget.onPressedButton.call(text1!);
