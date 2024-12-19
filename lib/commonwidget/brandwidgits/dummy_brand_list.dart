@@ -5,7 +5,9 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import '../../utils/constants.dart';
 
 class DummybrandList extends StatelessWidget {
+  final int size;
   const DummybrandList({
+    this.size = 10,
     Key? key,
   }) : super(key: key);
 
@@ -19,7 +21,7 @@ class DummybrandList extends StatelessWidget {
             primary: false,
             shrinkWrap: true,
             physics: const ScrollPhysics(),
-            itemCount: 10,
+            itemCount: size,
             padding: EdgeInsets.zero,
             scrollDirection: Axis.vertical,
             itemBuilder: (ctx, index) {

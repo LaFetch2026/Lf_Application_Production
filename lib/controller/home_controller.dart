@@ -41,6 +41,7 @@ class HomeController extends BaseController {
   // RxInt current = 0.obs;
   ScrollController tagsController = ScrollController();
   ScrollController discountScreenController = ScrollController();
+  List<bool> selected = List.generate(50, (i) => false).obs;
 
   /* @override
   void onInit() {
