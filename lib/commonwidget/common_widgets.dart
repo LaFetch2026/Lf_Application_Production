@@ -265,10 +265,10 @@ Widget showDoubleBtnDailog(
               Padding(
                 padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  padding: EdgeInsets.symmetric(horizontal: 6.sp),
                   child: Center(
                     child: SizedBox(
-                        width: 80.sp,
+                        width: 90.sp,
                         height: 30.sp,
                         child: ElevatedButton(
                             style: ButtonStyle(
@@ -299,10 +299,10 @@ Widget showDoubleBtnDailog(
               Padding(
                 padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  padding: EdgeInsets.symmetric(horizontal: 6.sp),
                   child: Center(
                     child: SizedBox(
-                        width: 80.sp,
+                        width: 95.sp,
                         height: 30.sp,
                         child: ElevatedButton(
                             style: ButtonStyle(
