@@ -363,35 +363,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () async {
-                                  if (productController.sizeInventoryId == 0) {
-                                    /*  final prefs =
-                                    await SharedPreferences.getInstance(); */
-                                    productController.selectedProductSize = i;
-                                    productController.sizeInventoryId.value =
-                                        productController
-                                            .selectedProductSize["id"];
-                                    productController.colorInventoryId.value =
-                                        0;
-                                    print(productController
-                                        .sizeInventoryId.value);
-                                    productController.colorInventoryList =
-                                        i["product_matrix_available_colors"];
+                                  // if (productController.sizeInventoryId == 0) {
+                                  productController.selectedProductSize = i;
+                                  productController.sizeInventoryId.value =
+                                      productController
+                                          .selectedProductSize["id"];
+                                  productController.colorInventoryId.value = 0;
+                                  print(
+                                      productController.sizeInventoryId.value);
+                                  productController.colorInventoryList =
+                                      i["product_matrix_available_colors"];
 
-                                    /*   prefs.setInt("inventorySizeId",
-                                    selectedProductSize["id"]); */
-                                    print(productController
-                                        .selectedProductSize["id"]);
-                                    print(i['product_matrix_size_name']);
-                                    // prefs.remove("inventoryColorId");
-                                    setState(() {});
-                                    await analytics.logEvent(
-                                      name: 'productDetails_sizeSelect',
-                                      parameters: <String, Object>{
-                                        'page_name':
-                                            'productDetails_sizeSelect',
-                                      },
-                                    );
-                                  }
+                                  print(productController
+                                      .selectedProductSize["id"]);
+                                  print(i['product_matrix_size_name']);
+
+                                  setState(() {});
+                                  await analytics.logEvent(
+                                    name: 'productDetails_sizeSelect',
+                                    parameters: <String, Object>{
+                                      'page_name': 'productDetails_sizeSelect',
+                                    },
+                                  );
+                                  //  }
                                 },
                                 child: Container(
                                     decoration: BoxDecoration(

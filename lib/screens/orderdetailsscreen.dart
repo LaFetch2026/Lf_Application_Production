@@ -74,6 +74,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
           getPrefrenceValue();
+          orderController.isDownloadInvoice.value = false;
           orderController.trackList.clear();
           orderController.selected.clear();
           orderController.selected = List.generate(50, (i) => false);
@@ -3871,13 +3872,23 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         )),
                   Obx(() => Padding(
                         padding: EdgeInsets.only(top: 10.sp, bottom: 20.sp),
-                        child: getSingleButton(
-                            label: "Download Invoice",
-                            controller: orderController,
-                            textColor: whiteTextColor,
-                            backgroundColor: btnTextColor,
-                            onPressed: () async {
-                              /*  final permission =
+                        child: orderController.isDownloadInvoice.value
+                            ? Center(
+                                child: AppText(
+                                  text: "Invoice Downloaded",
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                  color: greenText,
+                                  fontSize: 16,
+                                ),
+                              )
+                            : getSingleButton(
+                                label: "Download Invoice",
+                                controller: orderController,
+                                textColor: whiteTextColor,
+                                backgroundColor: btnTextColor,
+                                onPressed: () async {
+                                  /*  final permission =
                                   await FlDownloader.requestPermission();
                               if (permission ==
                                   StoragePermissionStatus.granted) {
@@ -3891,16 +3902,16 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               } else {
                                 debugPrint('Permission denied =(');
                               } */
-                              orderController
-                                  .getDownloadInvoice(widget.orderId);
-                              await analytics.logEvent(
-                                name: 'download_invoice',
-                                parameters: <String, Object>{
-                                  'page_name': 'download_invoice',
+                                  orderController
+                                      .getDownloadInvoice(widget.orderId);
+                                  await analytics.logEvent(
+                                    name: 'download_invoice',
+                                    parameters: <String, Object>{
+                                      'page_name': 'download_invoice',
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                            borderColor: btnTextColor),
+                                borderColor: btnTextColor),
                       ))
                 ],
               ),

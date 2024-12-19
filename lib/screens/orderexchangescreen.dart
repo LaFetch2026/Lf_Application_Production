@@ -405,6 +405,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     GestureDetector(
                                                                   onTap:
                                                                       () async {
+                                                                    orderController
+                                                                        .isDownloadInvoice
+                                                                        .value = false;
                                                                     Get.to(
                                                                         OrderDetailsScreen(
                                                                       orderId: value
@@ -1166,6 +1169,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             whiteColor,
                                                                         onPressed:
                                                                             () async {
+                                                                          orderController
+                                                                              .isDownloadInvoice
+                                                                              .value = false;
                                                                           Get.to(
                                                                               OrderDetailsScreen(
                                                                             orderId:

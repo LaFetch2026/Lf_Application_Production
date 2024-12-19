@@ -18,6 +18,7 @@ class OrderController extends BaseController {
   RxBool isDetails = false.obs;
   RxBool isTrack = false.obs;
   RxBool isInvoice = false.obs;
+  RxBool isDownloadInvoice = false.obs;
   RxDouble rating = 0.0.obs;
   final comment = TextEditingController();
   RxBool isUpdateLocation = false.obs;
@@ -395,6 +396,7 @@ class OrderController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        isDownloadInvoice.value = true;
         /* if (Platform.isAndroid) {
           const downloadsFolderPath = '/storage/emulated/0/Download/';
           Directory dir = Directory(downloadsFolderPath);
