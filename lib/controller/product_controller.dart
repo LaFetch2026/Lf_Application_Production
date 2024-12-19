@@ -1778,6 +1778,11 @@ class ProductController extends BaseController {
                 addressTypeValue.value = responseData[i]["type"];
               }
             }
+            if (id == 0 && addressText.value == "") {
+              addressText.value =
+                  "${responseData[0]["zip"]}, ${responseData[0]["address"]}";
+              addressTypeValue.value = responseData[0]["type"];
+            }
             if (id != 0) {
               getEstimateDate(id, defaultAddress["zip"]);
             }

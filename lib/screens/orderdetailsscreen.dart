@@ -628,14 +628,14 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             ] else if (orderController
                                                         .trackList[orderController.trackList.length - 1]
                                                     ["status"] ==
-                                                7) ...[
+                                                6) ...[
                                               Expanded(
                                                 flex: 1,
                                                 child: AppText(
-                                                  text: "Order Return",
+                                                  text: "Order Cancelled",
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
-                                                  color: deepGreen,
+                                                  color: deepRed,
                                                   fontSize: 14,
                                                 ),
                                               ),
