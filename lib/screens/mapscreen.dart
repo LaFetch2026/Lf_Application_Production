@@ -48,16 +48,21 @@ class MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
-    shipController.locationList.clear();
-    shipController.locationController.clear();
+    WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
+          shipController.locationList.clear();
+          shipController.locationController.clear();
+        });
+
     if (widget.addressId != 0) {
-      shipController.getAddressDetails(widget.addressId, 2, widget.cartId);
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          shipController.getAddressDetails(widget.addressId, 2, widget.cartId));
     } else {
       _init();
     }
     rootBundle.loadString('assets/map_style.json').then((string) {
       mapStyle = string;
     });
+
     super.initState();
   }
 
