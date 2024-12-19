@@ -65,16 +65,15 @@ class CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
-          if (widget.addressId != 0) {
-            shipController.addressId.value = widget.addressId;
-            WidgetsBinding.instance.addPostFrameCallback((_) => shipController
-                .getAddressDetails(widget.addressId, 1, widget.cartId));
-          } else {
-            shipController.addressId.value = 0;
-            shipController.addressDetails = "";
-          }
-        });
+    if (widget.addressId != 0) {
+      shipController.addressId.value = widget.addressId;
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          shipController.getAddressDetails(widget.addressId, 1, widget.cartId));
+    } else {
+      shipController.addressId.value = 0;
+      shipController.addressDetails = "";
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
           razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
           razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
