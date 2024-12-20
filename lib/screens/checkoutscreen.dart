@@ -74,11 +74,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       shipController.addressDetails = "";
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
-          razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
-          razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
-          razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
-        });
+    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
+    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
     super.initState();
   }
 

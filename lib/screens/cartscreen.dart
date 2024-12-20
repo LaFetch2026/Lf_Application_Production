@@ -843,439 +843,360 @@ class CartScreenState extends State<CartScreen> {
                                                         }),
                                                   ),
                                                 )),
-                                          ],
-                                        ),
-                                ],
-                              ),
-                  ),
-                  Obx(
-                    () => productController.isProduct.value
-                        ? const DummyProductList(text: "You may also like")
-                        : productController.productList.isNotEmpty
-                            ? Container(
-                                color: whiteBack,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 24.sp, left: 16.sp),
-                                      child: AppText(
-                                        text: "You may also like",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: colorPrimary,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.sp, vertical: 10.sp),
-                                      child: SizedBox(
-                                          width: double.infinity,
-                                          height: 310.sp,
-                                          child: GetBuilder<ProductController>(
-                                            builder: (value) =>
-                                                ListView.builder(
-                                                    shrinkWrap: true,
-                                                    primary: false,
-                                                    controller:
-                                                        productController
-                                                            .listController,
-                                                    physics:
-                                                        const BouncingScrollPhysics(),
-                                                    itemCount: value
-                                                        .productList.length,
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    itemBuilder: (ctx, index) {
-                                                      return Column(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () async {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .push(MaterialPageRoute(
-                                                                      builder: (BuildContext context) => ProductDetailsScreen(
-                                                                          productId: value.productList[index]
-                                                                              [
-                                                                              "id"],
-                                                                          brandName: value.productList[index]
-                                                                              [
-                                                                              "brand_name"],
-                                                                          type:
-                                                                              "add")))
-                                                                  .then((value) =>
-                                                                      setState(
-                                                                        () {
-                                                                          productController
-                                                                              .hasnextpage
-                                                                              .value = true;
-                                                                          productController
-                                                                              .loadMore
-                                                                              .value = false;
-                                                                          productController
-                                                                              .isProduct
-                                                                              .value = false;
-                                                                          productController
-                                                                              .page
-                                                                              .value = 1;
-                                                                          productController
-                                                                              .getProductData("relevant");
-                                                                          controller
-                                                                              .getCartData();
-                                                                          controller
-                                                                              .update();
-                                                                        },
-                                                                      ));
-                                                              await analytics
-                                                                  .logEvent(
-                                                                name:
-                                                                    'cart_youmay_product_details',
-                                                                parameters: <String,
-                                                                    Object>{
-                                                                  'page_name':
-                                                                      'cart_youmay_product_details',
-                                                                },
-                                                              );
-                                                            },
-                                                            child:
-                                                                AnimatedContainer(
-                                                              duration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                              margin: EdgeInsets
+                                            productController.isProduct.value
+                                                ? const DummyProductList(
+                                                    text: "You may also like")
+                                                : productController
+                                                        .productList.isNotEmpty
+                                                    ? Container(
+                                                        color: whiteBack,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets
                                                                   .only(
-                                                                      right:
-                                                                          8.sp),
-                                                              color: whiteColor,
-                                                              width: 122.sp,
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  productController
-                                                                              .productList[index][
-                                                                                  "images"]
-                                                                              .isNotEmpty &&
-                                                                          productController.productList[index]["images"] !=
-                                                                              null
-                                                                      ? SizedBox(
-                                                                          height:
-                                                                              150.sp,
-                                                                          width:
-                                                                              122.sp,
-                                                                          child:
-                                                                              CachedNetworkImage(
-                                                                            cacheManager: CacheManager(Config("customCacheKey",
-                                                                                stalePeriod: const Duration(days: 15),
-                                                                                maxNrOfCacheObjects: 100)),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                            imageUrl: isImage(productController.productList[index]["images"][0]["name"])
-                                                                                ? productController.productList[index]["images"][0]["name"]
-                                                                                : productController.productList[index]["images"][1]["name"],
-                                                                            /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                                                        child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                      ), */
-                                                                            errorWidget: (context, url, error) =>
-                                                                                Image.asset(
-                                                                              downloadImage,
-                                                                              fit: BoxFit.cover,
-                                                                              height: 150.sp,
-                                                                              width: 122.sp,
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                      : Image.asset(
-                                                                          dummyWishlistImage,
-                                                                          height:
-                                                                              150,
-                                                                          width:
-                                                                              122,
-                                                                          fit: BoxFit
-                                                                              .cover),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.symmetric(
-                                                                        horizontal: 10
-                                                                            .sp,
-                                                                        vertical:
-                                                                            5.sp),
-                                                                    child:
-                                                                        AppText(
-                                                                      text: value.productList[index]
-                                                                              [
-                                                                              "name"] ??
-                                                                          "",
-                                                                      color:
-                                                                          nameText,
-                                                                      fontSize:
-                                                                          12,
-                                                                      maxLines:
-                                                                          1,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.symmetric(
-                                                                        horizontal: 10
-                                                                            .sp,
-                                                                        vertical:
-                                                                            3.sp),
-                                                                    child:
-                                                                        AppText(
-                                                                      text: value.productList[index]
-                                                                              [
-                                                                              "short_description"] ??
-                                                                          "",
-                                                                      color:
-                                                                          nameText,
-                                                                      maxLines:
-                                                                          1,
-                                                                      fontSize:
-                                                                          11,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        top: 10
-                                                                            .sp,
-                                                                        left: 10
-                                                                            .sp,
-                                                                        right: 1
-                                                                            .sp),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        AppText(
-                                                                          text:
-                                                                              "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
-                                                                          color:
-                                                                              deepGreytextColor,
-                                                                          maxLines:
-                                                                              2,
-                                                                          fontSize:
-                                                                              11,
-                                                                          fontFamily:
-                                                                              "Franklin Gothic",
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                        Padding(
-                                                                          padding:
-                                                                              EdgeInsets.only(left: 5.sp),
-                                                                          child:
-                                                                              Text(
-                                                                            "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: textHintColor,
-                                                                              fontSize: 11.sp,
-                                                                              decoration: TextDecoration.lineThrough,
-                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                              fontWeight: FontWeight.w400,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        top: 10
-                                                                            .sp),
-                                                                    child: getSmallButton(
-                                                                        label: "Add to bag",
-                                                                        fontSize: 12,
-                                                                        onPressed: () async {
-                                                                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], brandName: value.productList[index]["brand_name"], type: "add"))).then((value) =>
-                                                                              setState(
-                                                                                () {
-                                                                                  productController.hasnextpage.value = true;
-                                                                                  productController.loadMore.value = false;
-                                                                                  productController.isProduct.value = false;
-                                                                                  productController.page.value = 1;
-                                                                                  productController.getProductData("relevant");
-                                                                                },
-                                                                              ));
-                                                                          await analytics
-                                                                              .logEvent(
-                                                                            name:
-                                                                                'cart_youmay_product_addtobag',
-                                                                            parameters: <String,
-                                                                                Object>{
-                                                                              'page_name': 'cart_youmay_product_addtobag',
-                                                                            },
-                                                                          );
-                                                                          // controller.callAddtoCart(1, "addproduct");
-                                                                        },
-                                                                        textColor: btnTextColor,
-                                                                        backgroundColor: whiteColor,
-                                                                        borderColor: btnTextColor,
-                                                                        width: 122.sp),
-                                                                  )
-                                                                ],
+                                                                      top:
+                                                                          24.sp,
+                                                                      left: 16
+                                                                          .sp),
+                                                              child: AppText(
+                                                                text:
+                                                                    "You may also like",
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color:
+                                                                    colorPrimary,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }),
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : SizedBox(
-                                height: 0,
-                              ),
-                  ),
-                  Obx(() => controller.isOrder.value
-                      ? SizedBox(
-                          height: 0,
-                        )
-                      : Column(
-                          children: [
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Container(
-                              color: whiteColor,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16.sp, vertical: 20.sp),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AppText(
-                                      text: "Coupons",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: colorPrimary,
-                                      fontSize: 12,
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10.sp),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: borderColor,
-                                                width: 1.sp),
-                                            borderRadius:
-                                                BorderRadius.circular(1)),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(16.sp),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {},
-                                                child: Row(
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          16.sp,
+                                                                      vertical:
+                                                                          10.sp),
+                                                              child: SizedBox(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  height:
+                                                                      310.sp,
+                                                                  child: GetBuilder<
+                                                                      ProductController>(
+                                                                    builder: (value) => ListView.builder(
+                                                                        shrinkWrap: true,
+                                                                        primary: false,
+                                                                        controller: productController.listController,
+                                                                        physics: const BouncingScrollPhysics(),
+                                                                        itemCount: value.productList.length,
+                                                                        scrollDirection: Axis.horizontal,
+                                                                        itemBuilder: (ctx, index) {
+                                                                          return Column(
+                                                                            children: [
+                                                                              GestureDetector(
+                                                                                onTap: () async {
+                                                                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], brandName: value.productList[index]["brand_name"], type: "add"))).then((value) => setState(
+                                                                                        () {
+                                                                                          productController.hasnextpage.value = true;
+                                                                                          productController.loadMore.value = false;
+                                                                                          productController.isProduct.value = false;
+                                                                                          productController.page.value = 1;
+                                                                                          productController.getProductData("relevant");
+                                                                                          controller.getCartData();
+                                                                                          controller.update();
+                                                                                        },
+                                                                                      ));
+                                                                                  await analytics.logEvent(
+                                                                                    name: 'cart_youmay_product_details',
+                                                                                    parameters: <String, Object>{
+                                                                                      'page_name': 'cart_youmay_product_details',
+                                                                                    },
+                                                                                  );
+                                                                                },
+                                                                                child: AnimatedContainer(
+                                                                                  duration: const Duration(milliseconds: 300),
+                                                                                  margin: EdgeInsets.only(right: 8.sp),
+                                                                                  color: whiteColor,
+                                                                                  width: 122.sp,
+                                                                                  child: Column(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                    children: [
+                                                                                      productController.productList[index]["images"].isNotEmpty && productController.productList[index]["images"] != null
+                                                                                          ? SizedBox(
+                                                                                              height: 150.sp,
+                                                                                              width: 122.sp,
+                                                                                              child: CachedNetworkImage(
+                                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                fit: BoxFit.cover,
+                                                                                                imageUrl: isImage(productController.productList[index]["images"][0]["name"]) ? productController.productList[index]["images"][0]["name"] : productController.productList[index]["images"][1]["name"],
+                                                                                                /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                                                                                        child: CircularProgressIndicator(value: downloadProgress.progress),
+                                                                                      ), */
+                                                                                                errorWidget: (context, url, error) => Image.asset(
+                                                                                                  downloadImage,
+                                                                                                  fit: BoxFit.cover,
+                                                                                                  height: 150.sp,
+                                                                                                  width: 122.sp,
+                                                                                                ),
+                                                                                              ),
+                                                                                            )
+                                                                                          : Image.asset(dummyWishlistImage, height: 150, width: 122, fit: BoxFit.cover),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
+                                                                                        child: AppText(
+                                                                                          text: value.productList[index]["name"] ?? "",
+                                                                                          color: nameText,
+                                                                                          fontSize: 12,
+                                                                                          maxLines: 1,
+                                                                                          fontFamily: "Franklin Gothic",
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 3.sp),
+                                                                                        child: AppText(
+                                                                                          text: value.productList[index]["short_description"] ?? "",
+                                                                                          color: nameText,
+                                                                                          maxLines: 1,
+                                                                                          fontSize: 11,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets.only(top: 10.sp, left: 10.sp, right: 1.sp),
+                                                                                        child: Row(
+                                                                                          children: [
+                                                                                            AppText(
+                                                                                              text: "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
+                                                                                              color: deepGreytextColor,
+                                                                                              maxLines: 2,
+                                                                                              fontSize: 11,
+                                                                                              fontFamily: "Franklin Gothic",
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: EdgeInsets.only(left: 5.sp),
+                                                                                              child: Text(
+                                                                                                "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
+                                                                                                style: TextStyle(
+                                                                                                  color: textHintColor,
+                                                                                                  fontSize: 11.sp,
+                                                                                                  decoration: TextDecoration.lineThrough,
+                                                                                                  fontFamily: "Franklin Gothic Regular",
+                                                                                                  fontWeight: FontWeight.w400,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets.only(top: 10.sp),
+                                                                                        child: getSmallButton(
+                                                                                            label: "Add to bag",
+                                                                                            fontSize: 12,
+                                                                                            onPressed: () async {
+                                                                                              Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], brandName: value.productList[index]["brand_name"], type: "add"))).then((value) => setState(
+                                                                                                    () {
+                                                                                                      productController.hasnextpage.value = true;
+                                                                                                      productController.loadMore.value = false;
+                                                                                                      productController.isProduct.value = false;
+                                                                                                      productController.page.value = 1;
+                                                                                                      productController.getProductData("relevant");
+                                                                                                    },
+                                                                                                  ));
+                                                                                              await analytics.logEvent(
+                                                                                                name: 'cart_youmay_product_addtobag',
+                                                                                                parameters: <String, Object>{
+                                                                                                  'page_name': 'cart_youmay_product_addtobag',
+                                                                                                },
+                                                                                              );
+                                                                                              // controller.callAddtoCart(1, "addproduct");
+                                                                                            },
+                                                                                            textColor: btnTextColor,
+                                                                                            backgroundColor: whiteColor,
+                                                                                            borderColor: btnTextColor,
+                                                                                            width: 122.sp),
+                                                                                      )
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        }),
+                                                                  )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    : SizedBox(
+                                                        height: 0,
+                                                      ),
+                                            const SizedBox(
+                                              height: 8,
+                                            ),
+                                            Container(
+                                              color: whiteColor,
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 16.sp,
+                                                    vertical: 20.sp),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    ImageIcon(
-                                                      AssetImage(coupanImage),
+                                                    AppText(
+                                                      text: "Coupons",
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: colorPrimary,
-                                                      size: 20.sp,
+                                                      fontSize: 12,
                                                     ),
                                                     Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                              horizontal: 8.sp),
-                                                      child: AppText(
-                                                        text: controller
-                                                            .couponText.value,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: textColor,
-                                                        fontSize: 14,
+                                                              vertical: 10.sp),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color:
+                                                                    borderColor,
+                                                                width: 1.sp),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        1)),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  16.sp),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              GestureDetector(
+                                                                onTap: () {},
+                                                                child: Row(
+                                                                  children: [
+                                                                    ImageIcon(
+                                                                      AssetImage(
+                                                                          coupanImage),
+                                                                      color:
+                                                                          colorPrimary,
+                                                                      size:
+                                                                          20.sp,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              8.sp),
+                                                                      child:
+                                                                          AppText(
+                                                                        text: controller
+                                                                            .couponText
+                                                                            .value,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic",
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        color:
+                                                                            textColor,
+                                                                        fontSize:
+                                                                            14,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const Expanded(
+                                                                child: SizedBox(
+                                                                  height: 0,
+                                                                ),
+                                                              ),
+                                                              GestureDetector(
+                                                                onTap:
+                                                                    () async {
+                                                                  await analytics
+                                                                      .logEvent(
+                                                                    name:
+                                                                        'cart_page_applycouponclick',
+                                                                    parameters: <String,
+                                                                        Object>{
+                                                                      'page_name':
+                                                                          'cart_page_applycouponclick',
+                                                                    },
+                                                                  );
+                                                                  if (controller
+                                                                              .cartDetails[
+                                                                          "discount"] !=
+                                                                      null) {
+                                                                    controller
+                                                                        .callRemoveCoupon();
+                                                                  } else {
+                                                                    Get.to(
+                                                                        BottomCoupon(
+                                                                      list: controller
+                                                                          .couponList,
+                                                                      onPressed:
+                                                                          (p0) {
+                                                                        controller
+                                                                            .couponText
+                                                                            .value = p0;
+                                                                        controller
+                                                                            .callAddCoupon(p0);
+                                                                      },
+                                                                    ));
+                                                                  }
+                                                                },
+                                                                child: controller
+                                                                        .isRemoveCoupan
+                                                                        .value
+                                                                    ? SizedBox(
+                                                                        height:
+                                                                            10.sp,
+                                                                        width: 10
+                                                                            .sp,
+                                                                        child: Center(
+                                                                            child:
+                                                                                CircularProgressIndicator()),
+                                                                      )
+                                                                    : AppText(
+                                                                        text: controller.cartDetails["discount"] !=
+                                                                                null
+                                                                            ? "Remove"
+                                                                            : "Select",
+                                                                        fontFamily:
+                                                                            "Franklin Gothic",
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        color: controller.cartDetails["discount"] !=
+                                                                                null
+                                                                            ? redColor
+                                                                            : textColor,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(
-                                                  height: 0,
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  await analytics.logEvent(
-                                                    name:
-                                                        'cart_page_applycouponclick',
-                                                    parameters: <String,
-                                                        Object>{
-                                                      'page_name':
-                                                          'cart_page_applycouponclick',
-                                                    },
-                                                  );
-                                                  if (controller.cartDetails[
-                                                          "discount"] !=
-                                                      null) {
-                                                    controller
-                                                        .callRemoveCoupon();
-                                                  } else {
-                                                    Get.to(BottomCoupon(
-                                                      list:
-                                                          controller.couponList,
-                                                      onPressed: (p0) {
-                                                        controller.couponText
-                                                            .value = p0;
-                                                        controller
-                                                            .callAddCoupon(p0);
-                                                      },
-                                                    ));
-                                                  }
-                                                },
-                                                child: controller
-                                                        .isRemoveCoupan.value
-                                                    ? SizedBox(
-                                                        height: 10.sp,
-                                                        width: 10.sp,
-                                                        child: Center(
-                                                            child:
-                                                                CircularProgressIndicator()),
-                                                      )
-                                                    : AppText(
-                                                        text: controller.cartDetails[
-                                                                    "discount"] !=
-                                                                null
-                                                            ? "Remove"
-                                                            : "Select",
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: controller
-                                                                        .cartDetails[
-                                                                    "discount"] !=
-                                                                null
-                                                            ? redColor
-                                                            : textColor,
-                                                        fontSize: 12,
-                                                      ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    /*    controller.cartDetails[
+                                                    /*    controller.cartDetails[
                                                       "express_delivery_charges"] ==
                                                   "0.00"
                                               ? SizedBox(
@@ -1393,426 +1314,544 @@ class CartScreenState extends State<CartScreen> {
                                                   ),
                                                 ),
                                          */
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 20.sp),
-                                      child: AppText(
-                                        text: "Price Details",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: colorPrimary,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 16.sp),
-                                      child: Container(
-                                        width: double.infinity,
-                                        color: colorSecondary,
-                                        height: 1.sp,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 4.sp),
-                                            child: AppText(
-                                              text: "Total MRP",
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: textColor,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
-                                            ),
-                                          ),
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${controller.cartDetails["total_mrp"] ?? "0"}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: textColor,
-                                            fontSize: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    controller.cartDetails[
-                                                "express_delivery_charges"] ==
-                                            "0.00"
-                                        ? SizedBox(
-                                            height: 0,
-                                          )
-                                        : Padding(
-                                            padding:
-                                                EdgeInsets.only(top: 10.sp),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 4.sp),
-                                                  child: AppText(
-                                                    text:
-                                                        "Express Delivery Charges",
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                    color: textColor,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                const Expanded(
-                                                  child: SizedBox(
-                                                    height: 0,
-                                                  ),
-                                                ),
-                                                AppText(
-                                                  text:
-                                                      "\u{20B9} ${controller.cartDetails["express_delivery_charges"] ?? "0"}",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: textColor,
-                                                  fontSize: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 4.sp),
-                                            child: AppText(
-                                              text: "Discount on MRP",
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: textColor,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
-                                            ),
-                                          ),
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${controller.cartDetails["discount_on_mrp"] ?? "0"}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: greenText,
-                                            fontSize: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    controller.cartDetails["coupon_discount"] ==
-                                            "0.00"
-                                        ? SizedBox(
-                                            height: 0,
-                                          )
-                                        : Padding(
-                                            padding:
-                                                EdgeInsets.only(top: 10.sp),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 4.sp),
-                                                  child: AppText(
-                                                    text: "Coupon Discount",
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                    color: textColor,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                const Expanded(
-                                                  child: SizedBox(
-                                                    height: 0,
-                                                  ),
-                                                ),
-                                                AppText(
-                                                  text:
-                                                      "\u{20B9} ${controller.cartDetails["coupon_discount"] ?? "0"}",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: greenText,
-                                                  fontSize: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                    controller.cartDetails["shipping_cost"] !=
-                                            "0.00"
-                                        ? Padding(
-                                            padding:
-                                                EdgeInsets.only(top: 10.sp),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 4.sp),
-                                                  child: AppText(
-                                                    text: "Shipping Cost",
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                    color: textColor,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                const Expanded(
-                                                  child: SizedBox(
-                                                    height: 0,
-                                                  ),
-                                                ),
-                                                AppText(
-                                                  text:
-                                                      "\u{20B9} ${controller.cartDetails["shipping_cost"]}",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: greenText,
-                                                  fontSize: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            height: 0,
-                                          ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 4.sp),
-                                            child: AppText(
-                                              text: "Service tax",
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: textColor,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
-                                            ),
-                                          ),
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${controller.cartDetails["lafetch_service_tax"].toString()}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: greenText,
-                                            fontSize: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 4.sp),
-                                                child: AppText(
-                                                  text: "Convenience Fee",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: textColor,
-                                                  fontSize: 12,
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 20.sp),
+                                                      child: AppText(
+                                                        text: "Price Details",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: colorPrimary,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 16.sp),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        color: colorSecondary,
+                                                        height: 1.sp,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.sp),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        4.sp),
+                                                            child: AppText(
+                                                              text: "Total MRP",
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: textColor,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text:
+                                                                "\u{20B9} ${controller.cartDetails["total_mrp"] ?? "0"}",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: textColor,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    controller.cartDetails[
+                                                                "express_delivery_charges"] ==
+                                                            "0.00"
+                                                        ? SizedBox(
+                                                            height: 0,
+                                                          )
+                                                        : Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10.sp),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              4.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Express Delivery Charges",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color:
+                                                                        textColor,
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                                const Expanded(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    height: 0,
+                                                                  ),
+                                                                ),
+                                                                AppText(
+                                                                  text:
+                                                                      "\u{20B9} ${controller.cartDetails["express_delivery_charges"] ?? "0"}",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      textColor,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.sp),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        4.sp),
+                                                            child: AppText(
+                                                              text:
+                                                                  "Discount on MRP",
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: textColor,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text:
+                                                                "\u{20B9} ${controller.cartDetails["discount_on_mrp"] ?? "0"}",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: greenText,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    controller.cartDetails[
+                                                                "coupon_discount"] ==
+                                                            "0.00"
+                                                        ? SizedBox(
+                                                            height: 0,
+                                                          )
+                                                        : Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10.sp),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              4.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Coupon Discount",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color:
+                                                                        textColor,
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                                const Expanded(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    height: 0,
+                                                                  ),
+                                                                ),
+                                                                AppText(
+                                                                  text:
+                                                                      "\u{20B9} ${controller.cartDetails["coupon_discount"] ?? "0"}",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      greenText,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                    controller.cartDetails[
+                                                                "shipping_cost"] !=
+                                                            "0.00"
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10.sp),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              4.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Shipping Cost",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color:
+                                                                        textColor,
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                                const Expanded(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    height: 0,
+                                                                  ),
+                                                                ),
+                                                                AppText(
+                                                                  text:
+                                                                      "\u{20B9} ${controller.cartDetails["shipping_cost"]}",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      greenText,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : SizedBox(
+                                                            height: 0,
+                                                          ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.sp),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        4.sp),
+                                                            child: AppText(
+                                                              text:
+                                                                  "Service tax",
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: textColor,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text:
+                                                                "\u{20B9} ${controller.cartDetails["lafetch_service_tax"].toString()}",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: greenText,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.sp),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        right: 4
+                                                                            .sp),
+                                                                child: AppText(
+                                                                  text:
+                                                                      "Convenience Fee",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      textColor,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  scaffoldKey
+                                                                      .currentState
+                                                                      ?.showBottomSheet(
+                                                                          (context) =>
+                                                                              BottomCharges(
+                                                                                text: "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
+                                                                                title: "Convenience Fee",
+                                                                              ));
+                                                                },
+                                                                child: Image.asset(
+                                                                    questionIcon,
+                                                                    height:
+                                                                        16.sp,
+                                                                    width:
+                                                                        16.sp,
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text:
+                                                                "\u{20B9} ${controller.cartDetails["convenience_fee"] ?? "Free"}",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: greenText,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.sp),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        right: 4
+                                                                            .sp),
+                                                                child: AppText(
+                                                                  text:
+                                                                      "Tax & Charges",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      textColor,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  scaffoldKey
+                                                                      .currentState
+                                                                      ?.showBottomSheet(
+                                                                          (context) =>
+                                                                              BottomCharges(
+                                                                                text: "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
+                                                                                title: "Tax & Charges",
+                                                                              ));
+                                                                },
+                                                                child: Image.asset(
+                                                                    questionIcon,
+                                                                    height:
+                                                                        16.sp,
+                                                                    width:
+                                                                        16.sp,
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text:
+                                                                "\u{20B9} ${controller.cartDetails["total_tax"].toString()}",
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: textColor,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 20.sp),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        color: colorSecondary,
+                                                        height: 1.5,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 6.sp),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        4.sp),
+                                                            child: AppText(
+                                                              text:
+                                                                  "Bill total",
+                                                              fontFamily:
+                                                                  "Franklin Gothic",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  colorPrimary,
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              height: 0,
+                                                            ),
+                                                          ),
+                                                          AppText(
+                                                            text:
+                                                                "\u{20B9} ${controller.cartDetails["total"] ?? "0"}",
+                                                            fontFamily:
+                                                                "Franklin Gothic Bold",
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: colorPrimary,
+                                                            fontSize: 18,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20.sp,
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  scaffoldKey.currentState
-                                                      ?.showBottomSheet(
-                                                          (context) =>
-                                                              BottomCharges(
-                                                                text:
-                                                                    "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
-                                                                title:
-                                                                    "Convenience Fee",
-                                                              ));
-                                                },
-                                                child: Image.asset(questionIcon,
-                                                    height: 16.sp,
-                                                    width: 16.sp,
-                                                    fit: BoxFit.cover),
-                                              )
-                                            ],
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
                                             ),
-                                          ),
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${controller.cartDetails["convenience_fee"] ?? "Free"}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: greenText,
-                                            fontSize: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 4.sp),
-                                                child: AppText(
-                                                  text: "Tax & Charges",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: textColor,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  scaffoldKey.currentState
-                                                      ?.showBottomSheet(
-                                                          (context) =>
-                                                              BottomCharges(
-                                                                text:
-                                                                    "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
-                                                                title:
-                                                                    "Tax & Charges",
-                                                              ));
-                                                },
-                                                child: Image.asset(questionIcon,
-                                                    height: 16.sp,
-                                                    width: 16.sp,
-                                                    fit: BoxFit.cover),
-                                              )
-                                            ],
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
-                                            ),
-                                          ),
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${controller.cartDetails["total_tax"].toString()}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: textColor,
-                                            fontSize: 12,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 20.sp),
-                                      child: Container(
-                                        width: double.infinity,
-                                        color: colorSecondary,
-                                        height: 1.5,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 6.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 4.sp),
-                                            child: AppText(
-                                              text: "Bill total",
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                              color: colorPrimary,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
-                                            ),
-                                          ),
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${controller.cartDetails["total"] ?? "0"}",
-                                            fontFamily: "Franklin Gothic Bold",
-                                            fontWeight: FontWeight.w700,
-                                            color: colorPrimary,
-                                            fontSize: 18,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20.sp,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            /*  Container(
+                                            /*  Container(
                                     color: backWhite,
                                     height: 34,
                                     child: Padding(
@@ -1830,7 +1869,7 @@ class CartScreenState extends State<CartScreen> {
                                       ),
                                     ),
                                   ), */
-                            /*      Container(
+                                            /*      Container(
                                     color: whiteColor,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -2001,8 +2040,11 @@ class CartScreenState extends State<CartScreen> {
                                     ),
                                   )
                               */
-                          ],
-                        )),
+                                          ],
+                                        ),
+                                ],
+                              ),
+                  ),
                 ],
               ),
             ),
