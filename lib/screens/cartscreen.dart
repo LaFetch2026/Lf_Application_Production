@@ -537,14 +537,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                             color: blackColor,
                                                                                             fontSize: 12,
                                                                                           ),
-                                                                                          /*  controller.isExpress.value
-                                                                                                ? SizedBox(
-                                                                                                    height: 10.sp,
-                                                                                                    width: 10.sp,
-                                                                                                    child: Center(child: CircularProgressIndicator()),
-                                                                                                  )
-                                                                                                : */
-                                                                                          value.selected[index]
+                                                                                          /*  value.selected[index]
                                                                                               ? Padding(
                                                                                                   padding: EdgeInsets.only(left: 12.sp),
                                                                                                   child: Center(
@@ -580,7 +573,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                           controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["express_delivery"] ? 0 : 1, 1);
                                                                                                         },
                                                                                                       )),
-                                                                                                ),
+                                                                                                ), */
                                                                                         ],
                                                                                       ),
                                                                                     )
@@ -591,50 +584,6 @@ class CartScreenState extends State<CartScreen> {
                                                                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                 child: Row(
                                                                                   children: [
-                                                                                    /*   value.orderList[index]["inventory"] != null
-                                                                                          ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
-                                                                                              ? Container(
-                                                                                                  color: whiteTextColor,
-                                                                                                  height: 40,
-                                                                                                  width: 75,
-                                                                                                  child: Row(
-                                                                                                    children: [
-                                                                                                      GestureDetector(
-                                                                                                        onTap: () {
-                                                                                                          scaffoldKey.currentState?.showBottomSheet((context) => BottomSize(
-                                                                                                                sizeList: sizeList,
-                                                                                                                selectedSize: value.orderList[index]["inventory"] != null
-                                                                                                                    ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size"
-                                                                                                                        ? value.orderList[index]["inventory"]["product_matrix"]["name"]
-                                                                                                                        : ""
-                                                                                                                    : "",
-                                                                                                              ));
-                                                                                                        },
-                                                                                                        child: Padding(
-                                                                                                          padding: const EdgeInsets.only(left: 4, right: 2, top: 5, bottom: 5),
-                                                                                                          child: AppText(
-                                                                                                            text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix"]["product_matrix_group"]["name"] == "Size" ? value.orderList[index]["inventory"]["product_matrix"]["name"] : "S" : "S"}",
-                                                                                                            color: blackColor,
-                                                                                                            fontSize: 10.sp,
-                                                                                                            fontFamily: "Franklin Gothic Regular",
-                                                                                                            fontWeight: FontWeight.w400,
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      const ImageIcon(
-                                                                                                        AssetImage(dropdownImage),
-                                                                                                        color: nameText,
-                                                                                                        size: 16,
-                                                                                                      ),
-                                                                                                    ],
-                                                                                                  ),
-                                                                                                )
-                                                                                              : const SizedBox(
-                                                                                                  height: 0,
-                                                                                                )
-                                                                                          : const SizedBox(
-                                                                                              height: 0,
-                                                                                            ), */
                                                                                     value.orderList[index]["inventory"] != null
                                                                                         ? value.orderList[index]["inventory"]["product_matrix_name_size"] != ""
                                                                                             ? GestureDetector(

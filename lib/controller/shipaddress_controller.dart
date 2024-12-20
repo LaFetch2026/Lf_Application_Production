@@ -271,7 +271,7 @@ class ShipAddressController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         addressId.value = responseData["id"];
-        getSnackBar("Address updated");
+        // getSnackBar("Address updated");
         if (value == 1) {
           if (cartId.value != 0) {
             callCartAddressUpdate("create");
@@ -283,7 +283,7 @@ class ShipAddressController extends BaseController {
       } else if (response.statusCode == 201) {
         print(responseData);
         addressId.value = responseData["id"];
-        getSnackBar("Address updated");
+        //  getSnackBar("Address updated");
         if (value == 1) {
           if (cartId.value != 0) {
             callCartAddressUpdate("create");

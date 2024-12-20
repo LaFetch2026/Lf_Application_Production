@@ -75,6 +75,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => (timeStamp) {
           getPrefrenceValue();
           orderController.isDownloadInvoice.value = false;
+          orderController.downloadSuccess.value = "";
           orderController.trackList.clear();
           orderController.selected.clear();
           orderController.selected = List.generate(50, (i) => false);
@@ -3873,14 +3874,34 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   Obx(() => Padding(
                         padding: EdgeInsets.only(top: 10.sp, bottom: 20.sp),
                         child: orderController.isDownloadInvoice.value
-                            ? Center(
-                                child: AppText(
-                                  text: "Invoice Downloaded",
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                  color: greenText,
-                                  fontSize: 16,
-                                ),
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                        bottom: 20.sp),
+                                    child: AppText(
+                                      text:
+                                          orderController.downloadSuccess.value,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: greenText,
+                                      maxLines: 5,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Center(
+                                    child: AppText(
+                                      text: "Invoice Downloaded",
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                      color: greenText,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
                               )
                             : getSingleButton(
                                 label: "Download Invoice",

@@ -17,6 +17,7 @@ class ProductController extends BaseController {
   RxBool isFilter = false.obs;
   RxBool isMostSearch = false.obs;
   RxBool istags = false.obs;
+  RxString errorMsg = "".obs;
   RxBool isCategoryProduct = false.obs;
   RxBool istagsProduct = false.obs;
   RxBool isBannerTag = false.obs;
@@ -2021,7 +2022,8 @@ class ProductController extends BaseController {
         } */
       } else if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {
-        print(response.body);
+        var responseData = json.decode(response.body);
+        errorMsg.value = responseData["message"];
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

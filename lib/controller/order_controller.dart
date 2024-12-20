@@ -19,6 +19,7 @@ class OrderController extends BaseController {
   RxBool isTrack = false.obs;
   RxBool isInvoice = false.obs;
   RxBool isDownloadInvoice = false.obs;
+  RxString downloadSuccess = "".obs;
   RxDouble rating = 0.0.obs;
   final comment = TextEditingController();
   RxBool isUpdateLocation = false.obs;
@@ -408,7 +409,8 @@ class OrderController extends BaseController {
           final file = File('${dir.path}/invoice.pdf');
           await file.writeAsBytes(response.bodyBytes);
         } */
-        getSnackBar(responseData["message"]);
+        downloadSuccess.value = responseData["message"];
+        // getSnackBar(responseData["message"]);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

@@ -661,6 +661,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.errorMsg.value = "";
       productController.brandDetails = "";
       productController.defaultAddress = "";
       productController.pincodeController.clear();
@@ -1692,6 +1693,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               .getDefaultAddressData(
                                                                   widget
                                                                       .productId);
+                                                          productController
+                                                              .getProductDetails(
+                                                                  widget
+                                                                      .productId,
+                                                                  widget.Slug);
                                                         },
                                                       ));
 
@@ -3549,6 +3555,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   : SizedBox(
                                       height: 0,
                                     )),
+                          Obx(
+                            () => productController.errorMsg.value != ""
+                                ? Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                        top: 16.sp,
+                                        bottom: 16.sp),
+                                    child: AppText(
+                                      text: productController.errorMsg.value,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: deepRed,
+                                      maxLines: 5,
+                                      fontSize: 12,
+                                    ),
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  ),
+                          )
                         ],
                       ),
                     )

@@ -408,6 +408,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                     orderController
                                                                         .isDownloadInvoice
                                                                         .value = false;
+                                                                    orderController
+                                                                        .downloadSuccess
+                                                                        .value = "";
                                                                     Get.to(
                                                                         OrderDetailsScreen(
                                                                       orderId: value
@@ -1172,6 +1175,9 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           orderController
                                                                               .isDownloadInvoice
                                                                               .value = false;
+                                                                          orderController
+                                                                              .downloadSuccess
+                                                                              .value = "";
                                                                           Get.to(
                                                                               OrderDetailsScreen(
                                                                             orderId:
