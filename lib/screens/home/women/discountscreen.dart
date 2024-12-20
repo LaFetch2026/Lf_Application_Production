@@ -201,11 +201,11 @@ class DiscountScreenState extends State<DiscountScreen> {
               ),
             ),
             */
-            Container(
+            /*  Container(
               width: double.infinity,
               color: lightText,
               height: 1.sp,
-            ),
+            ), */
             Obx(() => productController.istags.value
                 ? Padding(
                     padding: EdgeInsets.only(
