@@ -140,6 +140,72 @@ class DiscountScreenState extends State<DiscountScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // const SaleCardWidget(),
+            /*    SizedBox(
+              height: 40.sp,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppText(
+                        text: "Women",
+                        color: btnTextColor,
+                        fontSize: 14,
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                      ),
+                      Container(
+                        color: btnTextColor,
+                        width: 80.sp,
+                        height: 2.sp,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppText(
+                        text: "Men",
+                        color: btnTextColor,
+                        fontSize: 14,
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                      ),
+                      Container(
+                        color: btnTextColor,
+                        height: 2.sp,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppText(
+                        text: "Accessories",
+                        color: btnTextColor,
+                        fontSize: 14,
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                      ),
+                      Container(
+                        color: btnTextColor,
+                        height: 2.sp,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            */
+            Container(
+              width: double.infinity,
+              color: lightText,
+              height: 1.sp,
+            ),
             Obx(() => productController.istags.value
                 ? Padding(
                     padding: EdgeInsets.only(
