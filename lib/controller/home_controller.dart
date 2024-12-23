@@ -16,8 +16,10 @@ class HomeController extends BaseController {
   RxBool isCity = false.obs;
   RxBool isFaqs = false.obs;
   RxBool isBanner2 = false.obs;
+  RxBool showGenderList = false.obs;
   RxBool isCategory = false.obs;
   RxString playerId = "".obs;
+  RxString genderText = "Women".obs;
   RxString fcmToken = "".obs;
   String devicename = "";
   String platform = "";
