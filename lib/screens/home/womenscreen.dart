@@ -320,9 +320,9 @@ class _WomenScreenState extends State<WomenScreen>
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return DiscountScreen(
-                  tagId: productController.tagId.value,
-                  genderType: widget.genderType,
-                );
+                    /*  tagId: productController.tagId.value,
+                  genderType: widget.genderType, */
+                    );
               },
             ),
           ),

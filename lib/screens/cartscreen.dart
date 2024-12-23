@@ -40,6 +40,8 @@ class CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.qtyProductId.value = 0;
+      controller.qtyText.value = "";
       controller.couponList.clear();
       controller.selected.clear();
       controller.selected = List.generate(50, (i) => false).obs;
@@ -640,6 +642,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                     GestureDetector(
                                                                                       onTap: () async {
                                                                                         if (value.orderList[index]["express_delivery"]) {
+                                                                                          value.qtyProductId.value = value.orderList[index]["product"]["id"];
+                                                                                          value.qtyText.value = "For Express delivery product quantity can not update.";
+                                                                                          value.update();
                                                                                         } else {
                                                                                           scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
                                                                                                 qtyList: qtyList,
@@ -656,6 +661,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                               'page_name': 'cart_product_updateqtyClick',
                                                                                             },
                                                                                           );
+                                                                                          controller.qtyProductId.value = 0;
+                                                                                          controller.qtyText.value = "";
+                                                                                          value.update();
                                                                                         }
                                                                                       },
                                                                                       child: Padding(
@@ -689,6 +697,24 @@ class CartScreenState extends State<CartScreen> {
                                                                                   ],
                                                                                 ),
                                                                               ),
+                                                                              value.orderList[index]["product"]["id"] == value.qtyProductId.value
+                                                                                  ? Container(
+                                                                                      width: MediaQuery.of(context).size.width - 128.sp,
+                                                                                      child: Padding(
+                                                                                        padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                        child: AppText(
+                                                                                          text: value.qtyText.value,
+                                                                                          color: deepRed,
+                                                                                          fontSize: 12,
+                                                                                          maxLines: 3,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ),
+                                                                                      ),
+                                                                                    )
+                                                                                  : SizedBox(
+                                                                                      height: 0,
+                                                                                    ),
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                 child: Row(

@@ -26,8 +26,8 @@ class DoubleButton extends StatelessWidget {
       required this.secondBackgroundColor,
       required this.firstBorderColor,
       required this.secondBorderColor,
-      this.firstFontSize = 14,
-      this.secondFontSize = 14,
+      this.firstFontSize = 12,
+      this.secondFontSize = 12,
       this.fontFamily = "Franklin Gothic",
       this.onPressedFirst,
       this.onPressedSecond})

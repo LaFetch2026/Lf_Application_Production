@@ -32,6 +32,7 @@ class HomeController extends BaseController {
   List bannerCategory2Id = [].obs;
   List categoryList = [].obs;
   RxInt currentPage = 0.obs;
+  RxInt homeGenderValue = 3.obs;
   List banners = [].obs;
   // RxBool loadMore = false.obs;
   // RxBool hasnextpage = true.obs;

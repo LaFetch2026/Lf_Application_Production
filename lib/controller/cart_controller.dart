@@ -33,6 +33,8 @@ class CartController extends BaseController {
   RxInt expressValue = 0.obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
+  RxString qtyText = "".obs;
+  RxInt qtyProductId = 0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},
@@ -58,6 +60,8 @@ class CartController extends BaseController {
           orderList = responseData["order_lines"];
           print(orderList);
           cartId.value = responseData["id"];
+          qtyProductId.value = 0;
+          qtyText.value = "";
           if (responseData["discount"] != null) {
             couponText.value = responseData["discount"]["code"];
           }
