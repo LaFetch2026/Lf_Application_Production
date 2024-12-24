@@ -46,10 +46,12 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>To choose user profile picture</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Needed to access location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Needed to access location</string>
+	<string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Lafetch requires your location to provide personalized delivery options, including express delivery within 4 hours and seamless address selection for accurate deliveries.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used to capture audio for image picker</string>
 	<key>NSPhotoLibraryUsageDescription</key>
