@@ -217,7 +217,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               textFieldAlignment: MainAxisAlignment.spaceAround,
                               spaceBetween: 4.sp,
                               fieldWidth:
-                                  (MediaQuery.of(context).size.width - 78) / 4,
+                                  (MediaQuery.of(context).size.width - 100) / 4,
                               fieldStyle: FieldStyle.box,
                               outlineBorderRadius: 1.sp,
                               otpFieldStyle: OtpFieldStyle(

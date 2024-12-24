@@ -66,9 +66,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteTextColor,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: GestureDetector(
+      backgroundColor: blackColor,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      /* floatingActionButton: GestureDetector(
         onTap: () async {
           setState(() {
             _currentIndex = 4;
@@ -87,8 +87,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           width: _currentIndex == 4 ? 70.sp : 58.sp,
           fit: BoxFit.contain,
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
+      ), */
+      /*   bottomNavigationBar: BottomAppBar(
         notchMargin: -15.sp,
         shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
@@ -311,193 +311,249 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           ],
         ),
       ),
-      /*  bottomNavigationBar: BottomAppBar(
-        notchMargin: -15.sp,
-        shape: const CircularNotchedRectangle(),
+     */
+      bottomNavigationBar: BottomAppBar(
+        // notchMargin: -15.sp,
+        // shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
-        color: colorPrimary,
-        height: MediaQuery.of(context).size.height * 0.084, //0.074
+        color: blackColor,
+        height: 80.sp, //0.074
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            Expanded(
-              child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.084, //0.068
-                color: _currentIndex == 0 ? colorSecondary : colorPrimary,
-                onPressed: () async {
-                  setState(() {
-                    _currentIndex = 0;
-                  });
-                  await analytics.logEvent(
-                    name: 'home_page',
-                    parameters: <String, Object>{
-                      'page_name': 'home_page',
-                      'page_index': _currentIndex,
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(
-                            _currentIndex == 0 ? homeIcon : homeUnselectImage),
-                        color:
-                            _currentIndex == 0 ? bottomnavBack : greyTextColor,
-                        size: 22.sp,
-                      ),
-                      Text(
+            MaterialButton(
+              height: 80.sp,
+              // color: _currentIndex == 0 ? colorSecondary : colorPrimary,
+              color: blackColor,
+              minWidth: MediaQuery.of(context).size.width / 5 - 5.sp,
+              onPressed: () async {
+                setState(() {
+                  _currentIndex = 0;
+                });
+                await analytics.logEvent(
+                  name: 'home_page',
+                  parameters: <String, Object>{
+                    'page_name': 'home_page',
+                    'page_index': _currentIndex,
+                  },
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(
+                          _currentIndex == 0 ? homeIcon : homeUnselectImage),
+                      color:
+                          _currentIndex == 0 ? whiteColor : Color(0xFF9CA3AF),
+                      size: 18.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.sp),
+                      child: Text(
                         "Home",
                         style: TextStyle(
                             color: _currentIndex == 0
-                                ? bottomnavBack
-                                : greyTextColor,
-                            fontSize: 10.sp,
+                                ? whiteColor
+                                : Color(0xFF9CA3AF),
+                            fontSize: 9.sp,
                             fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            Expanded(
-              child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.084,
-                color: _currentIndex == 1 ? colorSecondary : colorPrimary,
-                onPressed: () async {
-                  setState(() {
-                    _currentIndex = 1;
-                  });
-                  await analytics.logEvent(
-                    name: 'brand_page',
-                    parameters: <String, Object>{
-                      'page_name': 'brand_page',
-                      'page_index': _currentIndex,
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(
-                            _currentIndex == 1 ? brandSelectImage : brandsIcon),
-                        color:
-                            _currentIndex == 1 ? bottomnavBack : greyTextColor,
-                        size: 22.sp,
-                      ),
-                      Text(
-                        "Brands",
+            MaterialButton(
+              height: 80.sp,
+              minWidth: MediaQuery.of(context).size.width / 5 - 5.sp,
+              //  color: _currentIndex == 1 ? colorSecondary : whiteBack,
+              color: blackColor,
+              onPressed: () async {
+                setState(() {
+                  _currentIndex = 1;
+                });
+                await analytics.logEvent(
+                  name: 'shop_page',
+                  parameters: <String, Object>{
+                    'page_name': 'brand_page',
+                    'page_index': _currentIndex,
+                  },
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(_currentIndex == 1
+                          ? accountSelectImage
+                          : accountIcon),
+                      color:
+                          _currentIndex == 1 ? whiteColor : Color(0xFF9CA3AF),
+                      size: 18.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.sp),
+                      child: Text(
+                        "Shop",
                         style: TextStyle(
                             color: _currentIndex == 1
-                                ? bottomnavBack
-                                : greyTextColor,
-                            fontSize: 10.sp,
+                                ? whiteColor
+                                : Color(0xFF9CA3AF),
+                            fontSize: 9.sp,
                             fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            // SizedBox(
-            //   width: MediaQuery.of(context).size.width/4,
-            // ),
-            Expanded(
-              child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.084,
-                color: _currentIndex == 2 ? colorSecondary : colorPrimary,
-                onPressed: () async {
-                  setState(() {
-                    _currentIndex = 2;
-                  });
-                  await analytics.logEvent(
-                    name: 'wishlist_page',
-                    parameters: <String, Object>{
-                      'page_name': 'wishlist_page',
-                      'page_index': _currentIndex,
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(_currentIndex == 2
-                            ? wishlistSelectImage
-                            : wishlistIcon),
-                        color:
-                            _currentIndex == 2 ? bottomnavBack : greyTextColor,
-                        size: 22.sp,
+            MaterialButton(
+              height: 80.sp,
+              minWidth: MediaQuery.of(context).size.width / 5 - 5.sp,
+              //color: _currentIndex == 4 ? colorSecondary : colorPrimary,
+              color: blackColor,
+              onPressed: () async {
+                setState(() {
+                  _currentIndex = 4;
+                });
+                await analytics.logEvent(
+                  name: 'express_page',
+                  parameters: <String, Object>{
+                    'page_name': 'brand_page',
+                    'page_index': _currentIndex,
+                  },
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(
+                          _currentIndex == 4 ? expressImage : expressImage),
+                      color: _currentIndex == 4
+                          ? Color(0xFFDFC5FE)
+                          : Color(0xFFDFC5FE),
+                      size: 18.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.sp),
+                      child: Text(
+                        "Express",
+                        style: TextStyle(
+                            color: _currentIndex == 4
+                                ? Color(0xFFDFC5FE)
+                                : Color(0xFFDFC5FE),
+                            fontSize: 9.sp,
+                            fontFamily: "Franklin Gothic"),
                       ),
-                      Text(
+                    )
+                  ],
+                ),
+              ),
+            ),
+            MaterialButton(
+              height: 80.sp,
+              minWidth: MediaQuery.of(context).size.width / 5 - 5.sp,
+              color: blackColor,
+              // color: _currentIndex == 2 ? colorSecondary : colorPrimary,
+              onPressed: () async {
+                setState(() {
+                  _currentIndex = 2;
+                });
+                await analytics.logEvent(
+                  name: 'wishlist_page',
+                  parameters: <String, Object>{
+                    'page_name': 'wishlist_page',
+                    'page_index': _currentIndex,
+                  },
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(_currentIndex == 2
+                          ? wishlistSelectImage
+                          : wishlistIcon),
+                      color:
+                          _currentIndex == 2 ? whiteColor : Color(0xFF9CA3AF),
+                      size: 18.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.sp),
+                      child: Text(
                         "Wishlist",
                         style: TextStyle(
                             color: _currentIndex == 2
-                                ? bottomnavBack
-                                : greyTextColor,
-                            fontSize: 10.sp,
+                                ? whiteColor
+                                : Color(0xFF9CA3AF),
+                            fontSize: 9.sp,
                             fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            Expanded(
-              child: MaterialButton(
-                height: MediaQuery.of(context).size.height * 0.084,
-                color: _currentIndex == 3 ? colorSecondary : colorPrimary,
-                onPressed: () async {
-                  setState(() {
-                    _currentIndex = 3;
-                  });
-                  await analytics.logEvent(
-                    name: 'account_page',
-                    parameters: <String, Object>{
-                      'page_name': 'account_page',
-                      'page_index': _currentIndex,
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ImageIcon(
-                        AssetImage(_currentIndex == 3
-                            ? accountSelectImage
-                            : accountIcon),
-                        color:
-                            _currentIndex == 3 ? bottomnavBack : greyTextColor,
-                        size: 22.sp,
-                      ),
-                      Text(
+            MaterialButton(
+              height: 80.sp,
+              minWidth: MediaQuery.of(context).size.width / 5 - 5.sp,
+              color: blackColor,
+              // color: _currentIndex == 3 ? colorSecondary : colorPrimary,
+              onPressed: () async {
+                setState(() {
+                  _currentIndex = 3;
+                });
+                await analytics.logEvent(
+                  name: 'account_page',
+                  parameters: <String, Object>{
+                    'page_name': 'account_page',
+                    'page_index': _currentIndex,
+                  },
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ImageIcon(
+                      AssetImage(_currentIndex == 3
+                          ? accountSelectImage
+                          : accountIcon),
+                      color:
+                          _currentIndex == 3 ? whiteColor : Color(0xFF9CA3AF),
+                      size: 18.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.sp),
+                      child: Text(
                         "Account",
                         style: TextStyle(
                             color: _currentIndex == 3
-                                ? bottomnavBack
-                                : greyTextColor,
-                            fontSize: 10.sp,
+                                ? whiteColor
+                                : Color(0xFF9CA3AF),
+                            fontSize: 9.sp,
                             fontFamily: "Franklin Gothic"),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
           ],
         ),
       ),
-      */
       body: screen[_currentIndex],
     );
   }

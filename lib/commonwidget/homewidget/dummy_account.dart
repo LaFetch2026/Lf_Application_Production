@@ -122,7 +122,7 @@ class DummyAccount extends StatelessWidget {
               width: 100,
             ),
           ),
-          SizedBox(
+          /* SizedBox(
             height: 30,
           ),
           Padding(
@@ -138,7 +138,7 @@ class DummyAccount extends StatelessWidget {
               height: 14,
               width: 100,
             ),
-          ),
+          ), */
         ],
       ),
     );
