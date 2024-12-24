@@ -169,6 +169,10 @@ const searchNewImage = 'assets/images/search_new.png';
 const lafetchBlackImage = 'assets/images/lafetch_black.png';
 const refreshImage = 'assets/images/refresh.png';
 const downArrowImage = 'assets/images/down_arrow.png';
+const greyIndicator = 'assets/images/grey_indicator.png';
+const longIndicator = 'assets/images/long_indicator.png';
+const rightBlackArrow = 'assets/images/right_black_arrow.png';
+const expressImage = 'assets/images/express.png';
 
 class ApiConstants {
   ApiConstants._();

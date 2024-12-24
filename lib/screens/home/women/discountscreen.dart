@@ -210,6 +210,7 @@ class DiscountScreenState extends State<DiscountScreen> {
         }
       });
     });
+    OneSignal.Notifications.requestPermission(true);
   }
 
   @override
@@ -246,6 +247,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                 },
               );
             },
+            showGender: true,
             onPressedDropDown: () {
               if (homeController.showGenderList.value) {
                 homeController.showGenderList.value = false;
@@ -650,6 +652,11 @@ class DiscountScreenState extends State<DiscountScreen> {
                                           viewportFraction: 1.0,
                                           aspectRatio: 2.0,
                                           autoPlay: true,
+                                          onPageChanged: (index, reason) {
+                                            homeController.currentPage.value =
+                                                index;
+                                            homeController.update();
+                                          },
                                           autoPlayInterval:
                                               const Duration(seconds: 10),
                                           enlargeCenterPage: true,
@@ -762,7 +769,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         ),
                                       ),
                                     ),
-                                    Padding(
+                                    /*  Padding(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 10.sp),
                                       child: Container(
@@ -770,12 +777,57 @@ class DiscountScreenState extends State<DiscountScreen> {
                                         color: colorSecondary,
                                         height: 1,
                                       ),
-                                    ),
+                                    ), */
+                                    homeController.banner1List.length == 1
+                                        ? SizedBox(
+                                            height: 0,
+                                          )
+                                        : Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16),
+                                            child: SizedBox(
+                                              width: 50 *
+                                                  homeController
+                                                      .banner1List.length
+                                                      .toDouble(),
+                                              height: 6,
+                                              child: GetBuilder<HomeController>(
+                                                  builder: (value) =>
+                                                      ListView.builder(
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          itemCount: value
+                                                              .banner1List
+                                                              .length,
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          itemBuilder:
+                                                              (ctx, index) {
+                                                            return AnimatedContainer(
+                                                                duration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            400),
+                                                                height: 6.sp,
+                                                                width: 40.sp,
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal: 5
+                                                                            .sp),
+                                                                decoration: BoxDecoration(
+                                                                    color: index ==
+                                                                            value.currentPage.value
+                                                                        ? colorPrimary
+                                                                        : colorSecondary));
+                                                          })),
+                                            ),
+                                          ),
                                   ],
                                 )
                               : const SizedBox(
                                   height: 0,
                                 )),
+
                       /*  Obx(() => productController.isExpress.value
                           ? const DummyProductList(text: "Express Delivery")
                           : productController.expressProductList.isNotEmpty
@@ -826,6 +878,9 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   child: HorizontalHomeList(
                                     text: productController.tagname.value,
                                     visibleViewAll: true,
+                                    visibleSubtitle: true,
+                                    text1:
+                                        "Selected styles for a limited time only",
                                     controller:
                                         productController.tagsProductController,
                                     height: 250.sp,

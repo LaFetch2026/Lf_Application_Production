@@ -11,12 +11,14 @@ class HomeAppbar extends StatefulWidget {
   final Function? onPressedSearch;
   final Function? onPressedCatalog;
   final Function? onPressedDropDown;
+  final bool showGender;
 
   const HomeAppbar(
       {Key? key,
       this.onPressedCart,
       this.onPressedCatalog,
       this.onPressedSearch,
+      this.showGender = false,
       this.onPressedDropDown})
       : super(key: key);
 
@@ -39,33 +41,37 @@ class _HomeAppbarState extends State<HomeAppbar> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              GestureDetector(
-                onTap: () {
-                  widget.onPressedDropDown?.call();
-                },
-                child: Row(
-                  children: [
-                    Obx(
-                      () => AppText(
-                        text:
-                            "${homeController.genderText.value}".toUpperCase(),
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w400,
-                        color: whiteColor,
-                        fontSize: 13,
+              widget.showGender
+                  ? GestureDetector(
+                      onTap: () {
+                        widget.onPressedDropDown?.call();
+                      },
+                      child: Row(
+                        children: [
+                          Obx(
+                            () => AppText(
+                              text: "${homeController.genderText.value}"
+                                  .toUpperCase(),
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w400,
+                              color: whiteColor,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                            child: ImageIcon(
+                              AssetImage(dropdownImage),
+                              color: whiteColor,
+                              size: 20.sp,
+                            ),
+                          ),
+                        ],
                       ),
+                    )
+                  : SizedBox(
+                      height: 0,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                      child: ImageIcon(
-                        AssetImage(dropdownImage),
-                        color: whiteColor,
-                        size: 20.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const Expanded(
                 child: SizedBox(
                   height: 0,

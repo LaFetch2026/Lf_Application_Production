@@ -10,6 +10,7 @@ import '../common_widgets.dart';
 
 class HorizontalHomeList extends StatelessWidget {
   final String text;
+  final String text1;
   final double height;
   final bool visibleExpress;
   final bool visibleheart;
@@ -23,14 +24,17 @@ class HorizontalHomeList extends StatelessWidget {
   final Function? onPressedExpress;
   final Function? onPressedViewAll;
   final Function(int, int)? onPressedHeart;
+  final bool visibleSubtitle;
 
   const HorizontalHomeList(
       {Key? key,
       required this.text,
+      this.text1 = "",
       required this.height,
       required this.visibleExpress,
       required this.list,
       this.visibleViewAll = false,
+      this.visibleSubtitle = false,
       this.textColor = blackColor,
       this.leftPadding = 16,
       this.visibleheart = false,
@@ -68,14 +72,18 @@ class HorizontalHomeList extends StatelessWidget {
                     onTap: () {
                       onPressedViewAll?.call();
                     },
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(top: 10.sp, right: leftPadding.sp),
-                      child: AppText(
-                        text: "View All",
-                        fontFamily: fontFamily,
-                        color: textColor,
-                        fontSize: 14,
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 10.sp,
+                            right: leftPadding.sp,
+                            left: 16.sp,
+                            bottom: 2.sp),
+                        child: ImageIcon(
+                          AssetImage(rightBlackArrow),
+                          color: blackColor,
+                          size: 14.sp,
+                        ),
                       ),
                     ),
                   )
@@ -84,6 +92,19 @@ class HorizontalHomeList extends StatelessWidget {
                   ),
           ],
         ),
+        visibleSubtitle
+            ? Padding(
+                padding: EdgeInsets.only(top: 6.sp, left: leftPadding.sp),
+                child: AppText(
+                  text: text1,
+                  fontFamily: "Franklin Gothic Regular",
+                  color: Color(0xFF6B7280),
+                  fontSize: 12,
+                ),
+              )
+            : SizedBox(
+                height: 0,
+              ),
         Padding(
           padding:
               EdgeInsets.symmetric(horizontal: leftPadding.sp, vertical: 16),
