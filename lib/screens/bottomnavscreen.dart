@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
-import 'package:lafetch/screens/home/women/discountscreen.dart';
+import 'package:lafetch/screens/home/women/homescreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -24,7 +24,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   final productController = Get.put(ProductController());
   int _currentIndex = 0;
   var screen = [
-    const DiscountScreen(),
+    const HomeScreen(),
     const BrandsScreen(
       screen: "home",
     ),
@@ -37,7 +37,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   void initState() {
     analytics.setAnalyticsCollectionEnabled(true);
     screen = [
-      const DiscountScreen(),
+      const HomeScreen(),
       const BrandsScreen(
         screen: "home",
       ),

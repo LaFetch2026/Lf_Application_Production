@@ -36,16 +36,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 //import '../../account/customercare.dart';
 
-class DiscountScreen extends StatefulWidget {
-  const DiscountScreen({
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({
     super.key,
   });
 
   @override
-  State<DiscountScreen> createState() => DiscountScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class DiscountScreenState extends State<DiscountScreen> {
+class HomeScreenState extends State<HomeScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());

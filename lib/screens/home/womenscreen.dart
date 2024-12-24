@@ -1,7 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/home/women/discountscreen.dart';
+import 'package:lafetch/screens/home/women/homescreen.dart';
 import '../../controller/home_controller.dart';
 import '../../controller/product_controller.dart';
 
@@ -319,7 +319,7 @@ class _WomenScreenState extends State<WomenScreen>
               onPageChanged: callOnchanged,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return DiscountScreen(
+                return HomeScreen(
                     /*  tagId: productController.tagId.value,
                   genderType: widget.genderType, */
                     );

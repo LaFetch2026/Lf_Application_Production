@@ -19,14 +19,14 @@ import '../utils/constants.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'cartscreen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class Demoscreen extends StatefulWidget {
+  const Demoscreen({super.key});
 
   @override
-  State<HomeScreen> createState() => HomeScreenState();
+  State<Demoscreen> createState() => DemoscreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class DemoscreenState extends State<Demoscreen> {
   final homeController = Get.put(HomeController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? city;
