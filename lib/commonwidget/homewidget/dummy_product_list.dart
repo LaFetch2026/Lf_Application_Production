@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
 class DummyProductList extends StatelessWidget {
   final String text;
+  final bool visibleSubtitle;
 
   const DummyProductList({
     Key? key,
     required this.text,
+    this.visibleSubtitle = false,
   }) : super(key: key);
 
   @override
@@ -25,6 +28,17 @@ class DummyProductList extends StatelessWidget {
             fontSize: 16,
           ),
         ),
+        visibleSubtitle
+            ? Padding(
+                padding: EdgeInsets.only(top: 6.sp, left: 16.sp, right: 40.sp),
+                child: DummyContainer(
+                  height: 12,
+                  width: double.infinity,
+                ),
+              )
+            : SizedBox(
+                height: 0,
+              ),
         Padding(
             padding: EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
             child: SizedBox(

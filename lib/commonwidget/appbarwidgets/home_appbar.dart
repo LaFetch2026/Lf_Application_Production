@@ -78,7 +78,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.sp),
+                padding: EdgeInsets.symmetric(horizontal: 16.sp),
                 child: Center(
                   child: Image.asset(appNameImage,
                       height: 28.sp, width: 70.sp, fit: BoxFit.cover),

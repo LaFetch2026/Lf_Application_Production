@@ -203,6 +203,10 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productList = responseData["data"];
+          hasnextpage.value = true;
+          loadMore.value = false;
+          isProduct.value = false;
+          page.value = 1;
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

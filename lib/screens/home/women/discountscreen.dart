@@ -10,9 +10,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
-import 'package:lafetch/commonwidget/homewidget/question_card.dart';
+//import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
@@ -20,7 +21,8 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/catalogscreen.dart';
-import 'package:lafetch/screens/home/faqscreen.dart';
+import 'package:lafetch/screens/home/women/productlistscreen.dart';
+//import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -32,7 +34,7 @@ import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../account/customercare.dart';
+//import '../../account/customercare.dart';
 
 class DiscountScreen extends StatefulWidget {
   const DiscountScreen({
@@ -65,16 +67,33 @@ class DiscountScreenState extends State<DiscountScreen> {
       productController.productTags = [];
       checkUserConnection();
     });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.tagsHasnextpage.value = true;
+      productController.tagsLoadMore.value = false;
+      productController.istagsProduct.value = false;
+      productController.tagsPage.value = 1;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.hasnextpage.value = true;
+      productController.loadMore.value = false;
+      productController.isProduct.value = false;
+      productController.page.value = 1;
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.getTagsData(3));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar1Data();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getBannar2Data();
+      homeController.getBrandData();
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getCategoryData(3));
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getProductData("relevant"));
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      homeController.getBannar2Data();
+    }); */
+    /*  WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getCategoryData(3)); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getConfigurationData();
     });
@@ -94,24 +113,24 @@ class DiscountScreenState extends State<DiscountScreen> {
       });
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.tagsHasnextpage.value = true;
-      productController.tagsLoadMore.value = false;
-      //  productController.istagsProduct.value = false;
-      productController.tagsPage.value = 1;
+      productController.listController.addListener(() {
+        productController.fetchMoreData("relevant");
+        productController.update();
+      });
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressListController.addListener(() {
         productController.fetchExpressMoreData(productController.tagId.value,
             homeController.homeGenderValue.value);
         productController.update();
       });
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    }); */
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressHasnextpage.value = true;
       productController.expressLoadMore.value = false;
       //  productController.isExpress.value = false;
       productController.expressPage.value = 1;
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.homeTagshasnextpage.value = true;
       productController.homeTagsloadMore.value = false;
@@ -803,22 +822,23 @@ class DiscountScreenState extends State<DiscountScreen> {
                                                               Axis.horizontal,
                                                           itemBuilder:
                                                               (ctx, index) {
-                                                            return AnimatedContainer(
-                                                                duration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            400),
-                                                                height: 6.sp,
-                                                                width: 40.sp,
-                                                                margin: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal: 5
-                                                                            .sp),
-                                                                decoration: BoxDecoration(
-                                                                    color: index ==
-                                                                            value.currentPage.value
-                                                                        ? colorPrimary
-                                                                        : colorSecondary));
+                                                            return index ==
+                                                                    value
+                                                                        .currentPage
+                                                                        .value
+                                                                ? Image.asset(
+                                                                    longIndicator,
+                                                                    width:
+                                                                        48.sp,
+                                                                    height:
+                                                                        6.sp,
+                                                                  )
+                                                                : Image.asset(
+                                                                    greyIndicator,
+                                                                    width: 8.sp,
+                                                                    height:
+                                                                        8.sp,
+                                                                  );
                                                           })),
                                             ),
                                           ),
@@ -866,98 +886,336 @@ class DiscountScreenState extends State<DiscountScreen> {
                                   height: 0,
                                 )),
                      */
+                      Obx(() => homeController.isBrand.value
+                          ? DummyHomeBrand()
+                          : homeController.brandList.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10.sp, left: 16.sp),
+                                          child: AppText(
+                                            text:
+                                                "Featured brands".toUpperCase(),
+                                            fontFamily: "Franklin Gothic",
+                                            color: blackColor,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {},
+                                          child: Container(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 10.sp,
+                                                  right: 16.sp,
+                                                  left: 16.sp,
+                                                  bottom: 2.sp),
+                                              child: ImageIcon(
+                                                AssetImage(rightBlackArrow),
+                                                color: blackColor,
+                                                size: 14.sp,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 10.sp,
+                                          left: 16.sp,
+                                          right: 16.sp),
+                                      child: SizedBox(
+                                        height: 100.sp,
+                                        child: ListView.builder(
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            itemCount:
+                                                homeController.brandList.length,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (ctx, index) {
+                                              return homeController
+                                                              .brandList[index]
+                                                          ["logo"] !=
+                                                      null
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 12.sp),
+                                                      child: SizedBox(
+                                                        height: 80.sp,
+                                                        width: 80.sp,
+                                                        child: CircleAvatar(
+                                                          backgroundColor:
+                                                              blackColor,
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            height: 80.sp,
+                                                            width: 80.sp,
+                                                            cacheManager: CacheManager(Config(
+                                                                "customCacheKey",
+                                                                stalePeriod:
+                                                                    const Duration(
+                                                                        days:
+                                                                            15),
+                                                                maxNrOfCacheObjects:
+                                                                    100)),
+                                                            fit: BoxFit.contain,
+                                                            imageUrl: homeController
+                                                                    .brandList[
+                                                                index]["logo"],
+                                                            errorWidget:
+                                                                (context, url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                              downloadImage,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              height: 80.sp,
+                                                              width: 80.sp,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 12.sp),
+                                                      child: CircleAvatar(
+                                                        child: Image.asset(
+                                                            dummyWishlistImage,
+                                                            height: 80.sp,
+                                                            width: 80.sp,
+                                                            fit: BoxFit.cover),
+                                                      ),
+                                                    );
+                                            }),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.sp),
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: colorSecondary,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(
+                                  height: 0,
+                                )),
                       Obx(() => productController.istagsProduct.value
                           ? Padding(
                               padding: EdgeInsets.only(top: 10.sp),
                               child: DummyProductList(
-                                  text: productController.tagname.value),
+                                  visibleSubtitle: true,
+                                  text: "${productController.tagname.value}"
+                                      .toUpperCase()),
                             )
                           : productController.tagProductList.isNotEmpty
-                              ? Padding(
-                                  padding: EdgeInsets.only(top: 10.sp),
-                                  child: HorizontalHomeList(
-                                    text: productController.tagname.value,
-                                    visibleViewAll: true,
-                                    visibleSubtitle: true,
-                                    text1:
-                                        "Selected styles for a limited time only",
-                                    controller:
-                                        productController.tagsProductController,
-                                    height: 250.sp,
-                                    visibleExpress: false,
-                                    onPressedViewAll: () {
-                                      productController.productCategory.clear();
-                                      productController.productTags.clear();
-                                      productController.productTags =
-                                          productController.tagId.value == 0
-                                              ? []
-                                              : [productController.tagId.value];
-                                      Navigator.push(
-                                          context,
-                                          scaleIn(
-                                            CategoryProductScreen(
-                                              categoryName: productController
-                                                          .tagId.value ==
-                                                      0
-                                                  ? "We think you might also like"
-                                                  : productController
-                                                      .tagname.value,
-                                              categoryId: 0,
-                                              brandId: 0,
-                                              genderType: homeController
-                                                  .homeGenderValue.value,
-                                              tagIds: productController
-                                                          .tagId.value ==
-                                                      0
+                              ? Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: HorizontalHomeList(
+                                        text:
+                                            "${productController.tagname.value}"
+                                                .toUpperCase(),
+                                        visibleViewAll: true,
+                                        visibleSubtitle: true,
+                                        text1:
+                                            "Selected styles for a limited time only",
+                                        controller: productController
+                                            .tagsProductController,
+                                        height: 250.sp,
+                                        visibleExpress: false,
+                                        onPressedViewAll: () {
+                                          productController.productCategory
+                                              .clear();
+                                          productController.productTags.clear();
+                                          productController.productTags =
+                                              productController.tagId.value == 0
                                                   ? []
                                                   : [
                                                       productController
                                                           .tagId.value
-                                                    ],
-                                              categoryList: [],
-                                            ),
-                                          )).then((value) => setState(
-                                            () {
-                                              //  productController.tagId.value = 0;
-                                            },
-                                          ));
-                                    },
-                                    onPressed: (p0, p1) async {
-                                      Navigator.push(
-                                          context,
-                                          scaleIn(
-                                            ProductDetailsScreen(
-                                              productId: p0,
-                                              type: "add",
-                                              brandName: p1,
-                                            ),
-                                          )).then((value) => setState(
-                                            () {
-                                              productController
-                                                  .tagsHasnextpage.value = true;
-                                              productController
-                                                  .tagsLoadMore.value = false;
-                                              productController
-                                                  .istagsProduct.value = false;
-                                              productController.tagsPage.value =
-                                                  1;
-                                            },
-                                          ));
-                                      await analytics.logEvent(
-                                        name: 'product_tabid_details_home_page',
-                                        parameters: <String, Object>{
-                                          'page_name':
-                                              'product_tabid_details_home_page',
+                                                    ];
+                                          Navigator.push(
+                                              context,
+                                              scaleIn(
+                                                CategoryProductScreen(
+                                                  categoryName: productController
+                                                              .tagId.value ==
+                                                          0
+                                                      ? "We think you might also like"
+                                                      : productController
+                                                          .tagname.value,
+                                                  categoryId: 0,
+                                                  brandId: 0,
+                                                  genderType: homeController
+                                                      .homeGenderValue.value,
+                                                  tagIds: productController
+                                                              .tagId.value ==
+                                                          0
+                                                      ? []
+                                                      : [
+                                                          productController
+                                                              .tagId.value
+                                                        ],
+                                                  categoryList: [],
+                                                ),
+                                              )).then((value) => setState(
+                                                () {
+                                                  //  productController.tagId.value = 0;
+                                                },
+                                              ));
                                         },
-                                      );
-                                    },
-                                    list: productController.tagProductList,
-                                  ),
+                                        onPressed: (p0, p1) async {
+                                          Navigator.push(
+                                              context,
+                                              scaleIn(
+                                                ProductDetailsScreen(
+                                                  productId: p0,
+                                                  type: "add",
+                                                  brandName: p1,
+                                                ),
+                                              )).then((value) => setState(
+                                                () {
+                                                  productController
+                                                      .tagsHasnextpage
+                                                      .value = true;
+                                                  productController.tagsLoadMore
+                                                      .value = false;
+                                                  productController
+                                                      .istagsProduct
+                                                      .value = false;
+                                                  productController
+                                                      .tagsPage.value = 1;
+                                                },
+                                              ));
+                                          await analytics.logEvent(
+                                            name:
+                                                'product_tabid_details_home_page',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'product_tabid_details_home_page',
+                                            },
+                                          );
+                                        },
+                                        list: productController.tagProductList,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10.sp),
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: colorSecondary,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
                                 )
                               : const SizedBox(
                                   height: 0,
                                 )),
-                      Obx(
+                      Obx(() => productController.isProduct.value
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 10.sp),
+                              child: DummyProductList(
+                                  visibleSubtitle: true,
+                                  text: "HANDPICKED FOR YOU"),
+                            )
+                          : productController.productList.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10.sp),
+                                      child: HorizontalHomeList(
+                                        text: "HANDPICKED FOR YOU",
+                                        visibleViewAll: true,
+                                        visibleSubtitle: true,
+                                        text1:
+                                            "Curated collection, just for you and only you.",
+                                        controller: productController
+                                            .tagsProductController,
+                                        height: 250.sp,
+                                        visibleExpress: false,
+                                        onPressedViewAll: () {
+                                          Navigator.push(
+                                              context,
+                                              scaleIn(
+                                                ProductListScreen(
+                                                  title: "HANDPICKED FOR YOU",
+                                                ),
+                                              )).then((value) => setState(
+                                                () {
+                                                  productController
+                                                      .hasnextpage.value = true;
+                                                  productController
+                                                      .loadMore.value = false;
+                                                  productController
+                                                      .isProduct.value = false;
+                                                  productController.page.value =
+                                                      1;
+                                                },
+                                              ));
+                                        },
+                                        onPressed: (p0, p1) async {
+                                          Navigator.push(
+                                              context,
+                                              scaleIn(
+                                                ProductDetailsScreen(
+                                                  productId: p0,
+                                                  type: "add",
+                                                  brandName: p1,
+                                                ),
+                                              )).then((value) => setState(
+                                                () {
+                                                  productController
+                                                      .hasnextpage.value = true;
+                                                  productController
+                                                      .loadMore.value = false;
+                                                  productController
+                                                      .isProduct.value = false;
+                                                  productController.page.value =
+                                                      1;
+                                                },
+                                              ));
+                                          await analytics.logEvent(
+                                            name:
+                                                'product_tabid_details_home_page',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'product_tabid_details_home_page',
+                                            },
+                                          );
+                                        },
+                                        list: productController.productList,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10.sp),
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: colorSecondary,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox(
+                                  height: 0,
+                                )),
+                      /*  Obx(
                         () => homeController.isCategory.value
                             ? const DummyProductList(text: "Popular Categories")
                             : homeController.categoryList.isNotEmpty
@@ -1674,6 +1932,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                             );
                           },
                           icon: questionIcon),
+                      */
                       SizedBox(
                         height: 40.sp,
                       )
@@ -1704,7 +1963,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 productController.getTagsData(3);
                                 homeController.getBannar1Data();
                                 homeController.getBannar2Data();
-                                homeController.getCategoryData(3);
+                                // homeController.getCategoryData(3);
                               },
                               child: Container(
                                 width: 110.sp,
@@ -1740,7 +1999,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 productController.productCategory = [];
                                 productController.productTags = [];
                                 productController.getTagsData(2);
-                                homeController.getCategoryData(2);
+                                // homeController.getCategoryData(2);
                               },
                               child: Container(
                                 width: 110.sp,
@@ -1776,7 +2035,7 @@ class DiscountScreenState extends State<DiscountScreen> {
                                 productController.productCategory = [];
                                 productController.productTags = [];
                                 productController.getTagsData(1);
-                                homeController.getCategoryData(1);
+                                // homeController.getCategoryData(1);
                               },
                               child: Container(
                                 width: 110.sp,

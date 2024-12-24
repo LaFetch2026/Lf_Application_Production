@@ -58,8 +58,8 @@ class HorizontalHomeList extends StatelessWidget {
               child: AppText(
                 text: text,
                 fontFamily: fontFamily,
-                color: textColor,
-                fontSize: 16,
+                color: blackColor,
+                fontSize: 18,
               ),
             ),
             Expanded(
