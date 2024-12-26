@@ -63,7 +63,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     productController.showAddressList.value = false;
     productController.addressText.value = "";
     productController.addressTypeValue.value = "";
-    // WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
@@ -142,20 +142,25 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     return position;
   }
 
-  /*  @override
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        deniedLocationCheck();
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.detached:
-        break;
+    if (state == AppLifecycleState.resumed) {
+      LocationPermission permission;
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        print("Location not enable");
+      } else {
+        getCurrentLocation();
+      }
     }
-  } */
+  }
 
   /* deniedLocationCheck() async {
     LocationPermission permission;
