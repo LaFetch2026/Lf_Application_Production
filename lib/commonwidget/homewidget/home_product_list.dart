@@ -8,11 +8,10 @@ import '../../utils/constants.dart';
 import '../app_text.dart';
 import '../common_widgets.dart';
 
-class HorizontalHomeList extends StatelessWidget {
+class HomeProductList extends StatelessWidget {
   final String text;
   final String text1;
   final double height;
-  final bool visibleExpress;
   final bool visibleheart;
   final bool visibleViewAll;
   final List list;
@@ -26,12 +25,11 @@ class HorizontalHomeList extends StatelessWidget {
   final Function(int, int)? onPressedHeart;
   final bool visibleSubtitle;
 
-  const HorizontalHomeList(
+  const HomeProductList(
       {Key? key,
       required this.text,
       this.text1 = "",
       required this.height,
-      required this.visibleExpress,
       required this.list,
       this.visibleViewAll = false,
       this.visibleSubtitle = false,
@@ -127,26 +125,7 @@ class HorizontalHomeList extends StatelessWidget {
                           : list.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, index) {
-                        return /* list.length > 5 && index == 4 && visibleViewAll
-                            ? GestureDetector(
-                                onTap: () {
-                                  onPressedViewAll?.call();
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 75.sp, right: 16.sp, left: 16.sp),
-                                  child: AppText(
-                                    text: "View All",
-                                    color: blue,
-                                    maxLines: 1,
-                                    fontSize: 12,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              )
-                            : */
-                            Column(
+                        return Column(
                           children: [
                             GestureDetector(
                               onTap: () {
@@ -175,9 +154,6 @@ class HorizontalHomeList extends StatelessWidget {
                                                         maxNrOfCacheObjects:
                                                             100)),
                                                 fit: BoxFit.cover,
-                                                /* fadeInCurve: Curves.easeIn,
-                                                fadeInDuration:
-                                                    Duration(milliseconds: 100), */
                                                 fadeOutCurve: Curves.ease,
                                                 fadeOutDuration:
                                                     Duration(milliseconds: 100),
@@ -245,9 +221,22 @@ class HorizontalHomeList extends StatelessWidget {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10.sp, vertical: 5.sp),
                                       child: AppText(
-                                        text: "${list[index]["name"]}\n",
+                                        text: "${list[index]["brand_name"]}\n",
                                         color: nameText,
-                                        maxLines: 2,
+                                        maxLines: 1,
+                                        fontSize: 13,
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10.sp, vertical: 3.sp),
+                                      child: AppText(
+                                        text:
+                                            "${list[index]["short_description"]}\n",
+                                        color: Color(0xFF6B7280),
+                                        maxLines: 1,
                                         fontSize: 11,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
@@ -255,79 +244,37 @@ class HorizontalHomeList extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: 10.sp, left: 10.sp, right: 1.sp),
+                                          top: 10.sp, left: 10.sp, right: 3.sp),
                                       child: Row(
                                         children: [
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${list[index]["price"] ?? ""}",
-                                            color: deepGreytextColor,
-                                            maxLines: 2,
-                                            fontSize: 11,
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
+                                          Text(
+                                            "\u{20B9} ${list[index]["mrp"] ?? ""}",
+                                            style: TextStyle(
+                                              color: textHintColor,
+                                              fontSize: 11.sp,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
                                           Padding(
                                             padding:
                                                 EdgeInsets.only(left: 5.sp),
-                                            child: Text(
-                                              "\u{20B9} ${list[index]["mrp"] ?? ""}",
-                                              style: TextStyle(
-                                                color: textHintColor,
-                                                fontSize: 11.sp,
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
+                                            child: AppText(
+                                              text:
+                                                  "\u{20B9} ${list[index]["price"] ?? ""}",
+                                              color: deepGreytextColor,
+                                              maxLines: 2,
+                                              fontSize: 11,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    Visibility(
-                                      visible: visibleExpress,
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            onPressedExpress?.call();
-                                          },
-                                          child: list[index]["express_delivery"]
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 10.sp,
-                                                      left: 10.sp,
-                                                      right: 10.sp),
-                                                  child: Row(
-                                                    children: [
-                                                      ImageIcon(
-                                                        AssetImage(truckImage),
-                                                        color: expressText,
-                                                        size: 14.sp,
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    5.sp),
-                                                        child: AppText(
-                                                          text: "Express",
-                                                          color: expressText,
-                                                          maxLines: 2,
-                                                          fontSize: 11,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : SizedBox(
-                                                  height: 0,
-                                                )),
-                                    )
                                   ],
                                 ),
                               ),

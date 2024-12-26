@@ -12,7 +12,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
-import 'package:lafetch/commonwidget/homewidget/horizontal_home_list.dart';
+import 'package:lafetch/commonwidget/homewidget/home_product_list.dart';
 //import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
@@ -921,7 +921,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               child: ImageIcon(
                                                 AssetImage(rightBlackArrow),
                                                 color: blackColor,
-                                                size: 14.sp,
+                                                size: 24.sp,
                                               ),
                                             ),
                                           ),
@@ -1026,7 +1026,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(top: 10.sp),
-                                      child: HorizontalHomeList(
+                                      child: HomeProductList(
                                         text:
                                             "${productController.tagname.value}"
                                                 .toUpperCase(),
@@ -1036,8 +1036,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             "Selected styles for a limited time only",
                                         controller: productController
                                             .tagsProductController,
-                                        height: 250.sp,
-                                        visibleExpress: false,
+                                        height: 235.sp,
                                         onPressedViewAll: () {
                                           productController.productCategory
                                               .clear();
@@ -1139,7 +1138,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(top: 10.sp),
-                                      child: HorizontalHomeList(
+                                      child: HomeProductList(
                                         text: "HANDPICKED FOR YOU",
                                         visibleViewAll: true,
                                         visibleSubtitle: true,
@@ -1147,8 +1146,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             "Curated collection, just for you and only you.",
                                         controller: productController
                                             .tagsProductController,
-                                        height: 250.sp,
-                                        visibleExpress: false,
+                                        height: 235.sp,
                                         onPressedViewAll: () {
                                           Navigator.push(
                                               context,
