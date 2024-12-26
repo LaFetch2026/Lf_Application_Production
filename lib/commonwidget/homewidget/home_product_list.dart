@@ -73,14 +73,14 @@ class HomeProductList extends StatelessWidget {
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.only(
-                            top: 10.sp,
-                            right: leftPadding.sp,
+                            top: 12.sp,
+                            right: 12.sp,
                             left: 16.sp,
                             bottom: 2.sp),
-                        child: ImageIcon(
-                          AssetImage(rightBlackArrow),
-                          color: blackColor,
-                          size: 24.sp,
+                        child: Image.asset(
+                          rightBlackArrow,
+                          height: 30.sp,
+                          width: 30.sp,
                         ),
                       ),
                     ),

@@ -82,7 +82,7 @@ class HorizontalHomeList extends StatelessWidget {
                         child: ImageIcon(
                           AssetImage(rightBlackArrow),
                           color: blackColor,
-                          size: 24.sp,
+                          size: 26.sp,
                         ),
                       ),
                     ),
