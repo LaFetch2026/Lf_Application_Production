@@ -9,6 +9,7 @@ import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
 import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_account.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
+import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/screens/account/customercare.dart';
 import 'package:lafetch/screens/account/notification_setting.dart';
@@ -16,6 +17,7 @@ import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
@@ -32,6 +34,7 @@ class AccountScreen extends StatefulWidget {
 
 class AccountScreenState extends State<AccountScreen> {
   final controller = Get.put(ProfileController());
+  final homeController = Get.put(HomeController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -197,7 +200,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                                 0,
                                                           )))
                                                   .then((value) => setState(
-                                                        () {
+                                                        () async {
                                                           controller
                                                               .getProfileData();
                                                           controller
@@ -206,6 +209,33 @@ class AccountScreenState extends State<AccountScreen> {
                                                           controller
                                                               .isPhoneNumber
                                                               .value = false;
+                                                          final prefs =
+                                                              await SharedPreferences
+                                                                  .getInstance();
+                                                          if (prefs.getInt(
+                                                                  'gender') !=
+                                                              null) {
+                                                            int id =
+                                                                prefs.getInt(
+                                                                    'gender')!;
+                                                            if (id == 1) {
+                                                              homeController
+                                                                  .homeGenderValue
+                                                                  .value = 3;
+                                                              homeController
+                                                                      .genderText
+                                                                      .value =
+                                                                  "Women";
+                                                            } else if (id ==
+                                                                2) {
+                                                              homeController
+                                                                  .homeGenderValue
+                                                                  .value = 2;
+                                                              homeController
+                                                                  .genderText
+                                                                  .value = "Men";
+                                                            } else {}
+                                                          }
                                                         },
                                                       ));
                                               await analytics.logEvent(

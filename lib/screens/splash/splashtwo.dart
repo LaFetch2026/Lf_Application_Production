@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,8 @@ class SplashTwoScreen extends StatefulWidget {
 }
 
 class SplashTwoScreenState extends State<SplashTwoScreen> {
+  final homeController = Get.put(HomeController());
+
   String? token;
   String? name;
 
@@ -31,6 +34,16 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     name = prefs.getString('name');
+    if (prefs.getInt('gender') != null) {
+      int id = prefs.getInt('gender')!;
+      if (id == 1) {
+        homeController.homeGenderValue.value = 3;
+        homeController.genderText.value = "Women";
+      } else if (id == 2) {
+        homeController.homeGenderValue.value = 2;
+        homeController.genderText.value = "Men";
+      } else {}
+    }
   }
 
   navigateToScreen() {

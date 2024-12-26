@@ -186,7 +186,7 @@ class ProfileController extends BaseController {
       if (response.statusCode == 200) {
         if (type == "edit") {
           if (otp.isNotEmpty) {
-            getSnackBar("Profile updated");
+            // getSnackBar("Profile updated");
             print(responseData);
             if (responseData['data']['email'] != null) {
               prefs.setString('email', responseData['data']['email']);
@@ -204,12 +204,21 @@ class ProfileController extends BaseController {
               isPhoneNumber.value = true;
               getSnackBar("Enter Otp");
             } else {
-              getSnackBar("Profile updated");
+              if (responseData['data']['email'] != null) {
+                prefs.setString('email', responseData['data']['email']);
+              }
+              if (responseData['data']['gender'] != null) {
+                prefs.setInt('gender', responseData['data']['gender']);
+              }
+              if (responseData['data']['name'] != null) {
+                prefs.setString('name', responseData['data']['name']);
+              }
+              //  getSnackBar("Profile updated");
               Get.close(1);
             }
           }
         } else {
-          getSnackBar("Profile updated");
+          // getSnackBar("Profile updated");
           print(responseData);
           if (responseData['data']['email'] != null) {
             prefs.setString('email', responseData['data']['email']);

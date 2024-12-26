@@ -57,7 +57,7 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.homeGenderValue.value = 3;
+      // homeController.homeGenderValue.value = 3;
       homeController.showGenderList.value = false;
       homeController.currentPage.value = 0;
       productController.current.value = 50;
@@ -79,8 +79,8 @@ class HomeScreenState extends State<HomeScreen> {
       productController.isProduct.value = false;
       productController.page.value = 1;
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getTagsData(3));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getTagsData(homeController.homeGenderValue.value));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar1Data();
     });
