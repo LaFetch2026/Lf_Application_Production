@@ -102,6 +102,8 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen>
       case AppLifecycleState.detached:
         FlutterBackgroundService().invoke("stopService");
         break;
+      case AppLifecycleState.hidden:
+        throw UnimplementedError();
     }
   }
 
