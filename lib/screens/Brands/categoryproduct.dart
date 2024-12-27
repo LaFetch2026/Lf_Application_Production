@@ -6,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
+import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/searchscreen.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../commonwidget/common_widgets.dart';
 import '../../commonwidget/homewidget/dummy_grid_list.dart';
 
@@ -39,6 +42,7 @@ class CategoryProductScreen extends StatefulWidget {
 class CategoryProductScreenState extends State<CategoryProductScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
+  final controller = Get.put(CartController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -56,6 +60,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.bannerTagLoadMore.value = false;
       productController.bannerTagPage.value = 1;
     });
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => controller.getCartData());
     if (widget.categoryId != 0) {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>
@@ -101,12 +107,23 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         backgroundColor: whiteColor,
         body: Column(
           children: [
-            BackButtonAppbar(
-              text: widget.categoryName,
-              threeDot: false,
-              backgroundColor: whiteColor,
-              icon: threeDotImage,
-            ),
+            ProductAppbar(onPressedSearch: () async {
+              Get.to(const SearchScreen());
+              analytics
+                  .logEvent(name: "search_page", parameters: <String, Object>{
+                "page_name": "search_page",
+              });
+            }, onPressedCart: () async {
+              Get.to(const CartScreen())?.then((value) => setState(
+                    () {
+                      controller.getCartData();
+                    },
+                  ));
+              analytics
+                  .logEvent(name: "cart_page", parameters: <String, Object>{
+                "page_name": "cart_page",
+              });
+            }),
             Obx(
               () => productController.isCategoryProduct.value
                   ? const DummyGridList(

@@ -173,6 +173,8 @@ const greyIndicator = 'assets/images/grey_indicator.png';
 const longIndicator = 'assets/images/long_indicator.png';
 const rightBlackArrow = 'assets/images/right_black_arrow.png';
 const expressImage = 'assets/images/express.png';
+const bagImage = 'assets/images/bag.png';
+const lafetchLogoImage = 'assets/images/lafetch_logo.png';
 
 class ApiConstants {
   ApiConstants._();

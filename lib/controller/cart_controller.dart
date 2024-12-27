@@ -32,6 +32,7 @@ class CartController extends BaseController {
   RxBool isExpress = false.obs;
   RxInt expressValue = 0.obs;
   RxDouble lat = 0.0.obs;
+  RxInt cartTotalValue = 0.obs;
   RxDouble lng = 0.0.obs;
   RxString qtyText = "".obs;
   RxInt qtyProductId = 0.obs;
@@ -62,6 +63,7 @@ class CartController extends BaseController {
           cartId.value = responseData["id"];
           qtyProductId.value = 0;
           qtyText.value = "";
+          cartTotalValue.value = orderList.length;
           if (responseData["discount"] != null) {
             couponText.value = responseData["discount"]["code"];
           }

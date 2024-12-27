@@ -45,6 +45,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                 orderId: widget.orderId,
               ));
               controller.orderList.clear();
+              controller.cartTotalValue.value = 0;
               controller.getCartData();
             } else {
               Get.offAll(

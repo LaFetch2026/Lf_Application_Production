@@ -131,7 +131,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                         ImageIcon(
                       AssetImage(cartNewImage),
                       color: whiteColor,
-                      size: 24.sp,
+                      size: 20.sp,
                     )),
               ),
             ],

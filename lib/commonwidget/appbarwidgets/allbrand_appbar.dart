@@ -79,6 +79,7 @@ class AllBrandAppbar extends StatelessWidget {
                         backgroundColor: whiteColor,
                         child: Image.asset(
                           cartNewImage,
+                          color: blackColor,
                           height: 20.sp,
                           width: 20.sp,
                         )),

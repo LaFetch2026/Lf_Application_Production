@@ -92,8 +92,8 @@ class AccountScreenState extends State<AccountScreen> {
                         child: Image.asset(
                           cartNewImage,
                           color: whiteColor,
-                          height: 20.sp,
-                          width: 20.sp,
+                          height: 18.sp,
+                          width: 18.sp,
                         ),
                       ),
                     ),

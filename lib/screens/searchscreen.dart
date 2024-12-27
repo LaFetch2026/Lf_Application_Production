@@ -47,35 +47,38 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   void initState() {
-    controller.searchController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.recentListController.addListener(() {
-        productController.fetchMoreData("recently-viewed");
-        productController.update();
-      });
+      controller.searchController.clear();
+      productController.hasnextpage.value = true;
+      productController.loadMore.value = false;
+      productController.isProduct.value = false;
+      productController.page.value = 1;
+      productController.mostViewHasnextpage.value = true;
+      productController.mostViewLoadMore.value = false;
+      productController.isMostSearch.value = false;
+      productController.mostViewPage.value = 1;
     });
-    productController.hasnextpage.value = true;
-    productController.loadMore.value = false;
-    productController.isProduct.value = false;
-    productController.page.value = 1;
+
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getRecentSearchData());
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.mostViewController.addListener(() {
-        productController.fetchMostSearchMoreData();
-        productController.update();
-      });
-    });
-    productController.mostViewHasnextpage.value = true;
-    productController.mostViewLoadMore.value = false;
-    productController.isMostSearch.value = false;
-    productController.mostViewPage.value = 1;
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getMostViewProductData());
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("recently-viewed"));
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getBrandData("brand search"));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.recentListController.addListener(() {
+        productController.fetchMoreData("recently-viewed");
+        productController.update();
+      });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.mostViewController.addListener(() {
+        productController.fetchMostSearchMoreData();
+        productController.update();
+      });
+    });
     super.initState();
   }
 

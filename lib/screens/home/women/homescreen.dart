@@ -240,7 +240,12 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           HomeAppbar(
             onPressedSearch: () async {
-              Navigator.push(context, scaleIn(const SearchScreen()));
+              Navigator.push(context, scaleIn(const SearchScreen()))
+                  .then((value) => setState(
+                        () {
+                          productController.getProductData("relevant");
+                        },
+                      ));
               await analytics.logEvent(
                 name: 'search_page',
                 parameters: <String, Object>{
