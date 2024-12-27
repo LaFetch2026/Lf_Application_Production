@@ -54,13 +54,17 @@ class ProductListScreenState extends State<ProductListScreen> {
       productController.isHandPicked.value = false;
       productController.handpickedPage.value = 1;
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getHandPickedProduct());
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getHandPickedProduct(
+            productController.productSortBy.value,
+            productController.filterProductEnable.value));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.handpickedController.addListener(() {
-        productController.fetchMoreHandPickedProduct();
+        productController.fetchMoreHandPickedProduct(
+            productController.productSortBy.value,
+            productController.filterProductEnable.value);
         productController.update();
       });
     });
@@ -78,7 +82,9 @@ class ProductListScreenState extends State<ProductListScreen> {
             ProductAppbar(onPressedSearch: () async {
               Get.to(const SearchScreen())?.then((value) => setState(
                     () {
-                      productController.getHandPickedProduct();
+                      productController.getHandPickedProduct(
+                          productController.productSortBy.value,
+                          productController.filterProductEnable.value);
                     },
                   ));
               analytics
@@ -599,18 +605,11 @@ class ProductListScreenState extends State<ProductListScreen> {
                       scaffoldKey.currentState
                           ?.showBottomSheet((context) => BottomSortBy(
                                 onPressedButton: (p0) {
-                                  productController.sortBy.value = p0;
-                                  /*  productController.getProductByCategoryData(
-                                      widget.categoryId,
-                                      0,
-                                      "",
-                                      [],
-                                      p0,
-                                      widget.genderType,
-                                      productController.filterEnable.value,
-                                      widget.catalogId,
-                                      false,
-                                      "catalog"); */
+                                  productController.productSortBy.value = p0;
+                                  productController.getHandPickedProduct(
+                                      productController.productSortBy.value,
+                                      productController
+                                          .filterProductEnable.value);
                                 },
                               ));
                     },
@@ -657,18 +656,17 @@ class ProductListScreenState extends State<ProductListScreen> {
                       scaffoldKey.currentState
                           ?.showBottomSheet((context) => BottomCategory(
                                 onPressedButton: (p0) {
-                                  //  productController.sortBy.value = p0;
-                                  /*  productController.getProductByCategoryData(
-                                      widget.categoryId,
-                                      0,
-                                      "",
-                                      [],
-                                      p0,
-                                      widget.genderType,
-                                      productController.filterEnable.value,
-                                      widget.catalogId,
-                                      false,
-                                      "catalog"); */
+                                  if (p0 == "Women") {
+                                    productController.categoryFilter.value = 3;
+                                  } else if (p0 == "Men") {
+                                    productController.categoryFilter.value = 2;
+                                  } else {
+                                    productController.categoryFilter.value = 1;
+                                  }
+                                  productController.getHandPickedProduct(
+                                      productController.productSortBy.value,
+                                      productController
+                                          .filterProductEnable.value);
                                 },
                               ));
                     },
@@ -717,8 +715,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                           productController.brand_ids.clear();
                           productController.color_ids.clear();
                           productController.size_ids.clear();
-                          productController.sortBy.value = "";
-                          productController.filterEnable.value = false;
+                          productController.productSortBy.value = "";
+                          productController.filterProductEnable.value = false;
                           final prefs = await SharedPreferences.getInstance();
                           prefs.remove("brandList");
                           prefs.remove("colorList");
@@ -726,33 +724,18 @@ class ProductListScreenState extends State<ProductListScreen> {
                           prefs.remove("upper");
                           prefs.remove("lower");
                           prefs.remove("sortby");
-                          /*  productController.getProductByCategoryData(
-                              widget.categoryId,
-                              0,
-                              "",
-                              [],
-                              productController.sortBy.value,
-                              widget.genderType,
-                              productController.filterEnable.value,
-                              widget.catalogId,
-                              false,
-                              "catalog"); */
+                          prefs.remove("category");
+                          productController.getHandPickedProduct(
+                              productController.productSortBy.value,
+                              productController.filterProductEnable.value);
                         },
                         onClick: (p0, p1) {
-                          productController.filterEnable.value = true;
+                          productController.filterProductEnable.value = true;
                           productController.lowPrice.value = p0;
                           productController.highPrice.value = p1;
-                          /*  productController.getProductByCategoryData(
-                              widget.categoryId,
-                              0,
-                              "",
-                              [],
-                              productController.sortBy.value,
-                              widget.genderType,
-                              productController.filterEnable.value,
-                              widget.catalogId,
-                              true,
-                              "catalog"); */
+                          productController.getHandPickedProduct(
+                              productController.productSortBy.value,
+                              productController.filterProductEnable.value);
                         },
                       ));
                     },

@@ -90,7 +90,6 @@ class _BottomCategoryState extends State<BottomCategory> {
                       prefs.setString("category", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
-
                       closeSheet();
                     }),
                 GestureDetector(

@@ -90,8 +90,8 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getHandPickedProduct());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false));
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
@@ -246,7 +246,7 @@ class HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, scaleIn(const SearchScreen()))
                   .then((value) => setState(
                         () {
-                          productController.getHandPickedProduct();
+                          productController.getHandPickedProduct("", false);
                         },
                       ));
               await analytics.logEvent(
@@ -1080,7 +1080,16 @@ class HomeScreenState extends State<HomeScreen> {
                                         controller: productController
                                             .tagsProductController,
                                         height: 235.sp,
-                                        onPressedViewAll: () {
+                                        onPressedViewAll: () async {
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          prefs.remove("brandList");
+                                          prefs.remove("colorList");
+                                          prefs.remove("sizeList");
+                                          prefs.remove("upper");
+                                          prefs.remove("lower");
+                                          prefs.remove("sortby");
+                                          prefs.remove("category");
                                           productController.productCategory
                                               .clear();
                                           productController.productTags.clear();
@@ -1190,7 +1199,22 @@ class HomeScreenState extends State<HomeScreen> {
                                         controller: productController
                                             .handpickedController,
                                         height: 235.sp,
-                                        onPressedViewAll: () {
+                                        onPressedViewAll: () async {
+                                          productController
+                                              .productSortBy.value = "";
+                                          productController.filterProductEnable
+                                              .value = false;
+                                          productController
+                                              .categoryFilter.value = 0;
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          prefs.remove("brandList");
+                                          prefs.remove("colorList");
+                                          prefs.remove("sizeList");
+                                          prefs.remove("upper");
+                                          prefs.remove("lower");
+                                          prefs.remove("sortby");
+                                          prefs.remove("category");
                                           Navigator.push(
                                               context,
                                               scaleIn(

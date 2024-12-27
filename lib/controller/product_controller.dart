@@ -73,8 +73,10 @@ class ProductController extends BaseController {
   RxBool homeTagsloadMore = false.obs;
   RxBool homeTagshasnextpage = true.obs;
   RxInt homeTagsPage = 1.obs;
+  RxInt categoryFilter = 0.obs;
   RxBool filterEnable = false.obs;
   RxBool filterExpressEnable = false.obs;
+  RxBool filterProductEnable = false.obs;
   RxInt page = 1.obs;
   RxInt lowPrice = 500.obs;
   RxInt highPrice = 500000.obs;
@@ -125,6 +127,7 @@ class ProductController extends BaseController {
   RxBool isVideoPlaying = true.obs;
   RxString sortBy = "".obs;
   RxString expressSortBy = "".obs;
+  RxString productSortBy = "".obs;
   List brand_ids = [].obs;
   List color_ids = [].obs;
   List size_ids = [].obs;
@@ -356,17 +359,68 @@ class ProductController extends BaseController {
     }
   }
 
-  getHandPickedProduct() async {
+  getHandPickedProduct(String handpickSortBy, bool filter) async {
     isHandPicked.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
+      /*  var response = await http.get(
           Uri.parse(
               "${ApiConstants.baseUrl}/products?type=relevant&latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+          }); */
+      if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
+        int id = prefs.getInt('gender')!;
+        if (id == 1) {
+          categoryFilter.value = 3;
+        } else if (id == 2) {
+          categoryFilter.value = 2;
+        } else {
+          categoryFilter.value = 1;
+        }
+      }
+      dynamic response;
+      String colorString = color_ids.join(',');
+      String sizeString = size_ids.join(',');
+      String brandString = brand_ids.join(',');
+      if (handpickSortBy.isNotEmpty) {
+        if (filter) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$handpickSortBy&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$handpickSortBy&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+      } else {
+        if (filter) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=relevant&&gender_type=${categoryFilter.value}color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=relevant&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
@@ -375,6 +429,9 @@ class ProductController extends BaseController {
           handpickedLoadMore.value = false;
           isHandPicked.value = false;
           handpickedPage.value = 1;
+          if (filter) {
+            Get.back();
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -394,7 +451,7 @@ class ProductController extends BaseController {
     isHandPicked.value = false;
   }
 
-  fetchMoreHandPickedProduct() async {
+  fetchMoreHandPickedProduct(String handpickSortBy, bool filter) async {
     if (handpickedHasnextpage.value == true &&
         isHandPicked.value == false &&
         handpickedLoadMore.value == false) {
@@ -403,13 +460,54 @@ class ProductController extends BaseController {
       print(handpickedPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        var response = await http.get(
+        /*  var response = await http.get(
             Uri.parse(
                 "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+            }); */
+        dynamic response;
+        String colorString = color_ids.join(',');
+        String sizeString = size_ids.join(',');
+        String brandString = brand_ids.join(',');
+        if (handpickSortBy.isNotEmpty) {
+          if (filter) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&gender_type=${categoryFilter.value}&sort_by=$handpickSortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&gender_type=${categoryFilter.value}&sort_by=$handpickSortBy&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
+        } else {
+          if (filter) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
+        }
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
           if (responseData["data"] != null) {
@@ -2167,7 +2265,7 @@ class ProductController extends BaseController {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "catalog");
         } else if (type == "handpicked") {
-          getHandPickedProduct();
+          getHandPickedProduct(productSortBy.value, filterProductEnable.value);
         } else if (type == "category product") {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "");
