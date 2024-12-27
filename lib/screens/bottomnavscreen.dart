@@ -37,7 +37,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   void initState() {
     analytics.setAnalyticsCollectionEnabled(true);
     screen = [
-      const HomeScreen(),
+      HomeScreen(
+        onPressed: () {
+          changeTab(1);
+        },
+      ),
       const BrandsScreen(
         screen: "home",
       ),
@@ -48,7 +52,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           });
         },
       ),
-      AccountScreen(onPressed: changeTab),
+      AccountScreen(onPressed: () {
+        changeTab(2);
+      }),
       const ExpressShoppingScreen(),
     ];
     if (widget.index != null) {
@@ -57,9 +63,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     super.initState();
   }
 
-  void changeTab() {
+  void changeTab(index) {
     setState(() {
-      _currentIndex = 2;
+      _currentIndex = index;
     });
   }
 

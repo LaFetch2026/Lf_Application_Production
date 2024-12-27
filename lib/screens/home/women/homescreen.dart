@@ -18,6 +18,7 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
+import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/catalogscreen.dart';
@@ -37,7 +38,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 //import '../../account/customercare.dart';
 
 class HomeScreen extends StatefulWidget {
+  final Function? onPressed;
   const HomeScreen({
+    this.onPressed,
     super.key,
   });
 
@@ -919,7 +922,9 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () {},
+                                          onTap: () {
+                                            widget.onPressed?.call();
+                                          },
                                           child: Container(
                                             child: Padding(
                                               padding: EdgeInsets.only(
@@ -955,40 +960,69 @@ class HomeScreenState extends State<HomeScreen> {
                                                               .brandList[index]
                                                           ["logo"] !=
                                                       null
-                                                  ? Padding(
-                                                      padding: EdgeInsets.only(
-                                                          right: 12.sp),
-                                                      child: SizedBox(
-                                                        height: 80.sp,
-                                                        width: 80.sp,
-                                                        child: CircleAvatar(
-                                                          backgroundColor:
-                                                              blackColor,
-                                                          child:
-                                                              CachedNetworkImage(
-                                                            height: 80.sp,
-                                                            width: 80.sp,
-                                                            cacheManager: CacheManager(Config(
-                                                                "customCacheKey",
-                                                                stalePeriod:
-                                                                    const Duration(
-                                                                        days:
-                                                                            15),
-                                                                maxNrOfCacheObjects:
-                                                                    100)),
-                                                            fit: BoxFit.contain,
-                                                            imageUrl: homeController
-                                                                    .brandList[
-                                                                index]["logo"],
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                              downloadImage,
-                                                              fit: BoxFit
-                                                                  .contain,
+                                                  ? GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(BrandsScreen(
+                                                          screen: "search",
+                                                          logo: homeController
+                                                                  .brandList[
+                                                              index]["logo"],
+                                                          backImage: homeController
+                                                                          .brandList[
+                                                                      index][
+                                                                  "background_image"] ??
+                                                              "",
+                                                          name: homeController
+                                                                  .brandList[
+                                                              index]["name"],
+                                                          brandId: homeController
+                                                                  .brandList[
+                                                              index]["id"],
+                                                        ))?.then(
+                                                            (value) => setState(
+                                                                  () {
+                                                                    homeController
+                                                                        .getBrandData();
+                                                                  },
+                                                                ));
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 12.sp),
+                                                        child: SizedBox(
+                                                          height: 80.sp,
+                                                          width: 80.sp,
+                                                          child: CircleAvatar(
+                                                            backgroundColor:
+                                                                blackColor,
+                                                            child:
+                                                                CachedNetworkImage(
                                                               height: 80.sp,
                                                               width: 80.sp,
+                                                              cacheManager: CacheManager(Config(
+                                                                  "customCacheKey",
+                                                                  stalePeriod:
+                                                                      const Duration(
+                                                                          days:
+                                                                              15),
+                                                                  maxNrOfCacheObjects:
+                                                                      100)),
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              imageUrl: homeController
+                                                                      .brandList[
+                                                                  index]["logo"],
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  Image.asset(
+                                                                downloadImage,
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                height: 80.sp,
+                                                                width: 80.sp,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
