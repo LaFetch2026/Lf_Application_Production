@@ -706,17 +706,17 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           ?.showBottomSheet((context) => BottomSortBy(
                                 onPressedButton: (p0) {
                                   productController.sortBy.value = p0;
-                                  /*  productController.getProductByCategoryData(
+                                  productController.getProductByCategoryData(
                                       widget.categoryId,
-                                      0,
+                                      widget.brandId,
                                       "",
                                       [],
-                                      p0,
+                                      productController.sortBy.value,
                                       widget.genderType,
                                       productController.filterEnable.value,
-                                      widget.catalogId,
+                                      0,
                                       false,
-                                      "catalog"); */
+                                      "");
                                 },
                               ));
                     },
@@ -763,18 +763,17 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       scaffoldKey.currentState
                           ?.showBottomSheet((context) => BottomCategory(
                                 onPressedButton: (p0) {
-                                  //  productController.sortBy.value = p0;
-                                  /*  productController.getProductByCategoryData(
+                                  productController.getProductByCategoryData(
                                       widget.categoryId,
-                                      0,
+                                      widget.brandId,
                                       "",
                                       [],
-                                      p0,
+                                      productController.sortBy.value,
                                       widget.genderType,
                                       productController.filterEnable.value,
-                                      widget.catalogId,
+                                      0,
                                       false,
-                                      "catalog"); */
+                                      "");
                                 },
                               ));
                     },
@@ -832,33 +831,33 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           prefs.remove("upper");
                           prefs.remove("lower");
                           prefs.remove("sortby");
-                          /*  productController.getProductByCategoryData(
+                          productController.getProductByCategoryData(
                               widget.categoryId,
-                              0,
+                              widget.brandId,
                               "",
                               [],
                               productController.sortBy.value,
                               widget.genderType,
                               productController.filterEnable.value,
-                              widget.catalogId,
+                              0,
                               false,
-                              "catalog"); */
+                              "");
                         },
                         onClick: (p0, p1) {
                           productController.filterEnable.value = true;
                           productController.lowPrice.value = p0;
                           productController.highPrice.value = p1;
-                          /*  productController.getProductByCategoryData(
+                          productController.getProductByCategoryData(
                               widget.categoryId,
-                              0,
+                              widget.brandId,
                               "",
                               [],
                               productController.sortBy.value,
                               widget.genderType,
                               productController.filterEnable.value,
-                              widget.catalogId,
+                              0,
                               true,
-                              "catalog"); */
+                              "");
                         },
                       ));
                     },
