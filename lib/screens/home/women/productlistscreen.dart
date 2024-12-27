@@ -145,10 +145,10 @@ class ProductListScreenState extends State<ProductListScreen> {
                                         productController.listController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
-                                    childAspectRatio: 0.5,
+                                    childAspectRatio: 0.57,
                                     physics: const ScrollPhysics(),
                                     crossAxisSpacing: 5.sp,
-                                    mainAxisSpacing: 0,
+                                    mainAxisSpacing: 8.sp,
                                     children: List.generate(
                                       productController.productList.length,
                                       (index) {
@@ -447,12 +447,13 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                     vertical: 5.sp),
                                                 child: AppText(
                                                   text: productController
-                                                              .productList[
-                                                          index]["name"] ??
+                                                                  .productList[
+                                                              index]
+                                                          ["brand_name"] ??
                                                       "",
-                                                  color: nameText,
-                                                  maxLines: 2,
-                                                  fontSize: 12,
+                                                  color: blackColor,
+                                                  maxLines: 1,
+                                                  fontSize: 13,
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -466,8 +467,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                               index][
                                                           "short_description"] ??
                                                       "",
-                                                  color: nameText,
-                                                  maxLines: 2,
+                                                  color: Color(0xFF6B7280),
+                                                  maxLines: 1,
                                                   fontSize: 11,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
@@ -481,33 +482,34 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                     right: 1.sp),
                                                 child: Row(
                                                   children: [
-                                                    AppText(
-                                                      text:
-                                                          "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
-                                                      color: deepGreytextColor,
-                                                      maxLines: 2,
-                                                      fontSize: 11,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                    Text(
+                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      style: TextStyle(
+                                                        color: textHintColor,
+                                                        fontSize: 11.sp,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
                                                           left: 5.sp),
-                                                      child: Text(
-                                                        "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
-                                                        style: TextStyle(
-                                                          color: textHintColor,
-                                                          fontSize: 11.sp,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
+                                                      child: AppText(
+                                                        text:
+                                                            "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                        color:
+                                                            deepGreytextColor,
+                                                        maxLines: 2,
+                                                        fontSize: 11,
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w400,
                                                       ),
                                                     ),
                                                   ],

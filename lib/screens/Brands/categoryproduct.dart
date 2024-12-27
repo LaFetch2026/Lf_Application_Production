@@ -184,10 +184,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         : productController.bannerTagController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
-                                    childAspectRatio: 0.5,
+                                    childAspectRatio: 0.57,
                                     physics: const ScrollPhysics(),
                                     crossAxisSpacing: 5.sp,
-                                    mainAxisSpacing: 0,
+                                    mainAxisSpacing: 8.sp,
                                     children: List.generate(
                                       productController
                                           .productCategoryList.length,
@@ -554,11 +554,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                 child: AppText(
                                                   text: productController
                                                               .productCategoryList[
-                                                          index]["name"] ??
+                                                          index]["brand_name"] ??
                                                       "",
-                                                  color: nameText,
-                                                  maxLines: 2,
-                                                  fontSize: 12,
+                                                  color: blackColor,
+                                                  maxLines: 1,
+                                                  fontSize: 13,
                                                   fontFamily: "Franklin Gothic",
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -572,8 +572,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               index][
                                                           "short_description"] ??
                                                       "",
-                                                  color: nameText,
-                                                  maxLines: 2,
+                                                  color: Color(0xFF6B7280),
+                                                  maxLines: 1,
                                                   fontSize: 11,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
@@ -587,33 +587,34 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     right: 1.sp),
                                                 child: Row(
                                                   children: [
-                                                    AppText(
-                                                      text:
-                                                          "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
-                                                      color: deepGreytextColor,
-                                                      maxLines: 2,
-                                                      fontSize: 11,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                    Text(
+                                                      "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
+                                                      style: TextStyle(
+                                                        color: textHintColor,
+                                                        fontSize: 11.sp,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .lineThrough,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
                                                           left: 5.sp),
-                                                      child: Text(
-                                                        "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
-                                                        style: TextStyle(
-                                                          color: textHintColor,
-                                                          fontSize: 11.sp,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
+                                                      child: AppText(
+                                                        text:
+                                                            "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
+                                                        color:
+                                                            deepGreytextColor,
+                                                        maxLines: 2,
+                                                        fontSize: 11,
+                                                        fontFamily:
+                                                            "Franklin Gothic",
+                                                        fontWeight:
+                                                            FontWeight.w400,
                                                       ),
                                                     ),
                                                   ],
