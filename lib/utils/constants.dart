@@ -175,6 +175,9 @@ const rightBlackArrow = 'assets/images/right_black_arrow.png';
 const expressImage = 'assets/images/express.png';
 const bagImage = 'assets/images/bag.png';
 const lafetchLogoImage = 'assets/images/lafetch_logo.png';
+const sortbyIcon = 'assets/images/sortby_icon.png';
+const categoryIcon = 'assets/images/category_icon.png';
+const filterIcon = 'assets/images/filter_icon.png';
 
 class ApiConstants {
   ApiConstants._();

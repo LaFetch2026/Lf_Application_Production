@@ -7,6 +7,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -106,6 +107,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         key: scaffoldKey,
         backgroundColor: whiteColor,
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProductAppbar(onPressedSearch: () async {
               Get.to(const SearchScreen());
@@ -124,6 +126,36 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 "page_name": "cart_page",
               });
             }),
+            Padding(
+              padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
+              child: AppText(
+                text: widget.categoryName.toUpperCase(),
+                color: Color(0xFF4B5563),
+                fontSize: 16,
+                fontFamily: "Franklin Gothic",
+                textAlign: TextAlign.center,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Obx(() => Padding(
+                  padding: EdgeInsets.only(left: 16.sp, top: 5.sp),
+                  child: productController.isCategoryProduct.value
+                      ? const DummyContainer(
+                          height: 10,
+                          width: 60,
+                        )
+                      : AppText(
+                          text: productController.productCategoryList.length ==
+                                  1
+                              ? "${productController.productCategoryList.length.toString()} item"
+                              : "${productController.productCategoryList.length.toString()} items",
+                          color: Color(0xFF4B5563),
+                          fontSize: 10,
+                          fontFamily: "Franklin Gothic Regular",
+                          textAlign: TextAlign.center,
+                          fontWeight: FontWeight.w500,
+                        ),
+                )),
             Obx(
               () => productController.isCategoryProduct.value
                   ? const DummyGridList(

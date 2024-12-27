@@ -807,44 +807,48 @@ class HomeScreenState extends State<HomeScreen> {
                                             height: 0,
                                           )
                                         : Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16),
-                                            child: SizedBox(
-                                              width: 50 *
-                                                  homeController
-                                                      .banner1List.length
-                                                      .toDouble(),
-                                              height: 6,
-                                              child: GetBuilder<HomeController>(
-                                                  builder: (value) =>
-                                                      ListView.builder(
-                                                          physics:
-                                                              const BouncingScrollPhysics(),
-                                                          itemCount: value
-                                                              .banner1List
-                                                              .length,
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          itemBuilder:
-                                                              (ctx, index) {
-                                                            return index ==
-                                                                    value
-                                                                        .currentPage
-                                                                        .value
-                                                                ? Image.asset(
-                                                                    longIndicator,
-                                                                    width:
-                                                                        48.sp,
-                                                                    height:
-                                                                        6.sp,
-                                                                  )
-                                                                : Image.asset(
-                                                                    greyIndicator,
-                                                                    width: 8.sp,
-                                                                    height:
-                                                                        8.sp,
-                                                                  );
-                                                          })),
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 10),
+                                            child: Center(
+                                              child: SizedBox(
+                                                width: 50 *
+                                                    homeController
+                                                        .banner1List.length
+                                                        .toDouble(),
+                                                height: 6,
+                                                child: GetBuilder<
+                                                        HomeController>(
+                                                    builder: (value) =>
+                                                        ListView.builder(
+                                                            physics:
+                                                                const BouncingScrollPhysics(),
+                                                            itemCount: value
+                                                                .banner1List
+                                                                .length,
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemBuilder:
+                                                                (ctx, index) {
+                                                              return index ==
+                                                                      value
+                                                                          .currentPage
+                                                                          .value
+                                                                  ? Image.asset(
+                                                                      longIndicator,
+                                                                      width:
+                                                                          48.sp,
+                                                                      height:
+                                                                          6.sp,
+                                                                    )
+                                                                  : Image.asset(
+                                                                      greyIndicator,
+                                                                      width:
+                                                                          8.sp,
+                                                                      height:
+                                                                          8.sp,
+                                                                    );
+                                                            })),
+                                              ),
                                             ),
                                           ),
                                   ],

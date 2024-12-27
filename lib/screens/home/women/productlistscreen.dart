@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -68,6 +69,7 @@ class ProductListScreenState extends State<ProductListScreen> {
         key: scaffoldKey,
         backgroundColor: whiteColor,
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProductAppbar(onPressedSearch: () async {
               Get.to(const SearchScreen())?.then((value) => setState(
@@ -90,6 +92,35 @@ class ProductListScreenState extends State<ProductListScreen> {
                 "page_name": "cart_page",
               });
             }),
+            Padding(
+              padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
+              child: AppText(
+                text: "HANDPICKED FOR YOU",
+                color: Color(0xFF4B5563),
+                fontSize: 16,
+                fontFamily: "Franklin Gothic",
+                textAlign: TextAlign.center,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Obx(() => Padding(
+                  padding: EdgeInsets.only(left: 16.sp, top: 5.sp),
+                  child: productController.isProduct.value
+                      ? const DummyContainer(
+                          height: 10,
+                          width: 60,
+                        )
+                      : AppText(
+                          text: productController.productList.length == 1
+                              ? "${productController.productList.length.toString()} item"
+                              : "${productController.productList.length.toString()} items",
+                          color: Color(0xFF4B5563),
+                          fontSize: 10,
+                          fontFamily: "Franklin Gothic Regular",
+                          textAlign: TextAlign.center,
+                          fontWeight: FontWeight.w500,
+                        ),
+                )),
             Obx(
               () => productController.isProduct.value
                   ? const DummyGridList(
@@ -548,6 +579,126 @@ class ProductListScreenState extends State<ProductListScreen> {
                           ),
                         ),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              sortbyIcon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                              child: Text(
+                                "SORT BY",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF374151),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 13.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                    child: Container(
+                      width: 1.sp,
+                      color: borderColor,
+                      height: 40.sp,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              categoryIcon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                              child: Text(
+                                "CATEGORY",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF374151),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 13.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                    child: Container(
+                      width: 1.sp,
+                      color: borderColor,
+                      height: 40.sp,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              filterIcon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                              child: Text(
+                                "FILTERS",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF374151),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 13.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ));
   }
