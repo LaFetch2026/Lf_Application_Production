@@ -643,7 +643,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       onTap: () async {
                                                                                         if (value.orderList[index]["express_delivery"]) {
                                                                                           value.qtyProductId.value = value.orderList[index]["product"]["id"];
-                                                                                          value.qtyText.value = "For Express delivery product quantity can not update.";
+                                                                                          value.qtyText.value = "For express delivery product, quantity cant be updated.";
                                                                                           value.update();
                                                                                         } else {
                                                                                           scaffoldKey.currentState?.showBottomSheet((context) => BottomQuantity(
