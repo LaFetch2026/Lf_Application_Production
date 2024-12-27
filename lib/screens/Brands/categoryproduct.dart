@@ -158,8 +158,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 )),
             Obx(
               () => productController.isCategoryProduct.value
-                  ? const DummyGridList(
-                      size: 2,
+                  ? Expanded(
+                      child: const DummyGridList(
+                        size: 2,
+                      ),
                     )
                   : productController.productCategoryList.isNotEmpty
                       ? Expanded(

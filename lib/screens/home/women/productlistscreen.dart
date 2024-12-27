@@ -123,8 +123,10 @@ class ProductListScreenState extends State<ProductListScreen> {
                 )),
             Obx(
               () => productController.isProduct.value
-                  ? const DummyGridList(
-                      size: 2,
+                  ? Expanded(
+                      child: const DummyGridList(
+                        size: 2,
+                      ),
                     )
                   : productController.productList.isNotEmpty
                       ? Expanded(

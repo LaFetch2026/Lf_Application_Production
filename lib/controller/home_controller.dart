@@ -329,7 +329,8 @@ class HomeController extends BaseController {
       final Map<String, dynamic> sendData = {
         "player_id": playerId.value,
         "device_model": devicename,
-        "apn_token": fcmToken.value,
+        "apn_token":
+            "eyJhbGciOiJFUzI1NiIsImtpZCI6Ik4yWEtDWloyRFYifQ.eyJpc3MiOiJGUUxZNEY0N1VNIiwiaWF0IjoxNzM1MjkwNTg4fQ.iVX838tT5plLx2ckS_m8DJAQQxjCioHZyI8yuzwCOZyTFO02aSosEr3a1IHZwKHUu7E9kyr7BAsUAm6j34_27Q",
         "fcm_token": fcmToken.value,
         "platform": platform,
       };
