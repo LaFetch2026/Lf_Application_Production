@@ -23,6 +23,7 @@ class ProductController extends BaseController {
   RxBool isBannerTag = false.obs;
   RxBool isBrandExpressProduct = false.obs;
   RxBool isExpress = false.obs;
+  RxBool isHandPicked = false.obs;
   RxBool isDetails = false.obs;
   RxBool isReview = false.obs;
   RxBool isPincode = false.obs;
@@ -44,6 +45,7 @@ class ProductController extends BaseController {
   dynamic returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List tagsList = [].obs;
+  List handPickedProductList = [].obs;
   List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
   List productList = [].obs;
@@ -77,10 +79,14 @@ class ProductController extends BaseController {
   RxInt lowPrice = 500.obs;
   RxInt highPrice = 500000.obs;
   ScrollController listController = ScrollController();
+  ScrollController handpickedController = ScrollController();
   ScrollController recentListController = ScrollController();
   RxBool expressLoadMore = false.obs;
   RxBool expressHasnextpage = true.obs;
   RxInt expressPage = 1.obs;
+  RxBool handpickedLoadMore = false.obs;
+  RxBool handpickedHasnextpage = true.obs;
+  RxInt handpickedPage = 1.obs;
   ScrollController expressListController = ScrollController();
   ScrollController categoryProductController = ScrollController();
   ScrollController brandProductController = ScrollController();
@@ -347,6 +353,89 @@ class ProductController extends BaseController {
         print("error$e");
       }
       frequentlyBoughtLoadMore.value = false;
+    }
+  }
+
+  getHandPickedProduct() async {
+    isHandPicked.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?type=relevant&latitude=${lat.value}&longitude=${lng.value}"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          handPickedProductList = responseData["data"];
+          handpickedHasnextpage.value = true;
+          handpickedLoadMore.value = false;
+          isHandPicked.value = false;
+          handpickedPage.value = 1;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isHandPicked.value = false;
+  }
+
+  fetchMoreHandPickedProduct() async {
+    if (handpickedHasnextpage.value == true &&
+        isHandPicked.value == false &&
+        handpickedLoadMore.value == false) {
+      handpickedLoadMore.value = true;
+      handpickedPage.value += 1;
+      print(handpickedPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              handPickedProductList.addAll(responseData['data']);
+            } else {
+              handpickedHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch hand picked product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      handpickedLoadMore.value = false;
     }
   }
 
@@ -2077,6 +2166,8 @@ class ProductController extends BaseController {
         } else if (type == "category") {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "catalog");
+        } else if (type == "handpicked") {
+          getHandPickedProduct();
         } else if (type == "category product") {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "");

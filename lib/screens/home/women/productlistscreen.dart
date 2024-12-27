@@ -7,6 +7,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomcategory.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomfiltters.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
@@ -14,6 +17,7 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
@@ -41,22 +45,22 @@ class ProductListScreenState extends State<ProductListScreen> {
 
   @override
   void initState() {
-    productController.productCategoryList.clear();
+    productController.handPickedProductList.clear();
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.hasnextpage.value = true;
-      productController.loadMore.value = false;
-      productController.isProduct.value = false;
-      productController.page.value = 1;
+      productController.handpickedHasnextpage.value = true;
+      productController.handpickedLoadMore.value = false;
+      productController.isHandPicked.value = false;
+      productController.handpickedPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.getHandPickedProduct());
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
+      productController.handpickedController.addListener(() {
+        productController.fetchMoreHandPickedProduct();
         productController.update();
       });
     });
@@ -74,7 +78,7 @@ class ProductListScreenState extends State<ProductListScreen> {
             ProductAppbar(onPressedSearch: () async {
               Get.to(const SearchScreen())?.then((value) => setState(
                     () {
-                      productController.getProductData("relevant");
+                      productController.getHandPickedProduct();
                     },
                   ));
               analytics
@@ -105,15 +109,17 @@ class ProductListScreenState extends State<ProductListScreen> {
             ),
             Obx(() => Padding(
                   padding: EdgeInsets.only(left: 16.sp, top: 5.sp),
-                  child: productController.isProduct.value
+                  child: productController.isHandPicked.value
                       ? const DummyContainer(
                           height: 10,
                           width: 60,
                         )
                       : AppText(
-                          text: productController.productList.length == 1
-                              ? "${productController.productList.length.toString()} item"
-                              : "${productController.productList.length.toString()} items",
+                          text: productController
+                                      .handPickedProductList.length ==
+                                  1
+                              ? "${productController.handPickedProductList.length.toString()} item"
+                              : "${productController.handPickedProductList.length.toString()} items",
                           color: Color(0xFF4B5563),
                           fontSize: 10,
                           fontFamily: "Franklin Gothic Regular",
@@ -122,16 +128,16 @@ class ProductListScreenState extends State<ProductListScreen> {
                         ),
                 )),
             Obx(
-              () => productController.isProduct.value
+              () => productController.isHandPicked.value
                   ? Expanded(
                       child: const DummyGridList(
                         size: 2,
                       ),
                     )
-                  : productController.productList.isNotEmpty
+                  : productController.handPickedProductList.isNotEmpty
                       ? Expanded(
                           child: SingleChildScrollView(
-                            controller: productController.listController,
+                            controller: productController.handpickedController,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -142,7 +148,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
                                     controller:
-                                        productController.listController,
+                                        productController.handpickedController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.57,
@@ -150,31 +156,33 @@ class ProductListScreenState extends State<ProductListScreen> {
                                     crossAxisSpacing: 5.sp,
                                     mainAxisSpacing: 8.sp,
                                     children: List.generate(
-                                      productController.productList.length,
+                                      productController
+                                          .handPickedProductList.length,
                                       (index) {
                                         return GestureDetector(
                                           onTap: () async {
                                             Get.to(ProductDetailsScreen(
                                                     brandName: productController
-                                                            .productList[index]
-                                                        ["brand_name"],
+                                                            .handPickedProductList[
+                                                        index]["brand_name"],
                                                     productId: productController
-                                                            .productList[index]
-                                                        ["id"],
+                                                            .handPickedProductList[
+                                                        index]["id"],
                                                     type: "add"))
                                                 ?.then((value) => setState(
                                                       () {
                                                         productController
-                                                            .hasnextpage
+                                                            .handpickedHasnextpage
                                                             .value = true;
                                                         productController
-                                                            .loadMore
+                                                            .handpickedLoadMore
                                                             .value = false;
                                                         productController
-                                                            .isProduct
+                                                            .isHandPicked
                                                             .value = false;
                                                         productController
-                                                            .page.value = 1;
+                                                            .handpickedPage
+                                                            .value = 1;
                                                       },
                                                     ));
                                             await analytics.logEvent(
@@ -193,11 +201,11 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                 children: [
                                                   Center(
                                                     child: productController
-                                                                .productList[index]
+                                                                .handPickedProductList[index]
                                                                     ["images"]
                                                                 .isNotEmpty &&
                                                             productController
-                                                                        .productList[index][
+                                                                        .handPickedProductList[index][
                                                                     "images"] !=
                                                                 null
                                                         ? SizedBox(
@@ -225,16 +233,16 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                                       100)),
                                                               fit: BoxFit.cover,
                                                               imageUrl: isImage(productController
-                                                                              .productList[index]
+                                                                              .handPickedProductList[index]
                                                                           ["images"][0]
                                                                       ["name"])
                                                                   ? productController
-                                                                              .productList[index]
+                                                                              .handPickedProductList[index]
                                                                           ["images"]
                                                                       [
                                                                       0]["name"]
                                                                   : productController
-                                                                              .productList[index]
+                                                                              .handPickedProductList[index]
                                                                           ["images"]
                                                                       [1]["name"],
                                                               errorWidget: (context,
@@ -274,17 +282,16 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                   GestureDetector(
                                                     onTap: () async {
                                                       if (productController
-                                                                  .productList[
-                                                              index]
-                                                          ["wishlisted"]) {
+                                                              .handPickedProductList[
+                                                          index]["wishlisted"]) {
                                                         productController.callAddProductToWishlist(
                                                             productController
-                                                                        .productList[
+                                                                        .handPickedProductList[
                                                                     index]
                                                                 ["wishlist_id"],
-                                                            "product",
+                                                            "handpicked",
                                                             productController
-                                                                    .productList[
+                                                                    .handPickedProductList[
                                                                 index]["id"],
                                                             0,
                                                             0,
@@ -303,8 +310,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                                         (p0) {
                                                                       productController.callAddProductToWishlist(
                                                                           p0,
-                                                                          "product",
-                                                                          productController.productList[index]
+                                                                          "handpicked",
+                                                                          productController.handPickedProductList[index]
                                                                               [
                                                                               "id"],
                                                                           0,
@@ -345,7 +352,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                               backgroundColor:
                                                                   whiteColor,
                                                               child: productController
-                                                                              .productList[
+                                                                              .handPickedProductList[
                                                                           index]
                                                                       [
                                                                       "wishlisted"]
@@ -393,12 +400,12 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                           ),
                                                           AppText(
                                                             text: productController
-                                                                            .productList[index]
+                                                                            .handPickedProductList[index]
                                                                         [
                                                                         "aggregated_rating"] !=
                                                                     null
                                                                 ? productController
-                                                                    .productList[
+                                                                    .handPickedProductList[
                                                                         index][
                                                                         "aggregated_rating"]
                                                                     .toString()
@@ -424,7 +431,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                           ),
                                                           AppText(
                                                             text: productController
-                                                                .productList[
+                                                                .handPickedProductList[
                                                                     index][
                                                                     "reviews_count"]
                                                                 .toString(),
@@ -447,9 +454,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                     vertical: 5.sp),
                                                 child: AppText(
                                                   text: productController
-                                                                  .productList[
-                                                              index]
-                                                          ["brand_name"] ??
+                                                              .handPickedProductList[
+                                                          index]["brand_name"] ??
                                                       "",
                                                   color: blackColor,
                                                   maxLines: 1,
@@ -463,7 +469,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                     horizontal: 10.sp),
                                                 child: AppText(
                                                   text: productController
-                                                                  .productList[
+                                                                  .handPickedProductList[
                                                               index][
                                                           "short_description"] ??
                                                       "",
@@ -483,7 +489,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                 child: Row(
                                                   children: [
                                                     Text(
-                                                      "\u{20B9} ${productController.productList[index]["mrp"] ?? ""}",
+                                                      "\u{20B9} ${productController.handPickedProductList[index]["mrp"] ?? ""}",
                                                       style: TextStyle(
                                                         color: textHintColor,
                                                         fontSize: 11.sp,
@@ -501,7 +507,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                           left: 5.sp),
                                                       child: AppText(
                                                         text:
-                                                            "\u{20B9} ${productController.productList[index]["price"] ?? ""}",
+                                                            "\u{20B9} ${productController.handPickedProductList[index]["price"] ?? ""}",
                                                         color:
                                                             deepGreytextColor,
                                                         maxLines: 2,
@@ -516,8 +522,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                 ),
                                               ),
                                               productController
-                                                          .productList[index]
-                                                      ["express_delivery"]
+                                                          .handPickedProductList[
+                                                      index]["express_delivery"]
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
                                                           top: 5.sp,
@@ -562,7 +568,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                                     ),
                                   ),
                                 ),
-                                productController.loadMore.value
+                                productController.handpickedLoadMore.value
                                     ? DummyGridList()
                                     : const SizedBox(
                                         height: 0,
@@ -572,7 +578,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                           ),
                         )
                       : SizedBox(
-                          height: MediaQuery.of(context).size.height - 100,
+                          height: MediaQuery.of(context).size.height - 200,
                           width: MediaQuery.of(context).size.width,
                           child: Center(
                             child: Text("No Product Found",
@@ -589,7 +595,25 @@ class ProductListScreenState extends State<ProductListScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      scaffoldKey.currentState
+                          ?.showBottomSheet((context) => BottomSortBy(
+                                onPressedButton: (p0) {
+                                  productController.sortBy.value = p0;
+                                  /*  productController.getProductByCategoryData(
+                                      widget.categoryId,
+                                      0,
+                                      "",
+                                      [],
+                                      p0,
+                                      widget.genderType,
+                                      productController.filterEnable.value,
+                                      widget.catalogId,
+                                      false,
+                                      "catalog"); */
+                                },
+                              ));
+                    },
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
@@ -629,7 +653,25 @@ class ProductListScreenState extends State<ProductListScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      scaffoldKey.currentState
+                          ?.showBottomSheet((context) => BottomCategory(
+                                onPressedButton: (p0) {
+                                  //  productController.sortBy.value = p0;
+                                  /*  productController.getProductByCategoryData(
+                                      widget.categoryId,
+                                      0,
+                                      "",
+                                      [],
+                                      p0,
+                                      widget.genderType,
+                                      productController.filterEnable.value,
+                                      widget.catalogId,
+                                      false,
+                                      "catalog"); */
+                                },
+                              ));
+                    },
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
@@ -669,7 +711,51 @@ class ProductListScreenState extends State<ProductListScreen> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(BottomFilters(
+                        btnclearAll: () async {
+                          productController.brand_ids.clear();
+                          productController.color_ids.clear();
+                          productController.size_ids.clear();
+                          productController.sortBy.value = "";
+                          productController.filterEnable.value = false;
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.remove("brandList");
+                          prefs.remove("colorList");
+                          prefs.remove("sizeList");
+                          prefs.remove("upper");
+                          prefs.remove("lower");
+                          prefs.remove("sortby");
+                          /*  productController.getProductByCategoryData(
+                              widget.categoryId,
+                              0,
+                              "",
+                              [],
+                              productController.sortBy.value,
+                              widget.genderType,
+                              productController.filterEnable.value,
+                              widget.catalogId,
+                              false,
+                              "catalog"); */
+                        },
+                        onClick: (p0, p1) {
+                          productController.filterEnable.value = true;
+                          productController.lowPrice.value = p0;
+                          productController.highPrice.value = p1;
+                          /*  productController.getProductByCategoryData(
+                              widget.categoryId,
+                              0,
+                              "",
+                              [],
+                              productController.sortBy.value,
+                              widget.genderType,
+                              productController.filterEnable.value,
+                              widget.catalogId,
+                              true,
+                              "catalog"); */
+                        },
+                      ));
+                    },
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.symmetric(

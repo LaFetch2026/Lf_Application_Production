@@ -77,10 +77,10 @@ class HomeScreenState extends State<HomeScreen> {
       productController.tagsPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.hasnextpage.value = true;
-      productController.loadMore.value = false;
-      productController.isProduct.value = false;
-      productController.page.value = 1;
+      productController.handpickedHasnextpage.value = true;
+      productController.handpickedLoadMore.value = false;
+      productController.isHandPicked.value = false;
+      productController.handpickedPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getTagsData(homeController.homeGenderValue.value));
@@ -90,8 +90,8 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant"));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.getHandPickedProduct());
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
@@ -115,12 +115,12 @@ class HomeScreenState extends State<HomeScreen> {
         productController.update();
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.handpickedController.addListener(() {
+        productController.fetchMoreHandPickedProduct();
         productController.update();
       });
-    });
+    }); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.expressListController.addListener(() {
         productController.fetchExpressMoreData(productController.tagId.value,
@@ -246,7 +246,7 @@ class HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, scaleIn(const SearchScreen()))
                   .then((value) => setState(
                         () {
-                          productController.getProductData("relevant");
+                          productController.getHandPickedProduct();
                         },
                       ));
               await analytics.logEvent(
@@ -1169,14 +1169,14 @@ class HomeScreenState extends State<HomeScreen> {
                               : const SizedBox(
                                   height: 0,
                                 )),
-                      Obx(() => productController.isProduct.value
+                      Obx(() => productController.isHandPicked.value
                           ? Padding(
                               padding: EdgeInsets.only(top: 10.sp),
                               child: DummyProductList(
                                   visibleSubtitle: true,
                                   text: "HANDPICKED FOR YOU"),
                             )
-                          : productController.productList.isNotEmpty
+                          : productController.handPickedProductList.isNotEmpty
                               ? Column(
                                   children: [
                                     Padding(
@@ -1188,7 +1188,7 @@ class HomeScreenState extends State<HomeScreen> {
                                         text1:
                                             "Curated collection, just for you and only you.",
                                         controller: productController
-                                            .tagsProductController,
+                                            .handpickedController,
                                         height: 235.sp,
                                         onPressedViewAll: () {
                                           Navigator.push(
@@ -1200,13 +1200,15 @@ class HomeScreenState extends State<HomeScreen> {
                                               )).then((value) => setState(
                                                 () {
                                                   productController
-                                                      .hasnextpage.value = true;
+                                                      .handpickedHasnextpage
+                                                      .value = true;
                                                   productController
-                                                      .loadMore.value = false;
+                                                      .handpickedLoadMore
+                                                      .value = false;
+                                                  productController.isHandPicked
+                                                      .value = false;
                                                   productController
-                                                      .isProduct.value = false;
-                                                  productController.page.value =
-                                                      1;
+                                                      .handpickedPage.value = 1;
                                                 },
                                               ));
                                         },
@@ -1222,13 +1224,15 @@ class HomeScreenState extends State<HomeScreen> {
                                               )).then((value) => setState(
                                                 () {
                                                   productController
-                                                      .hasnextpage.value = true;
+                                                      .handpickedHasnextpage
+                                                      .value = true;
                                                   productController
-                                                      .loadMore.value = false;
+                                                      .handpickedLoadMore
+                                                      .value = false;
+                                                  productController.isHandPicked
+                                                      .value = false;
                                                   productController
-                                                      .isProduct.value = false;
-                                                  productController.page.value =
-                                                      1;
+                                                      .handpickedPage.value = 1;
                                                 },
                                               ));
                                           await analytics.logEvent(
@@ -1240,7 +1244,8 @@ class HomeScreenState extends State<HomeScreen> {
                                             },
                                           );
                                         },
-                                        list: productController.productList,
+                                        list: productController
+                                            .handPickedProductList,
                                       ),
                                     ),
                                     Padding(

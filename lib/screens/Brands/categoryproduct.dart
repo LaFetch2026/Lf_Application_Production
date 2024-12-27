@@ -7,11 +7,15 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomcategory.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomfiltters.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
@@ -691,6 +695,206 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           ),
                         ),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      scaffoldKey.currentState
+                          ?.showBottomSheet((context) => BottomSortBy(
+                                onPressedButton: (p0) {
+                                  productController.sortBy.value = p0;
+                                  /*  productController.getProductByCategoryData(
+                                      widget.categoryId,
+                                      0,
+                                      "",
+                                      [],
+                                      p0,
+                                      widget.genderType,
+                                      productController.filterEnable.value,
+                                      widget.catalogId,
+                                      false,
+                                      "catalog"); */
+                                },
+                              ));
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              sortbyIcon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                              child: Text(
+                                "SORT BY",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF374151),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 13.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                    child: Container(
+                      width: 1.sp,
+                      color: borderColor,
+                      height: 40.sp,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      scaffoldKey.currentState
+                          ?.showBottomSheet((context) => BottomCategory(
+                                onPressedButton: (p0) {
+                                  //  productController.sortBy.value = p0;
+                                  /*  productController.getProductByCategoryData(
+                                      widget.categoryId,
+                                      0,
+                                      "",
+                                      [],
+                                      p0,
+                                      widget.genderType,
+                                      productController.filterEnable.value,
+                                      widget.catalogId,
+                                      false,
+                                      "catalog"); */
+                                },
+                              ));
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              categoryIcon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                              child: Text(
+                                "CATEGORY",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF374151),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 13.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                    child: Container(
+                      width: 1.sp,
+                      color: borderColor,
+                      height: 40.sp,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(BottomFilters(
+                        btnclearAll: () async {
+                          productController.brand_ids.clear();
+                          productController.color_ids.clear();
+                          productController.size_ids.clear();
+                          productController.sortBy.value = "";
+                          productController.filterEnable.value = false;
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.remove("brandList");
+                          prefs.remove("colorList");
+                          prefs.remove("sizeList");
+                          prefs.remove("upper");
+                          prefs.remove("lower");
+                          prefs.remove("sortby");
+                          /*  productController.getProductByCategoryData(
+                              widget.categoryId,
+                              0,
+                              "",
+                              [],
+                              productController.sortBy.value,
+                              widget.genderType,
+                              productController.filterEnable.value,
+                              widget.catalogId,
+                              false,
+                              "catalog"); */
+                        },
+                        onClick: (p0, p1) {
+                          productController.filterEnable.value = true;
+                          productController.lowPrice.value = p0;
+                          productController.highPrice.value = p1;
+                          /*  productController.getProductByCategoryData(
+                              widget.categoryId,
+                              0,
+                              "",
+                              [],
+                              productController.sortBy.value,
+                              widget.genderType,
+                              productController.filterEnable.value,
+                              widget.catalogId,
+                              true,
+                              "catalog"); */
+                        },
+                      ));
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10.sp, horizontal: 10.sp),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              filterIcon,
+                              height: 20.sp,
+                              width: 20.sp,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                              child: Text(
+                                "FILTERS",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF374151),
+                                  decoration: TextDecoration.none,
+                                  fontSize: 13.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ));
   }

@@ -5,19 +5,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/constants.dart';
 
-class BottomSortBy extends StatefulWidget {
+class BottomCategory extends StatefulWidget {
   final Function(String) onPressedButton;
 
-  const BottomSortBy({
+  const BottomCategory({
     Key? key,
     required this.onPressedButton,
   }) : super(key: key);
 
   @override
-  State<BottomSortBy> createState() => _BottomSortByState();
+  State<BottomCategory> createState() => _BottomCategoryState();
 }
 
-class _BottomSortByState extends State<BottomSortBy> {
+class _BottomCategoryState extends State<BottomCategory> {
   String? text1;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -35,8 +35,8 @@ class _BottomSortByState extends State<BottomSortBy> {
 
   Future getPrefrenceValue() async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('sortby') != null) {
-      text1 = prefs.getString('sortby');
+    if (prefs.getString('category') != null) {
+      text1 = prefs.getString('category');
     }
     setState(() {});
   }
@@ -44,7 +44,7 @@ class _BottomSortByState extends State<BottomSortBy> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 320.sp,
+      height: 240.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
@@ -69,7 +69,7 @@ class _BottomSortByState extends State<BottomSortBy> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
               child: Text(
-                "Sort by",
+                "Category",
                 style: TextStyle(
                   color: greyTextColor,
                   fontSize: 12.sp,
@@ -81,13 +81,13 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "recommended",
+                    value: "Women",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) async {
                       text1 = value.toString();
                       final prefs = await SharedPreferences.getInstance();
-                      prefs.setString("sortby", text1!);
+                      prefs.setString("category", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
 
@@ -95,15 +95,15 @@ class _BottomSortByState extends State<BottomSortBy> {
                     }),
                 GestureDetector(
                   onTap: () async {
-                    text1 = "recommended";
+                    text1 = "Women";
                     final prefs = await SharedPreferences.getInstance();
-                    prefs.setString("sortby", text1!);
+                    prefs.setString("category", text1!);
                     widget.onPressedButton.call(text1!);
                     setState(() {});
                     closeSheet();
                   },
                   child: Text(
-                    "Recommended",
+                    "Women",
                     style: TextStyle(
                       color: colorPrimary,
                       fontSize: 16,
@@ -117,28 +117,28 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "low-to-high",
+                    value: "Men",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) async {
                       text1 = value.toString();
                       final prefs = await SharedPreferences.getInstance();
-                      prefs.setString("sortby", text1!);
+                      prefs.setString("category", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
                       closeSheet();
                     }),
                 GestureDetector(
                   onTap: () async {
-                    text1 = "low-to-high";
+                    text1 = "Men";
                     final prefs = await SharedPreferences.getInstance();
-                    prefs.setString("sortby", text1!);
+                    prefs.setString("category", text1!);
                     setState(() {});
                     widget.onPressedButton.call(text1!);
                     closeSheet();
                   },
                   child: Text(
-                    "Price - low to high",
+                    "Men",
                     style: TextStyle(
                       color: colorPrimary,
                       fontSize: 16,
@@ -152,98 +152,28 @@ class _BottomSortByState extends State<BottomSortBy> {
             Row(
               children: [
                 Radio(
-                    value: "whats-new",
+                    value: "Accesories",
                     activeColor: colorPrimary,
                     groupValue: text1,
                     onChanged: (value) async {
                       text1 = value.toString();
                       final prefs = await SharedPreferences.getInstance();
-                      prefs.setString("sortby", text1!);
+                      prefs.setString("category", text1!);
                       setState(() {});
                       widget.onPressedButton.call(text1!);
                       closeSheet();
                     }),
                 GestureDetector(
                   onTap: () async {
-                    text1 = "whats-new";
+                    text1 = "Accesories";
                     final prefs = await SharedPreferences.getInstance();
-                    prefs.setString("sortby", text1!);
+                    prefs.setString("category", text1!);
                     setState(() {});
                     widget.onPressedButton.call(text1!);
                     closeSheet();
                   },
                   child: Text(
-                    "What’s new",
-                    style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: 16,
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Radio(
-                    value: "high-to-low",
-                    activeColor: colorPrimary,
-                    groupValue: text1,
-                    onChanged: (value) async {
-                      text1 = value.toString();
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setString("sortby", text1!);
-                      setState(() {});
-                      widget.onPressedButton.call(text1!);
-                      closeSheet();
-                    }),
-                GestureDetector(
-                  onTap: () async {
-                    text1 = "high-to-low";
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setString("sortby", text1!);
-                    setState(() {});
-                    widget.onPressedButton.call(text1!);
-                    closeSheet();
-                  },
-                  child: Text(
-                    "Price - high to low",
-                    style: TextStyle(
-                      color: colorPrimary,
-                      fontSize: 16,
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Radio(
-                    value: "customer-rating",
-                    activeColor: colorPrimary,
-                    groupValue: text1,
-                    onChanged: (value) async {
-                      text1 = value.toString();
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setString("sortby", text1!);
-                      setState(() {});
-                      widget.onPressedButton.call(text1!);
-                      closeSheet();
-                    }),
-                GestureDetector(
-                  onTap: () async {
-                    text1 = "customer-rating";
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setString("sortby", text1!);
-                    setState(() {});
-                    widget.onPressedButton.call(text1!);
-                    closeSheet();
-                  },
-                  child: Text(
-                    "Customer rating",
+                    "Accesories",
                     style: TextStyle(
                       color: colorPrimary,
                       fontSize: 16,
