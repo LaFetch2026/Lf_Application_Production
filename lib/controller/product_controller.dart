@@ -359,17 +359,11 @@ class ProductController extends BaseController {
     }
   }
 
-  getHandPickedProduct(String handpickSortBy, bool filter) async {
+  getHandPickedProduct(
+      String handpickSortBy, bool filter, bool enableFilter) async {
     isHandPicked.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      /*  var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?type=relevant&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          }); */
       if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
         int id = prefs.getInt('gender')!;
         if (id == 1) {
@@ -406,7 +400,7 @@ class ProductController extends BaseController {
         if (filter) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=relevant&&gender_type=${categoryFilter.value}color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?type=relevant&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -424,12 +418,13 @@ class ProductController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
+          handPickedProductList.clear();
           handPickedProductList = responseData["data"];
           handpickedHasnextpage.value = true;
           handpickedLoadMore.value = false;
           isHandPicked.value = false;
           handpickedPage.value = 1;
-          if (filter) {
+          if (enableFilter) {
             Get.back();
           }
         }
@@ -460,13 +455,6 @@ class ProductController extends BaseController {
       print(handpickedPage.value);
       final prefs = await SharedPreferences.getInstance();
       try {
-        /*  var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=relevant&page=${handpickedPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            }); */
         dynamic response;
         String colorString = color_ids.join(',');
         String sizeString = size_ids.join(',');
@@ -2265,7 +2253,8 @@ class ProductController extends BaseController {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "catalog");
         } else if (type == "handpicked") {
-          getHandPickedProduct(productSortBy.value, filterProductEnable.value);
+          getHandPickedProduct(
+              productSortBy.value, filterProductEnable.value, false);
         } else if (type == "category product") {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "");

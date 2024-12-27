@@ -91,7 +91,7 @@ class HomeScreenState extends State<HomeScreen> {
       homeController.getBrandData();
     });
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false));
+        (_) => productController.getHandPickedProduct("", false, false));
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
@@ -246,7 +246,8 @@ class HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, scaleIn(const SearchScreen()))
                   .then((value) => setState(
                         () {
-                          productController.getHandPickedProduct("", false);
+                          productController.getHandPickedProduct(
+                              "", false, false);
                         },
                       ));
               await analytics.logEvent(

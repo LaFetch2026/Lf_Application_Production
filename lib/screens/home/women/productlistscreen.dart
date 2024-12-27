@@ -57,7 +57,8 @@ class ProductListScreenState extends State<ProductListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getHandPickedProduct(
             productController.productSortBy.value,
-            productController.filterProductEnable.value));
+            productController.filterProductEnable.value,
+            false));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -83,8 +84,10 @@ class ProductListScreenState extends State<ProductListScreen> {
               Get.to(const SearchScreen())?.then((value) => setState(
                     () {
                       productController.getHandPickedProduct(
-                          productController.productSortBy.value,
-                          productController.filterProductEnable.value);
+                        productController.productSortBy.value,
+                        productController.filterProductEnable.value,
+                        false,
+                      );
                     },
                   ));
               analytics
@@ -609,7 +612,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                   productController.getHandPickedProduct(
                                       productController.productSortBy.value,
                                       productController
-                                          .filterProductEnable.value);
+                                          .filterProductEnable.value,
+                                      false);
                                 },
                               ));
                     },
@@ -666,7 +670,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                   productController.getHandPickedProduct(
                                       productController.productSortBy.value,
                                       productController
-                                          .filterProductEnable.value);
+                                          .filterProductEnable.value,
+                                      false);
                                 },
                               ));
                     },
@@ -727,7 +732,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                           prefs.remove("category");
                           productController.getHandPickedProduct(
                               productController.productSortBy.value,
-                              productController.filterProductEnable.value);
+                              productController.filterProductEnable.value,
+                              false);
                         },
                         onClick: (p0, p1) {
                           productController.filterProductEnable.value = true;
@@ -735,7 +741,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                           productController.highPrice.value = p1;
                           productController.getHandPickedProduct(
                               productController.productSortBy.value,
-                              productController.filterProductEnable.value);
+                              productController.filterProductEnable.value,
+                              true);
                         },
                       ));
                     },
