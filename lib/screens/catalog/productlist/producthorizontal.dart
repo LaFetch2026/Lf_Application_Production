@@ -274,6 +274,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                         if (productController
                                                                 .productCategoryList[
                                                             index]["wishlisted"]) {
+                                                          productController
+                                                                      .productCategoryList[
+                                                                  index][
+                                                              "wishlisted"] = false;
+                                                          setState(() {});
                                                           productController.callAddProductToWishlist(
                                                               productController
                                                                           .productCategoryList[
@@ -299,6 +304,10 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                           wishlistController,
                                                                       onPressed:
                                                                           (p0) {
+                                                                        productController.productCategoryList[index]["wishlisted"] =
+                                                                            true;
+                                                                        setState(
+                                                                            () {});
                                                                         productController.callAddProductToWishlist(
                                                                             p0,
                                                                             "category",

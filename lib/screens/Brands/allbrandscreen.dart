@@ -481,6 +481,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     onPressedHeart: (p0, p1) async {
                                       if (productController.tagProductList[p1]
                                           ["wishlisted"]) {
+                                        productController.tagProductList[p1]
+                                            ["wishlisted"] = false;
+                                        setState(() {});
                                         productController
                                             .callAddProductToWishlist(
                                                 productController
@@ -502,6 +505,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     controller:
                                                         wishlistController,
                                                     onPressed: (p0) {
+                                                      productController
+                                                              .tagProductList[p1]
+                                                          ["wishlisted"] = true;
+                                                      setState(() {});
                                                       productController
                                                           .callAddProductToWishlist(
                                                               p0,
@@ -586,6 +593,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   onPressedHeart: (p0, p1) async {
                                     if (productController.bestSellerList[p1]
                                         ["wishlisted"]) {
+                                      productController.bestSellerList[p1]
+                                          ["wishlisted"] = false;
+                                      setState(() {});
                                       productController
                                           .callAddProductToWishlist(
                                               productController
@@ -605,6 +615,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           (context) => BottomWishlist(
                                               controller: wishlistController,
                                               onPressed: (p0) {
+                                                productController
+                                                        .bestSellerList[p1]
+                                                    ["wishlisted"] = true;
+                                                setState(() {});
                                                 productController
                                                     .callAddProductToWishlist(
                                                         p0,

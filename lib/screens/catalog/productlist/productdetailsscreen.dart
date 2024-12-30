@@ -3379,6 +3379,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     .recommendedList[p1]
                                                 ["wishlisted"]) {
                                               productController
+                                                      .recommendedList[p1]
+                                                  ["wishlisted"] = false;
+                                              setState(() {});
+                                              productController
                                                   .callAddProductToWishlist(
                                                       productController
                                                               .recommendedList[
@@ -3399,6 +3403,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           controller:
                                                               wishlistController,
                                                           onPressed: (p0) {
+                                                            productController
+                                                                    .recommendedList[p1]
+                                                                [
+                                                                "wishlisted"] = true;
+                                                            setState(() {});
                                                             productController.callAddProductToWishlist(
                                                                 p0,
                                                                 "recommended",
@@ -3479,6 +3488,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     .frequentlyProductList[p1]
                                                 ["wishlisted"]) {
                                               productController
+                                                      .frequentlyProductList[p1]
+                                                  ["wishlisted"] = false;
+                                              setState(() {});
+                                              productController
                                                   .callAddProductToWishlist(
                                                       productController
                                                               .frequentlyProductList[
@@ -3499,6 +3512,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           controller:
                                                               wishlistController,
                                                           onPressed: (p0) {
+                                                            productController
+                                                                    .frequentlyProductList[p1]
+                                                                [
+                                                                "wishlisted"] = true;
+                                                            setState(() {});
                                                             productController.callAddProductToWishlist(
                                                                 p0,
                                                                 "frequently",

@@ -418,6 +418,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                         if (productController
                                                                 .productCategoryList[
                                                             index]["wishlisted"]) {
+                                                          productController
+                                                                      .productCategoryList[
+                                                                  index][
+                                                              "wishlisted"] = false;
+                                                          setState(() {});
                                                           productController.callAddProductToWishlist(
                                                               productController
                                                                           .productCategoryList[
@@ -447,6 +452,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                           wishlistController,
                                                                       onPressed:
                                                                           (p0) {
+                                                                        productController.productCategoryList[index]["wishlisted"] =
+                                                                            true;
+                                                                        setState(
+                                                                            () {});
                                                                         productController.callAddProductToWishlist(
                                                                             p0,
                                                                             "bannerTag",

@@ -377,6 +377,11 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                       .productExpressBrandList[
                                                                   index]
                                                               ["wishlisted"]) {
+                                                            productController
+                                                                        .productExpressBrandList[
+                                                                    index][
+                                                                "wishlisted"] = false;
+                                                            setState(() {});
                                                             productController.callAddProductToWishlist(
                                                                 productController
                                                                             .productExpressBrandList[
@@ -400,6 +405,12 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                                         wishlistController,
                                                                     onPressed:
                                                                         (p0) {
+                                                                      productController.productExpressBrandList[index]
+                                                                              [
+                                                                              "wishlisted"] =
+                                                                          true;
+                                                                      setState(
+                                                                          () {});
                                                                       productController.callAddProductToWishlist(
                                                                           p0,
                                                                           "brand",

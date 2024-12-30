@@ -293,6 +293,11 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                       if (productController
                                                               .handPickedProductList[
                                                           index]["wishlisted"]) {
+                                                        productController
+                                                                    .handPickedProductList[
+                                                                index][
+                                                            "wishlisted"] = false;
+                                                        setState(() {});
                                                         productController.callAddProductToWishlist(
                                                             productController
                                                                         .handPickedProductList[
@@ -319,6 +324,12 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                                         wishlistController,
                                                                     onPressed:
                                                                         (p0) {
+                                                                      productController.handPickedProductList[index]
+                                                                              [
+                                                                              "wishlisted"] =
+                                                                          true;
+                                                                      setState(
+                                                                          () {});
                                                                       productController.callAddProductToWishlist(
                                                                           p0,
                                                                           "handpicked",

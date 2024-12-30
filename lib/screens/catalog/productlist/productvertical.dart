@@ -356,6 +356,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       .productCategoryList[
                                                                   index]
                                                               ["wishlisted"]) {
+                                                            productController
+                                                                        .productCategoryList[
+                                                                    index][
+                                                                "wishlisted"] = false;
+                                                            setState(() {});
                                                             productController.callAddProductToWishlist(
                                                                 productController
                                                                             .productCategoryList[
@@ -383,6 +388,12 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                         wishlistController,
                                                                     onPressed:
                                                                         (p0) {
+                                                                      productController.productCategoryList[index]
+                                                                              [
+                                                                              "wishlisted"] =
+                                                                          true;
+                                                                      setState(
+                                                                          () {});
                                                                       productController.callAddProductToWishlist(
                                                                           p0,
                                                                           "category",
