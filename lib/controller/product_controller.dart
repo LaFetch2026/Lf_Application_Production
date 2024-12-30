@@ -2350,8 +2350,6 @@ class ProductController extends BaseController {
             expressProductList.clear();
             // getExpressProductData(0, genderType);
             getTagsProductData(0, genderType, 0);
-            categoryFilter.value = genderType;
-            getHandPickedProduct("", false, false);
           }
         }
       } else if (response.statusCode == 500) {

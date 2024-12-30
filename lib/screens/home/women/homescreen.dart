@@ -60,7 +60,6 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // homeController.homeGenderValue.value = 3;
       homeController.showGenderList.value = false;
       homeController.currentPage.value = 0;
       productController.current.value = 50;
@@ -68,6 +67,8 @@ class HomeScreenState extends State<HomeScreen> {
       productController.tagname.value = "We think you might also like";
       productController.productCategory = [];
       productController.productTags = [];
+      productController.categoryFilter.value =
+          homeController.homeGenderValue.value;
       checkUserConnection();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -90,8 +91,8 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    /* WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false)); */
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false, false));
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
@@ -2047,8 +2048,12 @@ class HomeScreenState extends State<HomeScreen> {
                                 productController.productCategory = [];
                                 productController.productTags = [];
                                 productController.getTagsData(3);
+                                productController.categoryFilter.value =
+                                    homeController.homeGenderValue.value;
+                                productController.getHandPickedProduct(
+                                    "", false, false);
                                 homeController.getBannar1Data();
-                                homeController.getBannar2Data();
+                                // homeController.getBannar2Data();
                                 // homeController.getCategoryData(3);
                               },
                               child: Container(
@@ -2085,6 +2090,10 @@ class HomeScreenState extends State<HomeScreen> {
                                 productController.productCategory = [];
                                 productController.productTags = [];
                                 productController.getTagsData(2);
+                                productController.categoryFilter.value =
+                                    homeController.homeGenderValue.value;
+                                productController.getHandPickedProduct(
+                                    "", false, false);
                                 // homeController.getCategoryData(2);
                               },
                               child: Container(
@@ -2121,6 +2130,10 @@ class HomeScreenState extends State<HomeScreen> {
                                 productController.productCategory = [];
                                 productController.productTags = [];
                                 productController.getTagsData(1);
+                                productController.categoryFilter.value =
+                                    homeController.homeGenderValue.value;
+                                productController.getHandPickedProduct(
+                                    "", false, false);
                                 // homeController.getCategoryData(1);
                               },
                               child: Container(
