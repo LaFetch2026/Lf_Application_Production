@@ -124,11 +124,11 @@ class ProductListScreenState extends State<ProductListScreen> {
                           width: 60,
                         )
                       : AppText(
-                          text: productController
-                                      .handPickedProductList.length ==
-                                  1
-                              ? "${productController.handPickedProductList.length.toString()} item"
-                              : "${productController.handPickedProductList.length.toString()} items",
+                          text: productController.totalProductValue.value ==
+                                      1 ||
+                                  productController.totalProductValue.value == 0
+                              ? "${productController.totalProductValue.value} item"
+                              : "${productController.totalProductValue.value} items",
                           color: Color(0xFF4B5563),
                           fontSize: 10,
                           fontFamily: "Franklin Gothic Regular",
@@ -307,7 +307,9 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                             [],
                                                             [],
                                                             0,
-                                                            0,
+                                                            productController
+                                                                .categoryFilter
+                                                                .value,
                                                             0);
                                                       } else {
                                                         scaffoldKey.currentState
@@ -328,7 +330,9 @@ class ProductListScreenState extends State<ProductListScreen> {
                                                                           [],
                                                                           [],
                                                                           0,
-                                                                          0,
+                                                                          productController
+                                                                              .categoryFilter
+                                                                              .value,
                                                                           0);
                                                                     },
                                                                     wishlistList:

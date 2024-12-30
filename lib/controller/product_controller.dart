@@ -67,6 +67,7 @@ class ProductController extends BaseController {
   List reviewList = [].obs;
   List recommendedList = [].obs;
   List bestSellerList = [].obs;
+  RxInt totalProductValue = 0.obs;
   final pincodeController = TextEditingController();
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
@@ -417,9 +418,10 @@ class ProductController extends BaseController {
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        handPickedProductList.clear();
         if (responseData["data"] != null) {
-          handPickedProductList.clear();
           handPickedProductList = responseData["data"];
+          totalProductValue.value = responseData["meta"]["total"];
           handpickedHasnextpage.value = true;
           handpickedLoadMore.value = false;
           isHandPicked.value = false;
@@ -2253,6 +2255,7 @@ class ProductController extends BaseController {
           getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "catalog");
         } else if (type == "handpicked") {
+          categoryFilter.value = genderType;
           getHandPickedProduct(
               productSortBy.value, filterProductEnable.value, false);
         } else if (type == "category product") {
@@ -2346,6 +2349,8 @@ class ProductController extends BaseController {
             expressProductList.clear();
             // getExpressProductData(0, genderType);
             getTagsProductData(0, genderType, 0);
+            categoryFilter.value = genderType;
+            getHandPickedProduct("", false, false);
           }
         }
       } else if (response.statusCode == 500) {

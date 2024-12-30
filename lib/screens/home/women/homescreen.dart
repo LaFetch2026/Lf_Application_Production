@@ -90,8 +90,8 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false));
+    /* WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false, false)); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
@@ -246,6 +246,8 @@ class HomeScreenState extends State<HomeScreen> {
               Navigator.push(context, scaleIn(const SearchScreen()))
                   .then((value) => setState(
                         () {
+                          productController.categoryFilter.value =
+                              homeController.homeGenderValue.value;
                           productController.getHandPickedProduct(
                               "", false, false);
                         },
@@ -526,13 +528,13 @@ class HomeScreenState extends State<HomeScreen> {
                                                   productController
                                                       .expressProductList
                                                       .clear();
-                                                  productController
+                                                  /*  productController
                                                       .getExpressProductData(
                                                           productController
                                                               .tagId.value,
                                                           homeController
                                                               .homeGenderValue
-                                                              .value);
+                                                              .value); */
                                                   productController
                                                       .getTagsProductData(
                                                           productController
@@ -561,13 +563,13 @@ class HomeScreenState extends State<HomeScreen> {
                                                   productController
                                                       .expressProductList
                                                       .clear();
-                                                  productController
+                                                  /* productController
                                                       .getExpressProductData(
                                                           productController
                                                               .tagId.value,
                                                           homeController
                                                               .homeGenderValue
-                                                              .value);
+                                                              .value); */
                                                   productController
                                                       .getTagsProductData(
                                                           productController
@@ -1216,6 +1218,10 @@ class HomeScreenState extends State<HomeScreen> {
                                           prefs.remove("lower");
                                           prefs.remove("sortby");
                                           prefs.remove("category");
+                                          productController
+                                                  .categoryFilter.value =
+                                              homeController
+                                                  .homeGenderValue.value;
                                           Navigator.push(
                                               context,
                                               scaleIn(
@@ -1234,6 +1240,15 @@ class HomeScreenState extends State<HomeScreen> {
                                                       .value = false;
                                                   productController
                                                       .handpickedPage.value = 1;
+                                                  productController
+                                                          .categoryFilter
+                                                          .value =
+                                                      homeController
+                                                          .homeGenderValue
+                                                          .value;
+                                                  productController
+                                                      .getHandPickedProduct(
+                                                          "", false, false);
                                                 },
                                               ));
                                         },
