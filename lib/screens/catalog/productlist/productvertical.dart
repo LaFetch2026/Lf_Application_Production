@@ -189,6 +189,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
         prefs.remove("upper");
         prefs.remove("lower");
         prefs.remove("sortby");
+        productController.size_ids.clear();
+        productController.color_ids.clear();
+        productController.brand_ids.clear();
         return true;
       },
       child: Scaffold(

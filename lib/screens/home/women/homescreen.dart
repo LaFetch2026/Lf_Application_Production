@@ -1094,6 +1094,12 @@ class HomeScreenState extends State<HomeScreen> {
                                           prefs.remove("lower");
                                           prefs.remove("sortby");
                                           prefs.remove("category");
+                                          productController.sortBy.value = "";
+                                          productController.filterEnable.value =
+                                              false;
+                                          productController.size_ids.clear();
+                                          productController.color_ids.clear();
+                                          productController.brand_ids.clear();
                                           productController.productCategory
                                               .clear();
                                           productController.productTags.clear();
@@ -1130,7 +1136,14 @@ class HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               )).then((value) => setState(
                                                 () {
-                                                  //  productController.tagId.value = 0;
+                                                  productController
+                                                      .getTagsProductData(
+                                                          productController
+                                                              .tagId.value,
+                                                          homeController
+                                                              .homeGenderValue
+                                                              .value,
+                                                          0);
                                                 },
                                               ));
                                         },
@@ -1208,8 +1221,9 @@ class HomeScreenState extends State<HomeScreen> {
                                               .productSortBy.value = "";
                                           productController.filterProductEnable
                                               .value = false;
-                                          productController
-                                              .categoryFilter.value = 0;
+                                          productController.size_ids.clear();
+                                          productController.color_ids.clear();
+                                          productController.brand_ids.clear();
                                           final prefs = await SharedPreferences
                                               .getInstance();
                                           prefs.remove("brandList");

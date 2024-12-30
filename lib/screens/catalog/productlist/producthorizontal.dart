@@ -88,6 +88,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
         prefs.remove("upper");
         prefs.remove("lower");
         prefs.remove("sortby");
+        productController.size_ids.clear();
+        productController.color_ids.clear();
+        productController.brand_ids.clear();
         return true;
       },
       child: Scaffold(

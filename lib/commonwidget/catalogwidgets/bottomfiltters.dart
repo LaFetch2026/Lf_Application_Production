@@ -48,9 +48,9 @@ class BottomFiltersState extends State<BottomFilters> {
     getPrefrenceValue();
     selected[0] = !selected[0];
     productController.isPrice.value = true;
-    productController.size_ids.clear();
+    /*  productController.size_ids.clear();
     productController.color_ids.clear();
-    productController.brand_ids.clear();
+    productController.brand_ids.clear(); */
     productController.filterList.clear();
     setState(() {});
     super.initState();

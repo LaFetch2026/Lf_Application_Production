@@ -64,6 +64,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.bannerTagHasnextpage.value = true;
       productController.bannerTagLoadMore.value = false;
       productController.bannerTagPage.value = 1;
+      productController.sortBy.value = "";
+      productController.filterEnable.value = false;
+      productController.categoryProductGender.value = widget.genderType;
+      productController.size_ids.clear();
+      productController.color_ids.clear();
+      productController.brand_ids.clear();
     });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
@@ -75,34 +81,59 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               widget.brandId,
               "",
               [],
-              "",
+              productController.sortBy.value,
               widget.genderType,
-              false,
+              productController.filterEnable.value,
               0,
               false,
               ""));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.brandProductController.addListener(() {
           productController.fetchCategoryProductMoreData(
-              widget.brandId, "", widget.genderType, false, "");
+              widget.brandId,
+              productController.sortBy.value,
+              productController.categoryProductGender.value,
+              productController.filterEnable.value,
+              "");
           productController.update();
         });
       });
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) =>
           productController.getTagsBannerData(
-              widget.tagIds, widget.categoryList, widget.genderType));
+              widget.tagIds,
+              widget.categoryList,
+              widget.genderType,
+              productController.sortBy.value,
+              productController.filterEnable.value,
+              false));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.bannerTagController.addListener(() {
           productController.fetchMoreBannerTagProductData(
-              productController.productTags,
-              productController.productCategory,
-              widget.genderType);
+            productController.productTags,
+            productController.productCategory,
+            productController.categoryProductGender.value,
+            productController.sortBy.value,
+            productController.filterEnable.value,
+          );
           productController.update();
         });
       });
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => clearPrefrenceValue());
     super.initState();
+  }
+
+  clearPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("brandList");
+    prefs.remove("colorList");
+    prefs.remove("sizeList");
+    prefs.remove("upper");
+    prefs.remove("lower");
+    prefs.remove("sortby");
+    prefs.remove("category");
+    print("abcdef");
   }
 
   @override
@@ -354,7 +385,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               [],
                                                               [],
                                                               0,
-                                                              widget.genderType,
+                                                              productController
+                                                                  .categoryProductGender
+                                                                  .value,
                                                               0);
                                                         } else {
                                                           scaffoldKey
@@ -374,7 +407,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             [],
                                                                             [],
                                                                             0,
-                                                                            widget.genderType,
+                                                                            productController.categoryProductGender.value,
                                                                             0);
                                                                       },
                                                                       wishlistList:
@@ -401,7 +434,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                               productController
                                                                   .productCategory,
                                                               0,
-                                                              widget.genderType,
+                                                              productController
+                                                                  .categoryProductGender
+                                                                  .value,
                                                               0);
                                                         } else {
                                                           scaffoldKey
@@ -421,7 +456,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                             productController.productTags,
                                                                             productController.productCategory,
                                                                             0,
-                                                                            widget.genderType,
+                                                                            productController.categoryProductGender.value,
                                                                             0);
                                                                       },
                                                                       wishlistList:
@@ -706,17 +741,29 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           ?.showBottomSheet((context) => BottomSortBy(
                                 onPressedButton: (p0) {
                                   productController.sortBy.value = p0;
-                                  productController.getProductByCategoryData(
-                                      widget.categoryId,
-                                      widget.brandId,
-                                      "",
-                                      [],
-                                      productController.sortBy.value,
-                                      widget.genderType,
-                                      productController.filterEnable.value,
-                                      0,
-                                      false,
-                                      "");
+                                  if (widget.categoryId != 0) {
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        widget.brandId,
+                                        "",
+                                        [],
+                                        productController.sortBy.value,
+                                        productController
+                                            .categoryProductGender.value,
+                                        productController.filterEnable.value,
+                                        0,
+                                        false,
+                                        "");
+                                  } else {
+                                    productController.getTagsBannerData(
+                                        widget.tagIds,
+                                        widget.categoryList,
+                                        productController
+                                            .categoryProductGender.value,
+                                        productController.sortBy.value,
+                                        productController.filterEnable.value,
+                                        false);
+                                  }
                                 },
                               ));
                     },
@@ -763,17 +810,39 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       scaffoldKey.currentState
                           ?.showBottomSheet((context) => BottomCategory(
                                 onPressedButton: (p0) {
-                                  productController.getProductByCategoryData(
-                                      widget.categoryId,
-                                      widget.brandId,
-                                      "",
-                                      [],
-                                      productController.sortBy.value,
-                                      widget.genderType,
-                                      productController.filterEnable.value,
-                                      0,
-                                      false,
-                                      "");
+                                  if (p0 == "Women") {
+                                    productController
+                                        .categoryProductGender.value = 3;
+                                  } else if (p0 == "Men") {
+                                    productController
+                                        .categoryProductGender.value = 2;
+                                  } else {
+                                    productController
+                                        .categoryProductGender.value = 1;
+                                  }
+                                  if (widget.categoryId != 0) {
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        widget.brandId,
+                                        "",
+                                        [],
+                                        productController.sortBy.value,
+                                        productController
+                                            .categoryProductGender.value,
+                                        productController.filterEnable.value,
+                                        0,
+                                        false,
+                                        "");
+                                  } else {
+                                    productController.getTagsBannerData(
+                                        widget.tagIds,
+                                        widget.categoryList,
+                                        productController
+                                            .categoryProductGender.value,
+                                        productController.sortBy.value,
+                                        productController.filterEnable.value,
+                                        false);
+                                  }
                                 },
                               ));
                     },
@@ -831,33 +900,54 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           prefs.remove("upper");
                           prefs.remove("lower");
                           prefs.remove("sortby");
-                          productController.getProductByCategoryData(
-                              widget.categoryId,
-                              widget.brandId,
-                              "",
-                              [],
-                              productController.sortBy.value,
-                              widget.genderType,
-                              productController.filterEnable.value,
-                              0,
-                              false,
-                              "");
+                          prefs.remove("category");
+                          if (widget.categoryId != 0) {
+                            productController.getProductByCategoryData(
+                                widget.categoryId,
+                                widget.brandId,
+                                "",
+                                [],
+                                productController.sortBy.value,
+                                productController.categoryProductGender.value,
+                                productController.filterEnable.value,
+                                0,
+                                false,
+                                "");
+                          } else {
+                            productController.getTagsBannerData(
+                                widget.tagIds,
+                                widget.categoryList,
+                                productController.categoryProductGender.value,
+                                productController.sortBy.value,
+                                productController.filterEnable.value,
+                                false);
+                          }
                         },
                         onClick: (p0, p1) {
                           productController.filterEnable.value = true;
                           productController.lowPrice.value = p0;
                           productController.highPrice.value = p1;
-                          productController.getProductByCategoryData(
-                              widget.categoryId,
-                              widget.brandId,
-                              "",
-                              [],
-                              productController.sortBy.value,
-                              widget.genderType,
-                              productController.filterEnable.value,
-                              0,
-                              true,
-                              "");
+                          if (widget.categoryId != 0) {
+                            productController.getProductByCategoryData(
+                                widget.categoryId,
+                                widget.brandId,
+                                "",
+                                [],
+                                productController.sortBy.value,
+                                productController.categoryProductGender.value,
+                                productController.filterEnable.value,
+                                0,
+                                true,
+                                "");
+                          } else {
+                            productController.getTagsBannerData(
+                                widget.tagIds,
+                                widget.categoryList,
+                                productController.categoryProductGender.value,
+                                productController.sortBy.value,
+                                productController.filterEnable.value,
+                                true);
+                          }
                         },
                       ));
                     },
