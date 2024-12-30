@@ -10,6 +10,7 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 //import 'package:lafetch/commonwidget/smallbtn.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 //import '../commonwidget/common_widgets.dart';
@@ -119,7 +120,10 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
         builder: (context) {
           return showSingleBtnNonCancelableDailog(
               click1: () {
-                Geolocator.openLocationSettings().then((value) {
+                /*  Geolocator.openLocationSettings().then((value) {
+                  Get.back();
+                }); */
+                openAppSettings().then((value) {
                   Get.back();
                 });
               },
