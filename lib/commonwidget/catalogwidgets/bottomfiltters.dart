@@ -106,18 +106,21 @@ class BottomFiltersState extends State<BottomFilters> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
-                      left: 16.sp, right: 16.sp, top: 50.sp, bottom: 10.sp),
+                  padding:
+                      EdgeInsets.only(left: 16.sp, right: 16.sp, top: 40.sp),
                   child: Row(
                     children: [
-                      Text(
-                        "Filters",
-                        style: TextStyle(
-                          color: blackColor,
-                          fontSize: 14.sp,
-                          decoration: TextDecoration.none,
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w500,
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
+                        child: Text(
+                          "Filters",
+                          style: TextStyle(
+                            color: blackColor,
+                            fontSize: 14.sp,
+                            decoration: TextDecoration.none,
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                       const Expanded(
@@ -138,8 +141,11 @@ class BottomFiltersState extends State<BottomFilters> {
                         },
                         child: Container(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10.sp, vertical: 5.sp),
+                            padding: EdgeInsets.only(
+                                right: 20.sp,
+                                left: 20.sp,
+                                top: 15.sp,
+                                bottom: 15.sp),
                             child: Text(
                               "Clear All",
                               style: TextStyle(
