@@ -661,6 +661,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           productCategoryList = responseData["data"];
+          total.value = responseData["mata"]["total"];
           isCategoryProduct.value = false;
           bannerTagHasnextpage.value = true;
           bannerTagLoadMore.value = false;

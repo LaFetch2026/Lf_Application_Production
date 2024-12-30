@@ -149,10 +149,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           width: 60,
                         )
                       : AppText(
-                          text: productController.productCategoryList.length ==
-                                  1
-                              ? "${productController.productCategoryList.length.toString()} item"
-                              : "${productController.productCategoryList.length.toString()} items",
+                          text: productController.total.value == 1 ||
+                                  productController.total.value == 0
+                              ? "${productController.total.value} item"
+                              : "${productController.total.value} items",
                           color: Color(0xFF4B5563),
                           fontSize: 10,
                           fontFamily: "Franklin Gothic Regular",
@@ -684,7 +684,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           ),
                         )
                       : SizedBox(
-                          height: MediaQuery.of(context).size.height - 100,
+                          height: MediaQuery.of(context).size.height - 200.sp,
                           width: MediaQuery.of(context).size.width,
                           child: Center(
                             child: Text("No Product Found",
