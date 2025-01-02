@@ -14,7 +14,7 @@ class DummyHomeBrand extends StatelessWidget {
     return Container(
       color: whiteColor,
       child: Padding(
-        padding: EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
+        padding: EdgeInsets.only(top: 12.sp, left: 16.sp, right: 16.sp),
         child: SizedBox(
           height: 100.sp,
           child: ListView.builder(

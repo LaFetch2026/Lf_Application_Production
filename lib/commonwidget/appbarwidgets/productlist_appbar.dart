@@ -69,9 +69,9 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   widget.onPressedSearch?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: ImageIcon(
-                    AssetImage(searchImage),
+                    AssetImage(searchNewImage),
                     color: whiteColor,
                     size: 20.sp,
                   ),

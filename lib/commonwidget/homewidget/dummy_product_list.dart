@@ -30,7 +30,7 @@ class DummyProductList extends StatelessWidget {
         ),
         visibleSubtitle
             ? Padding(
-                padding: EdgeInsets.only(top: 6.sp, left: 16.sp, right: 40.sp),
+                padding: EdgeInsets.only(top: 2.sp, left: 16.sp, right: 40.sp),
                 child: DummyContainer(
                   height: 12,
                   width: double.infinity,
@@ -40,7 +40,7 @@ class DummyProductList extends StatelessWidget {
                 height: 0,
               ),
         Padding(
-            padding: EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
+            padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
             child: SizedBox(
               height: 250.sp,
               width: double.infinity,

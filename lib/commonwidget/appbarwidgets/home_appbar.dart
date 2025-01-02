@@ -33,7 +33,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
     return Container(
       height: 100.sp,
       width: MediaQuery.of(context).size.width,
-      color: blackColor,
+      color: homeAppBarColor,
       child: Column(children: [
         Padding(
           padding: EdgeInsets.only(left: 16.sp, top: 60.sp, right: 16.sp),
@@ -46,93 +46,88 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       onTap: () {
                         widget.onPressedDropDown?.call();
                       },
-                      child: Row(
-                        children: [
-                          Obx(
-                            () => AppText(
-                              text: "${homeController.genderText.value}"
-                                  .toUpperCase(),
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w400,
-                              color: whiteColor,
-                              fontSize: 13,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 20.sp),
+                        child: Row(
+                          children: [
+                            Obx(
+                              () => AppText(
+                                text: "${homeController.genderText.value}"
+                                    .toUpperCase(),
+                                fontFamily: "Franklin Gothic Bold",
+                                fontWeight: FontWeight.w700,
+                                color: Color(0XFFF3F4F6),
+                                fontSize: 13,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                            child: ImageIcon(
-                              AssetImage(dropdownImage),
-                              color: whiteColor,
-                              size: 20.sp,
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                              child: ImageIcon(
+                                AssetImage(dropdownImage),
+                                color: Color(0XFFF3F4F6),
+                                size: 14.sp,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     )
                   : SizedBox(
                       height: 0,
                     ),
-              const Expanded(
-                child: SizedBox(
-                  height: 0,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                child: Center(
-                  child: Image.asset(appNameImage,
-                      height: 28.sp, width: 70.sp, fit: BoxFit.cover),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  widget.onPressedSearch?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                  child: ImageIcon(
-                    AssetImage(searchNewImage),
-                    color: whiteColor,
-                    size: 20.sp,
+              Expanded(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                    child: Center(
+                      child: Image.asset(appNameImage,
+                          height: 26.sp, width: 70.sp, fit: BoxFit.cover),
+                    ),
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  widget.onPressedCatalog?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15.sp),
-                  child: ImageIcon(
-                    AssetImage(saveIcon),
-                    color: whiteColor,
-                    size: 20.sp,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  widget.onPressedCart?.call();
-                },
-                child: Padding(
-                    padding: EdgeInsets.only(left: 5.sp),
-                    child: /* SizedBox(
-                    height: 28.sp,
-                    width: 28.sp,
-                    child: CircleAvatar(
-                      backgroundColor: whiteColor,
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      widget.onPressedSearch?.call();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.sp),
                       child: ImageIcon(
-                        AssetImage(cartImage),
-                        color: colorPrimary,
+                        AssetImage(searchNewImage),
+                        color: Color(0XFFF3F4F6),
                         size: 20.sp,
                       ),
                     ),
-                  ), */
-                        ImageIcon(
-                      AssetImage(cartNewImage),
-                      color: whiteColor,
-                      size: 20.sp,
-                    )),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      widget.onPressedCatalog?.call();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                      child: ImageIcon(
+                        AssetImage(saveIcon),
+                        color: Color(0XFFF3F4F6),
+                        size: 18.sp,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      widget.onPressedCart?.call();
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 5.sp),
+                        child: ImageIcon(
+                          AssetImage(cartNewImage),
+                          color: Color(0XFFF3F4F6),
+                          size: 18.sp,
+                        )),
+                  ),
+                ],
               ),
             ],
           ),

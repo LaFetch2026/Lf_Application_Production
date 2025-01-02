@@ -42,6 +42,7 @@ const Color color2StartReview = Color(0xFFE9C437);
 const Color color1StartReview = Color(0xFFD95656);
 const Color greyDotColor = Color(0xFFC6C3C0);
 const Color greyback = Color(0xFFEEEEEE);
+const Color homeAppBarColor = Color(0xFF171717);
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';

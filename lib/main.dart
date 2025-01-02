@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/firebase_options.dart';
 import 'package:lafetch/screens/splash/splash.dart';
+import 'package:lafetch/utils/constants.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,7 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black,
+    statusBarColor: homeAppBarColor,
   ));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

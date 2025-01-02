@@ -92,7 +92,7 @@ class HomeProductList extends StatelessWidget {
         ),
         visibleSubtitle
             ? Padding(
-                padding: EdgeInsets.only(top: 6.sp, left: leftPadding.sp),
+                padding: EdgeInsets.only(left: leftPadding.sp),
                 child: AppText(
                   text: text1,
                   fontFamily: "Franklin Gothic Regular",
@@ -219,7 +219,7 @@ class HomeProductList extends StatelessWidget {
                                     ]),
                                     Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 10.sp, vertical: 5.sp),
+                                          horizontal: 4.sp, vertical: 5.sp),
                                       child: AppText(
                                         text: "${list[index]["brand_name"]}\n",
                                         color: nameText,
@@ -231,7 +231,7 @@ class HomeProductList extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 10.sp, vertical: 3.sp),
+                                          horizontal: 4.sp, vertical: 2.sp),
                                       child: AppText(
                                         text:
                                             "${list[index]["short_description"]}\n",
@@ -244,7 +244,7 @@ class HomeProductList extends StatelessWidget {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: 10.sp, left: 10.sp, right: 3.sp),
+                                          top: 8.sp, left: 4.sp, right: 3.sp),
                                       child: Row(
                                         children: [
                                           Text(

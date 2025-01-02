@@ -456,9 +456,9 @@ class HomeScreenState extends State<HomeScreen> {
                           ? Padding(
                               padding: EdgeInsets.only(
                                   left: 16.sp,
-                                  bottom: 10.sp,
+                                  bottom: 5.sp,
                                   right: 16.sp,
-                                  top: 20.sp),
+                                  top: 8.sp),
                               child: SizedBox(
                                 height: 30.sp,
                                 width: double.infinity,
@@ -477,13 +477,12 @@ class HomeScreenState extends State<HomeScreen> {
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10.sp),
                                             child: DummyContainer(
-                                                height: 16, width: 85),
+                                                height: 16, width: 70),
                                           ),
                                           Padding(
-                                            padding:
-                                                EdgeInsets.only(top: 10.sp),
+                                            padding: EdgeInsets.only(top: 6.sp),
                                             child: DummyContainer(
-                                              width: 85,
+                                              width: 70,
                                               height: 2,
                                             ),
                                           ),
@@ -494,9 +493,9 @@ class HomeScreenState extends State<HomeScreen> {
                           : Padding(
                               padding: EdgeInsets.only(
                                   left: 16.sp,
-                                  bottom: 10.sp,
+                                  bottom: 5.sp,
                                   right: 16.sp,
-                                  top: 20.sp),
+                                  top: 8.sp),
                               child: Center(
                                 child: SizedBox(
                                     width: double.infinity,
@@ -597,38 +596,46 @@ class HomeScreenState extends State<HomeScreen> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.end,
                                                   children: [
-                                                    Center(
-                                                      child: AppText(
-                                                        text:
-                                                            "${productController.tagsList[index]["name"]}"
-                                                                .toUpperCase(),
-                                                        color: productController
-                                                                    .current
-                                                                    .value ==
-                                                                index
-                                                            ? blackColor
-                                                            : textHintColor,
-                                                        fontSize: 13,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 10.sp),
+                                                          right: 16.sp),
                                                       child: Container(
-                                                        color: productController
-                                                                    .current
-                                                                    .value ==
-                                                                index
-                                                            ? blackColor
-                                                            : whiteColor,
-                                                        width: 85.sp,
-                                                        height: 2.sp,
+                                                        decoration: BoxDecoration(
+                                                            border: Border(
+                                                                bottom: BorderSide(
+                                                                    width: 2,
+                                                                    color: productController.current.value ==
+                                                                            index
+                                                                        ? blackColor
+                                                                        : whiteColor))),
+                                                        child: Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    bottom:
+                                                                        6.sp),
+                                                            child: AppText(
+                                                              text: "${productController.tagsList[index]["name"]}"
+                                                                  .toUpperCase(),
+                                                              color: productController
+                                                                          .current
+                                                                          .value ==
+                                                                      index
+                                                                  ? blackColor
+                                                                  : Color(
+                                                                      0xFF9CA3AF),
+                                                              fontSize: 13,
+                                                              fontFamily:
+                                                                  "Franklin Gothic",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -645,7 +652,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   left: 16.sp,
                                   bottom: 10.sp,
                                   right: 16.sp,
-                                  top: 10.sp),
+                                  top: 6.sp),
                               child: SizedBox(
                                 height: 210.sp,
                                 width: double.infinity,
@@ -674,7 +681,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           left: 16.sp,
                                           bottom: 10.sp,
                                           right: 16.sp,
-                                          top: 10.sp),
+                                          top: 6.sp),
                                       child: CarouselSlider.builder(
                                         itemCount:
                                             homeController.banner1List.length,
@@ -814,11 +821,11 @@ class HomeScreenState extends State<HomeScreen> {
                                             height: 0,
                                           )
                                         : Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20, right: 10),
+                                            padding: EdgeInsets.only(
+                                                left: 30.sp, right: 10.sp),
                                             child: Center(
-                                              child: SizedBox(
-                                                width: 50 *
+                                              child: Container(
+                                                width: 25 *
                                                     homeController
                                                         .banner1List.length
                                                         .toDouble(),
@@ -911,13 +918,13 @@ class HomeScreenState extends State<HomeScreen> {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 10.sp, left: 16.sp),
+                                              top: 12.sp, left: 16.sp),
                                           child: AppText(
                                             text:
                                                 "Featured brands".toUpperCase(),
                                             fontFamily: "Franklin Gothic",
                                             color: blackColor,
-                                            fontSize: 20,
+                                            fontSize: 18,
                                           ),
                                         ),
                                         Expanded(
@@ -948,9 +955,9 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: 10.sp,
-                                          left: 16.sp,
-                                          right: 16.sp),
+                                        top: 10.sp,
+                                        left: 16.sp,
+                                      ),
                                       child: SizedBox(
                                         height: 100.sp,
                                         child: ListView.builder(
@@ -987,6 +994,14 @@ class HomeScreenState extends State<HomeScreen> {
                                                                   () {
                                                                     homeController
                                                                         .getBrandData();
+                                                                    productController.getTagsProductData(
+                                                                        productController
+                                                                            .tagId
+                                                                            .value,
+                                                                        homeController
+                                                                            .homeGenderValue
+                                                                            .value,
+                                                                        0);
                                                                   },
                                                                 ));
                                                       },
@@ -1083,7 +1098,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             "Selected styles for a limited time only",
                                         controller: productController
                                             .tagsProductController,
-                                        height: 235.sp,
+                                        height: 230.sp,
                                         onPressedViewAll: () async {
                                           final prefs = await SharedPreferences
                                               .getInstance();
@@ -1197,7 +1212,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 )),
                       Obx(() => productController.isHandPicked.value
                           ? Padding(
-                              padding: EdgeInsets.only(top: 10.sp),
+                              padding: EdgeInsets.only(top: 6.sp),
                               child: DummyProductList(
                                   visibleSubtitle: true,
                                   text: "HANDPICKED FOR YOU"),
@@ -1206,7 +1221,7 @@ class HomeScreenState extends State<HomeScreen> {
                               ? Column(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
+                                      padding: EdgeInsets.only(top: 6.sp),
                                       child: HomeProductList(
                                         text: "HANDPICKED FOR YOU",
                                         visibleViewAll: true,
@@ -1215,7 +1230,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             "Curated collection, just for you and only you.",
                                         controller: productController
                                             .handpickedController,
-                                        height: 235.sp,
+                                        height: 230.sp,
                                         onPressedViewAll: () async {
                                           productController
                                               .productSortBy.value = "";
