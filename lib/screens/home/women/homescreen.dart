@@ -625,8 +625,12 @@ class HomeScreenState extends State<HomeScreen> {
                                                                   : Color(
                                                                       0xFF9CA3AF),
                                                               fontSize: 13,
-                                                              fontFamily:
-                                                                  "Franklin Gothic",
+                                                              fontFamily: productController
+                                                                          .current
+                                                                          .value ==
+                                                                      index
+                                                                  ? "Franklin Gothic Semibold"
+                                                                  : "Franklin Gothic",
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
@@ -922,7 +926,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           child: AppText(
                                             text:
                                                 "Featured brands".toUpperCase(),
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily:
+                                                "Franklin Gothic Semibold",
                                             color: blackColor,
                                             fontSize: 18,
                                           ),

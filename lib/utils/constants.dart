@@ -179,6 +179,9 @@ const lafetchLogoImage = 'assets/images/lafetch_logo.png';
 const sortbyIcon = 'assets/images/sortby_icon.png';
 const categoryIcon = 'assets/images/category_icon.png';
 const filterIcon = 'assets/images/filter_icon.png';
+const homeBottomIcon = 'assets/images/homebottom.png';
+const shopBottomIcon = 'assets/images/shopbottom.png';
+const wishlistBottomIcon = 'assets/images/wishlistbottom.png';
 
 class ApiConstants {
   ApiConstants._();

@@ -55,7 +55,7 @@ class HomeProductList extends StatelessWidget {
               padding: EdgeInsets.only(top: 10.sp, left: leftPadding.sp),
               child: AppText(
                 text: text,
-                fontFamily: fontFamily,
+                fontFamily: "Franklin Gothic Semibold",
                 color: blackColor,
                 fontSize: 18,
               ),

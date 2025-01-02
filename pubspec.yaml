@@ -145,10 +145,10 @@ flutter:
       fonts:
         - asset: fonts/LibreFranklin-Bold.otf
           weight: 700
-    - family: Franklin Gothic Medium
+    - family: Franklin Gothic Semibold
       fonts:
-        - asset: fonts/LibreFranklin-Medium.otf
-          weight: 500
+        - asset: fonts/LibreFranklin-SemiBold.otf
+          weight: 600
     - family: Franklin Gothic Light
       fonts:
         - asset: fonts/LibreFranklin-Light.otf
