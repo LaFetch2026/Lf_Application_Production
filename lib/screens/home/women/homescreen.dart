@@ -955,7 +955,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                        top: 10.sp,
+                                        top: 4.sp,
                                         left: 16.sp,
                                       ),
                                       child: SizedBox(

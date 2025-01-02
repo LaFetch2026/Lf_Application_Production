@@ -105,7 +105,7 @@ class HomeProductList extends StatelessWidget {
               ),
         Padding(
           padding:
-              EdgeInsets.symmetric(horizontal: leftPadding.sp, vertical: 16),
+              EdgeInsets.only(left: leftPadding.sp, top: 16.sp, bottom: 16.sp),
           child: SizedBox(
             width: double.infinity,
             height: height,
