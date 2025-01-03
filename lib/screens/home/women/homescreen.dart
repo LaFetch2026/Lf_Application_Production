@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
 
-import 'package:carousel_slider_plus/carousel_slider_plus.dart';
+//import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -27,6 +27,7 @@ import 'package:lafetch/screens/home/women/productlistscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/common_widgets.dart';
@@ -55,6 +56,9 @@ class HomeScreenState extends State<HomeScreen> {
   final searchController = Get.put(SearchScreenController());
   final cartController = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final PageController _pageController = PageController(
+    initialPage: 0,
+  );
 
   @override
   void initState() {
@@ -177,6 +181,86 @@ class HomeScreenState extends State<HomeScreen> {
       cartController.lat.value = prefs.getDouble('latitude')!;
       cartController.lng.value = prefs.getDouble('longitude')!;
     }
+  }
+
+  List<Widget> widgitBannerList() {
+    List<Widget> list = [];
+    if (homeController.banner1List.isNotEmpty) {
+      for (var itemIndex = 0;
+          itemIndex < homeController.banner1List.length;
+          itemIndex++) {
+        list.add(GestureDetector(
+          onTap: () async {
+            homeController.bannerTag1Id.clear();
+            homeController.bannerCategory1Id.clear();
+            productController.productCategory.clear();
+            productController.productTags.clear();
+            /*  if (homeController
+                                                .banner1List[itemIndex]["tags"]
+                                                .isNotEmpty) { */
+            for (var i = 0;
+                i < homeController.banner1List[itemIndex]["tags"].length;
+                i++) {
+              homeController.bannerTag1Id
+                  .add(homeController.banner1List[itemIndex]["tags"][i]["id"]);
+            }
+            for (var i = 0;
+                i < homeController.banner1List[itemIndex]["categories"].length;
+                i++) {
+              homeController.bannerCategory1Id.add(
+                  homeController.banner1List[itemIndex]["categories"][i]["id"]);
+            }
+            productController.productCategory =
+                homeController.bannerCategory1Id;
+            productController.productTags = homeController.bannerTag1Id;
+            Navigator.push(
+                context,
+                scaleIn(
+                  CategoryProductScreen(
+                    categoryName: homeController.banner1List[itemIndex]["name"],
+                    categoryId: 0,
+                    brandId: 0,
+                    genderType: homeController.homeGenderValue.value,
+                    tagIds: homeController.bannerTag1Id,
+                    categoryList: homeController.bannerCategory1Id,
+                  ),
+                ));
+            await analytics.logEvent(
+              name: 'banner_home_page',
+              parameters: <String, Object>{
+                'page_name': 'banner_home_page',
+              },
+            );
+            //   }
+          },
+          child: CachedNetworkImage(
+            cacheManager: CacheManager(Config("customCacheKey",
+                stalePeriod: const Duration(days: 15),
+                maxNrOfCacheObjects: 100)),
+            fit: BoxFit.fill,
+            imageUrl: homeController.banner1List[itemIndex]["image"],
+            height: 210.sp,
+            width: MediaQuery.of(context).size.width,
+            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                Center(
+              child: Container(
+                height: 210.sp,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
+                  color: Colors.black.withOpacity(0.04),
+                ),
+              ),
+            ),
+            errorWidget: (context, url, error) => Image.asset(
+              downloadImage,
+              height: 210.sp,
+            ),
+          ),
+        ));
+      }
+    }
+    return list;
   }
 
   determinePosition() async {
@@ -650,7 +734,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     )),
                               ),
                             )),
-                      Obx(() => homeController.isBanner1.value
+                      /*  Obx(() => homeController.isBanner1.value
                           ? Padding(
                               padding: EdgeInsets.only(
                                   left: 16.sp,
@@ -811,15 +895,6 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
-                                    /*  Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10.sp),
-                                      child: Container(
-                                        width: double.infinity,
-                                        color: colorSecondary,
-                                        height: 1,
-                                      ),
-                                    ), */
                                     homeController.banner1List.length == 1
                                         ? SizedBox(
                                             height: 0,
@@ -873,8 +948,206 @@ class HomeScreenState extends State<HomeScreen> {
                                 )
                               : const SizedBox(
                                   height: 0,
+                                )), */
+                      Obx(() => homeController.isBanner1.value
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  bottom: 10.sp,
+                                  right: 16.sp,
+                                  top: 6.sp),
+                              child: SizedBox(
+                                height: 210.sp,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Container(
+                                        height: 210.sp,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.04),
+                                        ),
+                                      );
+                                    }),
+                              ))
+                          : homeController.banner1List.isNotEmpty &&
+                                  productController.current.value == 50
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            bottom: 10.sp,
+                                            right: 16.sp,
+                                            top: 6.sp),
+                                        child: /*  CarouselSlider.builder(
+                                        itemCount:
+                                            homeController.banner1List.length,
+                                        options: CarouselOptions(
+                                          height: 210.sp,
+                                          viewportFraction: 1.0,
+                                          aspectRatio: 2.0,
+                                          autoPlay: true,
+                                          onPageChanged: (index, reason) {
+                                            homeController.currentPage.value =
+                                                index;
+                                            homeController.update();
+                                          },
+                                          autoPlayInterval:
+                                              const Duration(seconds: 10),
+                                          enlargeCenterPage: true,
+                                        ),
+                                        itemBuilder: (BuildContext context,
+                                                int itemIndex,
+                                                int pageViewIndex) =>
+                                            GestureDetector(
+                                          onTap: () async {
+                                            homeController.bannerTag1Id.clear();
+                                            homeController.bannerCategory1Id
+                                                .clear();
+                                            productController.productCategory
+                                                .clear();
+                                            productController.productTags
+                                                .clear();
+                                            /*  if (homeController
+                                                .banner1List[itemIndex]["tags"]
+                                                .isNotEmpty) { */
+                                            for (var i = 0;
+                                                i <
+                                                    homeController
+                                                        .banner1List[itemIndex]
+                                                            ["tags"]
+                                                        .length;
+                                                i++) {
+                                              homeController.bannerTag1Id.add(
+                                                  homeController.banner1List[
+                                                          itemIndex]["tags"][i]
+                                                      ["id"]);
+                                            }
+                                            for (var i = 0;
+                                                i <
+                                                    homeController
+                                                        .banner1List[itemIndex]
+                                                            ["categories"]
+                                                        .length;
+                                                i++) {
+                                              homeController.bannerCategory1Id
+                                                  .add(homeController
+                                                              .banner1List[
+                                                          itemIndex]
+                                                      ["categories"][i]["id"]);
+                                            }
+                                            productController.productCategory =
+                                                homeController
+                                                    .bannerCategory1Id;
+                                            productController.productTags =
+                                                homeController.bannerTag1Id;
+                                            Navigator.push(
+                                                context,
+                                                scaleIn(
+                                                  CategoryProductScreen(
+                                                    categoryName: homeController
+                                                            .banner1List[
+                                                        itemIndex]["name"],
+                                                    categoryId: 0,
+                                                    brandId: 0,
+                                                    genderType: homeController
+                                                        .homeGenderValue.value,
+                                                    tagIds: homeController
+                                                        .bannerTag1Id,
+                                                    categoryList: homeController
+                                                        .bannerCategory1Id,
+                                                  ),
+                                                ));
+                                            await analytics.logEvent(
+                                              name: 'banner_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name': 'banner_home_page',
+                                              },
+                                            );
+                                            //   }
+                                          },
+                                          child: CachedNetworkImage(
+                                            cacheManager: CacheManager(Config(
+                                                "customCacheKey",
+                                                stalePeriod:
+                                                    const Duration(days: 15),
+                                                maxNrOfCacheObjects: 100)),
+                                            fit: BoxFit.fill,
+                                            imageUrl: homeController
+                                                    .banner1List[itemIndex]
+                                                ["image"],
+                                            height: 210.sp,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                Center(
+                                              child: Container(
+                                                height: 210.sp,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.04),
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              downloadImage,
+                                              height: 210.sp,
+                                            ),
+                                          ),
+                                        ),
+                                      ), */
+                                            SizedBox(
+                                          height: 210.sp,
+                                          child: PageView(
+                                            controller: _pageController,
+                                            onPageChanged: (index) {
+                                              homeController.currentPage.value =
+                                                  index;
+                                              homeController.update();
+                                            },
+                                            children: widgitBannerList(),
+                                          ),
+                                        )),
+                                    homeController.banner1List.length == 1
+                                        ? SizedBox(
+                                            height: 0,
+                                          )
+                                        : Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 10.sp, right: 10.sp),
+                                            child: Center(
+                                              child: PageIndicator(
+                                                controller: _pageController,
+                                                count: homeController
+                                                    .banner1List.length,
+                                                size: 6.0.sp,
+                                                activeColor: Colors.black,
+                                                color: Color(0xffE5E7EB),
+                                                layout:
+                                                    PageIndicatorLayout.WARM,
+                                                scale: 0.65,
+                                                space: 8.sp,
+                                              ),
+                                            ),
+                                          ),
+                                  ],
+                                )
+                              : const SizedBox(
+                                  height: 0,
                                 )),
-
                       /*  Obx(() => productController.isExpress.value
                           ? const DummyProductList(text: "Express Delivery")
                           : productController.expressProductList.isNotEmpty
@@ -1082,7 +1355,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 )),
                       Obx(() => productController.istagsProduct.value
                           ? Padding(
-                              padding: EdgeInsets.only(top: 10.sp),
+                              padding: EdgeInsets.only(top: 6.sp),
                               child: DummyProductList(
                                   visibleSubtitle: true,
                                   text: "${productController.tagname.value}"
@@ -1092,7 +1365,7 @@ class HomeScreenState extends State<HomeScreen> {
                               ? Column(
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.only(top: 10.sp),
+                                      padding: EdgeInsets.only(top: 6.sp),
                                       child: HomeProductList(
                                         text:
                                             "${productController.tagname.value}"
