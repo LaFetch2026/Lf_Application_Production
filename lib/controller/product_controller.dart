@@ -2440,8 +2440,8 @@ class ProductController extends BaseController {
           /*   getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, ""); */
         } else if (type == "tags") {
-          /*  getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
-          getBestSellerProductData(brandId); */
+          getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
+          getBestSellerProductData(brandId);
         } else if (type == "brand") {
           /*  getBrandExpressProductData(
               brandId, expressSortBy.value, filterExpressEnable.value); */
@@ -2449,14 +2449,14 @@ class ProductController extends BaseController {
           /*  getTagsBannerData(list, categoryList, genderType, sortBy.value,
               filterEnable.value, false); */
         } else if (type == "frequently") {
-          /*  getFrequentlyProductData("frequently-bought", existId);
-          getProductRecommendations(existId); */
+          getFrequentlyProductData("frequently-bought", existId);
+          getProductRecommendations(existId);
         } else if (type == "seller") {
-          /*  getBestSellerProductData(brandId);
-          getTagsProductData(prefs.getInt('tagId')!, 0, brandId); */
+          getBestSellerProductData(brandId);
+          getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else {
-          /* getProductRecommendations(existId);
-          getFrequentlyProductData("frequently-bought", existId); */
+          getProductRecommendations(existId);
+          getFrequentlyProductData("frequently-bought", existId);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

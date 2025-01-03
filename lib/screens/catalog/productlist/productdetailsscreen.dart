@@ -3378,10 +3378,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             if (productController
                                                     .recommendedList[p1]
                                                 ["wishlisted"]) {
-                                              productController
+                                              /*  productController
                                                       .recommendedList[p1]
                                                   ["wishlisted"] = false;
-                                              setState(() {});
+                                              setState(() {}); */
                                               productController
                                                   .callAddProductToWishlist(
                                                       productController
@@ -3403,11 +3403,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           controller:
                                                               wishlistController,
                                                           onPressed: (p0) {
-                                                            productController
+                                                            /*  productController
                                                                     .recommendedList[p1]
                                                                 [
                                                                 "wishlisted"] = true;
-                                                            setState(() {});
+                                                            setState(() {}); */
                                                             productController.callAddProductToWishlist(
                                                                 p0,
                                                                 "recommended",
@@ -3487,10 +3487,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             if (productController
                                                     .frequentlyProductList[p1]
                                                 ["wishlisted"]) {
-                                              productController
+                                              /*  productController
                                                       .frequentlyProductList[p1]
                                                   ["wishlisted"] = false;
-                                              setState(() {});
+                                              setState(() {}); */
                                               productController
                                                   .callAddProductToWishlist(
                                                       productController
@@ -3512,11 +3512,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           controller:
                                                               wishlistController,
                                                           onPressed: (p0) {
-                                                            productController
+                                                            /*   productController
                                                                     .frequentlyProductList[p1]
                                                                 [
                                                                 "wishlisted"] = true;
-                                                            setState(() {});
+                                                            setState(() {}); */
                                                             productController.callAddProductToWishlist(
                                                                 p0,
                                                                 "frequently",
