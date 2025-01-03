@@ -1209,7 +1209,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 12.sp, left: 16.sp),
+                                              top: 22.sp, left: 16.sp),
                                           child: AppText(
                                             text:
                                                 "Featured brands".toUpperCase(),
@@ -1231,7 +1231,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           child: Container(
                                             child: Padding(
                                               padding: EdgeInsets.only(
-                                                  top: 12.sp,
+                                                  top: 22.sp,
                                                   right: 12.sp,
                                                   left: 16.sp,
                                                   bottom: 2.sp),
@@ -1306,38 +1306,52 @@ class HomeScreenState extends State<HomeScreen> {
                                                           width: 80.sp,
                                                           child: CircleAvatar(
                                                             backgroundColor:
-                                                                blackColor,
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(15.0
-                                                                          .sp),
-                                                              child:
-                                                                  CachedNetworkImage(
-                                                                height: 80.sp,
-                                                                width: 80.sp,
-                                                                cacheManager: CacheManager(Config(
-                                                                    "customCacheKey",
-                                                                    stalePeriod:
-                                                                        const Duration(
-                                                                            days:
-                                                                                15),
-                                                                    maxNrOfCacheObjects:
-                                                                        100)),
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                                imageUrl: homeController
-                                                                        .brandList[
-                                                                    index]["logo"],
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                                  downloadImage,
-                                                                  fit: BoxFit
-                                                                      .contain,
+                                                                whiteColor,
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border: Border.all(
+                                                                    width: 1.sp,
+                                                                    color: Color(
+                                                                        0xff9CA3AF)),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(16.0
+                                                                            .sp),
+                                                                child:
+                                                                    CachedNetworkImage(
                                                                   height: 80.sp,
                                                                   width: 80.sp,
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  imageUrl: homeController
+                                                                              .brandList[
+                                                                          index]
+                                                                      ["logo"],
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    downloadImage,
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                    height:
+                                                                        80.sp,
+                                                                    width:
+                                                                        80.sp,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),

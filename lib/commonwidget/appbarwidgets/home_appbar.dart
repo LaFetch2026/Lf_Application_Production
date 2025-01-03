@@ -76,58 +76,64 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       height: 0,
                     ),
               Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                    child: Center(
-                      child: Image.asset(appNameImage,
-                          height: 26.sp, width: 70.sp, fit: BoxFit.cover),
-                    ),
+                child: SizedBox(
+                  height: 0,
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 16.sp),
+                  child: Center(
+                    child: Image.asset(appNameImage,
+                        height: 26.sp, width: 70.sp, fit: BoxFit.cover),
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      widget.onPressedSearch?.call();
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                      child: ImageIcon(
-                        AssetImage(searchNewImage),
-                        color: Color(0XFFF3F4F6),
-                        size: 20.sp,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      widget.onPressedCatalog?.call();
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                      child: ImageIcon(
-                        AssetImage(saveIcon),
-                        color: Color(0XFFF3F4F6),
-                        size: 18.sp,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      widget.onPressedCart?.call();
-                    },
-                    child: Padding(
-                        padding: EdgeInsets.only(left: 5.sp),
+              Padding(
+                padding: EdgeInsets.only(left: 25.sp),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        widget.onPressedSearch?.call();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.sp),
                         child: ImageIcon(
-                          AssetImage(cartNewImage),
+                          AssetImage(searchNewImage),
+                          color: Color(0XFFF3F4F6),
+                          size: 20.sp,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        widget.onPressedCatalog?.call();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                        child: ImageIcon(
+                          AssetImage(saveIcon),
                           color: Color(0XFFF3F4F6),
                           size: 18.sp,
-                        )),
-                  ),
-                ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        widget.onPressedCart?.call();
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 5.sp),
+                          child: ImageIcon(
+                            AssetImage(cartNewImage),
+                            color: Color(0XFFF3F4F6),
+                            size: 18.sp,
+                          )),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

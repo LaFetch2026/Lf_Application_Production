@@ -641,7 +641,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                           ),
                                                                                     GestureDetector(
                                                                                       onTap: () async {
-                                                                                        if (value.orderList[index]["express_delivery"]) {
+                                                                                        if (value.orderList[index]["product"]["express_delivery"]) {
                                                                                           value.qtyProductId.value = value.orderList[index]["product"]["id"];
                                                                                           value.qtyText.value = "For express delivery product, quantity cant be updated.";
                                                                                           value.update();

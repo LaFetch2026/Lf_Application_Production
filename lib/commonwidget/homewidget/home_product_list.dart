@@ -221,7 +221,8 @@ class HomeProductList extends StatelessWidget {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 4.sp, vertical: 5.sp),
                                       child: AppText(
-                                        text: "${list[index]["brand_name"]}\n",
+                                        text: "${list[index]["brand_name"]}\n"
+                                            .toUpperCase(),
                                         color: nameText,
                                         maxLines: 1,
                                         fontSize: 13,
