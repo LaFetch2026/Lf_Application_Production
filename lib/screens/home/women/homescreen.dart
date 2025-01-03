@@ -22,7 +22,7 @@ import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/catalogscreen.dart';
-import 'package:lafetch/screens/home/women/productlistscreen.dart';
+import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -95,8 +95,8 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false));
+    /* WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false, false)); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
@@ -111,7 +111,7 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initPlatformState();
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsProductController.addListener(() {
         productController.fetchMoreTagsProductData(
             productController.tagId.value,
@@ -119,7 +119,7 @@ class HomeScreenState extends State<HomeScreen> {
             0);
         productController.update();
       });
-    });
+    }); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.handpickedController.addListener(() {
         productController.fetchMoreHandPickedProduct();
@@ -334,7 +334,7 @@ class HomeScreenState extends State<HomeScreen> {
                           productController.categoryFilter.value =
                               homeController.homeGenderValue.value;
                           productController.getHandPickedProduct(
-                              "", false, false);
+                              "", false, false, productController.tagId.value);
                         },
                       ));
               await analytics.logEvent(
@@ -620,6 +620,13 @@ class HomeScreenState extends State<HomeScreen> {
                                                               .homeGenderValue
                                                               .value); */
                                                   productController
+                                                      .getHandPickedProduct(
+                                                          "",
+                                                          false,
+                                                          false,
+                                                          productController
+                                                              .tagId.value);
+                                                  productController
                                                       .getTagsProductData(
                                                           productController
                                                               .tagId.value,
@@ -654,6 +661,13 @@ class HomeScreenState extends State<HomeScreen> {
                                                           homeController
                                                               .homeGenderValue
                                                               .value); */
+                                                  productController
+                                                      .getHandPickedProduct(
+                                                          "",
+                                                          false,
+                                                          false,
+                                                          productController
+                                                              .tagId.value);
                                                   productController
                                                       .getTagsProductData(
                                                           productController
@@ -1287,38 +1301,44 @@ class HomeScreenState extends State<HomeScreen> {
                                                         padding:
                                                             EdgeInsets.only(
                                                                 right: 12.sp),
-                                                        child: SizedBox(
+                                                        child: Container(
                                                           height: 80.sp,
                                                           width: 80.sp,
                                                           child: CircleAvatar(
                                                             backgroundColor:
                                                                 blackColor,
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              height: 80.sp,
-                                                              width: 80.sp,
-                                                              cacheManager: CacheManager(Config(
-                                                                  "customCacheKey",
-                                                                  stalePeriod:
-                                                                      const Duration(
-                                                                          days:
-                                                                              15),
-                                                                  maxNrOfCacheObjects:
-                                                                      100)),
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                              imageUrl: homeController
-                                                                      .brandList[
-                                                                  index]["logo"],
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Image.asset(
-                                                                downloadImage,
-                                                                fit: BoxFit
-                                                                    .contain,
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(15.0
+                                                                          .sp),
+                                                              child:
+                                                                  CachedNetworkImage(
                                                                 height: 80.sp,
                                                                 width: 80.sp,
+                                                                cacheManager: CacheManager(Config(
+                                                                    "customCacheKey",
+                                                                    stalePeriod:
+                                                                        const Duration(
+                                                                            days:
+                                                                                15),
+                                                                    maxNrOfCacheObjects:
+                                                                        100)),
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                imageUrl: homeController
+                                                                        .brandList[
+                                                                    index]["logo"],
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    Image.asset(
+                                                                  downloadImage,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  height: 80.sp,
+                                                                  width: 80.sp,
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
@@ -1533,7 +1553,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           Navigator.push(
                                               context,
                                               scaleIn(
-                                                ProductListScreen(
+                                                ProductViewScreen(
                                                   title: "HANDPICKED FOR YOU",
                                                 ),
                                               )).then((value) => setState(
@@ -1556,7 +1576,11 @@ class HomeScreenState extends State<HomeScreen> {
                                                           .value;
                                                   productController
                                                       .getHandPickedProduct(
-                                                          "", false, false);
+                                                          "",
+                                                          false,
+                                                          false,
+                                                          productController
+                                                              .tagId.value);
                                                 },
                                               ));
                                         },
@@ -2357,8 +2381,6 @@ class HomeScreenState extends State<HomeScreen> {
                                 productController.getTagsData(3);
                                 productController.categoryFilter.value =
                                     homeController.homeGenderValue.value;
-                                productController.getHandPickedProduct(
-                                    "", false, false);
                                 homeController.getBannar1Data();
                                 // homeController.getBannar2Data();
                                 // homeController.getCategoryData(3);
@@ -2399,8 +2421,6 @@ class HomeScreenState extends State<HomeScreen> {
                                 productController.getTagsData(2);
                                 productController.categoryFilter.value =
                                     homeController.homeGenderValue.value;
-                                productController.getHandPickedProduct(
-                                    "", false, false);
                                 // homeController.getCategoryData(2);
                               },
                               child: Container(
@@ -2439,8 +2459,6 @@ class HomeScreenState extends State<HomeScreen> {
                                 productController.getTagsData(1);
                                 productController.categoryFilter.value =
                                     homeController.homeGenderValue.value;
-                                productController.getHandPickedProduct(
-                                    "", false, false);
                                 // homeController.getCategoryData(1);
                               },
                               child: Container(

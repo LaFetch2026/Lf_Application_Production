@@ -24,19 +24,19 @@ import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 
-class ProductListScreen extends StatefulWidget {
+class ProductViewScreen extends StatefulWidget {
   final String title;
 
-  const ProductListScreen({
+  const ProductViewScreen({
     super.key,
     required this.title,
   });
 
   @override
-  State<ProductListScreen> createState() => ProductListScreenState();
+  State<ProductViewScreen> createState() => ProductViewScreenState();
 }
 
-class ProductListScreenState extends State<ProductListScreen> {
+class ProductViewScreenState extends State<ProductViewScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
@@ -58,14 +58,16 @@ class ProductListScreenState extends State<ProductListScreen> {
         productController.getHandPickedProduct(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
-            false));
+            false,
+            productController.tagId.value));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.handpickedController.addListener(() {
         productController.fetchMoreHandPickedProduct(
             productController.productSortBy.value,
-            productController.filterProductEnable.value);
+            productController.filterProductEnable.value,
+            productController.tagId.value);
         productController.update();
       });
     });
@@ -84,10 +86,10 @@ class ProductListScreenState extends State<ProductListScreen> {
               Get.to(const SearchScreen())?.then((value) => setState(
                     () {
                       productController.getHandPickedProduct(
-                        productController.productSortBy.value,
-                        productController.filterProductEnable.value,
-                        false,
-                      );
+                          productController.productSortBy.value,
+                          productController.filterProductEnable.value,
+                          false,
+                          productController.tagId.value);
                     },
                   ));
               analytics
@@ -628,7 +630,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                       productController.productSortBy.value,
                                       productController
                                           .filterProductEnable.value,
-                                      false);
+                                      false,
+                                      productController.tagId.value);
                                 },
                               ));
                     },
@@ -686,7 +689,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                                       productController.productSortBy.value,
                                       productController
                                           .filterProductEnable.value,
-                                      false);
+                                      false,
+                                      productController.tagId.value);
                                 },
                               ));
                     },
@@ -748,7 +752,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                           productController.getHandPickedProduct(
                               productController.productSortBy.value,
                               productController.filterProductEnable.value,
-                              false);
+                              false,
+                              productController.tagId.value);
                         },
                         onClick: (p0, p1) {
                           productController.filterProductEnable.value = true;
@@ -757,7 +762,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                           productController.getHandPickedProduct(
                               productController.productSortBy.value,
                               productController.filterProductEnable.value,
-                              true);
+                              true,
+                              productController.tagId.value);
                         },
                       ));
                     },
