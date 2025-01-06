@@ -630,7 +630,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    top: 10.sp,
+                                                    top: 8.sp,
                                                     left: 10.sp,
                                                     right: 1.sp),
                                                 child: Row(
@@ -673,7 +673,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                       index]["express_delivery"]
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 5.sp,
+                                                          top: 3.sp,
                                                           left: 10.sp,
                                                           right: 10.sp),
                                                       child: Row(
@@ -779,7 +779,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 10.sp),
+                            vertical: 10.sp, horizontal: 5.sp),
                         child: Row(
                           children: [
                             Image.asset(
@@ -807,7 +807,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
                     child: Container(
                       width: 1.sp,
                       color: borderColor,
@@ -858,7 +858,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 10.sp),
+                            vertical: 10.sp, horizontal: 5.sp),
                         child: Row(
                           children: [
                             Image.asset(
@@ -886,7 +886,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
                     child: Container(
                       width: 1.sp,
                       color: borderColor,
@@ -963,7 +963,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     child: Container(
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 10.sp),
+                            vertical: 10.sp, horizontal: 5.sp),
                         child: Row(
                           children: [
                             Image.asset(

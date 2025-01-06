@@ -2098,15 +2098,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           width: 16.sp,
                                         ),
                                       ),
-                                      AppText(
-                                        text: productController
-                                                .productDetails["has_exchange"]
-                                            ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
-                                            : 'Exchange not available',
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w500,
-                                        color: blackColor,
-                                        fontSize: 14,
+                                      Expanded(
+                                        child: AppText(
+                                          text: productController
+                                                      .productDetails[
+                                                  "has_exchange"]
+                                              ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
+                                              : 'Exchange not available',
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w500,
+                                          maxLines: 1,
+                                          color: blackColor,
+                                          fontSize: 14,
+                                        ),
                                       )
                                     ],
                                   )

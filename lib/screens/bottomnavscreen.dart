@@ -325,13 +325,13 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         color: homeAppBarColor,
         height: 80.sp, //0.074
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
             MaterialButton(
               height: 80.sp,
               color: homeAppBarColor,
-              minWidth: MediaQuery.of(context).size.width / 5 - 9.sp,
+              minWidth: MediaQuery.of(context).size.width % 5.sp,
               onPressed: () async {
                 setState(() {
                   _currentIndex = 0;
@@ -374,7 +374,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             MaterialButton(
               height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width / 5 - 9.sp,
+              minWidth: MediaQuery.of(context).size.width % 5.sp,
               color: homeAppBarColor,
               onPressed: () async {
                 setState(() {
@@ -418,7 +418,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             MaterialButton(
               height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width / 5 - 8.sp,
+              minWidth: MediaQuery.of(context).size.width % 5.sp,
               color: homeAppBarColor,
               onPressed: () async {
                 setState(() {
@@ -463,7 +463,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             MaterialButton(
               height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width / 5 - 9.sp,
+              minWidth: MediaQuery.of(context).size.width % 5.sp,
               color: homeAppBarColor,
               onPressed: () async {
                 setState(() {
@@ -509,7 +509,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             ),
             MaterialButton(
               height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width / 5 - 9.sp,
+              minWidth: MediaQuery.of(context).size.width % 5.sp,
               color: homeAppBarColor,
               onPressed: () async {
                 setState(() {
