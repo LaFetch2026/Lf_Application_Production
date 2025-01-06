@@ -60,14 +60,18 @@ class _HomeAppbarState extends State<HomeAppbar> {
                                 fontSize: 13,
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                              child: ImageIcon(
-                                AssetImage(dropdownImage),
-                                color: Color(0XFFF3F4F6),
-                                size: 14.sp,
-                              ),
-                            ),
+                            Obx(() => Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 2.sp),
+                                  child: ImageIcon(
+                                    AssetImage(
+                                        homeController.showGenderList.value
+                                            ? upArrowIcon
+                                            : dropdownImage),
+                                    color: Color(0XFFF3F4F6),
+                                    size: 14.sp,
+                                  ),
+                                )),
                           ],
                         ),
                       ),

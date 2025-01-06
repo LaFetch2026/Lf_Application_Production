@@ -2373,7 +2373,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 homeController.showGenderList.value
                     ? Container(
-                        color: blackColor,
+                        color: whiteColor,
                         height: 125.sp,
                         width: 115.sp,
                         child: Column(
@@ -2408,7 +2408,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     text: "Women",
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w400,
-                                    color: whiteColor,
+                                    color: blackColor,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -2446,7 +2446,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     text: "Men",
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w400,
-                                    color: whiteColor,
+                                    color: blackColor,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -2484,7 +2484,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     text: "Accessories",
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w400,
-                                    color: whiteColor,
+                                    color: blackColor,
                                     fontSize: 13,
                                   ),
                                 ),
