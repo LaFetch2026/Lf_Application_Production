@@ -613,6 +613,14 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                   .addressList[index]["type"];
                                           productController
                                               .showAddressList.value = false;
+                                          productController.lat.value =
+                                              double.parse(productController
+                                                      .addressList[index]
+                                                  ["latitude"]);
+                                          productController.lng.value =
+                                              double.parse(productController
+                                                      .addressList[index]
+                                                  ["longitude"]);
                                           productController
                                               .getBrandExpressProductData(
                                                   productController
@@ -622,14 +630,6 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                   productController
                                                       .filterExpressEnable
                                                       .value);
-                                          productController.lat.value =
-                                              double.parse(productController
-                                                      .addressList[index]
-                                                  ["latitude"]);
-                                          productController.lng.value =
-                                              double.parse(productController
-                                                      .addressList[index]
-                                                  ["longitude"]);
                                           final prefs = await SharedPreferences
                                               .getInstance();
                                           prefs.setDouble("latitude",
@@ -639,6 +639,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                           productController
                                               .isBrandProduct.value = true;
                                           productController.callSaveAddress(
+                                              "express",
                                               productController.addressList[index]
                                                   ["id"],
                                               productController.addressList[index]

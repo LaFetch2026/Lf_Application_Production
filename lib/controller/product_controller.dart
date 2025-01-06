@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
+import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -2139,9 +2140,12 @@ class ProductController extends BaseController {
               }
             }
             if (id == 0 && addressText.value == "") {
-              addressText.value =
+              /*  addressText.value =
                   "${responseData[0]["zip"]}, ${responseData[0]["address"]}";
-              addressTypeValue.value = responseData[0]["type"];
+              addressTypeValue.value = responseData[0]["type"]; */
+              Get.to(ChangeAddressScreen(
+                cartId: 0,
+              ))?.then((value) {});
             }
             if (id != 0) {
               getEstimateDate(id, defaultAddress["zip"]);
@@ -2595,6 +2599,7 @@ class ProductController extends BaseController {
   }
 
   callSaveAddress(
+      String screenType,
       int addressId,
       String name,
       String phone,
@@ -2632,6 +2637,12 @@ class ProductController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        if (screenType == "change address") {
+          getDefaultAddressData(0);
+          Get.back();
+          getBrandExpressProductData(
+              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+        }
       } else if (response.statusCode == 201) {
         print(responseData);
       } else if (response.statusCode == 400) {

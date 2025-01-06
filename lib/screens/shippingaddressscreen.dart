@@ -70,7 +70,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
       shipController.stateController.clear();
       shipController.searchController.clear();
       shipController.defaultBilling.value = 0;
-      shipController.defaultBilling.value = 0;
+      shipController.defaultShipping.value = 0;
       shipController.type.value = "";
       shipController.cityId.value = 0;
       shipController.current.value = 3;

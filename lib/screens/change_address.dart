@@ -6,9 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_saveaddress.dart';
+import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/mapscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../utils/constants.dart';
@@ -24,6 +26,7 @@ class ChangeAddressScreen extends StatefulWidget {
 class ChangeAddressScreenState extends State<ChangeAddressScreen> {
   final controller = Get.put(ProfileController());
   final shipController = Get.put(ShipAddressController());
+  final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
@@ -56,56 +59,61 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                   SizedBox(
                     height: 10.sp,
                   ),
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext context) => MapScreen(
-                                      addressId: 0,
-                                      cartId: widget.cartId,
-                                    )))
-                            .then((value) => setState(
-                                  () {
-                                    controller.getAddressData();
-                                  },
-                                ));
-                      },
-                      child: Row(
-                        children: [
-                          AppText(
-                            text: "",
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: textHintColor,
-                            fontSize: 12,
-                          ),
-                          const Expanded(
-                            child: SizedBox(
-                              width: 0,
+                  widget.cartId != 0
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              top: 10.sp, left: 16.sp, right: 16.sp),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          MapScreen(
+                                            addressId: 0,
+                                            cartId: widget.cartId,
+                                          )))
+                                  .then((value) => setState(
+                                        () {
+                                          controller.getAddressData();
+                                        },
+                                      ));
+                            },
+                            child: Row(
+                              children: [
+                                AppText(
+                                  text: "",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: textHintColor,
+                                  fontSize: 12,
+                                ),
+                                const Expanded(
+                                  child: SizedBox(
+                                    width: 0,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.add,
+                                  color: blackColor,
+                                  size: 16.sp,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5.sp),
+                                  child: AppText(
+                                    text: "New Address",
+                                    color: blackColor,
+                                    fontSize: 12,
+                                    fontFamily: "Franklin Gothic Bold",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Icon(
-                            Icons.add,
-                            color: blackColor,
-                            size: 16.sp,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 5.sp),
-                            child: AppText(
-                              text: "New Address",
-                              color: blackColor,
-                              fontSize: 12,
-                              fontFamily: "Franklin Gothic Bold",
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        )
+                      : SizedBox(
+                          height: 0.sp,
+                        ),
                   Obx(() => controller.isAddress.value
                       ? const DummySaveAddress()
                       : controller.addressList.isNotEmpty
@@ -301,26 +309,81 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                         backgroundColor:
                                                             whiteColor,
                                                         onPressed: () async {
-                                                          shipController
-                                                                      .selected[
-                                                                  index] =
-                                                              !shipController
-                                                                      .selected[
-                                                                  index];
-                                                          shipController
-                                                              .update();
-                                                          setState(() {});
-                                                          shipController
-                                                              .addressId
-                                                              .value = controller
-                                                                  .addressList[
-                                                              index]["id"];
-                                                          shipController.cartId
-                                                                  .value =
-                                                              widget.cartId;
-                                                          shipController
-                                                              .callCartAddressUpdate(
-                                                                  "update");
+                                                          if (widget.cartId ==
+                                                              0) {
+                                                            productController
+                                                                    .lat.value =
+                                                                double.parse(controller
+                                                                            .addressList[
+                                                                        index][
+                                                                    "latitude"]);
+                                                            productController
+                                                                    .lng.value =
+                                                                double.parse(controller
+                                                                            .addressList[
+                                                                        index][
+                                                                    "longitude"]);
+                                                            final prefs =
+                                                                await SharedPreferences
+                                                                    .getInstance();
+                                                            prefs.setDouble(
+                                                                "latitude",
+                                                                productController
+                                                                    .lat.value);
+                                                            prefs.setDouble(
+                                                                "longitude",
+                                                                productController
+                                                                    .lng.value);
+                                                            productController.callSaveAddress(
+                                                                "change address",
+                                                                controller.addressList[index]
+                                                                    ["id"],
+                                                                controller.addressList[index]
+                                                                    ["name"],
+                                                                controller.addressList[index]
+                                                                    ["phone"],
+                                                                controller.addressList[index]
+                                                                        ["city"]
+                                                                    ["id"],
+                                                                controller.addressList[index]
+                                                                    ["type"],
+                                                                controller.addressList[index]
+                                                                    ["address"],
+                                                                controller
+                                                                    .addressList[index]
+                                                                        ["zip"]
+                                                                    .toString(),
+                                                                controller.addressList[index][
+                                                                    "locality"],
+                                                                controller.addressList[index][
+                                                                    "default_billing"],
+                                                                double.parse(controller.addressList[index]
+                                                                    ["latitude"]),
+                                                                double.parse(controller.addressList[index]["longitude"]));
+                                                          } else {
+                                                            shipController
+                                                                        .selected[
+                                                                    index] =
+                                                                !shipController
+                                                                        .selected[
+                                                                    index];
+                                                            shipController
+                                                                .update();
+                                                            setState(() {});
+                                                            shipController
+                                                                .addressId
+                                                                .value = controller
+                                                                    .addressList[
+                                                                index]["id"];
+                                                            shipController
+                                                                    .cartId
+                                                                    .value =
+                                                                widget.cartId;
+                                                            shipController
+                                                                .callCartAddressUpdate(
+                                                                    "update");
+                                                          }
+
                                                           await analytics
                                                               .logEvent(
                                                             name:
