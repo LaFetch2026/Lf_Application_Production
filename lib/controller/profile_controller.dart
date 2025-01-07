@@ -21,6 +21,7 @@ class ProfileController extends BaseController {
   RxBool isPhoneNumber = false.obs;
   RxInt genderId = 0.obs;
   dynamic defaultAddress = "".obs;
+  RxString queryText = "".obs;
   List addressList = [].obs;
   dynamic profileDetails = "".obs;
   RxBool isOrder = false.obs;
@@ -262,7 +263,8 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/addresses"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/addresses?address=${queryText.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

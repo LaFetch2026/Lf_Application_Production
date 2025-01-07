@@ -34,6 +34,7 @@ class ShipAddressController extends BaseController {
   RxInt addressId = 0.obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
+  List<bool> dailogSelected = List.generate(50, (i) => false).obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
   Rx<LatLng> defaultLatLng = const LatLng(0.0, 0.0).obs;
   Rx<LatLng> draggedLatLng = const LatLng(0.0, 0.0).obs;
@@ -48,6 +49,7 @@ class ShipAddressController extends BaseController {
   final localityController = TextEditingController();
   final searchController = TextEditingController();
   final locationController = TextEditingController();
+  final searchAddressController = TextEditingController();
   RxString nameError = "".obs;
   RxString phoneError = "".obs;
   RxString pincodeError = "".obs;

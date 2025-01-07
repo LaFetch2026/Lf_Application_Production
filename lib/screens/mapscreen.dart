@@ -11,7 +11,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:lafetch/commonwidget/app_text.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,6 +39,7 @@ class MapScreenState extends State<MapScreen> {
   Completer<GoogleMapController> googleMapController = Completer();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String draggedAddress = "";
+  String localityName = "";
   late String mapStyle;
   bool showAddress = false;
   Placemark? address;
@@ -166,183 +170,160 @@ class MapScreenState extends State<MapScreen> {
                             ),
                           ), */
                           _getCustomPin(),
+                          SaveAddressAppbar(
+                            text: "Select Address",
+                            onPressedWishlist: () {
+                              Get.off(BottomNavScreen(
+                                index: 2,
+                              ));
+                            },
+                          ),
                           Container(
-                            height: 100.sp,
-                            color: colorPrimary,
+                            margin: EdgeInsets.only(top: 90.sp),
+                            child: Divider(
+                              color: dividerColor,
+                              height: 1.sp,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 91.sp),
+                            height: 12.sp,
+                            color: whiteColor,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 120.sp),
                             child: Padding(
                               padding: EdgeInsets.only(
-                                  left: 16.sp,
-                                  right: 16.sp,
-                                  bottom: 5.sp,
-                                  top: 30.sp),
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Get.back();
-                                    },
-                                    child: ImageIcon(
-                                      AssetImage(backWhiteArrow),
-                                      color: whiteColor,
-                                      size: 16.sp,
-                                    ),
-                                  ),
-                                  MediaQuery.of(context).size.width < 600
-                                      ? Expanded(
-                                          flex: 1,
-                                          child: SizedBox(
-                                            height: 40.sp,
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10.sp),
-                                              child: RawKeyboardListener(
-                                                focusNode: FocusNode(),
-                                                onKey: (value) {
-                                                  print(value);
-                                                  if (value
-                                                      is RawKeyDownEvent) {}
-                                                },
-                                                child: TextField(
-                                                  controller: shipController
-                                                      .locationController,
-                                                  textCapitalization:
-                                                      TextCapitalization.words,
-                                                  maxLines: 1,
-                                                  style: const TextStyle(
-                                                    color: textColor,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                  ),
-                                                  onChanged: (value) {
-                                                    onSearchChanged(value);
-                                                  },
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                    filled: true,
-                                                    isDense: true,
-                                                    fillColor: whiteColor,
-                                                    prefixIcon: Icon(
-                                                        Icons.search,
-                                                        size: 20.sp,
-                                                        color: Colors.grey),
-                                                    focusedBorder:
-                                                        const OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                color:
-                                                                    borderColor)),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              1),
-                                                    ),
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              1),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              color:
-                                                                  borderColor),
-                                                    ),
-                                                    counterText: "",
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.sp),
-                                                    hintText: "Search Location",
-                                                    hintStyle: TextStyle(
-                                                        fontSize: 14.sp),
-                                                  ),
-                                                ),
-                                              ),
+                                left: 16.sp,
+                                right: 16.sp,
+                              ),
+                              child: MediaQuery.of(context).size.width < 600
+                                  ? Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                        height: 40.sp,
+                                        child: RawKeyboardListener(
+                                          focusNode: FocusNode(),
+                                          onKey: (value) {
+                                            print(value);
+                                            if (value is RawKeyDownEvent) {}
+                                          },
+                                          child: TextField(
+                                            controller: shipController
+                                                .locationController,
+                                            textCapitalization:
+                                                TextCapitalization.words,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: titleColor,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
                                             ),
-                                          ),
-                                        )
-                                      : Expanded(
-                                          flex: 1,
-                                          child: SizedBox(
-                                            height: 40.sp,
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10.sp),
-                                              child: RawKeyboardListener(
-                                                focusNode: FocusNode(),
-                                                onKey: (value) {
-                                                  print(value);
-                                                  if (value
-                                                      is RawKeyDownEvent) {}
-                                                },
-                                                child: TextField(
-                                                  controller: shipController
-                                                      .locationController,
-                                                  textCapitalization:
-                                                      TextCapitalization.words,
-                                                  maxLines: 1,
-                                                  style: const TextStyle(
-                                                    color: textColor,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                  ),
-                                                  onChanged: (value) {
-                                                    onSearchChanged(value);
-                                                  },
-                                                  keyboardType:
-                                                      TextInputType.text,
-                                                  decoration: InputDecoration(
-                                                    filled: true,
-                                                    isDense: true,
-                                                    fillColor: whiteColor,
-                                                    /*  suffixIcon: InkWell(
-                                                      onTap: () {},
-                                                      child: ImageIcon(
-                                                        AssetImage(
-                                                            greyCrossImage),
-                                                        size: 14.sp,
-                                                      ),
-                                                    ), */
-                                                    prefixIcon: Icon(
-                                                        Icons.search,
-                                                        size: 20.sp,
-                                                        color: Colors.grey),
-                                                    focusedBorder:
-                                                        const OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                color:
-                                                                    borderColor)),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              1),
-                                                    ),
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              1),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              color:
-                                                                  borderColor),
-                                                    ),
-                                                    counterText: "",
-                                                    /*   contentPadding: EdgeInsets.symmetric(
-                                                  horizontal: 10.sp), */
-                                                    hintText: "Search Location",
-                                                    hintStyle: TextStyle(
-                                                        fontSize: 14.sp),
-                                                  ),
-                                                ),
+                                            onChanged: (value) {
+                                              onSearchChanged(value);
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true,
+                                              fillColor: whiteColor,
+                                              prefixIcon: Icon(Icons.search,
+                                                  size: 20.sp,
+                                                  color: titleColor),
+                                              focusedBorder:
+                                                  const OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: borderColor)),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
                                               ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                                borderSide: const BorderSide(
+                                                    color: borderColor),
+                                              ),
+                                              counterText: "",
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 10.sp),
+                                              hintText:
+                                                  "Search for building, street name, or area",
+                                              hintStyle: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  color: searchTextColor,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular"),
                                             ),
                                           ),
                                         ),
-                                ],
-                              ),
+                                      ),
+                                    )
+                                  : Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                        height: 40.sp,
+                                        child: RawKeyboardListener(
+                                          focusNode: FocusNode(),
+                                          onKey: (value) {
+                                            print(value);
+                                            if (value is RawKeyDownEvent) {}
+                                          },
+                                          child: TextField(
+                                            controller: shipController
+                                                .locationController,
+                                            textCapitalization:
+                                                TextCapitalization.words,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: titleColor,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                            ),
+                                            onChanged: (value) {
+                                              onSearchChanged(value);
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true,
+                                              fillColor: whiteColor,
+                                              prefixIcon: Icon(Icons.search,
+                                                  size: 20.sp,
+                                                  color: titleColor),
+                                              focusedBorder:
+                                                  const OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: borderColor)),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                                borderSide: const BorderSide(
+                                                    color: borderColor),
+                                              ),
+                                              counterText: "",
+                                              hintText:
+                                                  "Search for building, street name, or area",
+                                              hintStyle: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  color: searchTextColor,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular"),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(top: 98.sp),
+                            padding: EdgeInsets.only(
+                                top: 160.sp, left: 16.sp, right: 16.sp),
                             child: Container(
                               // height: 200.sp,
                               child: shipController.isLocation.value
@@ -483,23 +464,54 @@ class MapScreenState extends State<MapScreen> {
                                       }),
                             ),
                           ),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: InkWell(
-                              onTap: () {
-                                _gotoUserCurrentPosition();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20.sp, vertical: 30.sp),
-                                child: Icon(
-                                  Icons.location_disabled_sharp,
-                                  size: 20.sp,
-                                  color: colorPrimary,
+                          shipController.locationList.isNotEmpty
+                              ? SizedBox(
+                                  height: 0,
+                                )
+                              : Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _gotoUserCurrentPosition();
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 40.sp, vertical: 20.sp),
+                                      child: Container(
+                                        height: 40.sp,
+                                        decoration: BoxDecoration(
+                                            color: whiteColor,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.sp))),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16.sp),
+                                          child: Row(
+                                            children: [
+                                              ImageIcon(
+                                                AssetImage(currentLocationIcon),
+                                                color: homeAppBarColor,
+                                                size: 20.sp,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 10.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "Use my current location",
+                                                  color: homeAppBarColor,
+                                                  fontSize: 16,
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ],
                       )),
                   Expanded(
@@ -510,8 +522,8 @@ class MapScreenState extends State<MapScreen> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(30.0)),
+                              /*  borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(30.0)), */
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
@@ -536,27 +548,48 @@ class MapScreenState extends State<MapScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 30.sp, right: 10.sp, top: 15.sp),
+          padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
           child: Row(
             children: [
               Image.asset(
-                locationIcon,
-                width: 25.sp,
-                height: 25.sp,
+                locationPinImage,
+                width: 29.sp,
+                height: 29.sp,
                 color: colorPrimary,
               ),
               SizedBox(width: 6.sp),
-              Text("Address",
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black)),
+              showAddress
+                  ? DummyContainer(height: 20, width: 100.sp)
+                  : Text(localityName,
+                      style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          fontSize: 16.sp,
+                          fontFamily: 'Franklin Gothic',
+                          fontWeight: FontWeight.w500,
+                          color: homeAppBarColor)),
+              Expanded(child: SizedBox(width: 0.sp)),
+              GestureDetector(
+                onTap: () {},
+                child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 2.sp),
+                    child: Text(
+                      "Change".toUpperCase(),
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: appBarColor,
+                        fontSize: 10.sp,
+                      ),
+                    )),
+              )
             ],
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 30.sp, right: 10.sp, top: 15.sp),
+          padding: EdgeInsets.only(
+              left: 40.sp, right: 10.sp, top: 5.sp, bottom: 10.sp),
           child: Row(
             children: [
               Flexible(
@@ -564,17 +597,18 @@ class MapScreenState extends State<MapScreen> {
                   children: <Widget>[
                     Shimmer.fromColors(
                       enabled: false,
-                      baseColor: Colors.black,
-                      highlightColor: Colors.grey,
+                      baseColor: subtitleColor,
+                      highlightColor: subtitleColor,
                       child: showAddress
                           ? DummyContainer(height: 20, width: double.infinity)
                           : Text(draggedAddress,
                               maxLines: 2,
                               textAlign: TextAlign.start,
                               style: TextStyle(
+                                color: subtitleColor,
                                 overflow: TextOverflow.ellipsis,
-                                fontFamily: "Gilroy",
-                                fontSize: 16.sp,
+                                fontFamily: 'Franklin Gothic Regular',
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
                               )),
                     ),
@@ -584,42 +618,35 @@ class MapScreenState extends State<MapScreen> {
             ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.all(20),
-          child: SizedBox(
+        GestureDetector(
+          onTap: () async {
+            FocusScope.of(context).requestFocus(FocusNode());
+            if (shipController.checkLocationValidation()) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => ShippingAddressScreen(
+                      addressId: widget.addressId,
+                      cartId: widget.cartId,
+                      latitude: shipController.lat.value,
+                      longitude: shipController.lng.value)));
+              await analytics.logEvent(
+                name: 'shipAddress_page',
+                parameters: <String, Object>{
+                  'page_name': 'shipAddress_page',
+                },
+              );
+            } else {
+              _determineUserCurrentPosition();
+            }
+          },
+          child: Container(
             width: double.infinity,
-            height: 50.sp,
-            child: ElevatedButton(
-              onPressed: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                if (shipController.checkLocationValidation()) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => ShippingAddressScreen(
-                          addressId: widget.addressId,
-                          cartId: widget.cartId,
-                          latitude: shipController.lat.value,
-                          longitude: shipController.lng.value)));
-                  await analytics.logEvent(
-                    name: 'shipAddress_page',
-                    parameters: <String, Object>{
-                      'page_name': 'shipAddress_page',
-                    },
-                  );
-                } else {
-                  _determineUserCurrentPosition();
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(colorPrimary),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                ),
-              ),
-              child: Text("Next",
+            height: 80.sp,
+            color: homeAppBarColor,
+            margin: EdgeInsets.only(top: 20.sp),
+            child: Center(
+              child: Text("Confirm Location".toUpperCase(),
                   style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: 13.sp,
                       color: Colors.white,
                       fontFamily: 'Franklin Gothic')),
             ),
@@ -653,7 +680,11 @@ class MapScreenState extends State<MapScreen> {
     return Center(
       child: SizedBox(
         width: 150.sp,
-        child: Lottie.asset(locationAnim, width: 100.sp, height: 100.sp),
+        child: Lottie.asset(
+          locationAnim,
+          width: 100.sp,
+          height: 100.sp,
+        ),
       ),
     );
   }
@@ -670,6 +701,7 @@ class MapScreenState extends State<MapScreen> {
     setState(() {
       showAddress = false;
       draggedAddress = addressString;
+      localityName = "${address!.locality}";
     });
   }
 

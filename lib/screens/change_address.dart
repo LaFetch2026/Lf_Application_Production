@@ -35,6 +35,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       shipController.selected.clear();
       shipController.selected = List.generate(50, (i) => false);
+      controller.queryText.value = "";
     });
     super.initState();
   }

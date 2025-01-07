@@ -43,6 +43,11 @@ const Color color1StartReview = Color(0xFFD95656);
 const Color greyDotColor = Color(0xFFC6C3C0);
 const Color greyback = Color(0xFFEEEEEE);
 const Color homeAppBarColor = Color(0xFF171717);
+const Color appBarColor = Color(0xFF4B5563);
+const Color titleColor = Color(0xFF374151);
+const Color subtitleColor = Color(0xFF6B7280);
+const Color dividerColor = Color(0XFFE5E7EB);
+const Color searchTextColor = Color(0XFF9CA3AF);
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';
@@ -182,6 +187,10 @@ const filterIcon = 'assets/images/filter_icon.png';
 const homeBottomIcon = 'assets/images/homebottom.png';
 const shopBottomIcon = 'assets/images/shopbottom.png';
 const wishlistBottomIcon = 'assets/images/wishlistbottom.png';
+const currentLocationIcon = 'assets/images/current_location_icon.png';
+const deleteAddressIcon = 'assets/images/delete_address.png';
+const editAddressIcon = 'assets/images/edit_address.png';
+const locationPinImage = 'assets/images/location_pin.png';
 
 class ApiConstants {
   ApiConstants._();
