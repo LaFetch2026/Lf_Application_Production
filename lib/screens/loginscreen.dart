@@ -37,8 +37,10 @@ class LoginScreenState extends State<LoginScreen> {
   void initState() {
     if (widget.initialTab == 0) {
       appbarColor = colorPrimary;
+      loginController.loginError.value = "";
     } else {
       appbarColor = btnTextColor;
+      loginController.registerError.value = "";
     }
     requestNotificationPermission();
     super.initState();
@@ -142,8 +144,10 @@ class LoginScreenState extends State<LoginScreen> {
                         onTap: (value) {
                           if (appbarColor == btnTextColor) {
                             appbarColor = colorPrimary;
+                            loginController.loginError.value = "";
                           } else {
                             appbarColor = btnTextColor;
+                            loginController.registerError.value = "";
                           }
                           setState(() {});
                         },
@@ -230,7 +234,7 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp),
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: NumberWidget(
                             readonly: false,
                             login: true,
@@ -253,6 +257,16 @@ class LoginScreenState extends State<LoginScreen> {
                             },
                             controller: loginController.phoneNumberLogin),
                       ),
+                      Obx(() => Padding(
+                            padding: EdgeInsets.only(left: 16.sp, right: 5.sp),
+                            child: AppText(
+                              text: loginController.loginError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          )),
                       Obx(
                         () => Padding(
                           padding: EdgeInsets.only(top: 40.sp, bottom: 10.sp),
@@ -365,13 +379,13 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.sp),
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: NumberWidget(
                             readonly: false,
                             login: true,
                             onPressedLogin: () async {
                               FocusScope.of(context).requestFocus(FocusNode());
-                              if (loginController.checkNumbervalidation(
+                              if (loginController.checkRegistervalidation(
                                   loginController.phoneNumberRegister.text
                                       .toString()
                                       .trim())) {
@@ -388,6 +402,16 @@ class LoginScreenState extends State<LoginScreen> {
                             },
                             controller: loginController.phoneNumberRegister),
                       ),
+                      Obx(() => Padding(
+                            padding: EdgeInsets.only(left: 16.sp, right: 5.sp),
+                            child: AppText(
+                              text: loginController.registerError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          )),
                       Obx(
                         () => Padding(
                           padding: EdgeInsets.only(top: 40.sp, bottom: 10.sp),
@@ -397,7 +421,7 @@ class LoginScreenState extends State<LoginScreen> {
                               borderColor: colorPrimary,
                               controller: loginController,
                               onPressed: () async {
-                                if (loginController.checkNumbervalidation(
+                                if (loginController.checkRegistervalidation(
                                     loginController.phoneNumberRegister.text
                                         .toString()
                                         .trim())) {

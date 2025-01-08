@@ -8,12 +8,14 @@ class NumberWidget extends StatelessWidget {
   final TextEditingController controller;
   final bool readonly;
   final bool login;
+  final Color fillColor;
   final Function onPressedLogin;
 
   const NumberWidget({
     Key? key,
     required this.controller,
     required this.readonly,
+    this.fillColor = whiteTextColor,
     required this.login,
     required this.onPressedLogin,
   }) : super(key: key);
@@ -39,7 +41,7 @@ class NumberWidget extends StatelessWidget {
           decoration: InputDecoration(
             filled: true,
             isDense: true,
-            fillColor: whiteTextColor,
+            fillColor: fillColor,
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: borderColor)),
             enabledBorder: OutlineInputBorder(

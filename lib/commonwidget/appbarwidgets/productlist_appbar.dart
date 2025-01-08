@@ -7,12 +7,11 @@ import '../../utils/constants.dart';
 class ProductAppbar extends StatefulWidget {
   final Function? onPressedSearch;
   final Function? onPressedCart;
+  final Function? onPressedHeart;
 
-  const ProductAppbar({
-    Key? key,
-    this.onPressedSearch,
-    this.onPressedCart,
-  }) : super(key: key);
+  const ProductAppbar(
+      {Key? key, this.onPressedSearch, this.onPressedCart, this.onPressedHeart})
+      : super(key: key);
 
   @override
   State<ProductAppbar> createState() => _ProductAppbarState();
@@ -25,10 +24,10 @@ class _ProductAppbarState extends State<ProductAppbar> {
     return Container(
       height: 80.sp,
       width: MediaQuery.of(context).size.width,
-      color: blackColor,
+      color: whiteColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 20.sp),
+          padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -39,6 +38,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   icon: Image.asset(
                     backWhiteArrow,
                     height: 16.sp,
+                    color: homeAppBarColor,
                     width: 16.sp,
                   ),
                   onPressed: () {
@@ -55,6 +55,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 padding: EdgeInsets.only(left: 5.sp),
                 child: Image.asset(
                   lafetchLogoImage,
+                  color: homeAppBarColor,
                   height: 25.sp,
                   width: 20.sp,
                 ),
@@ -69,11 +70,24 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   widget.onPressedSearch?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 5),
                   child: ImageIcon(
                     AssetImage(searchNewImage),
-                    color: whiteColor,
-                    size: 20.sp,
+                    color: homeAppBarColor,
+                    size: 22.sp,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  widget.onPressedHeart?.call();
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  child: ImageIcon(
+                    AssetImage(wishlistBottomIcon),
+                    color: homeAppBarColor,
+                    size: 18.sp,
                   ),
                 ),
               ),
@@ -89,9 +103,9 @@ class _ProductAppbarState extends State<ProductAppbar> {
                         padding: EdgeInsets.only(bottom: 3.sp),
                         child: Image.asset(
                           cartNewImage,
-                          color: whiteColor,
-                          height: 20.sp,
-                          width: 20.sp,
+                          color: homeAppBarColor,
+                          height: 18.sp,
+                          width: 18.sp,
                         ),
                       ),
                       Obx(() => controller.cartTotalValue.value != 0
@@ -106,7 +120,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.white,
+                                      color: homeAppBarColor,
                                     ),
                                     child: Center(
                                       child: Text(
@@ -114,7 +128,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                                             .toString(),
                                         style: TextStyle(
                                             fontSize: 8,
-                                            color: blackColor,
+                                            color: whiteColor,
                                             fontFamily:
                                                 "Libre Franklin Regular",
                                             fontWeight: FontWeight.w400),

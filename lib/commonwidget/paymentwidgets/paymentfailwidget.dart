@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lafetch/commonwidget/smallbtn.dart';
-
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
@@ -29,41 +28,52 @@ class PaymentFailWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Visibility(
-            visible: visible,
-            child: Center(
-              child: Image.asset(image,
-                  height: 200.sp, width: 200.sp, fit: BoxFit.cover),
-            )),
         Padding(
-          padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
+          padding: EdgeInsets.only(top: 100.sp),
+          child: Center(
+            child: Image.asset(image,
+                height: 200.sp,
+                width: text1 == "Order Placed Successfully" ? 200.sp : 220.sp,
+                fit: BoxFit.cover),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+              top: visible ? 40.sp : 20.sp,
+              left: 16.sp,
+              right: 16.sp,
+              bottom: 8),
           child: Center(
             child: AppText(
-              text: text1,
-              fontFamily: "Franklin Gothic Bold",
-              fontWeight: FontWeight.w700,
-              color: blackColor,
-              fontSize: 18,
+              text: text1.toUpperCase(),
+              fontFamily: "Franklin Gothic Semibold",
+              fontWeight: FontWeight.w600,
+              color: homeAppBarColor,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: visible,
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 8.sp, left: 16.sp, right: 16.sp),
+            child: AppText(
+              text: text2,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+              color: subtitleColor,
+              fontSize: 12,
             ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
-          child: AppText(
-            text: text2,
-            fontFamily: "Franklin Gothic Regular",
-            fontWeight: FontWeight.w400,
-            color: blackColor,
-            fontSize: 14,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 30.sp, left: 16.sp, right: 16.sp),
-          child: SmallButton(
-              width: 160.sp,
-              label: btntext,
-              textColor: whiteBorderColor,
-              backgroundColor: colorPrimary,
+          padding: EdgeInsets.only(top: 20.sp),
+          child: getSingleButton(
+              width: double.infinity,
+              label: btntext.toUpperCase(),
+              textColor: whiteColor,
+              fontSize: 13,
+              backgroundColor: homeAppBarColor,
               onPressed: () {
                 onPressed?.call();
               },

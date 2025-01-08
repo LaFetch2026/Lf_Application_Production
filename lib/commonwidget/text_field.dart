@@ -24,8 +24,9 @@ class TextFieldWidget extends StatelessWidget {
               height: 44.sp,
               child: TextField(
                 textCapitalization: TextCapitalization.words,
-                style: const TextStyle(
+                style: TextStyle(
                   color: textColor,
+                  fontSize: 14.sp,
                   fontFamily: "Franklin Gothic Regular",
                 ),
                 controller: controller,
@@ -34,7 +35,7 @@ class TextFieldWidget extends StatelessWidget {
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: whiteTextColor,
+                  fillColor: whiteColor,
                   focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: borderColor)),
                   border: OutlineInputBorder(
@@ -47,7 +48,7 @@ class TextFieldWidget extends StatelessWidget {
                   counterText: "",
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.sp),
                   hintText: hint,
-                  hintStyle: TextStyle(fontSize: 14.sp),
+                  hintStyle: TextStyle(fontSize: 14.sp, color: subtitleColor),
                 ),
               ),
             ),
@@ -68,7 +69,7 @@ class TextFieldWidget extends StatelessWidget {
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: whiteTextColor,
+                  fillColor: whiteColor,
                   focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: borderColor)),
                   border: OutlineInputBorder(
@@ -80,7 +81,7 @@ class TextFieldWidget extends StatelessWidget {
                   ),
                   counterText: "",
                   hintText: hint,
-                  hintStyle: TextStyle(fontSize: 14.sp),
+                  hintStyle: TextStyle(fontSize: 14.sp, color: subtitleColor),
                 ),
               ),
             ),

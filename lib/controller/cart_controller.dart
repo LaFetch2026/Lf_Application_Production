@@ -54,6 +54,7 @@ class CartController extends BaseController {
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
+      cartTotalValue.value = orderList.length;
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
@@ -393,7 +394,7 @@ class CartController extends BaseController {
         Get.to(const PaymentSuccessScreen(
             text1: "Payment Failed",
             orderId: 0,
-            text2: "Thank you for placing your order",
+            text2: "",
             image: paymentFailImage));
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

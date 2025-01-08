@@ -38,6 +38,7 @@ class MapScreenState extends State<MapScreen> {
   final shipController = Get.put(ShipAddressController());
   Completer<GoogleMapController> googleMapController = Completer();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String draggedAddress = "";
   String localityName = "";
   late String mapStyle;
@@ -121,6 +122,7 @@ class MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
         backgroundColor: whiteColor,
         body: Obx(() => shipController.isDetails.value
             ? Padding(
@@ -569,7 +571,22 @@ class MapScreenState extends State<MapScreen> {
                           color: homeAppBarColor)),
               Expanded(child: SizedBox(width: 0.sp)),
               GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  scaffoldKey.currentState?.showBottomSheet((context) =>
+                      ShippingAddressScreen(
+                          addressId: widget.addressId,
+                          cartId: widget.cartId,
+                          address: draggedAddress,
+                          localityName: localityName,
+                          latitude: shipController.lat.value,
+                          longitude: shipController.lng.value));
+                  await analytics.logEvent(
+                    name: 'shipAddress_page',
+                    parameters: <String, Object>{
+                      'page_name': 'shipAddress_page',
+                    },
+                  );
+                },
                 child: Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 16.sp, vertical: 2.sp),
@@ -589,7 +606,7 @@ class MapScreenState extends State<MapScreen> {
         ),
         Padding(
           padding: EdgeInsets.only(
-              left: 40.sp, right: 10.sp, top: 5.sp, bottom: 10.sp),
+              left: 48.sp, right: 10.sp, top: 5.sp, bottom: 10.sp),
           child: Row(
             children: [
               Flexible(
@@ -622,12 +639,14 @@ class MapScreenState extends State<MapScreen> {
           onTap: () async {
             FocusScope.of(context).requestFocus(FocusNode());
             if (shipController.checkLocationValidation()) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => ShippingAddressScreen(
+              scaffoldKey.currentState?.showBottomSheet((context) =>
+                  ShippingAddressScreen(
                       addressId: widget.addressId,
                       cartId: widget.cartId,
+                      address: draggedAddress,
+                      localityName: localityName,
                       latitude: shipController.lat.value,
-                      longitude: shipController.lng.value)));
+                      longitude: shipController.lng.value));
               await analytics.logEvent(
                 name: 'shipAddress_page',
                 parameters: <String, Object>{

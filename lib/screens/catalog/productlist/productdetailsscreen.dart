@@ -2487,11 +2487,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       : const SizedBox(
                                           height: 0,
                                         ),
-                                  productController.returnPolicyDetails !=
-                                              null &&
-                                          productController
-                                                  .returnPolicyDetails !=
-                                              ""
+                                  productController
+                                          .returnPolicyDetails.value.isNotEmpty
                                       ? Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -2532,9 +2529,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       child: AppText(
                                                         text: Bidi.stripHtmlIfNeeded(
                                                             productController
-                                                                        .returnPolicyDetails[
-                                                                    "description"] ??
-                                                                ""),
+                                                                .returnPolicyDetails
+                                                                .value),
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
                                                         maxLines: 20,
@@ -3709,6 +3705,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ? "Add to bag"
                                         : "Move to bag",
                                     textColor: whiteBorderColor,
+                                    fontSize: 13,
                                     right: productController
                                             .productDetails["added_to_cart"]
                                         ? 8
@@ -3792,6 +3789,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         label: "Go to bag",
                                         left: 0,
                                         right: 16,
+                                        fontSize: 13,
                                         textColor: whiteBorderColor,
                                         backgroundColor: colorPrimary,
                                         //  controller: productController,

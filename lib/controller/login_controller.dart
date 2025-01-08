@@ -20,6 +20,9 @@ class LoginController extends BaseController {
   final phoneNumberRegister = TextEditingController();
   RxInt secondsRemaining = 30.obs;
   RxString number = "".obs;
+  RxString loginError = "".obs;
+  RxString otpError = "".obs;
+  RxString registerError = "".obs;
   RxString otp = "".obs;
   // RxBool otpClear = false.obs;
   RxBool showButton = false.obs;
@@ -28,15 +31,17 @@ class LoginController extends BaseController {
 
   bool checkOtpvalidation(String otpnumber) {
     if (otpnumber.isEmpty) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter OTP",
-      );
+      ); */
+      otpError.value = "Enter OTP";
       return false;
     }
     if (otpnumber.length < 4) {
-      getSnackBar(
+      /*  getSnackBar(
         "The otp field must be 4 digit.",
-      );
+      ); */
+      otpError.value = "The otp field must be 4 digit.";
       return false;
     }
     return true;
@@ -46,21 +51,51 @@ class LoginController extends BaseController {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
     if (phone.isEmpty) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter Phone Number",
-      );
+      ); */
+      loginError.value = "Enter Phone Number";
       return false;
     }
     if (phone.length < 10) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter 10 digit Phone Number",
-      );
+      ); */
+      loginError.value = "Enter 10 digit Phone Number";
       return false;
     }
     if (!regExp.hasMatch(phone)) {
-      getSnackBar(
+      /* getSnackBar(
         "Enter valid Phone Number",
-      );
+      ); */
+      loginError.value = "Enter valid Phone Number";
+      return false;
+    }
+    return true;
+  }
+
+  bool checkRegistervalidation(String phone) {
+    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+    RegExp regExp = RegExp(patttern);
+    if (phone.isEmpty) {
+      /*  getSnackBar(
+        "Enter Phone Number",
+      ); */
+      registerError.value = "Enter Phone Number";
+      return false;
+    }
+    if (phone.length < 10) {
+      /*  getSnackBar(
+        "Enter 10 digit Phone Number",
+      ); */
+      registerError.value = "Enter 10 digit Phone Number";
+      return false;
+    }
+    if (!regExp.hasMatch(phone)) {
+      /*   getSnackBar(
+        "Enter valid Phone Number",
+      ); */
+      registerError.value = "Enter valid Phone Number";
       return false;
     }
     return true;
@@ -78,22 +113,30 @@ class LoginController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        loginError.value = "";
+        registerError.value = "";
         // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 201) {
         print(responseData);
+        loginError.value = "";
+        registerError.value = "";
         // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
-          getSnackBar(responseData['errors']['phone'][0]);
+          // getSnackBar(responseData['errors']['phone'][0]);
+          loginError.value = responseData['errors']['phone'][0];
+          registerError.value = responseData['errors']['phone'][0];
         }
         if (responseData['errors']['otp'] != null) {
-          getSnackBar(responseData['errors']['otp']);
+          //getSnackBar(responseData['errors']['otp']);
+          loginError.value = responseData['errors']['otp'];
+          registerError.value = responseData['errors']['otp'];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -119,29 +162,33 @@ class LoginController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        otpError.value = "";
         // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 201) {
         print(responseData);
+        otpError.value = "";
         //  getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
-          getSnackBar(responseData['errors']['phone'][0]);
+          //getSnackBar(responseData['errors']['phone'][0]);
+          otpError.value = responseData['errors']['phone'][0];
         }
         if (responseData['errors']['otp'] != null) {
-          getSnackBar(responseData['errors']['otp']);
+          // getSnackBar(responseData['errors']['otp']);
+          otpError.value = responseData['errors']['otp'];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("login failed");
+        getSnackBar("resend otp failed");
       }
     } catch (e) {
       print(e.toString());
@@ -243,6 +290,7 @@ class LoginController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         // getSnackBar(responseData['message']);
+        otpError.value = "";
         prefs.setString('token', responseData['meta']['access_token']);
         prefs.setInt('userId', responseData['data']['id']);
         if (responseData['data']['phone'] != null) {
@@ -266,6 +314,7 @@ class LoginController extends BaseController {
         }
       } else if (response.statusCode == 201) {
         print(responseData);
+        otpError.value = "";
         //  getSnackBar(responseData['message']);
         prefs.setString('token', responseData['meta']['access_token']);
         prefs.setInt('userId', responseData['data']['id']);
@@ -291,14 +340,17 @@ class LoginController extends BaseController {
       } else if (response.statusCode == 400) {
         if (responseData['errors']['otp'] != null) {
           for (var i = 0; i < responseData['errors']['otp'].length; i++) {
-            getSnackBar(responseData['errors']['otp'][i]);
+            // getSnackBar(responseData['errors']['otp'][i]);
+            otpError.value = responseData['errors']['otp'][i];
           }
         }
         if (responseData['errors']['phone'] != null) {
-          getSnackBar(responseData['errors']['phone'][0]);
+          // getSnackBar(responseData['errors']['phone'][0]);
+          otpError.value = responseData['errors']['phone'][0];
         }
         if (responseData['errors']['otp'] != null) {
-          getSnackBar(responseData['errors']['otp']);
+          //  getSnackBar(responseData['errors']['otp']);
+          otpError.value = responseData['errors']['otp'];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

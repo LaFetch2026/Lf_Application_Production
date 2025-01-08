@@ -50,6 +50,7 @@ class ShipAddressController extends BaseController {
   final searchController = TextEditingController();
   final locationController = TextEditingController();
   final searchAddressController = TextEditingController();
+  final addressTypeController = TextEditingController();
   RxString nameError = "".obs;
   RxString phoneError = "".obs;
   RxString pincodeError = "".obs;

@@ -14,6 +14,7 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -95,6 +96,18 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               analytics
                   .logEvent(name: "search_page", parameters: <String, Object>{
                 "page_name": "search_page",
+              });
+            }, onPressedHeart: () async {
+              Get.to(const BottomNavScreen(
+                index: 2,
+              ))?.then((value) => setState(
+                    () {
+                      controller.getCartData();
+                    },
+                  ));
+              analytics
+                  .logEvent(name: "wishlist_page", parameters: <String, Object>{
+                "page_name": "wishlist_page",
               });
             }, onPressedCart: () async {
               Get.to(const CartScreen())?.then((value) => setState(
@@ -194,6 +207,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                         productController
                                                             .handpickedPage
                                                             .value = 1;
+                                                        controller
+                                                            .getCartData();
                                                       },
                                                     ));
                                             await analytics.logEvent(

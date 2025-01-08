@@ -4,6 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
@@ -35,6 +36,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
   @override
   void initState() {
     print(widget.btnText);
+    wishlistController.boardError.value = "";
     if (widget.boardName.isNotEmpty) {
       wishlistController.boardNameController.text = widget.boardName;
     } else {
@@ -66,6 +68,17 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                       controller: wishlistController.boardNameController,
                     ),
                   ),
+                  Obx(() => Padding(
+                        padding: EdgeInsets.only(
+                            left: 16.sp, right: 5.sp, top: 5.sp),
+                        child: AppText(
+                          text: wishlistController.boardError.value,
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                          color: redColor,
+                          fontSize: 12,
+                        ),
+                      )),
                 ],
               ),
             ),

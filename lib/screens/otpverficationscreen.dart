@@ -32,6 +32,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   @override
   void initState() {
     otpController.showButton.value = false;
+    otpController.otpError.value = "";
     if (Platform.isAndroid) {
       callReceiveMsg();
     }
@@ -241,6 +242,19 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         ),
                       ),
                     ),
+                    Obx(() => otpController.otpError.value != ""
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                left: 20.sp, right: 5.sp, top: 5.sp),
+                            child: AppText(
+                              text: otpController.otpError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          )
+                        : SizedBox(height: 0)),
                     Padding(
                       padding: EdgeInsets.only(
                           right: 16.sp, top: 20.sp, left: 16.sp),

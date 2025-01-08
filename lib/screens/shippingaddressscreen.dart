@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/commonwidget/doublebutton_new.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/loginwidgets/number_widget.dart';
@@ -17,12 +16,16 @@ import '../utils/constants.dart';
 class ShippingAddressScreen extends StatefulWidget {
   final int addressId;
   final int cartId;
+  final String address;
+  final String localityName;
   final double latitude;
   final double longitude;
   const ShippingAddressScreen({
     super.key,
     required this.addressId,
     required this.cartId,
+    required this.address,
+    required this.localityName,
     required this.latitude,
     required this.longitude,
   });
@@ -158,16 +161,11 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
           shipController.showList.value = false;
         });
       },
-      child: Scaffold(
-        backgroundColor: whiteTextColor,
-        body: Column(
+      child: Container(
+        color: whiteColor,
+        height: MediaQuery.of(context).size.height / 2 + 80.sp,
+        child: Column(
           children: [
-            BackButtonAppbar(
-              text: "Shipping Address",
-              threeDot: false,
-              icon: threeDotImage,
-              onPressedThreeDot: () {},
-            ),
             Expanded(
               child: SingleChildScrollView(
                   child: Obx(
@@ -180,152 +178,242 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           /*   Stack(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: SizedBox(
-                                  height: 300,
-                                  width: double.infinity,
-                                  child: GoogleMap(
-                                    initialCameraPosition:
-                                        initialCameraPosition,
-                                    markers: markers,
-                                    zoomControlsEnabled: true,
-                                    mapType: MapType.normal,
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      googleMapController = controller;
-                                      if (shipController.lat.value != 0.0) {
-                                        apiPosition();
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Center(
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 250),
-                                  height: 40,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                      color: colorPrimary,
-                                      width: 1,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(7)),
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      Position position =
-                                          await determinePosition();
-                                      googleMapController.animateCamera(
-                                          CameraUpdate.newCameraPosition(
-                                              CameraPosition(
-                                                  target: LatLng(
-                                                      position.latitude,
-                                                      position.longitude),
-                                                  zoom: 16)));
-                                      markers.clear();
-                                      List<Placemark> placemarks =
-                                          await placemarkFromCoordinates(
-                                              position.latitude,
-                                              position.longitude);
-                                      Placemark place1 = placemarks[0];
-                                      cityname = place1.subLocality.toString();
-                                      print("cityname $cityname");
-                                      markers.add(Marker(
-                                          draggable: true,
-                                          markerId: const MarkerId('1'),
-                                          infoWindow: InfoWindow(
-                                            title: cityname,
-                                          ),
-                                          onDragEnd: (newPosition) async {
-                                            print(newPosition.latitude);
-                                            print(newPosition.longitude);
-                                            shipController.lat.value =
-                                                newPosition.latitude;
-                                            shipController.lng.value =
-                                                newPosition.longitude;
-                                            List<Placemark> placemarks =
-                                                await placemarkFromCoordinates(
-                                                    newPosition.latitude,
-                                                    newPosition.longitude);
-                                            Placemark place1 = placemarks[0];
-                                            cityname =
-                                                place1.subLocality.toString();
-                                            setState(() {});
-                                          },
-                                          position: LatLng(position.latitude,
-                                              position.longitude)));
-                                      shipController.lat.value =
-                                          position.latitude;
-                                      shipController.lng.value =
-                                          position.longitude;
-                                      print(shipController.lat.value);
-                                      print(shipController.lng.value);
-                                      setState(() {});                                     
-                                    },
-                                    child: Center(
-                                      child: Row(children: [
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 10),
-                                          child: const Icon(
-                                            Icons.location_disabled_sharp,
-                                            size: 20,
-                                            color: colorPrimary,
-                                          ),
-                                        ),
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 8),
-                                          child: const Text(
-                                            "Use current location",
-                                            style:
-                                                TextStyle(color: colorPrimary),
-                                          ),
-                                        )
-                                      ]),
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 16),
+                                  child: SizedBox(
+                                    height: 300,
+                                    width: double.infinity,
+                                    child: GoogleMap(
+                                      initialCameraPosition:
+                                          initialCameraPosition,
+                                      markers: markers,
+                                      zoomControlsEnabled: true,
+                                      mapType: MapType.normal,
+                                      onMapCreated:
+                                          (GoogleMapController controller) {
+                                        googleMapController = controller;
+                                        if (shipController.lat.value != 0.0) {
+                                          apiPosition();
+                                        }
+                                      },
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                         */
+                                Center(
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 250),
+                                    height: 40,
+                                    width: 180,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: colorPrimary,
+                                        width: 1,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(7)),
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        Position position =
+                                            await determinePosition();
+                                        googleMapController.animateCamera(
+                                            CameraUpdate.newCameraPosition(
+                                                CameraPosition(
+                                                    target: LatLng(
+                                                        position.latitude,
+                                                        position.longitude),
+                                                    zoom: 16)));
+                                        markers.clear();
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                                position.latitude,
+                                                position.longitude);
+                                        Placemark place1 = placemarks[0];
+                                        cityname = place1.subLocality.toString();
+                                        print("cityname $cityname");
+                                        markers.add(Marker(
+                                            draggable: true,
+                                            markerId: const MarkerId('1'),
+                                            infoWindow: InfoWindow(
+                                              title: cityname,
+                                            ),
+                                            onDragEnd: (newPosition) async {
+                                              print(newPosition.latitude);
+                                              print(newPosition.longitude);
+                                              shipController.lat.value =
+                                                  newPosition.latitude;
+                                              shipController.lng.value =
+                                                  newPosition.longitude;
+                                              List<Placemark> placemarks =
+                                                  await placemarkFromCoordinates(
+                                                      newPosition.latitude,
+                                                      newPosition.longitude);
+                                              Placemark place1 = placemarks[0];
+                                              cityname =
+                                                  place1.subLocality.toString();
+                                              setState(() {});
+                                            },
+                                            position: LatLng(position.latitude,
+                                                position.longitude)));
+                                        shipController.lat.value =
+                                            position.latitude;
+                                        shipController.lng.value =
+                                            position.longitude;
+                                        print(shipController.lat.value);
+                                        print(shipController.lng.value);
+                                        setState(() {});                                     
+                                      },
+                                      child: Center(
+                                        child: Row(children: [
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(left: 10),
+                                            child: const Icon(
+                                              Icons.location_disabled_sharp,
+                                              size: 20,
+                                              color: colorPrimary,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(left: 8),
+                                            child: const Text(
+                                              "Use current location",
+                                              style:
+                                                  TextStyle(color: colorPrimary),
+                                            ),
+                                          )
+                                        ]),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                           */
                           Padding(
-                            padding: EdgeInsets.only(top: 30.sp),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.sp, vertical: 12.sp),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    "SORT BY",
+                                    style: TextStyle(
+                                      color: blackColor,
+                                      fontSize: 16.sp,
+                                      fontFamily: "Franklin Gothic Semibold",
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Image.asset(blackCrossImage,
+                                        height: 18.sp,
+                                        width: 18.sp,
+                                        color: appBarColor,
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  locationPinImage,
+                                  width: 29.sp,
+                                  height: 29.sp,
+                                  color: colorPrimary,
+                                ),
+                                SizedBox(width: 6.sp),
+                                Text(widget.localityName,
+                                    style: TextStyle(
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 16.sp,
+                                        fontFamily: 'Franklin Gothic',
+                                        fontWeight: FontWeight.w500,
+                                        color: homeAppBarColor)),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 48.sp,
+                                right: 10.sp,
+                                top: 5.sp,
+                                bottom: 10.sp),
+                            child: Row(
+                              children: [
+                                Text(
+                                  widget.address,
+                                  maxLines: 2,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    color: subtitleColor,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontFamily: 'Franklin Gothic Regular',
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.sp, top: 32.sp),
+                            child: Text(
+                              "PERSONAL DETAILS",
+                              style: TextStyle(
+                                color: blackColor,
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic Semibold",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 12.sp),
                             child: TextFieldWidget(
                               hint: "Name",
                               controller: shipController.nameController,
                             ),
                           ),
                           /*  shipController.checkvalidation()
-                              ? SizedBox(
-                                  height: 0,
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 20.sp,
-                                    right: 20.sp,
-                                    top: 2.sp,
-                                  ),
-                                  child: AppText(
-                                    text: shipController.nameError.value,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: redColor,
-                                    fontSize: 12,
-                                  ),
-                                ), */
+                                ? SizedBox(
+                                    height: 0,
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 20.sp,
+                                      right: 20.sp,
+                                      top: 2.sp,
+                                    ),
+                                    child: AppText(
+                                      text: shipController.nameError.value,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: redColor,
+                                      fontSize: 12,
+                                    ),
+                                  ), */
                           Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
+                            padding: EdgeInsets.only(top: 0.sp),
                             child: NumberWidget(
                                 readonly: false,
                                 login: false,
+                                fillColor: whiteColor,
                                 onPressedLogin: () {},
                                 controller: shipController.phoneController),
                           ),
@@ -364,7 +452,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   },
                                   decoration: InputDecoration(
                                     filled: true,
-                                    fillColor: whiteTextColor,
+                                    fillColor: whiteColor,
                                     focusedBorder: const OutlineInputBorder(
                                         borderSide:
                                             BorderSide(color: borderColor)),
@@ -378,22 +466,23 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     ),
                                     hintText: "Pin Code",
                                     counterText: "",
-                                    hintStyle: TextStyle(fontSize: 14.sp),
+                                    hintStyle: TextStyle(
+                                        fontSize: 14.sp, color: subtitleColor),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
-                            child: AppText(
-                              text: "Address",
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: blackColor,
-                              fontSize: 14,
-                            ),
-                          ),
+                          /*  Padding(
+                              padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
+                              child: AppText(
+                                text: "Address",
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: blackColor,
+                                fontSize: 14,
+                              ),
+                            ), */
                           Padding(
                             padding: EdgeInsets.only(top: 20.sp),
                             child: TextFieldWidget(
@@ -403,10 +492,27 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(top: 10.sp),
+                            padding: EdgeInsets.only(top: 8.sp),
                             child: TextFieldWidget(
                               hint: "Locality / Town",
                               controller: shipController.localityController,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
+                            child: AppText(
+                              text: "Save As".toUpperCase(),
+                              fontFamily: "Franklin Gothic Semibold",
+                              fontWeight: FontWeight.w600,
+                              color: blackColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 8.sp),
+                            child: TextFieldWidget(
+                              hint: "HOME/FLAT/HOUSE/OFFICE",
+                              controller: shipController.addressTypeController,
                             ),
                           ),
                           Padding(
@@ -440,7 +546,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     color: nameText,
                                     size: 30.sp,
                                   ),
-                                  fillColor: whiteTextColor,
+                                  fillColor: whiteColor,
                                   focusedBorder: const OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: borderColor)),
@@ -454,7 +560,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   ),
                                   counterText: "",
                                   hintText: "Select City",
-                                  hintStyle: TextStyle(fontSize: 14.sp),
+                                  hintStyle: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      color: subtitleColor),
                                 ),
                               ),
                             ),
@@ -996,48 +1105,77 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                       ),
               )),
             ),
-            Obx(() => Container(
-                  color: whiteBorderColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.sp),
-                        child: getSingleButton(
-                            label: widget.addressId == 0
-                                ? "Save and Continue"
-                                : "Update",
-                            controller: shipController,
-                            textColor: whiteBorderColor,
-                            backgroundColor: colorPrimary,
-                            onPressed: () async {
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              if (widget.addressId != 0) {
-                                if (shipController.checkvalidation()) {
-                                  shipController.callUpdateAddress(
-                                      widget.addressId,
-                                      widget.latitude,
-                                      widget.longitude,
-                                      1);
+            DoubleButtonNew(
+              firstText: "BACK",
+              controller: shipController,
+              secondText: widget.addressId == 0 ? "SAVE" : "UPDATE",
+              onPressedFirst: () {
+                Get.back();
+              },
+              onPressedSecond: () async {
+                FocusScope.of(context).requestFocus(FocusNode());
+                if (widget.addressId != 0) {
+                  if (shipController.checkvalidation()) {
+                    shipController.callUpdateAddress(
+                        widget.addressId, widget.latitude, widget.longitude, 1);
+                  }
+                } else {
+                  if (shipController.checkvalidation()) {
+                    shipController.callSaveAddress(
+                        widget.latitude, widget.longitude);
+                  }
+                }
+                await analytics.logEvent(
+                  name: 'save_address_btnClick',
+                  parameters: <String, Object>{
+                    'page_name': 'save_address_btnClick',
+                  },
+                );
+              },
+            ),
+            /*    Obx(() => Container(
+                    color: whiteBorderColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.sp),
+                          child: getSingleButton(
+                              label: widget.addressId == 0
+                                  ? "Save and Continue"
+                                  : "Update",
+                              controller: shipController,
+                              textColor: whiteBorderColor,
+                              backgroundColor: colorPrimary,
+                              onPressed: () async {
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                if (widget.addressId != 0) {
+                                  if (shipController.checkvalidation()) {
+                                    shipController.callUpdateAddress(
+                                        widget.addressId,
+                                        widget.latitude,
+                                        widget.longitude,
+                                        1);
+                                  }
+                                } else {
+                                  if (shipController.checkvalidation()) {
+                                    shipController.callSaveAddress(
+                                        widget.latitude, widget.longitude);
+                                  }
                                 }
-                              } else {
-                                if (shipController.checkvalidation()) {
-                                  shipController.callSaveAddress(
-                                      widget.latitude, widget.longitude);
-                                }
-                              }
-                              await analytics.logEvent(
-                                name: 'save_address_btnClick',
-                                parameters: <String, Object>{
-                                  'page_name': 'save_address_btnClick',
-                                },
-                              );
-                            },
-                            borderColor: colorPrimary),
-                      ),
-                    ],
-                  ),
-                ))
+                                await analytics.logEvent(
+                                  name: 'save_address_btnClick',
+                                  parameters: <String, Object>{
+                                    'page_name': 'save_address_btnClick',
+                                  },
+                                );
+                              },
+                              borderColor: colorPrimary),
+                        ),
+                      ],
+                    ),
+                  ))
+            */
           ],
         ),
       ),

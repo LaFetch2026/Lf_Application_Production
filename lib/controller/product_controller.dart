@@ -43,7 +43,7 @@ class ProductController extends BaseController {
   dynamic selectedProductColor = {}.obs;
   dynamic brandDetails = "".obs;
   dynamic compositionDetails = "".obs;
-  dynamic returnPolicyDetails = "".obs;
+  RxString returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List tagsList = [].obs;
   List handPickedProductList = [].obs;
@@ -1983,7 +1983,7 @@ class ProductController extends BaseController {
             compositionDetails = responseData["composition"];
           }
           if (responseData["return_policy"] != null) {
-            returnPolicyDetails = responseData["return_policy"];
+            returnPolicyDetails.value = responseData["return_policy"];
           }
           if (responseData["express_delivery"] == true) {
             isExpressDelivery.value = true;

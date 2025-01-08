@@ -31,6 +31,7 @@ class WishlistController extends BaseController {
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   RxInt page = 1.obs;
+  RxString boardError = "".obs;
   ScrollController wishlistListController = ScrollController();
   RxBool pLoadMore = false.obs;
   RxBool pHasnextpage = true.obs;
@@ -64,9 +65,10 @@ class WishlistController extends BaseController {
 
   bool checkIdNamevalidation(String name) {
     if (name.isEmpty) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter Board Name",
-      );
+      ); */
+      boardError.value = "Enter Board Name";
       return false;
     }
     return true;
@@ -307,7 +309,8 @@ class WishlistController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 201) {
         print(responseData);
-        getSnackBar("Board Created");
+        // getSnackBar("Board Created");
+        boardError.value = "";
         Get.off(
           () => CreateBoardScreen(
             btnText: "Add",
@@ -345,7 +348,8 @@ class WishlistController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        getSnackBar("Board Updated");
+        boardError.value = "";
+        // getSnackBar("Board Updated");
         Get.close(2);
       } else if (response.statusCode == 400) {
         print(response.body);
@@ -501,9 +505,9 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["wishlisted"]) {
           Get.close(1);
-          getSnackBar("product added to the wishlist");
+          // getSnackBar("product added to the wishlist");
         } else {
-          getSnackBar("product removed from the wishlist");
+          //  getSnackBar("product removed from the wishlist");
         }
         getWishlistProductDetails(responseData["id"]);
       } else if (response.statusCode == 500) {
@@ -537,7 +541,7 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         addList.clear();
         getWishlistData();
-        getSnackBar("Item added");
+        // getSnackBar("Item added");
         if (type == "add") {
           Get.close(1);
         } else {
@@ -585,7 +589,7 @@ class WishlistController extends BaseController {
       }
       if (response.statusCode == 200) {
         deleteidList.clear();
-        getSnackBar("Product deleted");
+        // getSnackBar("Product deleted");
         Get.close(3);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -629,7 +633,7 @@ class WishlistController extends BaseController {
       }
       if (response.statusCode == 200) {
         deleteId.clear();
-        getSnackBar("Product deleted");
+        // getSnackBar("Product deleted");
         Get.close(1);
         getWishlistDetails(wishlistId, 1);
       } else if (response.statusCode == 500) {
@@ -664,13 +668,13 @@ class WishlistController extends BaseController {
           },
           body: json.encode(sendData));
       if (response.statusCode == 200) {
-        getSnackBar("Product moved to bag");
+        // getSnackBar("Product moved to bag");
         wishListProduct.clear();
         addList.clear();
         deleteidList.clear();
         getWishlistDetails(wishlistId, 1);
       } else if (response.statusCode == 201) {
-        getSnackBar("Product moved to bag");
+        //  getSnackBar("Product moved to bag");
         wishListProduct.clear();
         addList.clear();
         deleteidList.clear();
