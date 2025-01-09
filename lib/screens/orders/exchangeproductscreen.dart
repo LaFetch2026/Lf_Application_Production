@@ -210,53 +210,52 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                 groupValue: text1,
                                                 onChanged: (value) async {
                                                   text1 = value.toString();
-                                                  scaffoldKey.currentState
-                                                      ?.showBottomSheet(
-                                                          (context) =>
-                                                              BottomSize(
-                                                                sizeList: exchangeController
-                                                                        .productDetails[
-                                                                    "new_inventories"],
-                                                                controller:
-                                                                    exchangeController,
-                                                                onPressedCross:
-                                                                    () {
-                                                                  Get.back();
-                                                                  text1 = "";
-                                                                  setState(
-                                                                      () {});
-                                                                },
-                                                                onPressed:
-                                                                    (p0) {
-                                                                  text1 = "";
-                                                                  setState(
-                                                                      () {});
-                                                                  Get.back();
-                                                                  Get.to(ExchangeConfirmScreen(
-                                                                      sizeId: widget
-                                                                          .sizeId,
-                                                                      orderId:
-                                                                          widget
-                                                                              .orderId,
-                                                                      newInventoryId:
-                                                                          p0,
-                                                                      productId:
-                                                                          widget
-                                                                              .productId,
-                                                                      productName:
-                                                                          widget
-                                                                              .productName,
-                                                                      productimage:
-                                                                          widget
-                                                                              .productimage,
-                                                                      productDescription:
-                                                                          widget
-                                                                              .productDescription));
-                                                                },
-                                                                selectedSizeId:
-                                                                    widget
-                                                                        .sizeId,
-                                                              ));
+                                                  showModalBottomSheet(
+                                                    context: context,
+                                                    isScrollControlled: true,
+                                                    constraints: BoxConstraints(
+                                                      maxWidth: double.infinity,
+                                                      maxHeight: 230.sp,
+                                                    ),
+                                                    builder: (ctx) {
+                                                      return BottomSize(
+                                                        sizeList: exchangeController
+                                                                .productDetails[
+                                                            "new_inventories"],
+                                                        controller:
+                                                            exchangeController,
+                                                        onPressedCross: () {
+                                                          Get.back();
+                                                          text1 = "";
+                                                          setState(() {});
+                                                        },
+                                                        onPressed: (p0) {
+                                                          text1 = "";
+                                                          setState(() {});
+                                                          Get.back();
+                                                          Get.to(ExchangeConfirmScreen(
+                                                              sizeId:
+                                                                  widget.sizeId,
+                                                              orderId: widget
+                                                                  .orderId,
+                                                              newInventoryId:
+                                                                  p0,
+                                                              productId: widget
+                                                                  .productId,
+                                                              productName: widget
+                                                                  .productName,
+                                                              productimage: widget
+                                                                  .productimage,
+                                                              productDescription:
+                                                                  widget
+                                                                      .productDescription));
+                                                        },
+                                                        selectedSizeId:
+                                                            widget.sizeId,
+                                                      );
+                                                    },
+                                                  );
+
                                                   await analytics.logEvent(
                                                     name:
                                                         'exchange_product_updatesizeClick',
@@ -271,47 +270,51 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                             GestureDetector(
                                               onTap: () async {
                                                 text1 = "Ordered wrong size";
-                                                scaffoldKey.currentState
-                                                    ?.showBottomSheet(
-                                                        (context) => BottomSize(
-                                                              sizeList: exchangeController
-                                                                      .productDetails[
-                                                                  "new_inventories"],
-                                                              controller:
-                                                                  exchangeController,
-                                                              onPressedCross:
-                                                                  () {
-                                                                Get.back();
-                                                                text1 = "";
-                                                                setState(() {});
-                                                              },
-                                                              onPressed: (p0) {
-                                                                text1 = "";
-                                                                setState(() {});
-                                                                Get.back();
-                                                                Get.to(ExchangeConfirmScreen(
-                                                                    sizeId: widget
-                                                                        .sizeId,
-                                                                    orderId: widget
-                                                                        .orderId,
-                                                                    newInventoryId:
-                                                                        p0,
-                                                                    productId:
-                                                                        widget
-                                                                            .productId,
-                                                                    productName:
-                                                                        widget
-                                                                            .productName,
-                                                                    productimage:
-                                                                        widget
-                                                                            .productimage,
-                                                                    productDescription:
-                                                                        widget
-                                                                            .productDescription));
-                                                              },
-                                                              selectedSizeId:
-                                                                  widget.sizeId,
-                                                            ));
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  constraints: BoxConstraints(
+                                                    maxWidth: double.infinity,
+                                                    maxHeight: 230.sp,
+                                                  ),
+                                                  builder: (ctx) {
+                                                    return BottomSize(
+                                                      sizeList: exchangeController
+                                                              .productDetails[
+                                                          "new_inventories"],
+                                                      controller:
+                                                          exchangeController,
+                                                      onPressedCross: () {
+                                                        Get.back();
+                                                        text1 = "";
+                                                        setState(() {});
+                                                      },
+                                                      onPressed: (p0) {
+                                                        text1 = "";
+                                                        setState(() {});
+                                                        Get.back();
+                                                        Get.to(ExchangeConfirmScreen(
+                                                            sizeId:
+                                                                widget.sizeId,
+                                                            orderId:
+                                                                widget.orderId,
+                                                            newInventoryId: p0,
+                                                            productId: widget
+                                                                .productId,
+                                                            productName: widget
+                                                                .productName,
+                                                            productimage: widget
+                                                                .productimage,
+                                                            productDescription:
+                                                                widget
+                                                                    .productDescription));
+                                                      },
+                                                      selectedSizeId:
+                                                          widget.sizeId,
+                                                    );
+                                                  },
+                                                );
+
                                                 await analytics.logEvent(
                                                   name:
                                                       'exchange_product_updatesizeClick',

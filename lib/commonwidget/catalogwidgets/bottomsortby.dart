@@ -52,8 +52,8 @@ class _BottomSortByState extends State<BottomSortBy> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.sp), topRight: Radius.circular(16.sp)),
+        /*  borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.sp), topRight: Radius.circular(16.sp)), */
       ),
       child: Column(
         children: [

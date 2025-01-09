@@ -3732,15 +3732,21 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                scaffoldKey.currentState
-                                                    ?.showBottomSheet(
-                                                        (context) =>
-                                                            BottomCharges(
-                                                              text:
-                                                                  "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
-                                                              title:
-                                                                  "Convenience Fee",
-                                                            ));
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  constraints: BoxConstraints(
+                                                    maxWidth: double.infinity,
+                                                    maxHeight: 220.sp,
+                                                  ),
+                                                  builder: (ctx) {
+                                                    return BottomCharges(
+                                                      text:
+                                                          "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
+                                                      title: "Convenience Fee",
+                                                    );
+                                                  },
+                                                );
                                               },
                                               child: Image.asset(questionIcon,
                                                   height: 16.sp,
@@ -3788,15 +3794,21 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             ),
                                             GestureDetector(
                                               onTap: () {
-                                                scaffoldKey.currentState
-                                                    ?.showBottomSheet(
-                                                        (context) =>
-                                                            BottomCharges(
-                                                              text:
-                                                                  "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
-                                                              title:
-                                                                  "Tax & Charges",
-                                                            ));
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  constraints: BoxConstraints(
+                                                    maxWidth: double.infinity,
+                                                    maxHeight: 220.sp,
+                                                  ),
+                                                  builder: (ctx) {
+                                                    return BottomCharges(
+                                                      text:
+                                                          "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
+                                                      title: "Tax & Charges",
+                                                    );
+                                                  },
+                                                );
                                               },
                                               child: Image.asset(questionIcon,
                                                   height: 16.sp,

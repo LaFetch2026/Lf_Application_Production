@@ -85,20 +85,20 @@ class ShipAddressController extends BaseController {
       // phoneError.value = "Enter valid Phone Number";
       return false;
     }
-    if (pincodeController.text.toString().trim().isEmpty) {
+    /*  if (pincodeController.text.toString().trim().isEmpty) {
       getSnackBar(
         "Enter Pincode",
       );
       //phoneError.value = "Enter valid Phone Number";
       return false;
-    }
-    if (pincodeController.text.toString().trim().length < 6) {
+    } */
+    /*  if (pincodeController.text.toString().trim().length < 6) {
       getSnackBar(
         "The pincode must be 6 digit.",
       );
       //pincodeError.value = "The pincode must be 6 digit.";
       return false;
-    }
+    } */
     if (addressController.text.toString().trim().isEmpty) {
       getSnackBar("Enter Address");
       // addressError.value = "Enter Address";
@@ -113,13 +113,13 @@ class ShipAddressController extends BaseController {
       getSnackBar("Enter City");
       return false;
     } */
-    if (stateController.text.toString().trim().isEmpty) {
+    /*  if (stateController.text.toString().trim().isEmpty) {
       getSnackBar("Select City");
       //cityError.value = "Select City";
       return false;
-    }
-    if (type.value.isEmpty) {
-      getSnackBar("Select Address Type");
+    } */
+    if (addressTypeController.text.toString().trim().isEmpty) {
+      getSnackBar("Enter Address Type");
       // addressTypeError.value = "Select Address Type";
       return false;
     }
@@ -139,7 +139,7 @@ class ShipAddressController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic response;
-      if (pincodeController.text.length == 6) {
+      /*  if (pincodeController.text.length == 6) {
         response = await http.get(
             Uri.parse(
                 "${ApiConstants.baseUrl}/cities?zip=${pincodeController.text.toString().trim()}&q=${searchController.text.toString().trim()}"),
@@ -147,18 +147,18 @@ class ShipAddressController extends BaseController {
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
-      } else {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/cities?q=${searchController.text.toString().trim()}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      }
+      } else { */
+      response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/cities?q=${searchController.text.toString().trim()}"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      // }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (pincodeController.text.isNotEmpty) {
+        /*  if (pincodeController.text.isNotEmpty) {
           cityId.value = responseData["id"];
           stateController.text = responseData["name"];
           update();
@@ -166,7 +166,7 @@ class ShipAddressController extends BaseController {
           if (responseData["data"] != null) {
             cityList = responseData["data"];
           }
-        }
+        } */
       } else if (response.statusCode == 400) {
         print(responseData);
         if (responseData["errors"] != null) {
@@ -197,12 +197,12 @@ class ShipAddressController extends BaseController {
       final Map<String, dynamic> sendData = {
         "name": nameController.text.toString().trim(),
         "phone": phoneController.text.toString().trim(),
-        "city_id": cityId.value,
-        "type": type.value,
+        "city": cityController.text.toString().trim(),
+        "type": addressTypeController.text.toString().trim(),
         "address": addressController.text.toString().trim(),
         "zip": pincodeController.text.toString().trim(),
+        "state": stateController.text.toString().trim(),
         "locality": localityController.text.toString().trim(),
-        "default_billing": defaultBilling.value,
         "default_shipping": defaultShipping.value,
         "latitude": lat,
         "longitude": lng
@@ -245,19 +245,24 @@ class ShipAddressController extends BaseController {
     hideLoading();
   }
 
-  callUpdateAddress(int id, double lat, double lng, int value) async {
+  callUpdateAddress(
+    int id,
+    double lat,
+    double lng,
+    int value,
+  ) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
         "name": nameController.text.toString().trim(),
         "phone": phoneController.text.toString().trim(),
-        "city_id": cityId.value,
-        "type": type.value,
+        "city": cityController.text.toString().trim(),
+        "type": addressTypeController.text.toString().trim(),
         "address": addressController.text.toString().trim(),
         "zip": pincodeController.text.toString().trim(),
+        "state": stateController.text.toString().trim(),
         "locality": localityController.text.toString().trim(),
-        "default_billing": defaultBilling.value,
         "default_shipping": defaultShipping.value,
         "latitude": lat,
         "longitude": lng
@@ -367,10 +372,13 @@ class ShipAddressController extends BaseController {
             pincodeController.text = responseData["zip"].toString();
             addressController.text = responseData["address"];
             localityController.text = responseData["locality"];
-            if (responseData["city"] != null) {
+            addressTypeController.text = responseData["type"];
+            stateController.text = responseData["state"];
+            cityController.text = responseData["city"];
+            /*  if (responseData["city"] != null) {
               stateController.text = responseData["city"]["name"];
               cityId.value = responseData["city"]["id"];
-            }
+            } */
             isCheck.value = responseData["default_shipping"];
             if (isCheck.value) {
               defaultShipping.value = 1;
@@ -379,13 +387,14 @@ class ShipAddressController extends BaseController {
               defaultShipping.value = 0;
               isCheck.value = false;
             }
-            if (responseData["type"] == "Work") {
+            /*  if (responseData["type"] == "Work") {
               type.value = "Work";
               current.value = 1;
             } else {
               type.value = "Home";
               current.value = 0;
-            }
+            } */
+
             if (responseData["default_billing"]) {
               onButton.value = true;
               defaultBilling.value = 1;

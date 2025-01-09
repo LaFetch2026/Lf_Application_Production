@@ -44,9 +44,9 @@ class BottomSizeState extends State<BottomSize> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: whiteTextColor,
-          borderRadius: BorderRadius.only(
+          /*   borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0.sp),
-              topRight: Radius.circular(16.0.sp)),
+              topRight: Radius.circular(16.0.sp)), */
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

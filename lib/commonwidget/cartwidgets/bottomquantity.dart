@@ -43,9 +43,9 @@ class BottomQuantityState extends State<BottomQuantity> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteTextColor,
-        borderRadius: BorderRadius.only(
+        /*   borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.0.sp),
-            topRight: Radius.circular(16.0.sp)),
+            topRight: Radius.circular(16.0.sp)), */
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),

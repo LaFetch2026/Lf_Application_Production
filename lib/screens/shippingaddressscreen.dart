@@ -18,12 +18,16 @@ class ShippingAddressScreen extends StatefulWidget {
   final int cartId;
   final String address;
   final String localityName;
+  final String stateName;
+  final String pincode;
   final double latitude;
   final double longitude;
   const ShippingAddressScreen({
     super.key,
     required this.addressId,
     required this.cartId,
+    required this.stateName,
+    required this.pincode,
     required this.address,
     required this.localityName,
     required this.latitude,
@@ -61,17 +65,24 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => shipController.getCitiesData());
     if (widget.addressId != 0) {
+      shipController.stateController.text = widget.stateName;
+      shipController.pincodeController.text = widget.pincode;
+      shipController.cityController.text = widget.localityName;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         shipController.getAddressDetails(widget.addressId, 1, widget.cartId);
       });
     } else {
+      shipController.stateController.text = widget.stateName;
+      shipController.pincodeController.text = widget.pincode;
+      shipController.cityController.text = widget.localityName;
       shipController.nameController.clear();
       shipController.phoneController.clear();
-      shipController.pincodeController.clear();
+      // shipController.pincodeController.clear();
       shipController.addressController.clear();
       shipController.localityController.clear();
-      shipController.stateController.clear();
+      // shipController.stateController.clear();
       shipController.searchController.clear();
+      shipController.addressTypeController.clear();
       shipController.defaultBilling.value = 0;
       shipController.defaultShipping.value = 0;
       shipController.type.value = "";
@@ -417,7 +428,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 onPressedLogin: () {},
                                 controller: shipController.phoneController),
                           ),
-                          Padding(
+                          /*    Padding(
                             padding: EdgeInsets.only(
                                 left: 16.sp, right: 16.sp, top: 10.sp),
                             child: SizedBox(
@@ -473,7 +484,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               ),
                             ),
                           ),
-                          /*  Padding(
+                         */ /*  Padding(
                               padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
                               child: AppText(
                                 text: "Address",
@@ -515,7 +526,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: shipController.addressTypeController,
                             ),
                           ),
-                          Padding(
+                          /*   Padding(
                             padding: EdgeInsets.only(
                                 left: 16.sp, top: 10.sp, right: 16.sp),
                             child: SizedBox(
@@ -568,7 +579,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               ),
                             ),
                           ),
-                          Obx(
+                          */
+                          /*  Obx(
                             () => shipController.showList.value
                                 ? Padding(
                                     padding: EdgeInsets.only(
@@ -874,7 +886,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     height: 0,
                                   ),
                           ),
-                          Padding(
+                          */
+                          /*   Padding(
                             padding: EdgeInsets.only(
                                 left: 16.sp, top: 40.sp, right: 16.sp),
                             child: Row(
@@ -935,7 +948,8 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               fontSize: 14,
                             ),
                           ),
-                          Padding(
+                         */
+                          /*    Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 16.sp, vertical: 16.sp),
                             child: SizedBox(
@@ -1019,9 +1033,10 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   }),
                             ),
                           ),
+                          */
                           Obx(() => Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 16.sp, vertical: 10.sp),
+                                    horizontal: 16.sp, vertical: 20.sp),
                                 child: Row(
                                   children: [
                                     Container(
@@ -1117,12 +1132,18 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 if (widget.addressId != 0) {
                   if (shipController.checkvalidation()) {
                     shipController.callUpdateAddress(
-                        widget.addressId, widget.latitude, widget.longitude, 1);
+                      widget.addressId,
+                      widget.latitude,
+                      widget.longitude,
+                      1,
+                    );
                   }
                 } else {
                   if (shipController.checkvalidation()) {
                     shipController.callSaveAddress(
-                        widget.latitude, widget.longitude);
+                      widget.latitude,
+                      widget.longitude,
+                    );
                   }
                 }
                 await analytics.logEvent(

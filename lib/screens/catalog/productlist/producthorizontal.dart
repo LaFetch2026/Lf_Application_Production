@@ -622,72 +622,90 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                           firstBorderColor: deepGreytextColor,
                           secondBorderColor: deepGreytextColor,
                           onPressedFirst: () {
-                            scaffoldKey.currentState
-                                ?.showBottomSheet((context) => BottomSortBy(
-                                      onPressedButton: (p0) {
-                                        productController.sortBy.value = p0;
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                0,
-                                                "",
-                                                [],
-                                                p0,
-                                                widget.genderType,
-                                                productController
-                                                    .filterEnable.value,
-                                                widget.catalogId,
-                                                false,
-                                                "catalog");
-                                      },
-                                    ));
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                maxHeight: 350.sp,
+                              ),
+                              builder: (ctx) {
+                                return BottomSortBy(
+                                  onPressedButton: (p0) {
+                                    productController.sortBy.value = p0;
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        0,
+                                        "",
+                                        [],
+                                        p0,
+                                        widget.genderType,
+                                        productController.filterEnable.value,
+                                        widget.catalogId,
+                                        false,
+                                        "catalog");
+                                  },
+                                );
+                              },
+                            );
                           },
                           onPressedSecond: () {
-                            Get.to(BottomFilters(
-                              btnclearAll: () async {
-                                productController.brand_ids.clear();
-                                productController.color_ids.clear();
-                                productController.size_ids.clear();
-                                productController.sortBy.value = "";
-                                productController.filterEnable.value = false;
-                                // Get.back();
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.remove("brandList");
-                                prefs.remove("colorList");
-                                prefs.remove("sizeList");
-                                prefs.remove("upper");
-                                prefs.remove("lower");
-                                prefs.remove("sortby");
-                                productController.getProductByCategoryData(
-                                    widget.categoryId,
-                                    0,
-                                    "",
-                                    [],
-                                    productController.sortBy.value,
-                                    widget.genderType,
-                                    productController.filterEnable.value,
-                                    widget.catalogId,
-                                    false,
-                                    "catalog");
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                maxHeight: 500.sp,
+                              ),
+                              builder: (ctx) {
+                                return BottomFilters(
+                                  btnclearAll: () async {
+                                    productController.brand_ids.clear();
+                                    productController.color_ids.clear();
+                                    productController.size_ids.clear();
+                                    productController.sortBy.value = "";
+                                    productController.filterEnable.value =
+                                        false;
+                                    // Get.back();
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.remove("brandList");
+                                    prefs.remove("colorList");
+                                    prefs.remove("sizeList");
+                                    prefs.remove("upper");
+                                    prefs.remove("lower");
+                                    prefs.remove("sortby");
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        0,
+                                        "",
+                                        [],
+                                        productController.sortBy.value,
+                                        widget.genderType,
+                                        productController.filterEnable.value,
+                                        widget.catalogId,
+                                        false,
+                                        "catalog");
+                                  },
+                                  onClick: (p0, p1) {
+                                    productController.filterEnable.value = true;
+                                    productController.lowPrice.value = p0;
+                                    productController.highPrice.value = p1;
+                                    productController.getProductByCategoryData(
+                                        widget.categoryId,
+                                        0,
+                                        "",
+                                        [],
+                                        productController.sortBy.value,
+                                        widget.genderType,
+                                        productController.filterEnable.value,
+                                        widget.catalogId,
+                                        true,
+                                        "catalog");
+                                  },
+                                );
                               },
-                              onClick: (p0, p1) {
-                                productController.filterEnable.value = true;
-                                productController.lowPrice.value = p0;
-                                productController.highPrice.value = p1;
-                                productController.getProductByCategoryData(
-                                    widget.categoryId,
-                                    0,
-                                    "",
-                                    [],
-                                    productController.sortBy.value,
-                                    widget.genderType,
-                                    productController.filterEnable.value,
-                                    widget.catalogId,
-                                    true,
-                                    "catalog");
-                              },
-                            ));
+                            );
                           },
                         ),
                       ),

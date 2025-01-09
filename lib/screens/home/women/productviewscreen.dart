@@ -618,15 +618,34 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             ),
                           ),
                         )
-                      : SizedBox(
-                          height: MediaQuery.of(context).size.height - 200.sp,
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: Text("No Product Found",
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: Colors.black,
-                                    fontFamily: "Franklin Gothic Regular")),
+                      : Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 0.sp),
+                                child: Center(
+                                  child: Image.asset(errorImage,
+                                      height: 200.sp,
+                                      width: 220.sp,
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 20.sp),
+                                child: getSingleButton(
+                                    width: double.infinity,
+                                    label: "Back to home".toUpperCase(),
+                                    textColor: whiteColor,
+                                    fontSize: 13,
+                                    backgroundColor: homeAppBarColor,
+                                    onPressed: () {
+                                      Get.off(BottomNavScreen());
+                                    },
+                                    borderColor: colorPrimary),
+                              )
+                            ],
                           ),
                         ),
             ),
@@ -637,18 +656,26 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      scaffoldKey.currentState
-                          ?.showBottomSheet((context) => BottomSortBy(
-                                onPressedButton: (p0) {
-                                  productController.productSortBy.value = p0;
-                                  productController.getHandPickedProduct(
-                                      productController.productSortBy.value,
-                                      productController
-                                          .filterProductEnable.value,
-                                      false,
-                                      productController.tagId.value);
-                                },
-                              ));
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                          maxHeight: 350.sp,
+                        ),
+                        builder: (ctx) {
+                          return BottomSortBy(
+                            onPressedButton: (p0) {
+                              productController.productSortBy.value = p0;
+                              productController.getHandPickedProduct(
+                                  productController.productSortBy.value,
+                                  productController.filterProductEnable.value,
+                                  false,
+                                  productController.tagId.value);
+                            },
+                          );
+                        },
+                      );
                     },
                     child: Container(
                       child: Padding(
@@ -690,24 +717,32 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      scaffoldKey.currentState
-                          ?.showBottomSheet((context) => BottomCategory(
-                                onPressedButton: (p0) {
-                                  if (p0 == "Women") {
-                                    productController.categoryFilter.value = 3;
-                                  } else if (p0 == "Men") {
-                                    productController.categoryFilter.value = 2;
-                                  } else {
-                                    productController.categoryFilter.value = 1;
-                                  }
-                                  productController.getHandPickedProduct(
-                                      productController.productSortBy.value,
-                                      productController
-                                          .filterProductEnable.value,
-                                      false,
-                                      productController.tagId.value);
-                                },
-                              ));
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                          maxHeight: 260.sp,
+                        ),
+                        builder: (ctx) {
+                          return BottomCategory(
+                            onPressedButton: (p0) {
+                              if (p0 == "Women") {
+                                productController.categoryFilter.value = 3;
+                              } else if (p0 == "Men") {
+                                productController.categoryFilter.value = 2;
+                              } else {
+                                productController.categoryFilter.value = 1;
+                              }
+                              productController.getHandPickedProduct(
+                                  productController.productSortBy.value,
+                                  productController.filterProductEnable.value,
+                                  false,
+                                  productController.tagId.value);
+                            },
+                          );
+                        },
+                      );
                     },
                     child: Container(
                       child: Padding(
@@ -749,38 +784,51 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Get.to(BottomFilters(
-                        btnclearAll: () async {
-                          productController.brand_ids.clear();
-                          productController.color_ids.clear();
-                          productController.size_ids.clear();
-                          productController.productSortBy.value = "";
-                          productController.filterProductEnable.value = false;
-                          final prefs = await SharedPreferences.getInstance();
-                          prefs.remove("brandList");
-                          prefs.remove("colorList");
-                          prefs.remove("sizeList");
-                          prefs.remove("upper");
-                          prefs.remove("lower");
-                          prefs.remove("sortby");
-                          prefs.remove("category");
-                          productController.getHandPickedProduct(
-                              productController.productSortBy.value,
-                              productController.filterProductEnable.value,
-                              false,
-                              productController.tagId.value);
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                          maxHeight: 500.sp,
+                        ),
+                        builder: (ctx) {
+                          return BottomFilters(
+                            btnclearAll: () async {
+                              productController.brand_ids.clear();
+                              productController.color_ids.clear();
+                              productController.size_ids.clear();
+                              productController.productSortBy.value = "";
+                              productController.filterProductEnable.value =
+                                  false;
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.remove("brandList");
+                              prefs.remove("colorList");
+                              prefs.remove("sizeList");
+                              prefs.remove("upper");
+                              prefs.remove("lower");
+                              prefs.remove("sortby");
+                              prefs.remove("category");
+                              productController.getHandPickedProduct(
+                                  productController.productSortBy.value,
+                                  productController.filterProductEnable.value,
+                                  false,
+                                  productController.tagId.value);
+                            },
+                            onClick: (p0, p1) {
+                              productController.filterProductEnable.value =
+                                  true;
+                              productController.lowPrice.value = p0;
+                              productController.highPrice.value = p1;
+                              productController.getHandPickedProduct(
+                                  productController.productSortBy.value,
+                                  productController.filterProductEnable.value,
+                                  true,
+                                  productController.tagId.value);
+                            },
+                          );
                         },
-                        onClick: (p0, p1) {
-                          productController.filterProductEnable.value = true;
-                          productController.lowPrice.value = p0;
-                          productController.highPrice.value = p1;
-                          productController.getHandPickedProduct(
-                              productController.productSortBy.value,
-                              productController.filterProductEnable.value,
-                              true,
-                              productController.tagId.value);
-                        },
-                      ));
+                      );
                     },
                     child: Container(
                       child: Padding(

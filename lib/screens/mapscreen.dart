@@ -41,6 +41,8 @@ class MapScreenState extends State<MapScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String draggedAddress = "";
   String localityName = "";
+  String stateName = "";
+  String pincode = "";
   late String mapStyle;
   bool showAddress = false;
   Placemark? address;
@@ -572,14 +574,25 @@ class MapScreenState extends State<MapScreen> {
               Expanded(child: SizedBox(width: 0.sp)),
               GestureDetector(
                 onTap: () async {
-                  scaffoldKey.currentState?.showBottomSheet((context) =>
-                      ShippingAddressScreen(
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    constraints: BoxConstraints(
+                      maxWidth: double.infinity,
+                      maxHeight: MediaQuery.of(context).size.height / 2 + 80.sp,
+                    ),
+                    builder: (ctx) {
+                      return ShippingAddressScreen(
                           addressId: widget.addressId,
                           cartId: widget.cartId,
+                          stateName: stateName,
+                          pincode: pincode,
                           address: draggedAddress,
                           localityName: localityName,
                           latitude: shipController.lat.value,
-                          longitude: shipController.lng.value));
+                          longitude: shipController.lng.value);
+                    },
+                  );
                   await analytics.logEvent(
                     name: 'shipAddress_page',
                     parameters: <String, Object>{
@@ -639,14 +652,25 @@ class MapScreenState extends State<MapScreen> {
           onTap: () async {
             FocusScope.of(context).requestFocus(FocusNode());
             if (shipController.checkLocationValidation()) {
-              scaffoldKey.currentState?.showBottomSheet((context) =>
-                  ShippingAddressScreen(
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                constraints: BoxConstraints(
+                  maxWidth: double.infinity,
+                  maxHeight: MediaQuery.of(context).size.height / 2 + 80.sp,
+                ),
+                builder: (ctx) {
+                  return ShippingAddressScreen(
                       addressId: widget.addressId,
                       cartId: widget.cartId,
+                      pincode: pincode,
+                      stateName: stateName,
                       address: draggedAddress,
                       localityName: localityName,
                       latitude: shipController.lat.value,
-                      longitude: shipController.lng.value));
+                      longitude: shipController.lng.value);
+                },
+              );
               await analytics.logEvent(
                 name: 'shipAddress_page',
                 parameters: <String, Object>{
@@ -716,11 +740,13 @@ class MapScreenState extends State<MapScreen> {
         await placemarkFromCoordinates(position.latitude, position.longitude);
     address = placeMarks![0];
     String addressString =
-        "${address!.street},${address!.locality},${address!.administrativeArea}, ${address!.country}";
+        "${address!.street},${address!.locality},${address!.administrativeArea}, ${address!.postalCode}";
     setState(() {
       showAddress = false;
       draggedAddress = addressString;
       localityName = "${address!.locality}";
+      pincode = "${address!.postalCode}";
+      stateName = "${address!.administrativeArea}";
     });
   }
 

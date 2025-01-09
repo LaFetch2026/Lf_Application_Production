@@ -312,7 +312,7 @@ class ProfileController extends BaseController {
         },
       );
       if (response.statusCode == 200) {
-        getSnackBar("Address removed");
+        // getSnackBar("Address removed");
         getAddressData();
       } else if (response.statusCode == 400) {
         print(response.body);

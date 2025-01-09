@@ -11,9 +11,13 @@ import '../../utils/constants.dart';
 class BottomFilters extends StatefulWidget {
   final Function(int, int) onClick;
   final Function btnclearAll;
+  final int containerHeight;
+  final int listHeight;
   const BottomFilters({
     required this.onClick,
     required this.btnclearAll,
+    this.containerHeight = 396,
+    this.listHeight = 350,
     Key? key,
   }) : super(key: key);
 
@@ -24,21 +28,24 @@ class BottomFilters extends StatefulWidget {
 class BottomFiltersState extends State<BottomFilters> {
   final productController = Get.put(ProductController());
   List<String> brands = [
-    "Price Range",
     "Brand",
-    "Color",
+    "Price Range",
     "Size",
+    "Color",
     /*"Material",
     "Style",
     "Ocassion",
-    "Feature",*/
+    "Features",*/
   ];
   List<bool> selected = List.generate(50, (i) => false);
   List<bool> brandSelected = List.generate(50, (i) => false);
   List<bool> colorSelected = List.generate(50, (i) => false);
   List<bool> sizeSelected = List.generate(50, (i) => false);
-  String type = "";
+  String type = "brands";
   bool isPriceLoading = true;
+  bool brandSelectAll = false;
+  bool colorSelectAll = false;
+  bool sizeSelectAll = false;
   String lowerValue = "500";
   String UpperValue = "500000";
   RangeValues values = RangeValues(500, 500000);
@@ -47,11 +54,13 @@ class BottomFiltersState extends State<BottomFilters> {
   void initState() {
     getPrefrenceValue();
     selected[0] = !selected[0];
-    productController.isPrice.value = true;
+    productController.isPrice.value = false;
     /*  productController.size_ids.clear();
     productController.color_ids.clear();
     productController.brand_ids.clear(); */
     productController.filterList.clear();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.getFilterData("brands"));
     setState(() {});
     super.initState();
   }
@@ -63,6 +72,10 @@ class BottomFiltersState extends State<BottomFilters> {
       brandSelected =
           // ignore: sdk_version_since
           prefs.getStringList('brandList')!.map((i) => bool.parse(i)).toList();
+      brandSelectAll =
+          brandSelected.length == productController.brand_ids.length
+              ? true
+              : false;
     }
     if (prefs.getStringList('colorList') != null) {
       colorSelected.clear();
@@ -94,8 +107,9 @@ class BottomFiltersState extends State<BottomFilters> {
     RangeLabels labels =
         RangeLabels(values.start.toString(), values.end.toString());
     return Container(
-      height: MediaQuery.of(context).size.height,
-      width: double.infinity,
+      height: 500.sp,
+      constraints: BoxConstraints.expand(),
+      width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         color: whiteColor,
       ),
@@ -105,69 +119,75 @@ class BottomFiltersState extends State<BottomFilters> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding:
-                      EdgeInsets.only(left: 16.sp, right: 16.sp, top: 40.sp),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
-                        child: Text(
-                          "Filters",
-                          style: TextStyle(
-                            color: blackColor,
-                            fontSize: 14.sp,
-                            decoration: TextDecoration.none,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w500,
+                Container(
+                  color: Color(0xFFF9FAFB),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
+                          child: Text(
+                            "Filters".toUpperCase(),
+                            style: TextStyle(
+                              color: blackColor,
+                              fontSize: 16.sp,
+                              decoration: TextDecoration.none,
+                              fontFamily: "Franklin Gothic Semibold",
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                      const Expanded(
-                        child: SizedBox(
-                          width: 0,
+                        const Expanded(
+                          child: SizedBox(
+                            width: 0,
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          brandSelected = List.generate(50, (i) => false);
-                          sizeSelected = List.generate(50, (i) => false);
-                          colorSelected = List.generate(50, (i) => false);
-                          lowerValue = "500";
-                          UpperValue = "500000";
-                          values = RangeValues(500, 500000);
-                          setState(() {});
-                          widget.btnclearAll.call();
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                right: 20.sp,
-                                left: 20.sp,
-                                top: 15.sp,
-                                bottom: 15.sp),
-                            child: Text(
-                              "Clear All",
-                              style: TextStyle(
-                                color: greyTextColor,
-                                decoration: TextDecoration.none,
-                                fontSize: 12.sp,
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
+                        GestureDetector(
+                          onTap: () {
+                            brandSelected = List.generate(50, (i) => false);
+                            sizeSelected = List.generate(50, (i) => false);
+                            colorSelected = List.generate(50, (i) => false);
+                            brandSelectAll = false;
+                            colorSelectAll = false;
+                            sizeSelectAll = false;
+                            lowerValue = "500";
+                            UpperValue = "500000";
+                            values = RangeValues(500, 500000);
+                            setState(() {});
+                            widget.btnclearAll.call();
+                          },
+                          child: Container(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  right: 20.sp,
+                                  left: 20.sp,
+                                  top: 15.sp,
+                                  bottom: 15.sp),
+                              child: Text(
+                                "Clear All".toUpperCase(),
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: appBarColor,
+                                  fontSize: 10.sp,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Row(
                   children: [
                     Container(
-                      color: backWhite,
+                      color: Color(0xFFF3F4F6),
                       width: 150.sp,
-                      height: MediaQuery.of(context).size.height - 150.sp,
+                      height: widget.containerHeight.sp,
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 8.sp),
                         child: SizedBox(
@@ -187,19 +207,31 @@ class BottomFiltersState extends State<BottomFilters> {
                                           selected =
                                               List.generate(50, (i) => false);
                                           selected[index] = !selected[index];
-                                          if (index == 1) {
+                                          if (index == 0) {
                                             productController
                                                 .getFilterData("brands");
                                             type = "brands";
                                             productController.isPrice.value =
                                                 false;
-                                          } else if (index == 2) {
+                                            brandSelectAll =
+                                                brandSelected.length ==
+                                                        productController
+                                                            .brand_ids.length
+                                                    ? true
+                                                    : false;
+                                          } else if (index == 3) {
                                             productController
                                                 .getFilterData("color");
                                             type = "color";
                                             productController.isPrice.value =
                                                 false;
-                                          } else if (index == 0) {
+                                            colorSelectAll =
+                                                colorSelected.length ==
+                                                        productController
+                                                            .color_ids.length
+                                                    ? true
+                                                    : false;
+                                          } else if (index == 1) {
                                             productController.filterList
                                                 .clear();
                                             type = "";
@@ -211,14 +243,21 @@ class BottomFiltersState extends State<BottomFilters> {
                                             type = "size";
                                             productController.isPrice.value =
                                                 false;
+                                            sizeSelectAll =
+                                                sizeSelected.length ==
+                                                        productController
+                                                            .size_ids.length
+                                                    ? true
+                                                    : false;
                                           }
                                           setState(() {});
                                         },
                                         child: Container(
-                                          width: double.infinity,
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           color: selected[index]
-                                              ? btnTextColor
-                                              : backWhite,
+                                              ? whiteColor
+                                              : Color(0xFFF3F4F6),
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 10.sp),
@@ -231,14 +270,15 @@ class BottomFiltersState extends State<BottomFilters> {
                                                 brands[index],
                                                 style: TextStyle(
                                                   color: selected[index]
-                                                      ? whiteBorderColor
-                                                      : btnTextColor,
+                                                      ? homeAppBarColor
+                                                      : appBarColor,
                                                   decoration:
                                                       TextDecoration.none,
                                                   fontSize: 14.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
+                                                  fontFamily: selected[index]
+                                                      ? "Franklin Gothic Semibold"
+                                                      : "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                             ),
@@ -251,9 +291,9 @@ class BottomFiltersState extends State<BottomFilters> {
                       ),
                     ),
                     Container(
-                      color: whiteBorderColor,
+                      color: whiteColor,
                       width: MediaQuery.of(context).size.width - 150.sp,
-                      height: MediaQuery.of(context).size.height - 150.sp,
+                      height: widget.containerHeight.sp,
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.sp, vertical: 8.sp),
@@ -270,9 +310,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 10.sp),
                                       child: SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                172.sp,
+                                        height: widget.listHeight.sp,
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -300,6 +338,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                               child: SizedBox(
                                                 width: double.maxFinite,
                                                 child: Material(
+                                                  color: whiteColor,
                                                   child: RangeSlider(
                                                     values: values,
                                                     min: 500,
@@ -364,9 +403,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 10.sp),
                                       child: SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                190.sp,
+                                        height: widget.listHeight.sp,
                                         child: ListView.builder(
                                             physics: const ScrollPhysics(),
                                             itemCount: 8,
@@ -405,40 +442,346 @@ class BottomFiltersState extends State<BottomFilters> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                          /*  Text(
-                                            productController.filterList.isEmpty
-                                                ? ""
-                                                : "Select All",
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 11.sp,
-                                              decoration: TextDecoration.none,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ), */
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 10.sp),
-                                            child: SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height -
-                                                  190.sp,
-                                              child: ListView.builder(
-                                                  physics:
-                                                      const ScrollPhysics(),
-                                                  itemCount: productController
-                                                      .filterList.length,
-                                                  padding: EdgeInsets.zero,
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemBuilder: (ctx, index) {
-                                                    return Column(
-                                                      children: [
-                                                        GestureDetector(
-                                                            onTap: () {},
-                                                            child: Padding(
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 10.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      if (type == "brands") ...[
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      5),
+                                                          child: Material(
+                                                            child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              3),
+                                                                  border:
+                                                                      Border(
+                                                                    top: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    left: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    right: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    bottom: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                  ),
+                                                                ),
+                                                                width: 20,
+                                                                height: 20,
+                                                                child: Checkbox(
+                                                                  value:
+                                                                      brandSelectAll,
+                                                                  checkColor: brandSelectAll
+                                                                      ? whiteColor
+                                                                      : titleColor,
+                                                                  activeColor:
+                                                                      brandSelectAll
+                                                                          ? titleColor
+                                                                          : whiteColor,
+                                                                  side: const BorderSide(
+                                                                      color:
+                                                                          titleColor,
+                                                                      width: 0),
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      brandSelectAll =
+                                                                          !brandSelectAll;
+                                                                    });
+                                                                    if (brandSelectAll ==
+                                                                        true) {
+                                                                      for (int i =
+                                                                              0;
+                                                                          i < productController.filterList.length;
+                                                                          i++) {
+                                                                        productController
+                                                                            .brand_ids
+                                                                            .add(productController.filterList[i]["id"]);
+                                                                      }
+                                                                      brandSelected = List.generate(
+                                                                          productController
+                                                                              .filterList
+                                                                              .length,
+                                                                          (i) =>
+                                                                              true);
+                                                                    } else {
+                                                                      brandSelected = List.generate(
+                                                                          productController
+                                                                              .filterList
+                                                                              .length,
+                                                                          (i) =>
+                                                                              false);
+                                                                      productController
+                                                                          .brand_ids
+                                                                          .clear();
+                                                                    }
+                                                                    print(productController
+                                                                        .brand_ids);
+                                                                  },
+                                                                )),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                      if (type == "color") ...[
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      5.sp),
+                                                          child: Material(
+                                                            child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              3),
+                                                                  border:
+                                                                      Border(
+                                                                    top: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    left: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    right: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    bottom: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                  ),
+                                                                ),
+                                                                width: 20,
+                                                                height: 20,
+                                                                child: Checkbox(
+                                                                  value:
+                                                                      colorSelectAll,
+                                                                  checkColor: colorSelectAll
+                                                                      ? whiteColor
+                                                                      : titleColor,
+                                                                  activeColor:
+                                                                      colorSelectAll
+                                                                          ? titleColor
+                                                                          : whiteColor,
+                                                                  side: const BorderSide(
+                                                                      color:
+                                                                          btnTextColor,
+                                                                      width: 0),
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      colorSelectAll =
+                                                                          !colorSelectAll;
+                                                                    });
+                                                                    if (colorSelectAll ==
+                                                                        true) {
+                                                                      for (int i =
+                                                                              0;
+                                                                          i < productController.filterList.length;
+                                                                          i++) {
+                                                                        productController
+                                                                            .color_ids
+                                                                            .add(productController.filterList[i]["id"]);
+                                                                      }
+                                                                      colorSelected = List.generate(
+                                                                          productController
+                                                                              .filterList
+                                                                              .length,
+                                                                          (i) =>
+                                                                              true);
+                                                                    } else {
+                                                                      colorSelected = List.generate(
+                                                                          productController
+                                                                              .filterList
+                                                                              .length,
+                                                                          (i) =>
+                                                                              false);
+                                                                      productController
+                                                                          .color_ids
+                                                                          .clear();
+                                                                    }
+                                                                    print(productController
+                                                                        .color_ids);
+                                                                  },
+                                                                )),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                      if (type == "size") ...[
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      5.sp),
+                                                          child: Material(
+                                                            child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              3),
+                                                                  border:
+                                                                      Border(
+                                                                    top: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    left: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    right: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                    bottom: BorderSide(
+                                                                        width: 2.0
+                                                                            .sp,
+                                                                        color:
+                                                                            titleColor),
+                                                                  ),
+                                                                ),
+                                                                width: 20,
+                                                                height: 20,
+                                                                child: Checkbox(
+                                                                  value:
+                                                                      sizeSelectAll,
+                                                                  checkColor: sizeSelectAll
+                                                                      ? whiteColor
+                                                                      : titleColor,
+                                                                  activeColor:
+                                                                      sizeSelectAll
+                                                                          ? titleColor
+                                                                          : whiteColor,
+                                                                  side: const BorderSide(
+                                                                      color:
+                                                                          btnTextColor,
+                                                                      width: 0),
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      sizeSelectAll =
+                                                                          !sizeSelectAll;
+                                                                    });
+                                                                    if (sizeSelectAll ==
+                                                                        true) {
+                                                                      sizeSelected = List.generate(
+                                                                          productController
+                                                                              .filterList
+                                                                              .length,
+                                                                          (i) =>
+                                                                              true);
+                                                                      for (int i =
+                                                                              0;
+                                                                          i < productController.filterList.length;
+                                                                          i++) {
+                                                                        productController
+                                                                            .size_ids
+                                                                            .add(productController.filterList[i]["id"]);
+                                                                      }
+                                                                    } else {
+                                                                      sizeSelected = List.generate(
+                                                                          productController
+                                                                              .filterList
+                                                                              .length,
+                                                                          (i) =>
+                                                                              false);
+                                                                      productController
+                                                                          .size_ids
+                                                                          .clear();
+                                                                    }
+                                                                    print(productController
+                                                                        .size_ids);
+                                                                  },
+                                                                )),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 2.sp),
+                                                        child: Text(
+                                                          "Select All",
+                                                          style: TextStyle(
+                                                            color: titleColor,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none,
+                                                            fontSize: 12.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 320.sp,
+                                                  child: ListView.builder(
+                                                      physics:
+                                                          const ScrollPhysics(),
+                                                      itemCount:
+                                                          productController
+                                                              .filterList
+                                                              .length,
+                                                      padding: EdgeInsets.zero,
+                                                      scrollDirection:
+                                                          Axis.vertical,
+                                                      itemBuilder:
+                                                          (ctx, index) {
+                                                        return Column(
+                                                          children: [
+                                                            Padding(
                                                               padding: EdgeInsets
                                                                   .symmetric(
                                                                       vertical:
@@ -455,21 +798,22 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                           Material(
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
+                                                                              color: whiteColor,
                                                                               borderRadius: BorderRadius.circular(3),
                                                                               border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                top: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                left: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                right: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: titleColor),
                                                                               ),
                                                                             ),
                                                                             width: 20,
                                                                             height: 20,
                                                                             child: Checkbox(
                                                                               value: brandSelected[index],
-                                                                              checkColor: btnTextColor,
-                                                                              activeColor: whiteBorderColor,
-                                                                              side: const BorderSide(color: btnTextColor, width: 0),
+                                                                              checkColor: brandSelected[index] ? whiteColor : titleColor,
+                                                                              activeColor: brandSelected[index] ? titleColor : whiteColor,
+                                                                              side: const BorderSide(color: titleColor, width: 0),
                                                                               onChanged: (value) {
                                                                                 setState(() {
                                                                                   brandSelected[index] = !brandSelected[index];
@@ -495,20 +839,21 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                           Material(
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
+                                                                              color: whiteColor,
                                                                               borderRadius: BorderRadius.circular(3),
                                                                               border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                top: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                left: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                right: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: titleColor),
                                                                               ),
                                                                             ),
                                                                             width: 20,
                                                                             height: 20,
                                                                             child: Checkbox(
                                                                               value: colorSelected[index],
-                                                                              checkColor: btnTextColor,
-                                                                              activeColor: whiteBorderColor,
+                                                                              checkColor: colorSelected[index] ? whiteColor : titleColor,
+                                                                              activeColor: colorSelected[index] ? titleColor : whiteColor,
                                                                               side: const BorderSide(color: btnTextColor, width: 0),
                                                                               onChanged: (value) {
                                                                                 setState(() {
@@ -535,20 +880,21 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                           Material(
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
+                                                                              color: whiteColor,
                                                                               borderRadius: BorderRadius.circular(3),
                                                                               border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                left: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                right: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: greyBorder),
+                                                                                top: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                left: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                right: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: titleColor),
                                                                               ),
                                                                             ),
                                                                             width: 20,
                                                                             height: 20,
                                                                             child: Checkbox(
                                                                               value: sizeSelected[index],
-                                                                              checkColor: btnTextColor,
-                                                                              activeColor: whiteBorderColor,
+                                                                              checkColor: sizeSelected[index] ? whiteColor : titleColor,
+                                                                              activeColor: sizeSelected[index] ? titleColor : whiteColor,
                                                                               side: const BorderSide(color: btnTextColor, width: 0),
                                                                               onChanged: (value) {
                                                                                 setState(() {
@@ -565,33 +911,38 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                       ),
                                                                     ),
                                                                   ],
-                                                                  Text(
-                                                                    productController
-                                                                            .filterList[index]
-                                                                        [
-                                                                        "name"],
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color:
-                                                                          textColor,
-                                                                      decoration:
-                                                                          TextDecoration
-                                                                              .none,
-                                                                      fontSize:
-                                                                          12.sp,
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: 2
+                                                                            .sp),
+                                                                    child: Text(
+                                                                      productController
+                                                                              .filterList[index]
+                                                                          [
+                                                                          "name"],
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color:
+                                                                            titleColor,
+                                                                        decoration:
+                                                                            TextDecoration.none,
+                                                                        fontSize:
+                                                                            12.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
-                                                            )),
-                                                      ],
-                                                    );
-                                                  }),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ]),
@@ -619,7 +970,7 @@ class BottomFiltersState extends State<BottomFilters> {
               prefs.setString("upper", UpperValue);
               widget.onClick.call(int.parse(lowerValue), int.parse(UpperValue));
             },
-          )
+          ),
         ],
       ),
     );

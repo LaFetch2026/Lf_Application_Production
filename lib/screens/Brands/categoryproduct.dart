@@ -742,15 +742,34 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             ),
                           ),
                         )
-                      : SizedBox(
-                          height: MediaQuery.of(context).size.height - 200.sp,
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: Text("No Product Found",
-                                style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: Colors.black,
-                                    fontFamily: "Franklin Gothic Regular")),
+                      : Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 0.sp),
+                                child: Center(
+                                  child: Image.asset(errorImage,
+                                      height: 200.sp,
+                                      width: 220.sp,
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 20.sp),
+                                child: getSingleButton(
+                                    width: double.infinity,
+                                    label: "Back to home".toUpperCase(),
+                                    textColor: whiteColor,
+                                    fontSize: 13,
+                                    backgroundColor: homeAppBarColor,
+                                    onPressed: () {
+                                      Get.off(BottomNavScreen());
+                                    },
+                                    borderColor: colorPrimary),
+                              )
+                            ],
                           ),
                         ),
             ),
@@ -761,35 +780,44 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      scaffoldKey.currentState
-                          ?.showBottomSheet((context) => BottomSortBy(
-                                onPressedButton: (p0) {
-                                  productController.sortBy.value = p0;
-                                  if (widget.categoryId != 0) {
-                                    productController.getProductByCategoryData(
-                                        widget.categoryId,
-                                        widget.brandId,
-                                        "",
-                                        [],
-                                        productController.sortBy.value,
-                                        productController
-                                            .categoryProductGender.value,
-                                        productController.filterEnable.value,
-                                        0,
-                                        false,
-                                        "");
-                                  } else {
-                                    productController.getTagsBannerData(
-                                        widget.tagIds,
-                                        widget.categoryList,
-                                        productController
-                                            .categoryProductGender.value,
-                                        productController.sortBy.value,
-                                        productController.filterEnable.value,
-                                        false);
-                                  }
-                                },
-                              ));
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                          maxHeight: 350.sp,
+                        ),
+                        builder: (ctx) {
+                          return BottomSortBy(
+                            onPressedButton: (p0) {
+                              productController.sortBy.value = p0;
+                              if (widget.categoryId != 0) {
+                                productController.getProductByCategoryData(
+                                    widget.categoryId,
+                                    widget.brandId,
+                                    "",
+                                    [],
+                                    productController.sortBy.value,
+                                    productController
+                                        .categoryProductGender.value,
+                                    productController.filterEnable.value,
+                                    0,
+                                    false,
+                                    "");
+                              } else {
+                                productController.getTagsBannerData(
+                                    widget.tagIds,
+                                    widget.categoryList,
+                                    productController
+                                        .categoryProductGender.value,
+                                    productController.sortBy.value,
+                                    productController.filterEnable.value,
+                                    false);
+                              }
+                            },
+                          );
+                        },
+                      );
                     },
                     child: Container(
                       child: Padding(
@@ -831,44 +859,53 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      scaffoldKey.currentState
-                          ?.showBottomSheet((context) => BottomCategory(
-                                onPressedButton: (p0) {
-                                  if (p0 == "Women") {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                          maxHeight: 260.sp,
+                        ),
+                        builder: (ctx) {
+                          return BottomCategory(
+                            onPressedButton: (p0) {
+                              if (p0 == "Women") {
+                                productController.categoryProductGender.value =
+                                    3;
+                              } else if (p0 == "Men") {
+                                productController.categoryProductGender.value =
+                                    2;
+                              } else {
+                                productController.categoryProductGender.value =
+                                    1;
+                              }
+                              if (widget.categoryId != 0) {
+                                productController.getProductByCategoryData(
+                                    widget.categoryId,
+                                    widget.brandId,
+                                    "",
+                                    [],
+                                    productController.sortBy.value,
                                     productController
-                                        .categoryProductGender.value = 3;
-                                  } else if (p0 == "Men") {
+                                        .categoryProductGender.value,
+                                    productController.filterEnable.value,
+                                    0,
+                                    false,
+                                    "");
+                              } else {
+                                productController.getTagsBannerData(
+                                    widget.tagIds,
+                                    widget.categoryList,
                                     productController
-                                        .categoryProductGender.value = 2;
-                                  } else {
-                                    productController
-                                        .categoryProductGender.value = 1;
-                                  }
-                                  if (widget.categoryId != 0) {
-                                    productController.getProductByCategoryData(
-                                        widget.categoryId,
-                                        widget.brandId,
-                                        "",
-                                        [],
-                                        productController.sortBy.value,
-                                        productController
-                                            .categoryProductGender.value,
-                                        productController.filterEnable.value,
-                                        0,
-                                        false,
-                                        "");
-                                  } else {
-                                    productController.getTagsBannerData(
-                                        widget.tagIds,
-                                        widget.categoryList,
-                                        productController
-                                            .categoryProductGender.value,
-                                        productController.sortBy.value,
-                                        productController.filterEnable.value,
-                                        false);
-                                  }
-                                },
-                              ));
+                                        .categoryProductGender.value,
+                                    productController.sortBy.value,
+                                    productController.filterEnable.value,
+                                    false);
+                              }
+                            },
+                          );
+                        },
+                      );
                     },
                     child: Container(
                       child: Padding(
@@ -910,70 +947,85 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Get.to(BottomFilters(
-                        btnclearAll: () async {
-                          productController.brand_ids.clear();
-                          productController.color_ids.clear();
-                          productController.size_ids.clear();
-                          productController.sortBy.value = "";
-                          productController.filterEnable.value = false;
-                          final prefs = await SharedPreferences.getInstance();
-                          prefs.remove("brandList");
-                          prefs.remove("colorList");
-                          prefs.remove("sizeList");
-                          prefs.remove("upper");
-                          prefs.remove("lower");
-                          prefs.remove("sortby");
-                          prefs.remove("category");
-                          if (widget.categoryId != 0) {
-                            productController.getProductByCategoryData(
-                                widget.categoryId,
-                                widget.brandId,
-                                "",
-                                [],
-                                productController.sortBy.value,
-                                productController.categoryProductGender.value,
-                                productController.filterEnable.value,
-                                0,
-                                false,
-                                "");
-                          } else {
-                            productController.getTagsBannerData(
-                                widget.tagIds,
-                                widget.categoryList,
-                                productController.categoryProductGender.value,
-                                productController.sortBy.value,
-                                productController.filterEnable.value,
-                                false);
-                          }
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        constraints: BoxConstraints(
+                          maxWidth: double.infinity,
+                          maxHeight: 500.sp,
+                        ),
+                        builder: (ctx) {
+                          return BottomFilters(
+                            btnclearAll: () async {
+                              productController.brand_ids.clear();
+                              productController.color_ids.clear();
+                              productController.size_ids.clear();
+                              productController.sortBy.value = "";
+                              productController.filterEnable.value = false;
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.remove("brandList");
+                              prefs.remove("colorList");
+                              prefs.remove("sizeList");
+                              prefs.remove("upper");
+                              prefs.remove("lower");
+                              prefs.remove("sortby");
+                              prefs.remove("category");
+                              if (widget.categoryId != 0) {
+                                productController.getProductByCategoryData(
+                                    widget.categoryId,
+                                    widget.brandId,
+                                    "",
+                                    [],
+                                    productController.sortBy.value,
+                                    productController
+                                        .categoryProductGender.value,
+                                    productController.filterEnable.value,
+                                    0,
+                                    false,
+                                    "");
+                              } else {
+                                productController.getTagsBannerData(
+                                    widget.tagIds,
+                                    widget.categoryList,
+                                    productController
+                                        .categoryProductGender.value,
+                                    productController.sortBy.value,
+                                    productController.filterEnable.value,
+                                    false);
+                              }
+                            },
+                            onClick: (p0, p1) {
+                              productController.filterEnable.value = true;
+                              productController.lowPrice.value = p0;
+                              productController.highPrice.value = p1;
+                              if (widget.categoryId != 0) {
+                                productController.getProductByCategoryData(
+                                    widget.categoryId,
+                                    widget.brandId,
+                                    "",
+                                    [],
+                                    productController.sortBy.value,
+                                    productController
+                                        .categoryProductGender.value,
+                                    productController.filterEnable.value,
+                                    0,
+                                    true,
+                                    "");
+                              } else {
+                                productController.getTagsBannerData(
+                                    widget.tagIds,
+                                    widget.categoryList,
+                                    productController
+                                        .categoryProductGender.value,
+                                    productController.sortBy.value,
+                                    productController.filterEnable.value,
+                                    true);
+                              }
+                            },
+                          );
                         },
-                        onClick: (p0, p1) {
-                          productController.filterEnable.value = true;
-                          productController.lowPrice.value = p0;
-                          productController.highPrice.value = p1;
-                          if (widget.categoryId != 0) {
-                            productController.getProductByCategoryData(
-                                widget.categoryId,
-                                widget.brandId,
-                                "",
-                                [],
-                                productController.sortBy.value,
-                                productController.categoryProductGender.value,
-                                productController.filterEnable.value,
-                                0,
-                                true,
-                                "");
-                          } else {
-                            productController.getTagsBannerData(
-                                widget.tagIds,
-                                widget.categoryList,
-                                productController.categoryProductGender.value,
-                                productController.sortBy.value,
-                                productController.filterEnable.value,
-                                true);
-                          }
-                        },
-                      ));
+                      );
                     },
                     child: Container(
                       child: Padding(
