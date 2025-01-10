@@ -3,15 +3,17 @@ import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/doublebutton_new.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
 import '../commonwidget/app_text.dart';
+import '../commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import '../commonwidget/loginwidgets/number_widget.dart';
 import '../commonwidget/text_field.dart';
 import '../utils/constants.dart';
+import 'bottomnavscreen.dart';
 
 class ShippingAddressScreen extends StatefulWidget {
   final int addressId;
@@ -172,11 +174,22 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
           shipController.showList.value = false;
         });
       },
-      child: Container(
-        color: whiteColor,
-        height: MediaQuery.of(context).size.height / 2 + 80.sp,
-        child: Column(
+      child: Scaffold(
+        backgroundColor: whiteColor,
+        body: Column(
           children: [
+            SaveAddressAppbar(
+              text: "Change Address",
+              onPressedWishlist: () {
+                Get.off(BottomNavScreen(
+                  index: 2,
+                ));
+              },
+            ),
+            Divider(
+              color: dividerColor,
+              height: 1.sp,
+            ),
             Expanded(
               child: SingleChildScrollView(
                   child: Obx(
@@ -305,7 +318,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               ],
                             ),
                            */
-                          Padding(
+                          /*     Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 16.sp, vertical: 12.sp),
                             child: Row(
@@ -313,7 +326,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 Expanded(
                                   flex: 1,
                                   child: Text(
-                                    "SORT BY",
+                                    "CHANGE ADDRESS",
                                     style: TextStyle(
                                       color: blackColor,
                                       fontSize: 16.sp,
@@ -338,6 +351,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               ],
                             ),
                           ),
+                         */
                           Padding(
                             padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
                             child: Row(
@@ -1114,7 +1128,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 ),
                               )),
                           SizedBox(
-                            height: 20.sp,
+                            height: 150.sp,
                           ),
                         ],
                       ),

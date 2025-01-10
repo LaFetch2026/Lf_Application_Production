@@ -6,12 +6,12 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lafetch/commonwidget/app_button.dart';
+//import 'package:lafetch/commonwidget/app_button.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
-import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
+//import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -193,7 +193,7 @@ class LoginScreenState extends State<LoginScreen> {
                           text1: "Welcome Back!",
                           fontfamily: "Franklin Gothic",
                           text2: "We are so glad to have you back here"),
-                      Padding(
+                      /*  Padding(
                         padding: EdgeInsets.only(top: 50.sp),
                         child: AppButton(
                             label: "Continue with Facebook",
@@ -206,8 +206,8 @@ class LoginScreenState extends State<LoginScreen> {
                             },
                             fontSize: 14.sp,
                             backgroundColor: blue),
-                      ),
-                      Padding(
+                      ), */
+                      /*  Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.sp),
                         child: AppButton(
                             label: "Continue with Gmail",
@@ -221,10 +221,10 @@ class LoginScreenState extends State<LoginScreen> {
                             borderColor: colorSecondary,
                             fontSize: 14.sp,
                             backgroundColor: whiteTextColor),
-                      ),
-                      const ORWidget(),
+                      ), */
+                      // const ORWidget(),
                       Padding(
-                        padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
+                        padding: EdgeInsets.only(top: 40.sp, left: 16.sp),
                         child: AppText(
                           text: "Let’s quickly verify it’s you",
                           fontFamily: "Franklin Gothic Regular",
@@ -269,7 +269,7 @@ class LoginScreenState extends State<LoginScreen> {
                           )),
                       Obx(
                         () => Padding(
-                          padding: EdgeInsets.only(top: 40.sp, bottom: 10.sp),
+                          padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                           child: getSingleButton(
                               label: "Continue",
                               textColor: whiteTextColor,
@@ -339,7 +339,7 @@ class LoginScreenState extends State<LoginScreen> {
                           text1: "Hey there,",
                           text2:
                               "Lets set you up around, for a tailored shopping experience"),
-                      Padding(
+                      /*  Padding(
                         padding: EdgeInsets.only(top: 50.sp),
                         child: AppButton(
                             label: "Continue with Facebook",
@@ -352,8 +352,8 @@ class LoginScreenState extends State<LoginScreen> {
                             },
                             fontSize: 14.sp,
                             backgroundColor: blue),
-                      ),
-                      Padding(
+                      ), */
+                      /* Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.sp),
                         child: AppButton(
                             label: "Continue with Gmail",
@@ -366,10 +366,10 @@ class LoginScreenState extends State<LoginScreen> {
                               googleSignInProcess(context, "SignUp");
                             },
                             backgroundColor: whiteTextColor),
-                      ),
-                      const ORWidget(),
+                      ), */
+                      // const ORWidget(),
                       Padding(
-                        padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
+                        padding: EdgeInsets.only(top: 40.sp, left: 16.sp),
                         child: AppText(
                           text: "Let’s quickly verify it’s you",
                           fontFamily: "Franklin Gothic Regular",
@@ -414,7 +414,7 @@ class LoginScreenState extends State<LoginScreen> {
                           )),
                       Obx(
                         () => Padding(
-                          padding: EdgeInsets.only(top: 40.sp, bottom: 10.sp),
+                          padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
                           child: getSingleButton(
                               label: "Continue",
                               textColor: whiteTextColor,

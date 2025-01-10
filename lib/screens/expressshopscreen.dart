@@ -42,7 +42,11 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
 
   @override
   void initState() {
-    getCurrentLocation();
+    if (productController.lat.value == 0) {
+      getCurrentLocation();
+    } else {
+      FetchProduct();
+    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandListController.addListener(() {
         brandController.fetchMoreData("express");
@@ -72,6 +76,21 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     setState(() {
       current = index;
     });
+  }
+
+  void FetchProduct() async {
+    locationText = "Fetching NearBy Products";
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getDouble('latitude') != null) {
+      productController.lat.value = prefs.getDouble('latitude')!;
+      productController.lng.value = prefs.getDouble('longitude')!;
+    }
+    productController.isBrandProduct.value = true;
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getDefaultAddressData(0));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
 
   void getCurrentLocation() async {

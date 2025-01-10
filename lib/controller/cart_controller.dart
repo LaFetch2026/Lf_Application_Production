@@ -28,6 +28,7 @@ class CartController extends BaseController {
   RxString tax = "".obs;
   RxString total = "".obs;
   RxString couponText = "Apply Coupon".obs;
+  final couponController = TextEditingController();
   List couponList = [].obs;
   RxBool isExpress = false.obs;
   RxInt expressValue = 0.obs;
