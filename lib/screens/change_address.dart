@@ -1,18 +1,20 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
+
+import 'dart:async';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_saveaddress.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/controller/shipaddress_controller.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../utils/constants.dart';
 
 class ChangeAddressScreen extends StatefulWidget {
@@ -28,6 +30,8 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
   final shipController = Get.put(ShipAddressController());
   final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  Timer? debounce;
+
   @override
   void initState() {
     WidgetsBinding.instance
@@ -40,23 +44,96 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
     super.initState();
   }
 
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () async {
+      controller.queryText.value = query;
+      controller.getAddressData();
+      await analytics.logEvent(
+        name: 'address_search',
+        parameters: <String, Object>{
+          'page_name': 'address_search',
+        },
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: whiteTextColor,
-      body: Column(
+    return Container(
+      color: whiteColor,
+      height: MediaQuery.of(context).size.height / 2,
+      child: Column(
         children: [
-          const BackButtonAppbar(
-            text: "Address",
-            threeDot: false,
-            backgroundColor: whiteColor,
-            icon: threeDotImage,
+          Visibility(
+            visible: widget.cartId != 0 ? true : false,
+            child: SaveAddressAppbar(
+              text: "Select Address",
+              onPressedWishlist: () {
+                Get.off(BottomNavScreen(
+                  index: 2,
+                ));
+              },
+            ),
+          ),
+          Visibility(
+            visible: widget.cartId != 0 ? true : false,
+            child: const Divider(
+              color: dividerColor,
+            ),
           ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /*   Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16.sp, vertical: 10.sp),
+                    child: RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      onKey: (value) {
+                        print(value);
+                        if (value is RawKeyDownEvent) {
+                          controller.queryText.value = "";
+                          controller.getAddressData();
+                        }
+                      },
+                      child: TextField(
+                        textCapitalization: TextCapitalization.words,
+                        style: TextStyle(
+                            color: titleColor,
+                            fontFamily: "Franklin Gothic Regular",
+                            fontSize: 14.sp),
+                        controller: shipController.searchAddressController,
+                        onChanged: onSearchChanged,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          filled: true,
+                          isDense: true,
+                          fillColor: whiteColor,
+                          prefixIcon: Icon(Icons.search,
+                              size: 24.sp, color: titleColor),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: borderColor)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(1.sp),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(1.sp),
+                            borderSide: const BorderSide(color: borderColor),
+                          ),
+                          counterText: "",
+                          hintText: "Try chandni chowk",
+                          hintStyle: TextStyle(
+                              fontSize: 14.sp,
+                              color: searchTextColor,
+                              fontFamily: "Franklin Gothic Regular"),
+                        ),
+                      ),
+                    ),
+                  ),
+                  */
                   SizedBox(
                     height: 10.sp,
                   ),
@@ -81,31 +158,19 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                             },
                             child: Row(
                               children: [
-                                AppText(
-                                  text: "",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: textHintColor,
-                                  fontSize: 12,
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    width: 0,
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.add,
-                                  color: blackColor,
-                                  size: 16.sp,
+                                ImageIcon(
+                                  AssetImage(currentLocationIcon),
+                                  color: homeAppBarColor,
+                                  size: 18.sp,
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(left: 5.sp),
                                   child: AppText(
-                                    text: "New Address",
-                                    color: blackColor,
-                                    fontSize: 12,
-                                    fontFamily: "Franklin Gothic Bold",
-                                    fontWeight: FontWeight.w400,
+                                    text: "Use my current location",
+                                    color: homeAppBarColor,
+                                    fontSize: 16,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -115,8 +180,153 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                       : SizedBox(
                           height: 0.sp,
                         ),
+                  widget.cartId == 0
+                      ? SizedBox(
+                          height: 0,
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 5.sp),
+                          child: const Divider(
+                            color: dividerColor,
+                          ),
+                        ),
+                  widget.cartId == 0
+                      ? SizedBox(
+                          height: 0,
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(
+                              top: 5.sp, left: 16.sp, right: 16.sp),
+                          child: GestureDetector(
+                            onTap: () async {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          MapScreen(
+                                            addressId: 0,
+                                            cartId: widget.cartId,
+                                          )))
+                                  .then((value) => setState(
+                                        () {
+                                          controller.getAddressData();
+                                          shipController.dailogSelected.clear();
+                                          shipController.dailogSelected =
+                                              List.generate(50, (i) => false);
+                                        },
+                                      ));
+                              await analytics.logEvent(
+                                name: 'map_page',
+                                parameters: <String, Object>{
+                                  'page_name': 'map_page',
+                                },
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                ImageIcon(
+                                  AssetImage(addBoardImage),
+                                  color: homeAppBarColor,
+                                  size: 18.sp,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5.sp),
+                                  child: AppText(
+                                    text: "Add new address",
+                                    color: homeAppBarColor,
+                                    fontSize: 16,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                  widget.cartId == 0
+                      ? SizedBox(
+                          height: 0,
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 5.sp),
+                          child: const Divider(
+                            color: dividerColor,
+                          ),
+                        ),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 30.sp, left: 16.sp, right: 16.sp),
+                    child: GestureDetector(
+                      onTap: () async {},
+                      child: AppText(
+                        text: "Saved Address".toUpperCase(),
+                        color: homeAppBarColor,
+                        fontSize: 14,
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+                    child: const Divider(
+                      color: dividerColor,
+                    ),
+                  ),
                   Obx(() => controller.isAddress.value
-                      ? const DummySaveAddress()
+                      ? Padding(
+                          padding: EdgeInsets.only(top: 10.sp),
+                          child: ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              physics: const ScrollPhysics(),
+                              itemCount: 3,
+                              padding: EdgeInsets.zero,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (ctx, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.sp, bottom: 20.sp),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp, right: 16.sp),
+                                        child: DummyContainer(
+                                            height: 20,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            right: 16.sp,
+                                            top: 8.sp),
+                                        child: DummyContainer(
+                                            height: 20, width: 100),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            right: 16.sp,
+                                            top: 4.sp),
+                                        child: DummyContainer(
+                                            height: 20,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                2),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        )
                       : controller.addressList.isNotEmpty
                           ? Padding(
                               padding: EdgeInsets.only(top: 10.sp),
@@ -140,6 +350,298 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Row(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 16.sp),
+                                                  child: AppText(
+                                                    text: controller
+                                                                .addressList[
+                                                            index]["type"] ??
+                                                        "",
+                                                    color: titleColor,
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                        "Franklin Gothic Semibold",
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                controller.addressList[index]
+                                                        ["default_shipping"]
+                                                    ? Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 14.sp,
+                                                        ),
+                                                        child:
+                                                            AnimatedContainer(
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 5.sp),
+                                                          width: 120.sp,
+                                                          height: 20.sp,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: titleColor,
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.sp),
+                                                            child: Center(
+                                                              child: AppText(
+                                                                text: controller
+                                                                            .addressList[index]
+                                                                        [
+                                                                        "default_shipping"]
+                                                                    ? "Currently selected"
+                                                                        .toUpperCase()
+                                                                    : "",
+                                                                color:
+                                                                    whiteColor,
+                                                                fontSize: 10,
+                                                                fontFamily:
+                                                                    "Franklin Gothic",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(
+                                                        height: 0,
+                                                      ),
+                                                Expanded(
+                                                  child: SizedBox(
+                                                    height: 0,
+                                                  ),
+                                                ),
+                                                shipController.selected[index]
+                                                    ? Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 5.sp,
+                                                                right: 30.sp,
+                                                                bottom: 5.sp),
+                                                        child: Center(
+                                                          child: SizedBox(
+                                                            height: 16.sp,
+                                                            width: 16.sp,
+                                                            child: Center(
+                                                                child:
+                                                                    CircularProgressIndicator()),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : GestureDetector(
+                                                        onTap: () async {
+                                                          if (widget.cartId ==
+                                                              0) {
+                                                            productController
+                                                                    .lat.value =
+                                                                double.parse(controller
+                                                                            .addressList[
+                                                                        index][
+                                                                    "latitude"]);
+                                                            productController
+                                                                    .lng.value =
+                                                                double.parse(controller
+                                                                            .addressList[
+                                                                        index][
+                                                                    "longitude"]);
+                                                            final prefs =
+                                                                await SharedPreferences
+                                                                    .getInstance();
+                                                            prefs.setDouble(
+                                                                "latitude",
+                                                                productController
+                                                                    .lat.value);
+                                                            prefs.setDouble(
+                                                                "longitude",
+                                                                productController
+                                                                    .lng.value);
+                                                            productController.callSaveAddress(
+                                                                "change address",
+                                                                controller.addressList[index]
+                                                                    ["id"],
+                                                                controller.addressList[index]
+                                                                    ["name"],
+                                                                controller.addressList[index]
+                                                                    ["phone"],
+                                                                controller.addressList[index]
+                                                                        ["city"]
+                                                                    ["name"],
+                                                                controller.addressList[index]
+                                                                    ["type"],
+                                                                controller.addressList[index]
+                                                                    ["address"],
+                                                                controller
+                                                                    .addressList[index]
+                                                                        ["zip"]
+                                                                    .toString(),
+                                                                controller.addressList[index][
+                                                                    "locality"],
+                                                                controller.addressList[index]
+                                                                            ["city"]
+                                                                        ["state"]
+                                                                    ["name"],
+                                                                double.parse(
+                                                                    controller.addressList[index]
+                                                                        ["latitude"]),
+                                                                double.parse(controller.addressList[index]["longitude"]),
+                                                                context);
+                                                          } else {
+                                                            shipController
+                                                                        .selected[
+                                                                    index] =
+                                                                !shipController
+                                                                        .selected[
+                                                                    index];
+                                                            shipController
+                                                                .update();
+                                                            setState(() {});
+                                                            shipController
+                                                                .addressId
+                                                                .value = controller
+                                                                    .addressList[
+                                                                index]["id"];
+                                                            shipController
+                                                                    .cartId
+                                                                    .value =
+                                                                widget.cartId;
+                                                            shipController
+                                                                .callCartAddressUpdate(
+                                                                    "update");
+                                                          }
+
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'changeAddress_btnclick',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'changeAddress_btnclick',
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                            horizontal: 14.sp,
+                                                          ),
+                                                          child:
+                                                              AnimatedContainer(
+                                                            duration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        5.sp),
+                                                            width: 80.sp,
+                                                            height: 20.sp,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: whiteColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20.sp),
+                                                              border: Border.all(
+                                                                  color:
+                                                                      btnTextColor,
+                                                                  width: 1.sp),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          5.sp),
+                                                              child: Center(
+                                                                child: AppText(
+                                                                  text:
+                                                                      "Select",
+                                                                  color:
+                                                                      btnTextColor,
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 16.sp,
+                                                  right: 16.sp,
+                                                  top: 8.sp),
+                                              child: AppText(
+                                                text: controller
+                                                            .addressList[index]
+                                                        ["address"] ??
+                                                    "",
+                                                color: subtitleColor,
+                                                fontSize: 12,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2.sp,
+                                              height: 20.sp,
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp,
+                                                    right: 16.sp,
+                                                    top: 4.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "${controller.addressList[index]["locality"] ?? ""} ,${controller.addressList[index]["city"] != null ? controller.addressList[index]["city"]["name"] : ""}",
+                                                  color: subtitleColor,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 16.sp,
+                                                  right: 16.sp,
+                                                  top: 4.sp),
+                                              child: AppText(
+                                                text: controller
+                                                    .addressList[index]["zip"]
+                                                    .toString(),
+                                                color: subtitleColor,
+                                                fontSize: 12,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            /*   Row(
                                               children: [
                                                 Expanded(
                                                   flex: 1,
@@ -285,11 +787,12 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                            shipController.selected[index]
+                                            */
+                                            /*  shipController.selected[index]
                                                 ? Padding(
                                                     padding: EdgeInsets.only(
                                                         top: 10.sp,
-                                                        bottom: 30.sp),
+                                                        bottom: 10.sp),
                                                     child: Center(
                                                       child: SizedBox(
                                                         height: 16.sp,
@@ -303,7 +806,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 : Padding(
                                                     padding: EdgeInsets.only(
                                                         top: 10.sp,
-                                                        bottom: 30.sp),
+                                                        bottom: 10.sp),
                                                     child: getSingleButton(
                                                         label: "Select Address",
                                                         textColor: btnTextColor,
@@ -399,6 +902,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                         borderColor:
                                                             btnTextColor),
                                                   )
+                                          */
                                           ],
                                         ),
                                       ),

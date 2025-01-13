@@ -116,7 +116,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                             borderSide: const BorderSide(color: borderColor),
                           ),
                           counterText: "",
-                          hintText: "Search Address",
+                          hintText: "Try chandni chowk",
                           hintStyle: TextStyle(
                               fontSize: 14.sp,
                               color: searchTextColor,

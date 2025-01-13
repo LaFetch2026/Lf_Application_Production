@@ -2,6 +2,8 @@
 
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -2105,7 +2107,7 @@ class ProductController extends BaseController {
     isDetails.value = false;
   }
 
-  getDefaultAddressData(int id) async {
+  getDefaultAddressData(int id, BuildContext cntx) async {
     isAddress.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -2143,9 +2145,19 @@ class ProductController extends BaseController {
               /*  addressText.value =
                   "${responseData[0]["zip"]}, ${responseData[0]["address"]}";
               addressTypeValue.value = responseData[0]["type"]; */
-              Get.to(ChangeAddressScreen(
-                cartId: 0,
-              ))?.then((value) {});
+              showModalBottomSheet(
+                context: cntx,
+                isScrollControlled: true,
+                constraints: BoxConstraints(
+                  maxWidth: double.infinity,
+                  maxHeight: 450.sp,
+                ),
+                builder: (ctx) {
+                  return ChangeAddressScreen(
+                    cartId: 0,
+                  );
+                },
+              );
             }
             if (id != 0) {
               getEstimateDate(id, defaultAddress["zip"]);
@@ -2603,25 +2615,26 @@ class ProductController extends BaseController {
       int addressId,
       String name,
       String phone,
-      int cityId,
+      String city,
       String type,
       String address,
       String zip,
       String locality,
-      bool defaultbilling,
+      String state,
       double lat,
-      double lng) async {
+      double lng,
+      BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
         "name": name,
         "phone": phone,
-        "city_id": cityId,
+        "city": city,
         "type": type,
         "address": address,
         "zip": zip,
         "locality": locality,
-        "default_billing": defaultbilling ? 1 : 0,
+        "state": state,
         "default_shipping": 1,
         "latitude": lat,
         "longitude": lng
@@ -2638,7 +2651,7 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         if (screenType == "change address") {
-          getDefaultAddressData(0);
+          getDefaultAddressData(0, context);
           Get.back();
           getBrandExpressProductData(
               brand_id.value, expressSortBy.value, filterExpressEnable.value);

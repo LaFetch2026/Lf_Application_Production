@@ -88,7 +88,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     productController.isBrandProduct.value = true;
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getDefaultAddressData(0));
+        (_) => productController.getDefaultAddressData(0, context));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
@@ -105,7 +105,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     productController.isBrandProduct.value = true;
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getDefaultAddressData(0));
+        (_) => productController.getDefaultAddressData(0, context));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
@@ -323,8 +323,11 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                         top: 10.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
                     child: DummyContainer(height: 20, width: double.infinity),
                   )
-                : productController.addressText.value == ""
-                    ? GestureDetector(
+                : /*  productController.addressText.value == ""
+                    ? */
+                Column(
+                    children: [
+                      GestureDetector(
                         onTap: () {
                           Navigator.of(context)
                               .push(MaterialPageRoute(
@@ -335,8 +338,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                       )))
                               .then((value) => setState(
                                     () {
-                                      productController
-                                          .getDefaultAddressData(0);
+                                      productController.getDefaultAddressData(
+                                          0, context);
                                       productController.addressList.clear();
                                     },
                                   ));
@@ -379,8 +382,8 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                             ],
                           ),
                         ),
-                      )
-                    : GestureDetector(
+                      ),
+                      GestureDetector(
                         onTap: () {
                           if (productController.showAddressList.value) {
                             productController.showAddressList.value = false;
@@ -436,7 +439,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                             ],
                           ),
                         ),
-                      )),
+                      )
+                    ],
+                  )),
             Stack(
               children: [
                 Obx(
@@ -666,9 +671,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                               productController.addressList[index]
                                                   ["phone"],
                                               productController.addressList[index]
-                                                  ["city"]["id"],
-                                              productController
-                                                  .addressList[index]["type"],
+                                                  ["city"]["name"],
+                                              productController.addressList[index]
+                                                  ["type"],
                                               productController.addressList[index]
                                                   ["address"],
                                               productController
@@ -677,11 +682,12 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                               productController.addressList[index]
                                                   ["locality"],
                                               productController.addressList[index]
-                                                  ["default_billing"],
+                                                  ["city"]["state"]["name"],
                                               double.parse(productController
                                                       .addressList[index]
                                                   ["latitude"]),
-                                              double.parse(productController.addressList[index]["longitude"]));
+                                              double.parse(productController.addressList[index]["longitude"]),
+                                              context);
                                           setState(() {});
                                         },
                                         child: Container(

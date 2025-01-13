@@ -373,8 +373,8 @@ class ShipAddressController extends BaseController {
             addressController.text = responseData["address"];
             localityController.text = responseData["locality"];
             addressTypeController.text = responseData["type"];
-            stateController.text = responseData["state"];
-            cityController.text = responseData["city"];
+            stateController.text = responseData["city"]["state"]["name"];
+            cityController.text = responseData["city"]["name"];
             /*  if (responseData["city"] != null) {
               stateController.text = responseData["city"]["name"];
               cityId.value = responseData["city"]["id"];
