@@ -1151,8 +1151,9 @@ class CartScreenState extends State<CartScreen> {
                                                                         controller
                                                                             .couponText
                                                                             .value = p0;
-                                                                        controller
-                                                                            .callAddCoupon(p0);
+                                                                        controller.callAddCoupon(
+                                                                            p0,
+                                                                            "cart");
                                                                       },
                                                                     ));
                                                                   }

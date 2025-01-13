@@ -19,6 +19,7 @@ class CartController extends BaseController {
   RxBool isRemoveCoupan = false.obs;
   List orderList = [].obs;
   RxInt cartId = 0.obs;
+  RxString couponError = "".obs;
   dynamic cartDetails = "".obs;
   RxString mrp = "".obs;
   RxString expressDelivery = "".obs;
@@ -298,8 +299,10 @@ class CartController extends BaseController {
     hideLoading();
   }
 
-  callAddCoupon(String code) async {
-    showLoading();
+  callAddCoupon(String code, String type) async {
+    if (type == "cart") {
+      showLoading();
+    }
     final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
@@ -314,9 +317,16 @@ class CartController extends BaseController {
               },
               body: json.encode(sendData));
       if (response.statusCode == 200) {
-        Get.back();
-        getCartData();
+        if (type == "cart") {
+          Get.back();
+          getCartData();
+        } else {
+          Get.back();
+          getCartData();
+        }
+        couponError.value = "";
       } else if (response.statusCode == 400) {
+        couponError.value = "Coupon doesn't exits!";
         print(response.body);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -328,7 +338,9 @@ class CartController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
-    hideLoading();
+    if (type == "cart") {
+      hideLoading();
+    }
   }
 
   callRemoveCoupon() async {
@@ -347,7 +359,6 @@ class CartController extends BaseController {
               },
               body: json.encode(sendData));
       if (response.statusCode == 200) {
-        getSnackBar("Coupon removed");
         couponText.value = "Apply Coupon";
         getCartData();
       } else if (response.statusCode == 400) {

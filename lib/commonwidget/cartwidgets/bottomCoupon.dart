@@ -2,11 +2,14 @@
 
 import 'dart:async';
 
+import 'package:dotted_border/dotted_border.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import '../../utils/constants.dart';
@@ -30,10 +33,17 @@ class BottomCouponState extends State<BottomCoupon> {
   List<bool> selected = List.generate(50, (i) => false);
   final controller = Get.put(CartController());
   Timer? debounce;
+  int? i;
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller.couponError.value = "";
   }
 
   @override
@@ -55,273 +65,728 @@ class BottomCouponState extends State<BottomCoupon> {
             height: 1.sp,
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  /*   MediaQuery.of(context).size.width < 600
-                      ? SizedBox(
-                          height: 40.sp,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
-                            child: RawKeyboardListener(
-                              focusNode: FocusNode(),
-                              onKey: (value) {
-                                print(value);
-                                if (value is RawKeyDownEvent) {}
-                              },
-                              child: TextField(
-                                textCapitalization: TextCapitalization.words,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: textColor,
-                                  fontFamily: "Franklin Gothic Regular",
-                                ),
-                                controller: controller.couponController,
-                                onChanged: onSearchChanged,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  isDense: true,
-                                  fillColor: whiteColor,
-                                  suffixIcon: InkWell(
-                                    onTap: () {},
-                                    child: ImageIcon(
-                                      AssetImage(greyCrossImage),
-                                      size: 14.sp,
-                                    ),
-                                  ),
-                                  prefixIcon: Icon(Icons.search,
-                                      size: 20.sp, color: Colors.grey),
-                                  focusedBorder: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: borderColor)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
-                                    borderSide:
-                                        const BorderSide(color: borderColor),
-                                  ),
-                                  counterText: "",
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 10.sp),
-                                  hintText: "Apply Coupon",
-                                  hintStyle: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: titleColor,
-                                    fontFamily: "Franklin Gothic Regular",
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : SizedBox(
-                          height: 40.sp,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
-                            child: RawKeyboardListener(
-                              focusNode: FocusNode(),
-                              onKey: (value) {
-                                print(value);
-                                if (value is RawKeyDownEvent) {}
-                              },
-                              child: TextField(
-                                textCapitalization: TextCapitalization.words,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: textColor,
-                                  fontFamily: "Franklin Gothic Regular",
-                                ),
-                                controller: controller.couponController,
-                                onChanged: onSearchChanged,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  isDense: true,
-                                  fillColor: whiteColor,
-                                  suffixIcon: InkWell(
-                                    onTap: () {},
-                                    child: ImageIcon(
-                                      AssetImage(greyCrossImage),
-                                      size: 14.sp,
-                                    ),
-                                  ),
-                                  prefixIcon: Icon(Icons.search,
-                                      size: 20.sp, color: Colors.grey),
-                                  focusedBorder: const OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: borderColor)),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(1),
-                                    borderSide:
-                                        const BorderSide(color: borderColor),
-                                  ),
-                                  counterText: "",
-                                  /*   contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 10.sp), */
-                                  hintText: "Apply Coupon",
-                                  hintStyle: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: titleColor,
-                                    fontFamily: "Franklin Gothic Regular",
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+            child: widget.list.isNotEmpty
+                ? SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 20.sp,
                         ),
-                  */
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
-                    child: widget.list.isNotEmpty
-                        ? ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: const ScrollPhysics(),
-                            itemCount: widget.list.length,
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (ctx, index) {
-                              return Container(
-                                color: whiteColor,
-                                margin:
-                                    EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                        MediaQuery.of(context).size.width < 600
+                            ? SizedBox(
+                                height: 40.sp,
                                 child: Padding(
                                   padding: EdgeInsets.only(
-                                    top: 10.sp,
+                                    left: 16.sp,
+                                    right: 16.sp,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 14.sp,
-                                                  vertical: 5.sp),
-                                              child: AppText(
-                                                text: widget.list[index]
-                                                    ["code"],
-                                                color: loginText,
-                                                fontSize: 16,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
+                                  child: RawKeyboardListener(
+                                    focusNode: FocusNode(),
+                                    onKey: (value) {
+                                      print(value);
+                                      if (value is RawKeyDownEvent) {
+                                        controller.couponError.value = "";
+                                      }
+                                    },
+                                    child: TextField(
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        color: textColor,
+                                        fontFamily: "Franklin Gothic Regular",
+                                      ),
+                                      controller: controller.couponController,
+                                      onChanged: onSearchChanged,
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        isDense: true,
+                                        fillColor: whiteColor,
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            FocusScope.of(context).unfocus();
+                                            controller.callAddCoupon(
+                                                controller.couponController.text
+                                                    .toString()
+                                                    .trim(),
+                                                "coupon");
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.sp,
+                                                vertical: 5.sp),
+                                            child: Container(
+                                              width: 80.sp,
+                                              height: 25.sp,
+                                              decoration: BoxDecoration(
+                                                color: btnTextColor,
+                                                border: Border.all(
+                                                    color: btnTextColor,
+                                                    width: 1.sp),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
+                                                child: Center(
+                                                  child: AppText(
+                                                    text: "Apply",
+                                                    color: whiteBack,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                          selected[index]
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 30.sp,
-                                                      right: 40.sp),
-                                                  child: Center(
-                                                    child: SizedBox(
-                                                      height: 16.sp,
-                                                      width: 16.sp,
-                                                      child: Center(
-                                                          child:
-                                                              CircularProgressIndicator()),
-                                                    ),
+                                        ),
+                                        prefixIcon: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.sp),
+                                          child: ImageIcon(
+                                            AssetImage(coupanImage),
+                                            color: titleColor,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: borderColor)),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                        ),
+                                        counterText: "",
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 10.sp),
+                                        hintText: "Apply Coupon",
+                                        hintStyle: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: titleColor,
+                                          fontFamily: "Franklin Gothic Regular",
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SizedBox(
+                                height: 40.sp,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 16.sp, right: 16.sp),
+                                  child: RawKeyboardListener(
+                                    focusNode: FocusNode(),
+                                    onKey: (value) {
+                                      print(value);
+                                      if (value is RawKeyDownEvent) {
+                                        controller.couponError.value = "";
+                                      }
+                                    },
+                                    child: TextField(
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        color: textColor,
+                                        fontFamily: "Franklin Gothic Regular",
+                                      ),
+                                      controller: controller.couponController,
+                                      onChanged: onSearchChanged,
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        isDense: true,
+                                        fillColor: whiteColor,
+                                        suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            FocusScope.of(context).unfocus();
+                                            controller.callAddCoupon(
+                                                controller.couponController.text
+                                                    .toString()
+                                                    .trim(),
+                                                "coupon");
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.sp,
+                                                vertical: 5.sp),
+                                            child: Container(
+                                              width: 80.sp,
+                                              height: 25.sp,
+                                              decoration: BoxDecoration(
+                                                color: btnTextColor,
+                                                border: Border.all(
+                                                    color: btnTextColor,
+                                                    width: 1.sp),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.sp),
+                                                child: Center(
+                                                  child: AppText(
+                                                    text: "Apply",
+                                                    color: whiteBack,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w500,
                                                   ),
-                                                )
-                                              : GestureDetector(
-                                                  onTap: () {
-                                                    selected[index] =
-                                                        !selected[index];
-                                                    setState(() {});
-                                                    widget.onPressed.call(widget
-                                                        .list[index]["code"]);
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: 14.sp,
-                                                    ),
-                                                    child: AnimatedContainer(
-                                                      duration: const Duration(
-                                                          milliseconds: 300),
-                                                      margin: EdgeInsets.only(
-                                                          right: 5.sp),
-                                                      width: 80.sp,
-                                                      height: 30.sp,
-                                                      decoration: BoxDecoration(
-                                                        color: btnTextColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    20.sp),
-                                                        border: Border.all(
-                                                            color: btnTextColor,
-                                                            width: 1.sp),
-                                                      ),
-                                                      child: Padding(
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        prefixIcon: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.sp),
+                                          child: ImageIcon(
+                                            AssetImage(coupanImage),
+                                            color: titleColor,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: borderColor)),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(1),
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                        ),
+                                        counterText: "",
+                                        hintText: "Apply Coupon",
+                                        hintStyle: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: titleColor,
+                                          fontFamily: "Franklin Gothic Regular",
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.sp, vertical: 8.sp),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Obx(() => Visibility(
+                                    visible: controller.couponError.value != ""
+                                        ? true
+                                        : false,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 20.sp, left: 2.sp),
+                                      child: AppText(
+                                        text: controller.couponError.value,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: redColor,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  )),
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(top: 20.sp, left: 2.sp),
+                                child: AppText(
+                                  text: "Available coupons",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: appBarColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 5.sp, left: 2.sp),
+                                child: AppText(
+                                  text: widget.list.length == 1
+                                      ? "${widget.list.length} coupon"
+                                      : "${widget.list.length} coupons",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: appBarColor,
+                                  fontSize: 10,
+                                ),
+                              ),
+                              ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  itemCount: widget.list.length,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (ctx, index) {
+                                    return GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        color: whiteColor,
+                                        margin: EdgeInsets.only(
+                                            bottom: 10.sp, top: 20.sp),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 10.sp,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Material(
+                                                    child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: whiteColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(3),
+                                                          border: Border(
+                                                            top: BorderSide(
+                                                                width: 2.0.sp,
+                                                                color: selected[
+                                                                        index]
+                                                                    ? titleColor
+                                                                    : greyTextColor),
+                                                            left: BorderSide(
+                                                                width: 2.0.sp,
+                                                                color: selected[
+                                                                        index]
+                                                                    ? titleColor
+                                                                    : greyTextColor),
+                                                            right: BorderSide(
+                                                                width: 2.0.sp,
+                                                                color: selected[
+                                                                        index]
+                                                                    ? titleColor
+                                                                    : greyTextColor),
+                                                            bottom: BorderSide(
+                                                                width: 2.0.sp,
+                                                                color: selected[
+                                                                        index]
+                                                                    ? titleColor
+                                                                    : greyTextColor),
+                                                          ),
+                                                        ),
+                                                        width: 20,
+                                                        height: 20,
+                                                        child: Checkbox(
+                                                          value:
+                                                              selected[index],
+                                                          checkColor:
+                                                              selected[index]
+                                                                  ? whiteColor
+                                                                  : titleColor,
+                                                          activeColor:
+                                                              selected[index]
+                                                                  ? titleColor
+                                                                  : whiteColor,
+                                                          side: BorderSide(
+                                                              color: selected[
+                                                                      index]
+                                                                  ? titleColor
+                                                                  : greyTextColor,
+                                                              width: 0),
+                                                          onChanged: (value) {
+                                                            if (selected[
+                                                                index]) {
+                                                              selected.clear();
+                                                              selected =
+                                                                  List.generate(
+                                                                      50,
+                                                                      (i) =>
+                                                                          false);
+                                                              i = null;
+                                                            } else {
+                                                              selected.clear();
+                                                              selected =
+                                                                  List.generate(
+                                                                      50,
+                                                                      (i) =>
+                                                                          false);
+                                                              selected[index] =
+                                                                  !selected[
+                                                                      index];
+                                                              print(widget.list[
+                                                                      index]
+                                                                  ["code"]);
+                                                              i = index;
+                                                            }
+
+                                                            setState(() {});
+                                                          },
+                                                        )),
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Padding(
                                                         padding: EdgeInsets
                                                             .symmetric(
-                                                                horizontal:
-                                                                    5.sp),
-                                                        child: Center(
-                                                          child: AppText(
-                                                            text: "Apply",
-                                                            color: whiteBack,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "Franklin Gothic",
-                                                            fontWeight:
-                                                                FontWeight.w500,
+                                                          horizontal: 14.sp,
+                                                        ),
+                                                        child: DottedBorder(
+                                                          borderType:
+                                                              BorderType.RRect,
+                                                          dashPattern: [5, 5],
+                                                          color:
+                                                              homeAppBarColor,
+                                                          strokeWidth: 1,
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        14.sp,
+                                                                    vertical:
+                                                                        5.sp),
+                                                            child: AppText(
+                                                              text: widget
+                                                                  .list[index]
+                                                                      ["code"]
+                                                                  .toUpperCase(),
+                                                              color:
+                                                                  homeAppBarColor,
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  "Franklin Gothic",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
+                                                    ],
                                                   ),
-                                                )
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 14.sp, vertical: 20.sp),
-                                        child: AppText(
-                                          text: widget.list[index]
-                                                  ["description"] ??
-                                              "",
-                                          color: greyTextColor,
-                                          fontSize: 12,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
+                                                  /* selected[index]
+                                                      ? Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 30.sp,
+                                                                  right: 40.sp),
+                                                          child: Center(
+                                                            child: SizedBox(
+                                                              height: 16.sp,
+                                                              width: 16.sp,
+                                                              child: Center(
+                                                                  child:
+                                                                      CircularProgressIndicator()),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : GestureDetector(
+                                                          onTap: () {
+                                                            selected[index] =
+                                                                !selected[
+                                                                    index];
+                                                            setState(() {});
+                                                            widget.onPressed.call(
+                                                                widget.list[
+                                                                        index]
+                                                                    ["code"]);
+                                                          },
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              horizontal: 14.sp,
+                                                            ),
+                                                            child:
+                                                                AnimatedContainer(
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          300),
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      right:
+                                                                          5.sp),
+                                                              width: 80.sp,
+                                                              height: 30.sp,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    btnTextColor,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.sp),
+                                                                border: Border.all(
+                                                                    color:
+                                                                        btnTextColor,
+                                                                    width:
+                                                                        1.sp),
+                                                              ),
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            5.sp),
+                                                                child: Center(
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Apply",
+                                                                    color:
+                                                                        whiteBack,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                */
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 30.sp,
+                                                    top: 20.sp,
+                                                    right: 16.sp),
+                                                child: Row(
+                                                  children: [
+                                                    AppText(
+                                                      text: "Explore",
+                                                      color: subtitleColor,
+                                                      fontSize: 12,
+                                                      fontFamily:
+                                                          "Franklin Gothic Semibold",
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 5.sp),
+                                                      child: AppText(
+                                                        text: "\u{20B9}90",
+                                                        color:
+                                                            color5StartReview,
+                                                        fontSize: 12,
+                                                        fontFamily:
+                                                            "Franklin Gothic Semibold",
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 30.sp,
+                                                    top: 5.sp,
+                                                    right: 16.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "20% off on orders above Rs.1499",
+                                                  color: subtitleColor,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 30.sp,
+                                                    top: 5.sp,
+                                                    right: 16.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "Valid until: 15th September 2025",
+                                                  color: subtitleColor,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 10.sp, left: 32.sp),
+                                                child: DottedLine(
+                                                  direction: Axis.horizontal,
+                                                  alignment:
+                                                      WrapAlignment.center,
+                                                  lineLength: double.infinity,
+                                                  lineThickness: 1.0,
+                                                  dashLength: 5.0,
+                                                  dashColor: dividerColor,
+                                                  dashRadius: 0.0,
+                                                  dashGapLength: 4.0,
+                                                  dashGapColor:
+                                                      Colors.transparent,
+                                                  dashGapRadius: 0.0,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 30.sp,
+                                                    top: 30.sp,
+                                                    right: 16.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "Add items worth Rs. 601 for discount",
+                                                  color: titleColor,
+                                                  fontSize: 12,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 30.sp,
+                                                    top: 5.sp,
+                                                    right: 16.sp),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Browse Collection",
+                                                      style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: homeAppBarColor,
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 2.sp,
+                                                          right: 5.sp),
+                                                      child: Image.asset(
+                                                          rightArrowImage,
+                                                          color:
+                                                              homeAppBarColor,
+                                                          height: 10.sp,
+                                                          width: 10.sp,
+                                                          fit: BoxFit.cover),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ],
+                                    );
+                                  }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox(
+                    height: MediaQuery.of(context).size.height - 200.sp,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Text("No Coupon Found",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              decoration: TextDecoration.none,
+                              color: Colors.black,
+                              fontFamily: "Franklin Gothic Regular")),
+                    ),
+                  ),
+          ),
+          widget.list.isNotEmpty
+              ? Container(
+                  color: whiteColor,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 30.sp,
+                            left: 20.sp,
+                            right: 8.sp,
+                            bottom: 16.sp),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  text: "Maximum savings",
+                                  textAlign: TextAlign.center,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: appBarColor,
+                                  fontSize: 12,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 2.sp),
+                                  child: AppText(
+                                    text: "\u{20B9}123",
+                                    textAlign: TextAlign.center,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: titleColor,
+                                    fontSize: 16,
                                   ),
                                 ),
-                              );
-                            })
-                        : SizedBox(
-                            height: MediaQuery.of(context).size.height - 60.sp,
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Text("No Coupon Found",
-                                  style: TextStyle(
-                                      fontSize: 14.sp,
-                                      decoration: TextDecoration.none,
-                                      color: Colors.black,
-                                      fontFamily: "Franklin Gothic Regular")),
+                              ],
                             ),
-                          ),
+                          ],
+                        ),
+                      ),
+                      Obx(() => Expanded(
+                            flex: 1,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.only(top: 30.sp, bottom: 16.sp),
+                              child: getSingleButton(
+                                  label: "Apply".toUpperCase(),
+                                  textColor: whiteColor,
+                                  backgroundColor: homeAppBarColor,
+                                  controller: controller,
+                                  onPressed: () async {
+                                    if (i != null) {
+                                      widget.onPressed
+                                          .call(widget.list[i!]["code"]);
+                                    }
+                                  },
+                                  borderColor: homeAppBarColor),
+                            ),
+                          )),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
+                )
+              : SizedBox(
+                  height: 0,
+                )
         ],
       ),
     );
