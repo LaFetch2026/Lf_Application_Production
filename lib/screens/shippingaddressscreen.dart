@@ -179,7 +179,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
         body: Column(
           children: [
             SaveAddressAppbar(
-              text: "Change Address",
+              text: "Select Address",
               onPressedWishlist: () {
                 Get.off(BottomNavScreen(
                   index: 2,
