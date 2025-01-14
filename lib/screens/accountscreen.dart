@@ -12,6 +12,7 @@ import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/screens/account/customercare.dart';
+import 'package:lafetch/screens/account/deleteaccount.dart';
 import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -498,6 +499,9 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ), */
                                     SettingWidgets(
+                                      onPressedDelete: () {
+                                        Get.to(DeleteAccountScreen());
+                                      },
                                       onPressedNotification: () {
                                         if (controller.profileDetails[
                                                 "order_notification_enabled"] ==

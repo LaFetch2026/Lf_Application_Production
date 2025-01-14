@@ -6,10 +6,12 @@ import '../app_text.dart';
 
 class SettingWidgets extends StatelessWidget {
   final Function? onPressedNotification;
+  final Function? onPressedDelete;
 
   const SettingWidgets({
     Key? key,
     this.onPressedNotification,
+    this.onPressedDelete,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,21 @@ class SettingWidgets extends StatelessWidget {
             padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: AppText(
               text: "Notifications & Settings",
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+              color: nameText,
+              fontSize: 14,
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            onPressedDelete?.call();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
+            child: AppText(
+              text: "Delete Account",
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: nameText,

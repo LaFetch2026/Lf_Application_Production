@@ -9,6 +9,7 @@ import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../screens/account/confirmdelete.dart';
 import '../screens/bottomnavscreen.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../screens/loginscreen.dart';
@@ -403,4 +404,37 @@ class ProfileController extends BaseController {
       print(e.toString());
     }
   }
+
+  void callDeleteAccount() async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.post(
+          Uri.parse("${ApiConstants.baseUrl}/account-delete"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      if (response.statusCode == 200) {
+        Get.off(
+          () => const ConfirmDeleteScreen(),
+        );
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else {
+        getSnackBar("account delete failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  hideLoading();
 }

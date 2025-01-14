@@ -649,20 +649,27 @@ class BottomCouponState extends State<BottomCoupon> {
                                                   dashGapRadius: 0.0,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 30.sp,
-                                                    top: 30.sp,
-                                                    right: 16.sp),
-                                                child: AppText(
-                                                  text: widget.list[index]
-                                                          ["add_items_worth"] ??
-                                                      "",
-                                                  color: titleColor,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
+                                              Visibility(
+                                                visible: widget.list[index][
+                                                            "add_items_worth"] !=
+                                                        null
+                                                    ? true
+                                                    : false,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30.sp,
+                                                      top: 30.sp,
+                                                      right: 16.sp),
+                                                  child: AppText(
+                                                    text: widget.list[index][
+                                                            "add_items_worth"] ??
+                                                        "",
+                                                    color: titleColor,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
                                                 ),
                                               ),
                                               GestureDetector(
