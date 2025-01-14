@@ -782,7 +782,7 @@ class BottomCouponState extends State<BottomCoupon> {
           ),
           widget.list.isNotEmpty && i != null
               ? Container(
-                  color: whiteColor,
+                  color: Color(0xffF3F4F6),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

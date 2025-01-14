@@ -600,7 +600,7 @@ class AccountScreenState extends State<AccountScreen> {
                                       borderColor: redColor),
                                 ),
                                 const ProfileBottom(
-                                  version: " 1.2.1",
+                                  version: " 1.0.7",
                                 )
                               ],
                             ),

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
@@ -43,8 +45,8 @@ class DummyOrderList extends StatelessWidget {
                                         Expanded(
                                             flex: 1,
                                             child: DummyContainer(
-                                              height: 85,
-                                              width: 70,
+                                              height: 130,
+                                              width: 100,
                                             )),
                                         Expanded(
                                           flex: 3,
@@ -57,6 +59,16 @@ class DummyOrderList extends StatelessWidget {
                                               Padding(
                                                 padding: EdgeInsets.only(
                                                     right: 5.sp, left: 12.sp),
+                                                child: DummyContainer(
+                                                  height: 10,
+                                                  width: 70,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 5.sp,
+                                                    left: 12.sp,
+                                                    top: 5.sp),
                                                 child: DummyContainer(
                                                   height: 10,
                                                   width: 70,

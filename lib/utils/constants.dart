@@ -48,6 +48,7 @@ const Color titleColor = Color(0xFF374151);
 const Color subtitleColor = Color(0xFF6B7280);
 const Color dividerColor = Color(0XFFE5E7EB);
 const Color searchTextColor = Color(0XFF9CA3AF);
+const Color lightgreyColor = Color(0xffF3F4F6);
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';

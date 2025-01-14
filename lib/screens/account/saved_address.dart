@@ -354,12 +354,26 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                       child: Container(
                                                         height: 80.sp,
                                                         width: 130.sp,
-                                                        decoration: BoxDecoration(
-                                                            color: whiteColor,
-                                                            border: Border.all(
-                                                                width: 1.sp,
+                                                        decoration:
+                                                            BoxDecoration(
                                                                 color:
-                                                                    dividerColor)),
+                                                                    whiteColor,
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            0.5),
+                                                                  ),
+                                                                ],
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(4
+                                                                            .sp)),
+                                                                border: Border.all(
+                                                                    width: 1.sp,
+                                                                    color:
+                                                                        dividerColor)),
                                                         child: Column(
                                                           children: [
                                                             GestureDetector(
