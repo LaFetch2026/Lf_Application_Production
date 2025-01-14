@@ -519,6 +519,36 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                             shipController
                                                                 .callCartAddressUpdate(
                                                                     "update");
+                                                            productController.callSaveAddress(
+                                                                "express",
+                                                                controller.addressList[index]
+                                                                    ["id"],
+                                                                controller.addressList[index]
+                                                                    ["name"],
+                                                                controller.addressList[index]
+                                                                    ["phone"],
+                                                                controller.addressList[index]
+                                                                        ["city"]
+                                                                    ["name"],
+                                                                controller.addressList[index]
+                                                                    ["type"],
+                                                                controller.addressList[index]
+                                                                    ["address"],
+                                                                controller
+                                                                    .addressList[index]
+                                                                        ["zip"]
+                                                                    .toString(),
+                                                                controller.addressList[index][
+                                                                    "locality"],
+                                                                controller.addressList[index]
+                                                                            ["city"]
+                                                                        ["state"]
+                                                                    ["name"],
+                                                                double.parse(
+                                                                    controller.addressList[index]
+                                                                        ["latitude"]),
+                                                                double.parse(controller.addressList[index]["longitude"]),
+                                                                context);
                                                           }
 
                                                           await analytics

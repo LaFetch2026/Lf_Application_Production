@@ -86,7 +86,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                     backgroundColor: homeAppBarColor,
                     controller: controller,
                     onPressed: () {
-                      controller.callDeleteAccount();
+                      // controller.callDeleteAccount();
                     },
                     borderColor: btnTextColor),
               )),

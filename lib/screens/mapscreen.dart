@@ -16,7 +16,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
-import 'package:lottie/lottie.dart';
+//import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import '../controller/shipaddress_controller.dart';
 import '../utils/constants.dart';
@@ -678,12 +678,26 @@ class MapScreenState extends State<MapScreen> {
             height: 80.sp,
             color: homeAppBarColor,
             margin: EdgeInsets.only(top: 20.sp),
-            child: Center(
-              child: Text("Confirm Location".toUpperCase(),
-                  style: TextStyle(
-                      fontSize: 13.sp,
-                      color: Colors.white,
-                      fontFamily: 'Franklin Gothic')),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 16.sp),
+                  child: Text("Confirm Location".toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.white,
+                          fontFamily: 'Franklin Gothic')),
+                ),
+                Container(
+                  height: 5.sp,
+                  width: 140.sp,
+                  margin: EdgeInsets.only(top: 40.sp),
+                  decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(5.sp)),
+                )
+              ],
             ),
           ),
         )
@@ -715,10 +729,16 @@ class MapScreenState extends State<MapScreen> {
     return Center(
       child: SizedBox(
         width: 150.sp,
-        child: Lottie.asset(
+        child: /*  Lottie.asset(
           locationAnim,
           width: 100.sp,
           height: 100.sp,
+        ) */
+            Image.asset(
+          locationPinImage,
+          width: 50.sp,
+          height: 50.sp,
+          color: colorPrimary,
         ),
       ),
     );
