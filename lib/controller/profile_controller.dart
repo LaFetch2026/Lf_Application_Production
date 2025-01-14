@@ -410,7 +410,7 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.post(
-          Uri.parse("${ApiConstants.baseUrl}/account-delete"),
+          Uri.parse("${ApiConstants.baseUrl}/account-deletion"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -421,6 +421,9 @@ class ProfileController extends BaseController {
         );
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
+      } else if (response.statusCode == 400) {
+        var responseData = json.decode(response.body);
+        print(responseData);
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
@@ -434,7 +437,6 @@ class ProfileController extends BaseController {
     } catch (e) {
       print(e.toString());
     }
+    hideLoading();
   }
-
-  hideLoading();
 }

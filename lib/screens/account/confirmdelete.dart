@@ -65,18 +65,18 @@ class ConfirmDeleteScreenState extends State<ConfirmDeleteScreen> {
               ),
             ],
           ),
-          Obx(() => Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.sp),
-                child: getSingleButton(
-                    label: "Continue",
-                    textColor: whiteBorderColor,
-                    backgroundColor: homeAppBarColor,
-                    controller: controller,
-                    onPressed: () {
-                      controller.callLogout();
-                    },
-                    borderColor: btnTextColor),
-              )),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.sp),
+            child: getSingleButton(
+                label: "Continue",
+                textColor: whiteBorderColor,
+                backgroundColor: homeAppBarColor,
+                // controller: controller,
+                onPressed: () {
+                  controller.callLogout();
+                },
+                borderColor: btnTextColor),
+          ),
         ],
       ),
     );

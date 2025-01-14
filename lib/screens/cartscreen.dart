@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -74,14 +75,15 @@ class CartScreenState extends State<CartScreen> {
       body: Column(
         children: [
           CartAppbar(
-            text: "Shopping Bag",
-            threeDot: true,
-            icon: heartImage,
-            onPressedHeart: () {
-              Get.offAll(const BottomNavScreen(
+            text: "Bag",
+            onPressedWishlist: () {
+              Get.off(BottomNavScreen(
                 index: 2,
               ));
             },
+          ),
+          const Divider(
+            color: dividerColor,
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -115,7 +117,7 @@ class CartScreenState extends State<CartScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Padding(
+                                            /*  Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 16.sp,
                                                   vertical: 20.sp),
@@ -275,7 +277,7 @@ class CartScreenState extends State<CartScreen> {
                                                   ),
                                                 ],
                                               ),
-                                            ),
+                                            ), */
                                             Padding(
                                                 padding: EdgeInsets.only(
                                                     bottom: 10.sp, top: 5.sp),
@@ -838,7 +840,7 @@ class CartScreenState extends State<CartScreen> {
                                                         }),
                                                   ),
                                                 )),
-                                            productController.isProduct.value
+                                            /*  productController.isProduct.value
                                                 ? const DummyProductList(
                                                     text: "You may also like")
                                                 : productController
@@ -1037,18 +1039,18 @@ class CartScreenState extends State<CartScreen> {
                                                       ),
                                             const SizedBox(
                                               height: 8,
-                                            ),
+                                            ), */
                                             Container(
                                               color: whiteColor,
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                    horizontal: 16.sp,
-                                                    vertical: 20.sp),
+                                                  horizontal: 16.sp,
+                                                ),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    AppText(
+                                                    /*  AppText(
                                                       text: "Coupons",
                                                       fontFamily:
                                                           "Franklin Gothic Regular",
@@ -1056,7 +1058,7 @@ class CartScreenState extends State<CartScreen> {
                                                           FontWeight.w400,
                                                       color: colorPrimary,
                                                       fontSize: 12,
-                                                    ),
+                                                    ), */
                                                     Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
@@ -1072,9 +1074,12 @@ class CartScreenState extends State<CartScreen> {
                                                                     .circular(
                                                                         1)),
                                                         child: Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16.sp),
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10.sp,
+                                                                  vertical:
+                                                                      6.sp),
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -1087,31 +1092,83 @@ class CartScreenState extends State<CartScreen> {
                                                                 onTap: () {},
                                                                 child: Row(
                                                                   children: [
-                                                                    ImageIcon(
-                                                                      AssetImage(
-                                                                          coupanImage),
-                                                                      color:
-                                                                          colorPrimary,
-                                                                      size:
-                                                                          20.sp,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              8.sp),
+                                                                    Visibility(
+                                                                      visible: controller.couponText.value ==
+                                                                              "Apply Coupon"
+                                                                          ? true
+                                                                          : false,
                                                                       child:
-                                                                          AppText(
-                                                                        text: controller
-                                                                            .couponText
-                                                                            .value,
-                                                                        fontFamily:
-                                                                            "Franklin Gothic",
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
+                                                                          ImageIcon(
+                                                                        AssetImage(
+                                                                            coupanImage),
                                                                         color:
-                                                                            textColor,
-                                                                        fontSize:
-                                                                            14,
+                                                                            titleColor,
+                                                                        size: 22
+                                                                            .sp,
+                                                                      ),
+                                                                    ),
+                                                                    controller.couponText.value ==
+                                                                            "Apply Coupon"
+                                                                        ? Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 8.sp),
+                                                                            child:
+                                                                                AppText(
+                                                                              text: controller.couponText.value,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight.w500,
+                                                                              color: titleColor,
+                                                                              fontSize: 14,
+                                                                            ),
+                                                                          )
+                                                                        : Container(
+                                                                            color:
+                                                                                Color(0xffD1FAE5),
+                                                                            child:
+                                                                                DottedBorder(
+                                                                              borderType: BorderType.RRect,
+                                                                              dashPattern: [
+                                                                                5,
+                                                                                5
+                                                                              ],
+                                                                              color: Color(0xff10B981),
+                                                                              strokeWidth: 1,
+                                                                              child: Padding(
+                                                                                padding: EdgeInsets.symmetric(vertical: 6.sp, horizontal: 8.sp),
+                                                                                child: AppText(
+                                                                                  text: controller.couponText.value.toUpperCase(),
+                                                                                  fontFamily: "Franklin Gothic",
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                  color: titleColor,
+                                                                                  fontSize: 14,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                    Visibility(
+                                                                      visible: controller.couponText.value ==
+                                                                              "Apply Coupon"
+                                                                          ? false
+                                                                          : true,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            vertical:
+                                                                                2.sp,
+                                                                            horizontal: 10.sp),
+                                                                        child:
+                                                                            AppText(
+                                                                          text:
+                                                                              "Saved ₹${controller.couponSave.value}",
+                                                                          fontFamily:
+                                                                              "Franklin Gothic",
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          color:
+                                                                              Color(0xff059669),
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ],
@@ -1170,22 +1227,44 @@ class CartScreenState extends State<CartScreen> {
                                                                             child:
                                                                                 CircularProgressIndicator()),
                                                                       )
-                                                                    : AppText(
-                                                                        text: controller.cartDetails["discount"] !=
-                                                                                null
-                                                                            ? "Remove"
-                                                                            : "Select",
-                                                                        fontFamily:
-                                                                            "Franklin Gothic",
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        color: controller.cartDetails["discount"] !=
-                                                                                null
-                                                                            ? redColor
-                                                                            : textColor,
-                                                                        fontSize:
-                                                                            12,
-                                                                      ),
+                                                                    : controller.cartDetails["discount"] !=
+                                                                            null
+                                                                        ? AppText(
+                                                                            text:
+                                                                                "Remove".toUpperCase(),
+                                                                            fontFamily:
+                                                                                "Franklin Gothic",
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                            color:
+                                                                                redColor,
+                                                                            fontSize:
+                                                                                10,
+                                                                          )
+                                                                        : Container(
+                                                                            width:
+                                                                                80.sp,
+                                                                            height:
+                                                                                30.sp,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              color: homeAppBarColor,
+                                                                              border: Border.all(color: btnTextColor, width: 1.sp),
+                                                                            ),
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: EdgeInsets.symmetric(horizontal: 0.sp),
+                                                                              child: Center(
+                                                                                child: AppText(
+                                                                                  text: "Select".toUpperCase(),
+                                                                                  color: whiteColor,
+                                                                                  fontSize: 12,
+                                                                                  fontFamily: "Franklin Gothic",
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
                                                               ),
                                                             ],
                                                           ),
@@ -1312,21 +1391,22 @@ class CartScreenState extends State<CartScreen> {
                                          */
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 20.sp),
+                                                          top: 40.sp),
                                                       child: AppText(
-                                                        text: "Price Details",
+                                                        text: "order Details"
+                                                            .toUpperCase(),
                                                         fontFamily:
-                                                            "Franklin Gothic Regular",
+                                                            "Franklin Gothic",
                                                         fontWeight:
-                                                            FontWeight.w400,
-                                                        color: colorPrimary,
-                                                        fontSize: 12,
+                                                            FontWeight.w500,
+                                                        color: homeAppBarColor,
+                                                        fontSize: 14,
                                                       ),
                                                     ),
                                                     Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                              vertical: 16.sp),
+                                                              vertical: 10.sp),
                                                       child: Container(
                                                         width: double.infinity,
                                                         color: colorSecondary,
@@ -1355,7 +1435,8 @@ class CartScreenState extends State<CartScreen> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
-                                                              color: textColor,
+                                                              color:
+                                                                  subtitleColor,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -1366,18 +1447,19 @@ class CartScreenState extends State<CartScreen> {
                                                           ),
                                                           AppText(
                                                             text:
-                                                                "\u{20B9} ${controller.cartDetails["total_mrp"] ?? "0"}",
+                                                                "\u{20B9}${controller.cartDetails["total_mrp"] ?? "0"}",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
                                                                 FontWeight.w400,
-                                                            color: textColor,
+                                                            color:
+                                                                homeAppBarColor,
                                                             fontSize: 12,
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                    controller.cartDetails[
+                                                    /*  controller.cartDetails[
                                                                 "express_delivery_charges"] ==
                                                             "0.00"
                                                         ? SizedBox(
@@ -1402,15 +1484,15 @@ class CartScreenState extends State<CartScreen> {
                                                                               4.sp),
                                                                   child:
                                                                       AppText(
-                                                                    text:
-                                                                        "Express Delivery Charges",
+                                                                    text: "Express Delivery Charges"
+                                                                        .toUpperCase(),
                                                                     fontFamily:
                                                                         "Franklin Gothic Regular",
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
                                                                     color:
-                                                                        textColor,
+                                                                        subtitleColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -1430,15 +1512,79 @@ class CartScreenState extends State<CartScreen> {
                                                                       FontWeight
                                                                           .w400,
                                                                   color:
-                                                                      textColor,
+                                                                      homeAppBarColor,
                                                                   fontSize: 12,
                                                                 ),
                                                               ],
                                                             ),
                                                           ),
+                                                    */
+                                                    controller.cartDetails[
+                                                                "shipping_cost"] !=
+                                                            "0.00"
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 12.sp),
+                                                            child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              4.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text:
+                                                                        "Delivery Charges",
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    color:
+                                                                        subtitleColor,
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                ),
+                                                                const Expanded(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    height: 0,
+                                                                  ),
+                                                                ),
+                                                                AppText(
+                                                                  text: /*  controller
+                                                                              .cartDetails["express_delivery_charges"] !=
+                                                                          "0.00"
+                                                                      ? */
+                                                                      "\u{20B9}${double.parse(controller.cartDetails["shipping_cost"]) + double.parse(controller.cartDetails["express_delivery_charges"])}",
+                                                                  // "\u{20B9} ${controller.cartDetails["shipping_cost"]}",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      homeAppBarColor,
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : SizedBox(
+                                                            height: 0,
+                                                          ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 10.sp),
+                                                          top: 12.sp),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1459,7 +1605,8 @@ class CartScreenState extends State<CartScreen> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
-                                                              color: textColor,
+                                                              color:
+                                                                  subtitleColor,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -1470,7 +1617,7 @@ class CartScreenState extends State<CartScreen> {
                                                           ),
                                                           AppText(
                                                             text:
-                                                                "\u{20B9} ${controller.cartDetails["discount_on_mrp"] ?? "0"}",
+                                                                "\u{20B9}${controller.cartDetails["discount_on_mrp"] ?? "0"}",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
@@ -1490,7 +1637,7 @@ class CartScreenState extends State<CartScreen> {
                                                         : Padding(
                                                             padding:
                                                                 EdgeInsets.only(
-                                                                    top: 10.sp),
+                                                                    top: 12.sp),
                                                             child: Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -1514,7 +1661,7 @@ class CartScreenState extends State<CartScreen> {
                                                                         FontWeight
                                                                             .w400,
                                                                     color:
-                                                                        textColor,
+                                                                        subtitleColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -1525,81 +1672,43 @@ class CartScreenState extends State<CartScreen> {
                                                                     height: 0,
                                                                   ),
                                                                 ),
-                                                                AppText(
-                                                                  text:
-                                                                      "\u{20B9} ${controller.cartDetails["coupon_discount"] ?? "0"}",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color:
-                                                                      greenText,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                    controller.cartDetails[
-                                                                "shipping_cost"] !=
-                                                            "0.00"
-                                                        ? Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10.sp),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          right:
-                                                                              4.sp),
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    Get.to(
+                                                                        BottomCoupon(
+                                                                      list: controller
+                                                                          .couponList,
+                                                                      onPressed:
+                                                                          (p0) {
+                                                                        controller
+                                                                            .couponText
+                                                                            .value = p0;
+                                                                        controller.callAddCoupon(
+                                                                            p0,
+                                                                            "cart");
+                                                                      },
+                                                                    ));
+                                                                  },
                                                                   child:
                                                                       AppText(
                                                                     text:
-                                                                        "Shipping Cost",
+                                                                        // "\u{20B9} ${controller.cartDetails["coupon_discount"] ?? "0"}",
+                                                                        "Apply Coupon",
                                                                     fontFamily:
-                                                                        "Franklin Gothic Regular",
+                                                                        "Franklin Gothic",
                                                                     fontWeight:
                                                                         FontWeight
-                                                                            .w400,
-                                                                    color:
-                                                                        textColor,
+                                                                            .w500,
+                                                                    color: Color(
+                                                                        0xff7A6ECC),
                                                                     fontSize:
-                                                                        12,
+                                                                        10,
                                                                   ),
-                                                                ),
-                                                                const Expanded(
-                                                                  child:
-                                                                      SizedBox(
-                                                                    height: 0,
-                                                                  ),
-                                                                ),
-                                                                AppText(
-                                                                  text:
-                                                                      "\u{20B9} ${controller.cartDetails["shipping_cost"]}",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color:
-                                                                      greenText,
-                                                                  fontSize: 12,
                                                                 ),
                                                               ],
                                                             ),
-                                                          )
-                                                        : SizedBox(
-                                                            height: 0,
                                                           ),
-                                                    Padding(
+                                                    /*  Padding(
                                                       padding: EdgeInsets.only(
                                                           top: 10.sp),
                                                       child: Row(
@@ -1644,9 +1753,10 @@ class CartScreenState extends State<CartScreen> {
                                                         ],
                                                       ),
                                                     ),
+                                                    */
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 10.sp),
+                                                          top: 12.sp),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1670,7 +1780,7 @@ class CartScreenState extends State<CartScreen> {
                                                                       FontWeight
                                                                           .w400,
                                                                   color:
-                                                                      textColor,
+                                                                      subtitleColor,
                                                                   fontSize: 12,
                                                                 ),
                                                               ),
@@ -1701,13 +1811,13 @@ class CartScreenState extends State<CartScreen> {
                                                                   );
                                                                 },
                                                                 child: Image.asset(
-                                                                    questionIcon,
+                                                                    shipIcon,
                                                                     height:
-                                                                        16.sp,
+                                                                        18.sp,
                                                                     width:
-                                                                        16.sp,
+                                                                        18.sp,
                                                                     fit: BoxFit
-                                                                        .cover),
+                                                                        .contain),
                                                               )
                                                             ],
                                                           ),
@@ -1718,12 +1828,13 @@ class CartScreenState extends State<CartScreen> {
                                                           ),
                                                           AppText(
                                                             text:
-                                                                "\u{20B9} ${controller.cartDetails["convenience_fee"] ?? "Free"}",
+                                                                "\u{20B9}${controller.cartDetails["convenience_fee"] ?? "Free"}",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
                                                                 FontWeight.w400,
-                                                            color: greenText,
+                                                            color:
+                                                                homeAppBarColor,
                                                             fontSize: 12,
                                                           ),
                                                         ],
@@ -1731,7 +1842,7 @@ class CartScreenState extends State<CartScreen> {
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 10.sp),
+                                                          top: 12.sp),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1755,7 +1866,7 @@ class CartScreenState extends State<CartScreen> {
                                                                       FontWeight
                                                                           .w400,
                                                                   color:
-                                                                      textColor,
+                                                                      subtitleColor,
                                                                   fontSize: 12,
                                                                 ),
                                                               ),
@@ -1786,11 +1897,11 @@ class CartScreenState extends State<CartScreen> {
                                                                   );
                                                                 },
                                                                 child: Image.asset(
-                                                                    questionIcon,
+                                                                    shipIcon,
                                                                     height:
-                                                                        16.sp,
+                                                                        18.sp,
                                                                     width:
-                                                                        16.sp,
+                                                                        18.sp,
                                                                     fit: BoxFit
                                                                         .cover),
                                                               )
@@ -1803,12 +1914,13 @@ class CartScreenState extends State<CartScreen> {
                                                           ),
                                                           AppText(
                                                             text:
-                                                                "\u{20B9} ${controller.cartDetails["total_tax"].toString()}",
+                                                                "\u{20B9}${controller.cartDetails["total_tax"].toString()}",
                                                             fontFamily:
                                                                 "Franklin Gothic Regular",
                                                             fontWeight:
                                                                 FontWeight.w400,
-                                                            color: textColor,
+                                                            color:
+                                                                homeAppBarColor,
                                                             fontSize: 12,
                                                           ),
                                                         ],
@@ -1817,7 +1929,7 @@ class CartScreenState extends State<CartScreen> {
                                                     Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                              vertical: 20.sp),
+                                                              vertical: 10.sp),
                                                       child: Container(
                                                         width: double.infinity,
                                                         color: colorSecondary,
@@ -1826,7 +1938,7 @@ class CartScreenState extends State<CartScreen> {
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 6.sp),
+                                                          top: 0.sp),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1841,7 +1953,7 @@ class CartScreenState extends State<CartScreen> {
                                                                         4.sp),
                                                             child: AppText(
                                                               text:
-                                                                  "Bill total",
+                                                                  "BILL TOTAL",
                                                               fontFamily:
                                                                   "Franklin Gothic",
                                                               fontWeight:
@@ -1849,7 +1961,7 @@ class CartScreenState extends State<CartScreen> {
                                                                       .w500,
                                                               color:
                                                                   colorPrimary,
-                                                              fontSize: 16,
+                                                              fontSize: 15,
                                                             ),
                                                           ),
                                                           const Expanded(
@@ -1859,13 +1971,13 @@ class CartScreenState extends State<CartScreen> {
                                                           ),
                                                           AppText(
                                                             text:
-                                                                "\u{20B9} ${controller.cartDetails["total"] ?? "0"}",
+                                                                "\u{20B9}${controller.cartDetails["total"] ?? "0"}",
                                                             fontFamily:
-                                                                "Franklin Gothic Bold",
+                                                                "Franklin Gothic",
                                                             fontWeight:
-                                                                FontWeight.w700,
+                                                                FontWeight.w500,
                                                             color: colorPrimary,
-                                                            fontSize: 18,
+                                                            fontSize: 12,
                                                           ),
                                                         ],
                                                       ),

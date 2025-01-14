@@ -500,7 +500,14 @@ class AccountScreenState extends State<AccountScreen> {
                                 ), */
                                     SettingWidgets(
                                       onPressedDelete: () {
-                                        Get.to(DeleteAccountScreen());
+                                        Get.to(DeleteAccountScreen(
+                                          account_requested: controller
+                                                          .profileDetails[
+                                                      "account_deletion_requested_at"] !=
+                                                  null
+                                              ? true
+                                              : false,
+                                        ));
                                       },
                                       onPressedNotification: () {
                                         if (controller.profileDetails[

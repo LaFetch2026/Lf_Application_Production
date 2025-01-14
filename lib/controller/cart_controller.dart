@@ -29,6 +29,7 @@ class CartController extends BaseController {
   RxString tax = "".obs;
   RxString total = "".obs;
   RxString couponText = "Apply Coupon".obs;
+  RxString couponSave = "".obs;
   final couponController = TextEditingController();
   List couponList = [].obs;
   RxBool isExpress = false.obs;
@@ -71,6 +72,8 @@ class CartController extends BaseController {
           cartTotalValue.value = orderList.length;
           if (responseData["discount"] != null) {
             couponText.value = responseData["discount"]["code"];
+            couponSave.value =
+                responseData["discount"]["saved_total"].toString();
           }
         }
       } else if (response.statusCode == 500) {

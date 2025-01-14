@@ -12,7 +12,9 @@ import '../../controller/profile_controller.dart';
 import '../bottomnavscreen.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
+  final bool account_requested;
   const DeleteAccountScreen({
+    required this.account_requested,
     super.key,
   });
 
@@ -42,66 +44,85 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
             color: dividerColor,
             height: 1.sp,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 20.sp,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                child: AppText(
-                  text: "Are you dure you want to delete your account?",
-                  fontFamily: "Franklin Gothic Semibold",
-                  fontWeight: FontWeight.w400,
-                  color: appbarText,
-                  fontSize: 14,
+          widget.account_requested
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 30.sp),
+                      child: AppText(
+                        text:
+                            "Your account is scheduled to be deleted.  If you don't want this to be deleted, please reach out to support@la-fetch.com",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: redColor,
+                        maxLines: 4,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 20.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                      child: AppText(
+                        text: "Are you dure you want to delete your account?",
+                        fontFamily: "Franklin Gothic Semibold",
+                        fontWeight: FontWeight.w400,
+                        color: appbarText,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.sp,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                      child: AppText(
+                        text:
+                            "LaFetch securely maintains the user-collected data integral to user onboarding processes. Information pertaining to user services will be upheld as long as necessary for organisational puposes, while individual user data will be expunged to ensure privacy.",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: appbarText,
+                        maxLines: 8,
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.sp,
+                    ),
+                    Obx(() => Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.sp),
+                          child: getSingleButton(
+                              label: "Confirm Deletion",
+                              textColor: whiteBorderColor,
+                              backgroundColor: homeAppBarColor,
+                              controller: controller,
+                              onPressed: () {
+                                controller.callDeleteAccount();
+                              },
+                              borderColor: btnTextColor),
+                        )),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.sp),
+                      child: getSingleButton(
+                          label: "Cancel",
+                          textColor: homeAppBarColor,
+                          backgroundColor: whiteColor,
+                          // controller: controller,
+                          onPressed: () {
+                            Get.back();
+                          },
+                          borderColor: btnTextColor),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(
-                height: 10.sp,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                child: AppText(
-                  text:
-                      "LaFetch securely maintains the user-collected data integral to user onboarding processes. Information pertaining to user services will be upheld as long as necessary for organisational puposes, while individual user data will be expunged to ensure privacy.",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: appbarText,
-                  maxLines: 8,
-                  fontSize: 12,
-                ),
-              ),
-              SizedBox(
-                height: 20.sp,
-              ),
-            ],
-          ),
-          Obx(() => Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.sp),
-                child: getSingleButton(
-                    label: "Confirm Deletion",
-                    textColor: whiteBorderColor,
-                    backgroundColor: homeAppBarColor,
-                    controller: controller,
-                    onPressed: () {
-                      // controller.callDeleteAccount();
-                    },
-                    borderColor: btnTextColor),
-              )),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.sp),
-            child: getSingleButton(
-                label: "Cancel",
-                textColor: homeAppBarColor,
-                backgroundColor: whiteColor,
-                controller: controller,
-                onPressed: () {
-                  Get.back();
-                },
-                borderColor: btnTextColor),
-          ),
         ],
       ),
     );

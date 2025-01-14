@@ -191,6 +191,7 @@ const currentLocationIcon = 'assets/images/current_location_icon.png';
 const deleteAddressIcon = 'assets/images/delete_address.png';
 const editAddressIcon = 'assets/images/edit_address.png';
 const locationPinImage = 'assets/images/location_pin.png';
+const shipIcon = 'assets/images/ship_icon.png';
 
 class ApiConstants {
   ApiConstants._();

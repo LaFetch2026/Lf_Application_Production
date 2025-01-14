@@ -124,7 +124,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                               decoration: BoxDecoration(
                                                 color: btnTextColor,
                                                 border: Border.all(
-                                                    color: btnTextColor,
+                                                    color: homeAppBarColor,
                                                     width: 1.sp),
                                               ),
                                               child: Padding(
@@ -133,7 +133,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 child: Center(
                                                   child: AppText(
                                                     text: "Apply",
-                                                    color: whiteBack,
+                                                    color: whiteColor,
                                                     fontSize: 12,
                                                     fontFamily:
                                                         "Franklin Gothic",
@@ -227,7 +227,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                               decoration: BoxDecoration(
                                                 color: btnTextColor,
                                                 border: Border.all(
-                                                    color: btnTextColor,
+                                                    color: homeAppBarColor,
                                                     width: 1.sp),
                                               ),
                                               child: Padding(
