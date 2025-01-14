@@ -12,6 +12,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
+import '../../screens/Brands/categoryproduct.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
 
@@ -570,7 +571,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 child: Row(
                                                   children: [
                                                     AppText(
-                                                      text: "Explore",
+                                                      text: "Save",
                                                       color: subtitleColor,
                                                       fontSize: 12,
                                                       fontFamily:
@@ -583,7 +584,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                           EdgeInsets.symmetric(
                                                               horizontal: 5.sp),
                                                       child: AppText(
-                                                        text: "\u{20B9}90",
+                                                        text:
+                                                            "\u{20B9}${widget.list[index]["saved_total"].toString()}",
                                                         color:
                                                             color5StartReview,
                                                         fontSize: 12,
@@ -602,8 +604,11 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     top: 5.sp,
                                                     right: 16.sp),
                                                 child: AppText(
-                                                  text:
-                                                      "20% off on orders above Rs.1499",
+                                                  text: widget.list[index]
+                                                              ["type"] ==
+                                                          1
+                                                      ? "${widget.list[index]["type_label"].toString()}${widget.list[index]["value"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}"
+                                                      : "${widget.list[index]["value"].toString()}${widget.list[index]["type_label"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}",
                                                   color: subtitleColor,
                                                   fontSize: 12,
                                                   fontFamily:
@@ -617,8 +622,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     top: 5.sp,
                                                     right: 16.sp),
                                                 child: AppText(
-                                                  text:
-                                                      "Valid until: 15th September 2025",
+                                                  text: widget.list[index]
+                                                      ["ends_at"],
                                                   color: subtitleColor,
                                                   fontSize: 12,
                                                   fontFamily:
@@ -650,8 +655,9 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     top: 30.sp,
                                                     right: 16.sp),
                                                 child: AppText(
-                                                  text:
-                                                      "Add items worth Rs. 601 for discount",
+                                                  text: widget.list[index]
+                                                          ["add_items_worth"] ??
+                                                      "",
                                                   color: titleColor,
                                                   fontSize: 12,
                                                   fontFamily:
@@ -659,40 +665,87 @@ class BottomCouponState extends State<BottomCoupon> {
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 30.sp,
-                                                    top: 5.sp,
-                                                    right: 16.sp),
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      "Browse Collection",
-                                                      style: TextStyle(
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: homeAppBarColor,
-                                                        fontSize: 12.sp,
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 2.sp,
-                                                          right: 5.sp),
-                                                      child: Image.asset(
-                                                          rightArrowImage,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  controller.categoryList
+                                                      .clear();
+                                                  controller.tagsList.clear();
+                                                  for (var i = 0;
+                                                      i <
+                                                          widget
+                                                              .list[index]
+                                                                  ["tags"]
+                                                              .length;
+                                                      i++) {
+                                                    controller.tagsList.add(
+                                                        widget.list[index]
+                                                            ["tags"][i]["id"]);
+                                                  }
+                                                  for (var i = 0;
+                                                      i <
+                                                          widget
+                                                              .list[index]
+                                                                  ["categories"]
+                                                              .length;
+                                                      i++) {
+                                                    controller.categoryList.add(
+                                                        widget.list[index]
+                                                                ["categories"]
+                                                            [i]["id"]);
+                                                  }
+                                                  Navigator.push(
+                                                      context,
+                                                      scaleIn(
+                                                        CategoryProductScreen(
+                                                          categoryName: "",
+                                                          categoryId: 0,
+                                                          brandId: 0,
+                                                          genderType: 0,
+                                                          tagIds: controller
+                                                              .tagsList,
+                                                          categoryList:
+                                                              controller
+                                                                  .categoryList,
+                                                        ),
+                                                      ));
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30.sp,
+                                                      top: 5.sp,
+                                                      right: 16.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        "Browse Collection",
+                                                        style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                           color:
                                                               homeAppBarColor,
-                                                          height: 10.sp,
-                                                          width: 10.sp,
-                                                          fit: BoxFit.cover),
-                                                    )
-                                                  ],
+                                                          fontSize: 12.sp,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 2.sp,
+                                                                right: 5.sp),
+                                                        child: Image.asset(
+                                                            rightArrowImage,
+                                                            color:
+                                                                homeAppBarColor,
+                                                            height: 10.sp,
+                                                            width: 10.sp,
+                                                            fit: BoxFit.cover),
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ],
@@ -720,7 +773,7 @@ class BottomCouponState extends State<BottomCoupon> {
                     ),
                   ),
           ),
-          widget.list.isNotEmpty
+          widget.list.isNotEmpty && i != null
               ? Container(
                   color: whiteColor,
                   child: Row(
@@ -749,7 +802,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                 Padding(
                                   padding: EdgeInsets.only(top: 2.sp),
                                   child: AppText(
-                                    text: "\u{20B9}123",
+                                    text:
+                                        "\u{20B9} ${widget.list[i!]["saved_total"]}",
                                     textAlign: TextAlign.center,
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w500,
