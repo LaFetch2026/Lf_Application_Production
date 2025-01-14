@@ -692,7 +692,7 @@ class MapScreenState extends State<MapScreen> {
                 Container(
                   height: 5.sp,
                   width: 140.sp,
-                  margin: EdgeInsets.only(top: 40.sp),
+                  margin: EdgeInsets.only(top: 34.sp),
                   decoration: BoxDecoration(
                       color: whiteColor,
                       borderRadius: BorderRadius.circular(5.sp)),
