@@ -584,7 +584,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                           : SizedBox(
                                                                                               height: 0,
                                                                                             ),
-                                                                                  value.orderList[index]["product"]["express_delivery"]
+                                                                                  value.orderList[index]["express_delivery"]
                                                                                       ? Padding(
                                                                                           padding: EdgeInsets.only(
                                                                                             top: 8.0.sp,
@@ -807,7 +807,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     child: Row(
                                                                                       children: [
                                                                                         Visibility(
-                                                                                          visible: value.orderList[index]["product"]["mrp"] != null && value.orderList[index]["product"]["mrp"] == value.orderList[index]["product"]["price"] ? false : true,
+                                                                                          visible: value.orderList[index]["product"]["mrp"] == null && value.orderList[index]["product"]["mrp"] == value.orderList[index]["product"]["price"] ? false : true,
                                                                                           child: Padding(
                                                                                             padding: EdgeInsets.only(right: 10.sp),
                                                                                             child: Text(
