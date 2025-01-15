@@ -1487,13 +1487,46 @@ class ProductController extends BaseController {
         }
       } else {
         if (brandId != 0) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
+          String colorString = color_ids.join(',');
+          String sizeString = size_ids.join(',');
+          String brandString = brand_ids.join(',');
+          if (sort_By.isEmpty) {
+            if (filter) {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            } else {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            }
+          } else {
+            if (filter) {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            } else {
+              response = await http.get(
+                  Uri.parse(
+                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&sort_by=$sort_By"),
+                  headers: <String, String>{
+                    'Accept': 'application/json; charset=UTF-8',
+                    "Authorization": "Bearer ${prefs.getString('token')} ",
+                  });
+            }
+          }
         } else {
           if (categoryId == 0) {
             String colorString = color_ids.join(',');
@@ -1645,13 +1678,53 @@ class ProductController extends BaseController {
         dynamic response;
         if (type == "catalog") {
           if (brandId != 0) {
-            response = await http.get(
+            String colorString = color_ids.join(',');
+            String sizeString = size_ids.join(',');
+            String brandString = brand_ids.join(',');
+            if (sort_By.isEmpty) {
+              if (filter) {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&screen=catalog product list"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              } else {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              }
+            } else {
+              if (filter) {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&screen=catalog product list"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              } else {
+                response = await http.get(
+                    Uri.parse(
+                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&sort_by=$sort_By&screen=catalog product list"),
+                    headers: <String, String>{
+                      'Accept': 'application/json; charset=UTF-8',
+                      "Authorization": "Bearer ${prefs.getString('token')} ",
+                    });
+              }
+            }
+            /*  response = await http.get(
                 Uri.parse(
                     "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&brand_id=$brandId&page=${categoryProductPage.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
+                }); */
           } else {
             if (category_id == 0) {
               String colorString = color_ids.join(',');

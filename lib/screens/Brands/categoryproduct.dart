@@ -18,7 +18,7 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
+//import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
@@ -186,19 +186,38 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         ? true
                         : false,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
-                      child: AppText(
-                        text: widget.categoryName.toUpperCase(),
-                        color: Color(0xFF4B5563),
-                        fontSize: 16,
-                        fontFamily: "Franklin Gothic",
-                        textAlign: TextAlign.center,
-                        fontWeight: FontWeight.w500,
+                      padding: EdgeInsets.only(left: 16.sp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 16.sp),
+                            child: AppText(
+                              text: "Showing result for  ",
+                              color: Color(0xFF4B5563),
+                              fontSize: 16,
+                              fontFamily: "Franklin Gothic Regular",
+                              textAlign: TextAlign.center,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16.sp),
+                            child: AppText(
+                              text: "'${widget.categoryName.toUpperCase()}'",
+                              color: Color(0xFF4B5563),
+                              fontSize: 16,
+                              fontFamily: "Franklin Gothic Semibold",
+                              textAlign: TextAlign.center,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   )),
             Obx(() => Padding(
-                  padding: EdgeInsets.only(left: 16.sp, top: 5.sp),
+                  padding: EdgeInsets.only(left: 20.sp, top: 5.sp),
                   child: productController.isCategoryProduct.value
                       ? const DummyContainer(
                           height: 10,
@@ -397,7 +416,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                 24.sp,
                                                             fit: BoxFit.cover),
                                                   ),
-                                                  GestureDetector(
+                                                  /*   GestureDetector(
                                                     onTap: () async {
                                                       if (widget.categoryId !=
                                                           0) {
@@ -626,6 +645,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                       ),
                                                     ),
                                                   ),
+                                                */
                                                 ],
                                               ),
                                               Padding(
@@ -633,10 +653,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     horizontal: 10.sp,
                                                     vertical: 5.sp),
                                                 child: AppText(
-                                                  text: productController
-                                                              .productCategoryList[
-                                                          index]["brand_name"] ??
-                                                      "",
+                                                  text:
+                                                      "${productController.productCategoryList[index]["brand_name"]}"
+                                                          .toUpperCase(),
                                                   color: blackColor,
                                                   maxLines: 1,
                                                   fontSize: 13,
@@ -683,7 +702,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                           "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
                                                           style: TextStyle(
                                                             color:
-                                                                textHintColor,
+                                                                searchTextColor,
                                                             fontSize: 11.sp,
                                                             decoration:
                                                                 TextDecoration
@@ -699,7 +718,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     AppText(
                                                       text:
                                                           "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
-                                                      color: deepGreytextColor,
+                                                      color: homeAppBarColor,
                                                       maxLines: 2,
                                                       fontSize: 11,
                                                       fontFamily:

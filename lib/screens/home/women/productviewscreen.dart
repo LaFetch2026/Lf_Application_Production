@@ -11,7 +11,7 @@ import 'package:lafetch/commonwidget/catalogwidgets/bottomcategory.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomfiltters.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
+//import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
@@ -20,7 +20,7 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
+//import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
@@ -85,44 +85,50 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProductAppbar(onPressedSearch: () async {
-              Get.to(const SearchScreen())?.then((value) => setState(
-                    () {
-                      productController.getHandPickedProduct(
-                          productController.productSortBy.value,
-                          productController.filterProductEnable.value,
-                          false,
-                          productController.tagId.value);
-                    },
-                  ));
-              analytics
-                  .logEvent(name: "search_page", parameters: <String, Object>{
-                "page_name": "search_page",
-              });
-            }, onPressedHeart: () async {
-              Get.to(const BottomNavScreen(
-                index: 2,
-              ))?.then((value) => setState(
-                    () {
-                      controller.getCartData();
-                    },
-                  ));
-              analytics
-                  .logEvent(name: "wishlist_page", parameters: <String, Object>{
-                "page_name": "wishlist_page",
-              });
-            }, onPressedCart: () async {
-              Get.to(const CartScreen())?.then((value) => setState(
-                    () {
-                      controller.getCartData();
-                    },
-                  ));
-              analytics
-                  .logEvent(name: "cart_page", parameters: <String, Object>{
-                "page_name": "cart_page",
-              });
-            }),
-            Padding(
+            ProductAppbar(
+                onPressedSearch: () async {
+                  Get.to(const SearchScreen())?.then((value) => setState(
+                        () {
+                          productController.getHandPickedProduct(
+                              productController.productSortBy.value,
+                              productController.filterProductEnable.value,
+                              false,
+                              productController.tagId.value);
+                        },
+                      ));
+                  analytics.logEvent(
+                      name: "search_page",
+                      parameters: <String, Object>{
+                        "page_name": "search_page",
+                      });
+                },
+                isHandPicked: true,
+                onPressedHeart: () async {
+                  Get.to(const BottomNavScreen(
+                    index: 2,
+                  ))?.then((value) => setState(
+                        () {
+                          controller.getCartData();
+                        },
+                      ));
+                  analytics.logEvent(
+                      name: "wishlist_page",
+                      parameters: <String, Object>{
+                        "page_name": "wishlist_page",
+                      });
+                },
+                onPressedCart: () async {
+                  Get.to(const CartScreen())?.then((value) => setState(
+                        () {
+                          controller.getCartData();
+                        },
+                      ));
+                  analytics
+                      .logEvent(name: "cart_page", parameters: <String, Object>{
+                    "page_name": "cart_page",
+                  });
+                }),
+            /*  Padding(
               padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
               child: AppText(
                 text: "HANDPICKED FOR YOU",
@@ -153,6 +159,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                 )),
+            */
             Obx(
               () => productController.isHandPicked.value
                   ? Expanded(
@@ -307,7 +314,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                                 24.sp,
                                                             fit: BoxFit.cover),
                                                   ),
-                                                  GestureDetector(
+                                                  /*   GestureDetector(
                                                     onTap: () async {
                                                       if (productController
                                                               .handPickedProductList[
@@ -489,6 +496,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                       ),
                                                     ),
                                                   ),
+                                                */
                                                 ],
                                               ),
                                               Padding(
@@ -496,10 +504,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                     horizontal: 10.sp,
                                                     vertical: 5.sp),
                                                 child: AppText(
-                                                  text: productController
-                                                              .handPickedProductList[
-                                                          index]["brand_name"] ??
-                                                      "",
+                                                  text:
+                                                      "${productController.handPickedProductList[index]["brand_name"]}"
+                                                          .toUpperCase(),
                                                   color: blackColor,
                                                   maxLines: 1,
                                                   fontSize: 13,
@@ -546,7 +553,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                           "\u{20B9} ${productController.handPickedProductList[index]["mrp"] ?? ""}",
                                                           style: TextStyle(
                                                             color:
-                                                                textHintColor,
+                                                                searchTextColor,
                                                             fontSize: 11.sp,
                                                             decoration:
                                                                 TextDecoration
@@ -562,7 +569,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                     AppText(
                                                       text:
                                                           "\u{20B9} ${productController.handPickedProductList[index]["price"] ?? ""}",
-                                                      color: deepGreytextColor,
+                                                      color: homeAppBarColor,
                                                       maxLines: 2,
                                                       fontSize: 11,
                                                       fontFamily:

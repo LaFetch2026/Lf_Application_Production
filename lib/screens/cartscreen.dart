@@ -807,7 +807,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     child: Row(
                                                                                       children: [
                                                                                         Visibility(
-                                                                                          visible: value.orderList[index]["product"]["mrp"] == null && value.orderList[index]["product"]["mrp"] == value.orderList[index]["product"]["price"] ? false : true,
+                                                                                          visible: value.orderList[index]["product"]["mrp"] == null || value.orderList[index]["product"]["mrp"] == value.orderList[index]["product"]["price"] ? false : true,
                                                                                           child: Padding(
                                                                                             padding: EdgeInsets.only(right: 10.sp),
                                                                                             child: Text(

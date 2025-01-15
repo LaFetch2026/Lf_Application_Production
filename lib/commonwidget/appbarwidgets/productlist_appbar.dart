@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import '../../utils/constants.dart';
 
@@ -8,9 +9,14 @@ class ProductAppbar extends StatefulWidget {
   final Function? onPressedSearch;
   final Function? onPressedCart;
   final Function? onPressedHeart;
+  final bool isHandPicked;
 
   const ProductAppbar(
-      {Key? key, this.onPressedSearch, this.onPressedCart, this.onPressedHeart})
+      {Key? key,
+      this.onPressedSearch,
+      this.onPressedCart,
+      this.onPressedHeart,
+      this.isHandPicked = false})
       : super(key: key);
 
   @override
@@ -32,18 +38,29 @@ class _ProductAppbarState extends State<ProductAppbar> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: IconButton(
-                  icon: Image.asset(
-                    backWhiteArrow,
-                    height: 16.sp,
+              IconButton(
+                icon: Image.asset(
+                  backWhiteArrow,
+                  height: 16.sp,
+                  color: homeAppBarColor,
+                  width: 16.sp,
+                ),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              Visibility(
+                visible: widget.isHandPicked,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 0.sp),
+                  child: AppText(
+                    text: "HANDPICKED FOR YOU",
                     color: homeAppBarColor,
-                    width: 16.sp,
+                    fontSize: 16,
+                    fontFamily: "Franklin Gothic Semibold",
+                    textAlign: TextAlign.center,
+                    fontWeight: FontWeight.w500,
                   ),
-                  onPressed: () {
-                    Get.back();
-                  },
                 ),
               ),
               const Expanded(
@@ -51,13 +68,16 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   height: 0,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 5.sp),
-                child: Image.asset(
-                  lafetchLogoImage,
-                  color: homeAppBarColor,
-                  height: 25.sp,
-                  width: 20.sp,
+              Visibility(
+                visible: !widget.isHandPicked,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 35.sp, right: 10.sp),
+                  child: Image.asset(
+                    lafetchLogoImage,
+                    color: homeAppBarColor,
+                    height: 25.sp,
+                    width: 20.sp,
+                  ),
                 ),
               ),
               const Expanded(
