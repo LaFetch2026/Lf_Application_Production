@@ -180,18 +180,24 @@ class HorizontalBrandList extends StatelessWidget {
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w500,
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 5.sp),
-                                          child: Text(
-                                            "\u{20B9} ${list[index]["mrp"]}",
-                                            style: TextStyle(
-                                              color: textHintColor,
-                                              fontSize: 11.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
+                                        Visibility(
+                                          visible: list[index]["mrp"] != null
+                                              ? true
+                                              : false,
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 5.sp),
+                                            child: Text(
+                                              "\u{20B9} ${list[index]["mrp"]}",
+                                              style: TextStyle(
+                                                color: textHintColor,
+                                                fontSize: 11.sp,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
                                           ),
                                         ),

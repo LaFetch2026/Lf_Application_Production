@@ -306,6 +306,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           .push(MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   CategoryProductScreen(
+                                                    genderName: "",
                                                     categoryName:
                                                         brandController
                                                                 .categoryList[

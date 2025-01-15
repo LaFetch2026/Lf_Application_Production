@@ -32,6 +32,7 @@ class CategoryProductScreen extends StatefulWidget {
   final int genderType;
   final List tagIds;
   final List categoryList;
+  final String genderName;
   const CategoryProductScreen(
       {super.key,
       required this.categoryName,
@@ -39,6 +40,7 @@ class CategoryProductScreen extends StatefulWidget {
       required this.brandId,
       required this.genderType,
       required this.tagIds,
+      required this.genderName,
       required this.categoryList});
 
   @override
@@ -174,17 +176,27 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 "page_name": "cart_page",
               });
             }),
-            Padding(
-              padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
-              child: AppText(
-                text: widget.categoryName.toUpperCase(),
-                color: Color(0xFF4B5563),
-                fontSize: 16,
-                fontFamily: "Franklin Gothic",
-                textAlign: TextAlign.center,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            Obx(() => productController.isCategoryProduct.value
+                ? const DummyContainer(
+                    height: 10,
+                    width: 60,
+                  )
+                : Visibility(
+                    visible: productController.productCategoryList.isNotEmpty
+                        ? true
+                        : false,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
+                      child: AppText(
+                        text: widget.categoryName.toUpperCase(),
+                        color: Color(0xFF4B5563),
+                        fontSize: 16,
+                        fontFamily: "Franklin Gothic",
+                        textAlign: TextAlign.center,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  )),
             Obx(() => Padding(
                   padding: EdgeInsets.only(left: 16.sp, top: 5.sp),
                   child: productController.isCategoryProduct.value
@@ -192,16 +204,22 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           height: 10,
                           width: 60,
                         )
-                      : AppText(
-                          text: productController.total.value == 1 ||
-                                  productController.total.value == 0
-                              ? "${productController.total.value} item"
-                              : "${productController.total.value} items",
-                          color: Color(0xFF4B5563),
-                          fontSize: 10,
-                          fontFamily: "Franklin Gothic Regular",
-                          textAlign: TextAlign.center,
-                          fontWeight: FontWeight.w500,
+                      : Visibility(
+                          visible:
+                              productController.productCategoryList.isNotEmpty
+                                  ? true
+                                  : false,
+                          child: AppText(
+                            text: productController.total.value == 1 ||
+                                    productController.total.value == 0
+                                ? "${productController.total.value} item"
+                                : "${productController.total.value} items",
+                            color: Color(0xFF4B5563),
+                            fontSize: 10,
+                            fontFamily: "Franklin Gothic Regular",
+                            textAlign: TextAlign.center,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                 )),
             Obx(
@@ -650,35 +668,44 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     right: 1.sp),
                                                 child: Row(
                                                   children: [
-                                                    Text(
-                                                      "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
-                                                      style: TextStyle(
-                                                        color: textHintColor,
-                                                        fontSize: 11.sp,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .lineThrough,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                                    Visibility(
+                                                      visible: productController
+                                                                      .productCategoryList[
+                                                                  index]["mrp"] !=
+                                                              null
+                                                          ? true
+                                                          : false,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 5.sp),
+                                                        child: Text(
+                                                          "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
+                                                          style: TextStyle(
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 11.sp,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .lineThrough,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 5.sp),
-                                                      child: AppText(
-                                                        text:
-                                                            "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
-                                                        color:
-                                                            deepGreytextColor,
-                                                        maxLines: 2,
-                                                        fontSize: 11,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
+                                                    AppText(
+                                                      text:
+                                                          "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
+                                                      color: deepGreytextColor,
+                                                      maxLines: 2,
+                                                      fontSize: 11,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                     ),
                                                   ],
                                                 ),
@@ -754,6 +781,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                       height: 200.sp,
                                       width: 220.sp,
                                       fit: BoxFit.cover),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 2.sp),
+                                child: Text(
+                                  "No products found",
+                                  style: TextStyle(
+                                    color: colorPrimary,
+                                    fontSize: 14,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
                               Padding(
@@ -839,8 +879,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                   color: Color(0xFF374151),
                                   decoration: TextDecoration.none,
                                   fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -868,6 +908,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         ),
                         builder: (ctx) {
                           return BottomCategory(
+                            gender: widget.genderName,
                             onPressedButton: (p0) {
                               if (p0 == "Women") {
                                 productController.categoryProductGender.value =
@@ -903,6 +944,98 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     false);
                               }
                             },
+                            onPressedFilter: () {
+                              Get.back();
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                constraints: BoxConstraints(
+                                  maxWidth: double.infinity,
+                                  maxHeight: 500.sp,
+                                ),
+                                builder: (ctx) {
+                                  return BottomFilters(
+                                    btnclearAll: () async {
+                                      productController.brand_ids.clear();
+                                      productController.color_ids.clear();
+                                      productController.size_ids.clear();
+                                      productController.sortBy.value = "";
+                                      productController.filterEnable.value =
+                                          false;
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.remove("brandList");
+                                      prefs.remove("colorList");
+                                      prefs.remove("sizeList");
+                                      prefs.remove("upper");
+                                      prefs.remove("lower");
+                                      prefs.remove("sortby");
+                                      prefs.remove("category");
+                                      if (widget.categoryId != 0) {
+                                        productController
+                                            .getProductByCategoryData(
+                                                widget.categoryId,
+                                                widget.brandId,
+                                                "",
+                                                [],
+                                                productController.sortBy.value,
+                                                productController
+                                                    .categoryProductGender
+                                                    .value,
+                                                productController
+                                                    .filterEnable.value,
+                                                0,
+                                                false,
+                                                "");
+                                      } else {
+                                        productController.getTagsBannerData(
+                                            widget.tagIds,
+                                            widget.categoryList,
+                                            productController
+                                                .categoryProductGender.value,
+                                            productController.sortBy.value,
+                                            productController
+                                                .filterEnable.value,
+                                            false);
+                                      }
+                                    },
+                                    onClick: (p0, p1) {
+                                      productController.filterEnable.value =
+                                          true;
+                                      productController.lowPrice.value = p0;
+                                      productController.highPrice.value = p1;
+                                      if (widget.categoryId != 0) {
+                                        productController
+                                            .getProductByCategoryData(
+                                                widget.categoryId,
+                                                widget.brandId,
+                                                "",
+                                                [],
+                                                productController.sortBy.value,
+                                                productController
+                                                    .categoryProductGender
+                                                    .value,
+                                                productController
+                                                    .filterEnable.value,
+                                                0,
+                                                true,
+                                                "");
+                                      } else {
+                                        productController.getTagsBannerData(
+                                            widget.tagIds,
+                                            widget.categoryList,
+                                            productController
+                                                .categoryProductGender.value,
+                                            productController.sortBy.value,
+                                            productController
+                                                .filterEnable.value,
+                                            true);
+                                      }
+                                    },
+                                  );
+                                },
+                              );
+                            },
                           );
                         },
                       );
@@ -911,13 +1044,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Image.asset(
+                            /*  Image.asset(
                               categoryIcon,
                               height: 20.sp,
                               width: 20.sp,
-                            ),
+                            ), */
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 5.sp),
                               child: Text(
@@ -927,8 +1060,25 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                   color: Color(0xFF374151),
                                   decoration: TextDecoration.none,
                                   fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: widget.genderName == "" ? false : true,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 5.sp, right: 5.sp, top: 1.sp),
+                                child: Text(
+                                  widget.genderName.toUpperCase(),
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: appBarColor,
+                                    fontSize: 10.sp,
+                                  ),
                                 ),
                               ),
                             ),
@@ -1047,8 +1197,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                   color: Color(0xFF374151),
                                   decoration: TextDecoration.none,
                                   fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),

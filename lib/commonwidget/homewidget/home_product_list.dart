@@ -248,30 +248,35 @@ class HomeProductList extends StatelessWidget {
                                           top: 8.sp, left: 4.sp, right: 3.sp),
                                       child: Row(
                                         children: [
-                                          Text(
-                                            "\u{20B9} ${list[index]["mrp"] ?? ""}",
-                                            style: TextStyle(
-                                              color: textHintColor,
-                                              fontSize: 11.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
+                                          Visibility(
+                                            visible: list[index]["mrp"] != null
+                                                ? true
+                                                : false,
+                                            child: Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 5.sp),
+                                              child: Text(
+                                                "\u{20B9} ${list[index]["mrp"] ?? ""}",
+                                                style: TextStyle(
+                                                  color: textHintColor,
+                                                  fontSize: 11.sp,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 5.sp),
-                                            child: AppText(
-                                              text:
-                                                  "\u{20B9} ${list[index]["price"] ?? ""}",
-                                              color: deepGreytextColor,
-                                              maxLines: 2,
-                                              fontSize: 11,
-                                              fontFamily: "Franklin Gothic",
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                          AppText(
+                                            text:
+                                                "\u{20B9} ${list[index]["price"] ?? ""}",
+                                            color: deepGreytextColor,
+                                            maxLines: 2,
+                                            fontSize: 11,
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ],
                                       ),

@@ -1178,20 +1178,32 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Text(
-                                        "\u{20B9} ${productController.productDetails["mrp"] ?? "0"}",
-                                        style: TextStyle(
-                                          color: textHintColor,
-                                          fontSize: 16.sp,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
+                                      Visibility(
+                                        visible: productController
+                                                    .productDetails["mrp"] !=
+                                                null
+                                            ? true
+                                            : false,
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 10.sp),
+                                          child: Text(
+                                            "\u{20B9} ${productController.productDetails["mrp"]}",
+                                            style: TextStyle(
+                                              color: textHintColor,
+                                              fontSize: 16.sp,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10.0.sp),
+                                        padding:
+                                            EdgeInsets.only(right: 10.0.sp),
                                         child: AppText(
                                           text:
                                               "\u{20B9} ${productController.productDetails["price"] ?? "0"}",

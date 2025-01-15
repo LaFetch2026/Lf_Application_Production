@@ -409,6 +409,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               "id"],
                                                                       brandId:
                                                                           0,
+                                                                      genderName:
+                                                                          "",
                                                                       genderType:
                                                                           0,
                                                                       categoryList: [],
@@ -1356,6 +1358,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               0,
                                                                           genderType:
                                                                               0,
+                                                                          genderName:
+                                                                              "",
                                                                           tagIds: const [],
                                                                           categoryList: [],
                                                                         )))

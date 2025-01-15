@@ -9,11 +9,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/constants.dart';
 
 class BottomCategory extends StatefulWidget {
+  final String gender;
   final Function(String) onPressedButton;
+  final Function onPressedFilter;
 
   const BottomCategory({
     Key? key,
+    required this.gender,
     required this.onPressedButton,
+    required this.onPressedFilter,
   }) : super(key: key);
 
   @override
@@ -41,6 +45,8 @@ class _BottomCategoryState extends State<BottomCategory> {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getString('category') != null) {
       text1 = prefs.getString('category');
+    } else {
+      text1 = widget.gender;
     }
     setState(() {});
   }
@@ -64,32 +70,43 @@ class _BottomCategoryState extends State<BottomCategory> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.sp, vertical: 5.sp),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.sp,
+                    ),
                     child: Row(
                       children: [
                         Expanded(
                           flex: 1,
-                          child: Text(
-                            "Category".toUpperCase(),
-                            style: TextStyle(
-                              color: blackColor,
-                              fontSize: 16.sp,
-                              fontFamily: "Franklin Gothic Semibold",
-                              fontWeight: FontWeight.w600,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.sp),
+                            child: Text(
+                              "Category".toUpperCase(),
+                              style: TextStyle(
+                                color: blackColor,
+                                fontSize: 16.sp,
+                                fontFamily: "Franklin Gothic Semibold",
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            "View All Filters".toUpperCase(),
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: appBarColor,
-                              fontSize: 10.sp,
+                          onTap: () {
+                            widget.onPressedFilter.call();
+                          },
+                          child: Container(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.sp),
+                              child: Text(
+                                "View All Filters".toUpperCase(),
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: appBarColor,
+                                  fontSize: 10.sp,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -162,7 +179,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                   Row(
                     children: [
                       Radio(
-                          value: "Accesories",
+                          value: "Accessories",
                           activeColor: colorPrimary,
                           groupValue: text1,
                           onChanged: (value) async {

@@ -27,10 +27,12 @@ import '../../../utils/constants.dart';
 
 class ProductViewScreen extends StatefulWidget {
   final String title;
+  final String genderName;
 
   const ProductViewScreen({
     super.key,
     required this.title,
+    required this.genderName,
   });
 
   @override
@@ -529,35 +531,44 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                     right: 1.sp),
                                                 child: Row(
                                                   children: [
-                                                    Text(
-                                                      "\u{20B9} ${productController.handPickedProductList[index]["mrp"] ?? ""}",
-                                                      style: TextStyle(
-                                                        color: textHintColor,
-                                                        fontSize: 11.sp,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .lineThrough,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                                    Visibility(
+                                                      visible: productController
+                                                                      .handPickedProductList[
+                                                                  index]["mrp"] !=
+                                                              null
+                                                          ? true
+                                                          : false,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 5.sp),
+                                                        child: Text(
+                                                          "\u{20B9} ${productController.handPickedProductList[index]["mrp"] ?? ""}",
+                                                          style: TextStyle(
+                                                            color:
+                                                                textHintColor,
+                                                            fontSize: 11.sp,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .lineThrough,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 5.sp),
-                                                      child: AppText(
-                                                        text:
-                                                            "\u{20B9} ${productController.handPickedProductList[index]["price"] ?? ""}",
-                                                        color:
-                                                            deepGreytextColor,
-                                                        maxLines: 2,
-                                                        fontSize: 11,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
+                                                    AppText(
+                                                      text:
+                                                          "\u{20B9} ${productController.handPickedProductList[index]["price"] ?? ""}",
+                                                      color: deepGreytextColor,
+                                                      maxLines: 2,
+                                                      fontSize: 11,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                     ),
                                                   ],
                                                 ),
@@ -697,8 +708,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   color: Color(0xFF374151),
                                   decoration: TextDecoration.none,
                                   fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -726,6 +737,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         ),
                         builder: (ctx) {
                           return BottomCategory(
+                            gender: widget.genderName,
                             onPressedButton: (p0) {
                               if (p0 == "Women") {
                                 productController.categoryFilter.value = 3;
@@ -740,6 +752,57 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   false,
                                   productController.tagId.value);
                             },
+                            onPressedFilter: () {
+                              Get.back();
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                constraints: BoxConstraints(
+                                  maxWidth: double.infinity,
+                                  maxHeight: 500.sp,
+                                ),
+                                builder: (ctx) {
+                                  return BottomFilters(
+                                    btnclearAll: () async {
+                                      productController.brand_ids.clear();
+                                      productController.color_ids.clear();
+                                      productController.size_ids.clear();
+                                      productController.productSortBy.value =
+                                          "";
+                                      productController
+                                          .filterProductEnable.value = false;
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.remove("brandList");
+                                      prefs.remove("colorList");
+                                      prefs.remove("sizeList");
+                                      prefs.remove("upper");
+                                      prefs.remove("lower");
+                                      prefs.remove("sortby");
+                                      prefs.remove("category");
+                                      productController.getHandPickedProduct(
+                                          productController.productSortBy.value,
+                                          productController
+                                              .filterProductEnable.value,
+                                          false,
+                                          productController.tagId.value);
+                                    },
+                                    onClick: (p0, p1) {
+                                      productController
+                                          .filterProductEnable.value = true;
+                                      productController.lowPrice.value = p0;
+                                      productController.highPrice.value = p1;
+                                      productController.getHandPickedProduct(
+                                          productController.productSortBy.value,
+                                          productController
+                                              .filterProductEnable.value,
+                                          true,
+                                          productController.tagId.value);
+                                    },
+                                  );
+                                },
+                              );
+                            },
                           );
                         },
                       );
@@ -748,13 +811,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Image.asset(
+                            /*  Image.asset(
                               categoryIcon,
                               height: 20.sp,
                               width: 20.sp,
-                            ),
+                            ), */
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 5.sp),
                               child: Text(
@@ -764,8 +827,25 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   color: Color(0xFF374151),
                                   decoration: TextDecoration.none,
                                   fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: widget.genderName == "" ? false : true,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 5.sp, right: 5.sp, top: 1.sp),
+                                child: Text(
+                                  widget.genderName.toUpperCase(),
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: appBarColor,
+                                    fontSize: 10.sp,
+                                  ),
                                 ),
                               ),
                             ),
@@ -850,8 +930,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   color: Color(0xFF374151),
                                   decoration: TextDecoration.none,
                                   fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),

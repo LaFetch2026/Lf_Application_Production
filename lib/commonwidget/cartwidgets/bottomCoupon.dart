@@ -622,8 +622,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     top: 5.sp,
                                                     right: 16.sp),
                                                 child: AppText(
-                                                 text:"Valid until: ${widget.list[index]
-                                                      ["ends_at"]}",
+                                                  text:
+                                                      "Valid until: ${widget.list[index]["ends_at"]}",
                                                   color: subtitleColor,
                                                   fontSize: 12,
                                                   fontFamily:
@@ -707,6 +707,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                           categoryName: "",
                                                           categoryId: 0,
                                                           brandId: 0,
+                                                          genderName: "",
                                                           genderType: 0,
                                                           tagIds: controller
                                                               .tagsList,

@@ -502,6 +502,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         categoryId: value.brandList[index]["categories"][i]["id"],
                                                                                         brandId: value.brandList[index]["id"],
                                                                                         genderType: 0,
+                                                                                        genderName: "",
                                                                                         tagIds: const [],
                                                                                         categoryList: [],
                                                                                       ));

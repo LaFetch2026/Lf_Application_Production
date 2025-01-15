@@ -219,6 +219,7 @@ class HomeScreenState extends State<HomeScreen> {
                   CategoryProductScreen(
                     categoryName: homeController.banner1List[itemIndex]["name"],
                     categoryId: 0,
+                    genderName: homeController.genderText.value,
                     brandId: 0,
                     genderType: homeController.homeGenderValue.value,
                     tagIds: homeController.bannerTag1Id,
@@ -1441,6 +1442,8 @@ class HomeScreenState extends State<HomeScreen> {
                                               context,
                                               scaleIn(
                                                 CategoryProductScreen(
+                                                  genderName: homeController
+                                                      .genderText.value,
                                                   categoryName: productController
                                                               .tagId.value ==
                                                           0
@@ -1569,6 +1572,8 @@ class HomeScreenState extends State<HomeScreen> {
                                               scaleIn(
                                                 ProductViewScreen(
                                                   title: "HANDPICKED FOR YOU",
+                                                  genderName: homeController
+                                                      .genderText.value,
                                                 ),
                                               )).then((value) => setState(
                                                 () {

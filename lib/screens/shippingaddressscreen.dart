@@ -379,21 +379,17 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 right: 10.sp,
                                 top: 5.sp,
                                 bottom: 10.sp),
-                            child: Row(
-                              children: [
-                                Text(
-                                  widget.address,
-                                  maxLines: 2,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    color: subtitleColor,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontFamily: 'Franklin Gothic Regular',
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              widget.address,
+                              maxLines: 2,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: subtitleColor,
+                                overflow: TextOverflow.ellipsis,
+                                fontFamily: 'Franklin Gothic Regular',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                           Padding(

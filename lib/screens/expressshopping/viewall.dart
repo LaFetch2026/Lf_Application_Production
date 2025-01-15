@@ -623,24 +623,33 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 5.sp),
-                                                          child: Text(
-                                                            "\u{20B9} ${productController.productExpressBrandList[index]["mrp"] ?? ""}",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  textHintColor,
-                                                              fontSize: 11.sp,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .lineThrough,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
+                                                        Visibility(
+                                                          visible: productController
+                                                                              .productExpressBrandList[
+                                                                          index]
+                                                                      ["mrp"] !=
+                                                                  null
+                                                              ? true
+                                                              : false,
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 5.sp),
+                                                            child: Text(
+                                                              "\u{20B9} ${productController.productExpressBrandList[index]["mrp"] ?? ""}",
+                                                              style: TextStyle(
+                                                                color:
+                                                                    textHintColor,
+                                                                fontSize: 11.sp,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .lineThrough,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
