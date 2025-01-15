@@ -812,24 +812,45 @@ class CartScreenState extends State<CartScreen> {
                                                                                             ),
                                                                                           ),
                                                                                         ),
-                                                                                        Container(
-                                                                                          decoration: BoxDecoration(
-                                                                                            color: Color(0xffA7F3D0),
-                                                                                            borderRadius: BorderRadius.all(Radius.circular(20.sp)),
-                                                                                          ),
-                                                                                          child: Padding(
-                                                                                            padding: EdgeInsets.only(left: 10.sp, right: 10.sp, top: 4.sp, bottom: 4.sp),
-                                                                                            child: Text(
-                                                                                              "${value.orderList[index]["product"]["discount_percentage"] ?? "0 %"} OFF",
-                                                                                              style: TextStyle(
-                                                                                                color: homeAppBarColor,
-                                                                                                fontSize: 12.sp,
-                                                                                                fontFamily: "Franklin Gothic",
-                                                                                                fontWeight: FontWeight.w500,
+                                                                                        Visibility(
+                                                                                          visible: value.orderList[index]["product"]["discount_percentage"] == "0.00%" ? false : true,
+                                                                                          child: Container(
+                                                                                            decoration: BoxDecoration(
+                                                                                              color: Color(0xffA7F3D0),
+                                                                                              borderRadius: BorderRadius.all(Radius.circular(20.sp)),
+                                                                                            ),
+                                                                                            child: Padding(
+                                                                                              padding: EdgeInsets.only(left: 10.sp, right: 10.sp, top: 4.sp, bottom: 4.sp),
+                                                                                              child: Text(
+                                                                                                "${value.orderList[index]["product"]["discount_percentage"] ?? "0 %"} OFF",
+                                                                                                style: TextStyle(
+                                                                                                  color: homeAppBarColor,
+                                                                                                  fontSize: 12.sp,
+                                                                                                  fontFamily: "Franklin Gothic",
+                                                                                                  fontWeight: FontWeight.w500,
+                                                                                                ),
                                                                                               ),
                                                                                             ),
                                                                                           ),
                                                                                         ),
+                                                                                        value.orderList[index]["product"]["estimated_delivery_by"] != null
+                                                                                            ? Container(
+                                                                                                width: MediaQuery.of(context).size.width - 165.sp,
+                                                                                                child: Padding(
+                                                                                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                                  child: AppText(
+                                                                                                    text: "Delivering in ${value.orderList[index]["product"]["estimated_delivery_by"]}",
+                                                                                                    color: subtitleColor,
+                                                                                                    fontSize: 12,
+                                                                                                    maxLines: 3,
+                                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                                    fontWeight: FontWeight.w400,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              )
+                                                                                            : SizedBox(
+                                                                                                height: 0,
+                                                                                              ),
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -2390,7 +2411,7 @@ class CartScreenState extends State<CartScreen> {
                                           controller.cartDetails["address"] ==
                                                   null
                                               ? "Select Shipping Address"
-                                              : "delivering in ${controller.cartDetails["address"]["type"].toString()} ${controller.cartDetails["address"]["zip"].toString()}"
+                                              : "delivering in, ${controller.cartDetails["address"]["type"].toString()} ${controller.cartDetails["address"]["zip"].toString()}"
                                                   .toUpperCase(),
                                           style: TextStyle(
                                             fontFamily: "Franklin Gothic",
