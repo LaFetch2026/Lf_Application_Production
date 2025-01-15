@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/base_controller.dart';
-import 'package:lafetch/screens/checkoutscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
@@ -239,8 +239,7 @@ class CartController extends BaseController {
     isExpress.value = false;
   }
 
-  callInitiatePayment(int addressId, dynamic context, String shipCost,
-      String lafetchTax) async {
+  callInitiatePayment(int addressId, Razorpay razorpay) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -254,20 +253,24 @@ class CartController extends BaseController {
       );
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        /*  Get.to(CheckoutScreen(
-          orderId: responseData["payment"]["transaction_id"],
-          amount: responseData["payment"]["amount"],
-          cartId: responseData["id"],
-          mrp: mrp.value,
-          expressDelivery: expressDelivery.value,
-          convenienceFee: convenienceFee.value,
-          coupanDiscount: coupanDiscount.value,
-          discount: discount.value,
-          tax: tax.value,
-          total: total.value,
-          addressId: addressId,
-        )); */
-        Navigator.of(context)
+        var options = {
+          'key': ApiConstants.razorPayKey,
+          'amount': double.parse(responseData["payment"]["amount"]) * 100,
+          'name': 'Lafetch',
+          'order_id': responseData["payment"]["transaction_id"],
+          'description': 'Lafetch Customer',
+          'timeout': 60,
+          'theme': {
+            'color': '#070707',
+          },
+          'fullscreen': true,
+          'prefill': {
+            'contact': '9002973232',
+            'email': 'sonamagrahari11@gmail.com'
+          }
+        };
+        razorpay.open(options);
+        /*  Navigator.of(context)
             .push(MaterialPageRoute(
                 builder: (BuildContext context) => CheckoutScreen(
                     orderId: responseData["payment"]["transaction_id"],
@@ -285,7 +288,7 @@ class CartController extends BaseController {
                     lafetchtax: lafetchTax)))
             .then((value) => (value) {
                   getCartData();
-                });
+                }); */
       } else if (response.statusCode == 400) {
         print(response.body);
         if (responseData["errors"].isNotEmpty) {
