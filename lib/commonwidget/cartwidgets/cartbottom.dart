@@ -26,7 +26,7 @@ class Cartbottom extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Image.asset(qualityImage,
+                  Image.asset(qualityNewImage,
                       height: 50.sp, width: 50.sp, fit: BoxFit.cover),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp, right: 4.sp),
@@ -44,7 +44,7 @@ class Cartbottom extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Image.asset(locationBaseImage,
+                  Image.asset(priorityNewImage,
                       height: 50.sp, width: 50.sp, fit: BoxFit.cover),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp, right: 4.sp),
@@ -62,7 +62,7 @@ class Cartbottom extends StatelessWidget {
               ),
               Column(
                 children: [
-                  Image.asset(exchangeImage,
+                  Image.asset(exchangeNewimage,
                       height: 50.sp, width: 50.sp, fit: BoxFit.cover),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),

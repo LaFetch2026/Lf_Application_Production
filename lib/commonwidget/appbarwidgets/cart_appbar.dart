@@ -75,7 +75,7 @@ class _CartAppbarState extends State<CartAppbar> {
                                   : "${controller.orderList.length} Products",
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w600,
-                              color: appBarColor,
+                              color: subtitleColor,
                               fontSize: 10,
                             ),
                     )),

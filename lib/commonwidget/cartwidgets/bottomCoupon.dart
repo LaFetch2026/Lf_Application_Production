@@ -783,23 +783,23 @@ class BottomCouponState extends State<BottomCoupon> {
           widget.list.isNotEmpty && i != null
               ? Container(
                   color: Color(0xffF3F4F6),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  height: 110.sp,
+                  child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 30.sp,
-                            left: 20.sp,
-                            right: 8.sp,
-                            bottom: 16.sp),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 24.sp,
+                                left: 20.sp,
+                                right: 8.sp,
+                                bottom: 16.sp),
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AppText(
-                                  text: "Maximum savings",
+                                  text: "Maximum savings:",
                                   textAlign: TextAlign.center,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
@@ -820,28 +820,36 @@ class BottomCouponState extends State<BottomCoupon> {
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          Obx(() => Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 20.sp, bottom: 16.sp),
+                                  child: getSingleButton(
+                                      label: "Apply".toUpperCase(),
+                                      textColor: whiteColor,
+                                      backgroundColor: homeAppBarColor,
+                                      controller: controller,
+                                      onPressed: () async {
+                                        if (i != null) {
+                                          widget.onPressed
+                                              .call(widget.list[i!]["code"]);
+                                        }
+                                      },
+                                      borderColor: homeAppBarColor),
+                                ),
+                              )),
+                        ],
                       ),
-                      Obx(() => Expanded(
-                            flex: 1,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.only(top: 30.sp, bottom: 16.sp),
-                              child: getSingleButton(
-                                  label: "Apply".toUpperCase(),
-                                  textColor: whiteColor,
-                                  backgroundColor: homeAppBarColor,
-                                  controller: controller,
-                                  onPressed: () async {
-                                    if (i != null) {
-                                      widget.onPressed
-                                          .call(widget.list[i!]["code"]);
-                                    }
-                                  },
-                                  borderColor: homeAppBarColor),
-                            ),
-                          )),
+                      Container(
+                        height: 5.sp,
+                        width: 140.sp,
+                        margin: EdgeInsets.only(top: 5.sp),
+                        decoration: BoxDecoration(
+                            color: homeAppBarColor,
+                            borderRadius: BorderRadius.circular(5.sp)),
+                      )
                     ],
                   ),
                 )

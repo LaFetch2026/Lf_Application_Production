@@ -458,7 +458,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     child: Container(
                                                                                       width: MediaQuery.of(context).size.width - 165.sp,
                                                                                       child: AppText(
-                                                                                        text: value.orderList[index]["product"]["brand_name"] ?? "",
+                                                                                        text: value.orderList[index]["product"]["brand_name"].toUpperCase() ?? "",
                                                                                         maxLines: 1,
                                                                                         fontFamily: "Franklin Gothic",
                                                                                         fontWeight: FontWeight.w500,
@@ -670,13 +670,13 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       );
                                                                                                     },
                                                                                                     child: Container(
-                                                                                                      color: whiteTextColor,
+                                                                                                      decoration: BoxDecoration(color: Color(0xffF3F4F6), border: Border.all(width: 1, color: Color(0xFFE5E7EB))),
                                                                                                       height: 40.sp,
-                                                                                                      width: 75.sp,
+                                                                                                      width: 85.sp,
                                                                                                       child: Row(
                                                                                                         children: [
                                                                                                           Padding(
-                                                                                                            padding: EdgeInsets.only(left: 4.sp, right: 2.sp, top: 5.sp, bottom: 5.sp),
+                                                                                                            padding: EdgeInsets.only(left: 8.sp, right: 8.sp, top: 5.sp, bottom: 5.sp),
                                                                                                             child: AppText(
                                                                                                               text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
                                                                                                               color: titleColor,
@@ -740,13 +740,13 @@ class CartScreenState extends State<CartScreen> {
                                                                                           child: Padding(
                                                                                             padding: EdgeInsets.only(left: 10.sp, top: 5.sp, bottom: 5.sp),
                                                                                             child: Container(
-                                                                                              color: whiteTextColor,
+                                                                                              decoration: BoxDecoration(color: Color(0xffF3F4F6), border: Border.all(width: 1, color: Color(0xFFE5E7EB))),
                                                                                               height: 40.sp,
-                                                                                              width: 70.sp,
+                                                                                              width: 85.sp,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   Padding(
-                                                                                                    padding: EdgeInsets.symmetric(vertical: 5.sp, horizontal: 5.sp),
+                                                                                                    padding: EdgeInsets.symmetric(vertical: 5.sp, horizontal: 8.sp),
                                                                                                     child: AppText(
                                                                                                       text: "Qty : ${value.orderList[index]["quantity"] ?? "0"}",
                                                                                                       color: titleColor,
@@ -770,7 +770,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                   ),
                                                                                   value.orderList[index]["product"]["id"] == value.qtyProductId.value
                                                                                       ? Container(
-                                                                                          width: MediaQuery.of(context).size.width - 128.sp,
+                                                                                          width: MediaQuery.of(context).size.width - 165.sp,
                                                                                           child: Padding(
                                                                                             padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                             child: AppText(
@@ -814,7 +814,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                         ),
                                                                                         Container(
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xffD1FAE5),
+                                                                                            color: Color(0xffA7F3D0),
                                                                                             borderRadius: BorderRadius.all(Radius.circular(20.sp)),
                                                                                           ),
                                                                                           child: Padding(
@@ -2037,7 +2037,10 @@ class CartScreenState extends State<CartScreen> {
                                                         SizedBox(
                                                           height: 30.sp,
                                                         ),
-                                                        const Cartbottom()
+                                                        const Cartbottom(),
+                                                        SizedBox(
+                                                          height: 40.sp,
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -2372,7 +2375,7 @@ class CartScreenState extends State<CartScreen> {
                           },
                           child: Container(
                             color: lightgreyColor,
-                            margin: EdgeInsets.only(top: 60.sp),
+                            margin: EdgeInsets.only(top: 10.sp),
                             height: 40.sp,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16.sp),

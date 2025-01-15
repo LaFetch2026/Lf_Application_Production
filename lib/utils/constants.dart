@@ -193,6 +193,9 @@ const deleteAddressIcon = 'assets/images/delete_address.png';
 const editAddressIcon = 'assets/images/edit_address.png';
 const locationPinImage = 'assets/images/location_pin.png';
 const shipIcon = 'assets/images/ship_icon.png';
+const qualityNewImage = 'assets/images/quality_new.png';
+const priorityNewImage = 'assets/images/priority_new.png';
+const exchangeNewimage = 'assets/images/exchange_new.png';
 
 class ApiConstants {
   ApiConstants._();
