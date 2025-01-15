@@ -2390,7 +2390,7 @@ class CartScreenState extends State<CartScreen> {
                                           controller.cartDetails["address"] ==
                                                   null
                                               ? "Select Shipping Address"
-                                              : "delivering in 2-3 days, ${controller.cartDetails["address"]["type"].toString()} ${controller.cartDetails["address"]["zip"].toString()}"
+                                              : "delivering in ${controller.cartDetails["address"]["type"].toString()} ${controller.cartDetails["address"]["zip"].toString()}"
                                                   .toUpperCase(),
                                           style: TextStyle(
                                             fontFamily: "Franklin Gothic",
