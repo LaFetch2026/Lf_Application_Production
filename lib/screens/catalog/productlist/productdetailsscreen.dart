@@ -19,6 +19,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productimage.dart';
 import 'package:lafetch/screens/mapscreen.dart';
+import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
@@ -70,6 +71,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final GlobalKey widgetKey = GlobalKey();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   RegExp regExp = RegExp("");
+  final PageController _pageController = PageController(
+    initialPage: 0,
+  );
   /* final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
     {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
@@ -520,51 +524,50 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         .selectedProductColor["id"]);
                                 //   movetoNextScreen(i['product_id']);
                               },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: btnTextColor, width: 1),
-                                    color: productController
+                              child: CircleAvatar(
+                                child: Container(
+                                  height: 50.sp,
+                                  width: 50.sp,
+                                  decoration: BoxDecoration(
+                                      /* border: Border.all(
+                                          color: btnTextColor, width: 1), */
+                                      shape: BoxShape.circle,
+                                      color: Color(int.parse(i['color_code']))),
+                                  child: Visibility(
+                                    visible: productController
                                                 .selectedProductColor
                                                 .isNotEmpty &&
                                             productController
                                                         .selectedProductColor[
                                                     'id'] ==
                                                 i['id']
-                                        ? colorPrimary
-                                        : whiteColor),
-                                child: Padding(
-                                  padding: EdgeInsets.all(4.0.sp),
-                                  child: AppText(
-                                    text: i['name'].toString(),
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: productController
-                                                .selectedProductColor
-                                                .isNotEmpty &&
-                                            productController
-                                                        .selectedProductColor[
-                                                    'id'] ==
-                                                i['id']
-                                        ? whiteColor
-                                        : btnTextColor,
-                                    fontSize: 14,
+                                        ? true
+                                        : false,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(4.0.sp),
+                                      child: Center(
+                                        child: Image.asset(
+                                          colorSelectimage,
+                                          height: 14,
+                                          width: 14,
+                                          color: whiteColor,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            int.parse(i['stocks'].toString()) > 10
-                                ? const SizedBox()
-                                : Padding(
-                                    padding: EdgeInsets.only(top: 8.0.sp),
-                                    child: AppText(
-                                      text: '${i['stocks'].toString()} left',
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: redColor,
-                                      fontSize: 11,
-                                    ),
-                                  )
+                            Padding(
+                              padding: EdgeInsets.only(top: 8.0.sp),
+                              child: AppText(
+                                text: '${i['name'].toString()}'.toUpperCase(),
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                                color: blackColor,
+                                fontSize: 11,
+                              ),
+                            )
                           ],
                         ),
                     ])
@@ -826,6 +829,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     .height *
                                                 0.6,
                                             child: PageView(
+                                                controller: _pageController,
                                                 allowImplicitScrolling: true,
                                                 scrollDirection:
                                                     Axis.horizontal,
@@ -1058,6 +1062,26 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         height: 0,
                                       )
                                     : Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 10.sp,
+                                            right: 10.sp,
+                                            bottom: 18.sp,
+                                            top: 18.sp),
+                                        child: Center(
+                                          child: PageIndicator(
+                                            controller: _pageController,
+                                            count: productController
+                                                .imageList.length,
+                                            size: 6.0.sp,
+                                            activeColor: Colors.black,
+                                            color: Color(0xffE5E7EB),
+                                            layout: PageIndicatorLayout.WARM,
+                                            scale: 0.65,
+                                            space: 8.sp,
+                                          ),
+                                        ),
+                                      )
+                                /* Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 22.0.sp,
                                             vertical: 18.0.sp),
@@ -1080,7 +1104,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             : colorSecondary),
                                                   )),
                                         ),
-                                      ),
+                                      ) */
+                                ,
                                 SizedBox(
                                   height: 12.sp,
                                 ),
@@ -1276,7 +1301,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         visible: productController
                                                         .productDetails[
                                                     "discount_percentage"] !=
-                                                null
+                                                "0.00%"
                                             ? true
                                             : false,
                                         child: Container(
