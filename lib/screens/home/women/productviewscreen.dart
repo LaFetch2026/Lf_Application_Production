@@ -519,9 +519,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                     horizontal: 10.sp),
                                                 child: AppText(
                                                   text: productController
-                                                                  .handPickedProductList[
-                                                              index][
-                                                          "short_description"] ??
+                                                              .handPickedProductList[
+                                                          index]["name"] ??
                                                       "",
                                                   color: Color(0xFF6B7280),
                                                   maxLines: 1,

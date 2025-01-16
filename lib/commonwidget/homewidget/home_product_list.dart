@@ -234,8 +234,7 @@ class HomeProductList extends StatelessWidget {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 4.sp, vertical: 2.sp),
                                       child: AppText(
-                                        text:
-                                            "${list[index]["short_description"]}\n",
+                                        text: "${list[index]["name"]}\n",
                                         color: Color(0xFF6B7280),
                                         maxLines: 1,
                                         fontSize: 11,

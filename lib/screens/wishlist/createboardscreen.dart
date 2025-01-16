@@ -534,8 +534,8 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                     child: AppText(
                                                       text: wishlistController
                                                                       .wishListProduct[
-                                                                  index][
-                                                              "short_description"] ??
+                                                                  index]
+                                                              ["brand_name"] ??
                                                           "",
                                                       color: nameText,
                                                       maxLines: 1,

@@ -662,8 +662,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     child: AppText(
                                                       text: productController
                                                                       .productCategoryList[
-                                                                  index][
-                                                              "short_description"] ??
+                                                                  index]
+                                                              ["brand_name"] ??
                                                           "",
                                                       color: nameText,
                                                       maxLines: 2,

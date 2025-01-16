@@ -480,9 +480,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                       horizontal: 10.sp),
                                                   child: AppText(
                                                     text: productController
-                                                                    .productCategoryList[
-                                                                index][
-                                                            "short_description"] ??
+                                                                .productCategoryList[
+                                                            index]["brand_name"] ??
                                                         "",
                                                     color: nameText,
                                                     maxLines: 2,

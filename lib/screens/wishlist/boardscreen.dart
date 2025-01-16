@@ -522,7 +522,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                         child: AppText(
                                                           text: value.wishListProduct[
                                                                       index][
-                                                                  "short_description"] ??
+                                                                  "brand_name"] ??
                                                               "",
                                                           color: nameText,
                                                           maxLines: 1,

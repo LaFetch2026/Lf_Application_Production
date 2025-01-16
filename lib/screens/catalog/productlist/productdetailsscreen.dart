@@ -11,26 +11,26 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar%20copy.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
+//import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/doublebutton_iconnew.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
+//import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productimage.dart';
-import 'package:lafetch/screens/mapscreen.dart';
+//import 'package:lafetch/screens/mapscreen.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/bottomsizechart.dart';
 import '../../../commonwidget/homewidget/dummy_productImage.dart';
-import '../../../commonwidget/homewidget/dummy_product_list.dart';
-import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
-import '../../../commonwidget/homewidget/horizontal_home_list.dart';
+//import '../../../commonwidget/homewidget/dummy_product_list.dart';
+//import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
+//import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
-import '../../account/saved_address.dart';
+//import '../../account/saved_address.dart';
 import '../../brandsscreen.dart';
 import '../../cartscreen.dart';
 
@@ -529,8 +529,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   height: 50.sp,
                                   width: 50.sp,
                                   decoration: BoxDecoration(
-                                      /* border: Border.all(
-                                          color: btnTextColor, width: 1), */
+                                      border: Border.all(
+                                          color: searchTextColor, width: 1),
                                       shape: BoxShape.circle,
                                       color: Color(int.parse(i['color_code']))),
                                   child: Visibility(
@@ -550,7 +550,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           colorSelectimage,
                                           height: 14,
                                           width: 14,
-                                          color: whiteColor,
+                                          color: i['color_code'] == "0xFFFFFFFF"
+                                              ? blackColor
+                                              : whiteColor,
                                         ),
                                       ),
                                     ),

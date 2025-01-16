@@ -668,9 +668,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     horizontal: 10.sp),
                                                 child: AppText(
                                                   text: productController
-                                                                  .productCategoryList[
-                                                              index][
-                                                          "short_description"] ??
+                                                              .productCategoryList[
+                                                          index]["name"] ??
                                                       "",
                                                   color: Color(0xFF6B7280),
                                                   maxLines: 1,
