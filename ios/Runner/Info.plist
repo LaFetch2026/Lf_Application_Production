@@ -46,18 +46,24 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>To choose user profile picture</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Lafetch requires your location to provide personalized delivery options, including express delivery within 4 hours and seamless address selection for accurate deliveries.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used to capture audio for image picker</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To take user profile picture</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -68,10 +74,10 @@
 	<key>NSUserTrackingUsageDescription</key>
     <string>This identifier will be used to deliver personalized ads to you.</string>
 	<array>
-		 <string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>		
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
