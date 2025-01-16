@@ -505,6 +505,13 @@ class AccountScreenState extends State<AccountScreen> {
                                                 builder:
                                                     (BuildContext context) =>
                                                         DeleteAccountScreen(
+                                                          date: controller.profileDetails[
+                                                                      "account_deletion_requested_at"] !=
+                                                                  null
+                                                              ? controller
+                                                                      .profileDetails[
+                                                                  "account_deletion_requested_at"]
+                                                              : "",
                                                           account_requested:
                                                               controller.profileDetails[
                                                                           "account_deletion_requested_at"] !=

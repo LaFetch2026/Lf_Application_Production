@@ -13,8 +13,10 @@ import '../bottomnavscreen.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
   final bool account_requested;
+  final String date;
   const DeleteAccountScreen({
     required this.account_requested,
+    required this.date,
     super.key,
   });
 
@@ -53,7 +55,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           horizontal: 16.sp, vertical: 30.sp),
                       child: AppText(
                         text:
-                            "Your account is scheduled to be deleted.  If you don't want this to be deleted, please reach out to support@la-fetch.com",
+                            "Your account is scheduled to be deleted at ${widget.date}. If you don't want this to be deleted, please reach out to support@la-fetch.com",
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: redColor,
