@@ -1229,8 +1229,10 @@ class ProductController extends BaseController {
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
+        if (responseData["data"].isNotEmpty) {
           productExpressBrandList = responseData["data"];
+        } else {
+          productExpressBrandList.clear();
         }
         if (filter) {
           Get.back();

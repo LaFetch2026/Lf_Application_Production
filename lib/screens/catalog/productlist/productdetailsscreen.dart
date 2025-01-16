@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -928,68 +928,89 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ],
                                           ),
                                         ),
-                                      ),
-                                      Positioned(
-                                          bottom: 30.sp,
-                                          right: 16.sp,
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.0.sp),
-                                            height: 30.sp,
-                                            color: const Color(0xB3F7F7F5),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 2.sp),
-                                                  child: Image.asset(
-                                                    starImage,
-                                                    height: 16.sp,
-                                                    color: bottomnavBack,
-                                                    width: 16.sp,
+                                      ), */
+                                      Visibility(
+                                        visible:
+                                            productController.productDetails[
+                                                        "aggregated_rating"] !=
+                                                    0
+                                                ? true
+                                                : false,
+                                        child: Positioned(
+                                            bottom: 20.sp,
+                                            right: 30.sp,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0.sp),
+                                              height: 30.sp,
+                                              width: 50.sp,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0x80FFFFFF),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              20.sp))),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 2.sp),
+                                                    child: AppText(
+                                                      text: "\u{2605}",
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: homeAppBarColor,
+                                                      fontSize: 14,
+                                                    ),
                                                   ),
-                                                ),
-                                                AppText(
-                                                  text: productController
-                                                      .productDetails[
-                                                          "aggregated_rating"]
-                                                      .toString(),
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: colorPrimary,
-                                                  fontSize: 12,
-                                                ),
-                                                /* const VerticalDivider(
-                                                    color: colorSecondary), */
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 8.sp),
-                                                  child: Container(
-                                                    width: 1.sp,
-                                                    color: textHintColor,
-                                                    height: 16.sp,
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 1.sp, left: 2.sp),
+                                                    child: AppText(
+                                                      text: productController
+                                                          .productDetails[
+                                                              "aggregated_rating"]
+                                                          .toString(),
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: homeAppBarColor,
+                                                      fontSize: 10,
+                                                    ),
                                                   ),
-                                                ),
-                                                AppText(
-                                                  text: productController
-                                                      .totalReview.value
-                                                      .toString(),
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: colorPrimary,
-                                                  fontSize: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                    */
+                                                  /* Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                        horizontal: 8.sp),
+                                                    child: Container(
+                                                      width: 1.sp,
+                                                      color: textHintColor,
+                                                      height: 16.sp,
+                                                    ),
+                                                  ),
+                                                  AppText(
+                                                    text: productController
+                                                        .totalReview.value
+                                                        .toString(),
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: colorPrimary,
+                                                    fontSize: 12,
+                                                  ), */
+                                                ],
+                                              ),
+                                            )),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -1071,7 +1092,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
+                                /*  Padding(
                                   padding: EdgeInsets.only(
                                       left: 12.0.sp, top: 12.sp),
                                   child: AppText(
@@ -1081,13 +1102,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: greyTextColor,
                                     fontSize: 12,
                                   ),
-                                ),
+                                ), */
                                 Padding(
                                     padding: EdgeInsets.only(
-                                        top: 12.0.sp,
-                                        bottom: 5.0.sp,
-                                        left: 12.sp,
-                                        right: 12.sp),
+                                        left: 12.sp, right: 12.sp),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -1098,12 +1116,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         Expanded(
                                           child: AppText(
                                             text:
-                                                "${productController.productDetails["name"]} \n",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w600,
-                                            color: colorPrimary,
-                                            maxLines: 2,
+                                                "${productController.productDetails["brand_name"]} \n"
+                                                    .toUpperCase(),
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                            color: blackColor,
+                                            maxLines: 1,
                                             fontSize: 16,
                                           ),
                                         ),
@@ -1147,17 +1165,41 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                         "id"],
                                                               )));
                                                 },
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10.sp),
-                                                  child: AppText(
-                                                    text: 'Explore Brand \n',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w600,
-                                                    color: colorPrimary,
-                                                    maxLines: 2,
-                                                    fontSize: 12,
+                                                child: Container(
+                                                  color: Color(0xFFDFDBFF),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 8.0.sp,
+                                                        bottom: 10.0.sp,
+                                                        left: 10.sp,
+                                                        right: 8.sp),
+                                                    child: Row(
+                                                      children: [
+                                                        AppText(
+                                                          text: 'View Brand \n'
+                                                              .toUpperCase(),
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color:
+                                                              homeAppBarColor,
+                                                          maxLines: 1,
+                                                          fontSize: 10,
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      4.sp),
+                                                          child: ImageIcon(
+                                                            AssetImage(
+                                                                linkArrowImage),
+                                                            size: 16.sp,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               )
@@ -1166,18 +1208,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               )
                                       ],
                                     )),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 12.sp),
-                                  child: AppText(
-                                    text: productController.productDetails[
-                                            "short_description"] ??
-                                        "",
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: greyTextColor,
-                                    maxLines: 4,
-                                    fontSize: 14,
+                                Visibility(
+                                  visible: productController.productDetails[
+                                              "short_description"] !=
+                                          null
+                                      ? true
+                                      : false,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.sp, vertical: 14.sp),
+                                    child: AppText(
+                                      text: productController.productDetails[
+                                              "short_description"] ??
+                                          "",
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: subtitleColor,
+                                      maxLines: 4,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -1199,7 +1248,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           child: Text(
                                             "\u{20B9} ${productController.productDetails["mrp"]}",
                                             style: TextStyle(
-                                              color: textHintColor,
+                                              color: searchTextColor,
                                               fontSize: 16.sp,
                                               decoration:
                                                   TextDecoration.lineThrough,
@@ -1216,35 +1265,57 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         child: AppText(
                                           text:
                                               "\u{20B9} ${productController.productDetails["price"] ?? "0"}",
-                                          color: colorPrimary,
+                                          color: nameText,
                                           fontSize: 16,
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: greyBack,
-                                          borderRadius:
-                                              BorderRadius.circular(18),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 6.sp,
-                                              bottom: 6.sp,
-                                              left: 8.sp,
-                                              right: 8.sp),
-                                          child: AppText(
-                                            text:
-                                                "${productController.productDetails["discount_percentage"] != null ? productController.productDetails["discount_percentage"].toString() : "0"} OFF",
-                                            color: expressText,
-                                            fontSize: 12,
-                                            fontFamily: "Franklin Gothic",
-                                            fontWeight: FontWeight.w500,
+                                      Visibility(
+                                        visible: productController
+                                                        .productDetails[
+                                                    "discount_percentage"] !=
+                                                null
+                                            ? true
+                                            : false,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Color(0xffA7F3D0),
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 6.sp,
+                                                bottom: 6.sp,
+                                                left: 8.sp,
+                                                right: 8.sp),
+                                            child: AppText(
+                                              text:
+                                                  "${productController.productDetails["discount_percentage"] != null ? productController.productDetails["discount_percentage"].toString() : "0"} OFF",
+                                              color: expressText,
+                                              fontSize: 12,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
                                       )
                                     ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 8.sp,
+                                      bottom: 6.sp,
+                                      left: 16.sp,
+                                      right: 16.sp),
+                                  child: AppText(
+                                    text: "Price inclusive of all taxes",
+                                    color: subtitleColor,
+                                    fontSize: 12,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                                 productController.sizeInventoryList.isNotEmpty
@@ -1267,11 +1338,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     CrossAxisAlignment.center,
                                                 children: [
                                                   AppText(
-                                                    text: 'Select size',
+                                                    text: 'Select size'
+                                                        .toUpperCase(),
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Franklin Gothic",
                                                     fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
+                                                    color: blackColor,
                                                     fontSize: 16,
                                                   ),
                                                   productController
@@ -1291,15 +1363,22 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                               productController.productDetails["name"],
                                                                         ));
                                                           },
-                                                          child: AppText(
-                                                            text:
-                                                                'View Size chart',
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: colorPrimary,
-                                                            fontSize: 12,
+                                                          child: Text(
+                                                            "View Size chart"
+                                                                .toUpperCase(),
+                                                            style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color:
+                                                                  appBarColor,
+                                                              fontSize: 10.sp,
+                                                            ),
                                                           ),
                                                         )
                                                       : SizedBox(
@@ -1370,11 +1449,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     CrossAxisAlignment.center,
                                                 children: [
                                                   AppText(
-                                                    text: 'Select color',
+                                                    text: 'Select color'
+                                                        .toUpperCase(),
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Franklin Gothic",
                                                     fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
+                                                    color: blackColor,
                                                     fontSize: 16,
                                                   ),
                                                 ],
@@ -1440,11 +1520,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12.sp),
                       child: AppText(
-                        text: 'Delivery options',
+                        text: 'Delivery options'.toUpperCase(),
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w500,
-                        color: colorPrimary,
-                        fontSize: 16,
+                        color: appBarColor,
+                        fontSize: 12,
                       ),
                     ),
                     Obx(
@@ -1504,8 +1584,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           }
                                         },
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              right: 6.sp, bottom: 0.sp),
+                                          padding:
+                                              EdgeInsets.only(bottom: 0.sp),
                                           child: productController
                                                   .isEstimateDate.value
                                               ? SizedBox(
@@ -1515,13 +1595,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       child:
                                                           CircularProgressIndicator()),
                                                 )
-                                              : const AppText(
-                                                  text: 'Check',
-                                                  textAlign: TextAlign.center,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: blackColor,
-                                                  fontSize: 14,
+                                              : Container(
+                                                  color: homeAppBarColor,
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.sp,
+                                                            vertical: 6.sp),
+                                                    child: const AppText(
+                                                      text: 'Check',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: whiteColor,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
                                                 ),
                                         ),
                                       ),
@@ -1549,7 +1641,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               "Franklin Gothic Regular"),
                                     ),
                                     style: TextStyle(
-                                        color: colorPrimary, fontSize: 14.sp),
+                                        color: blackColor,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Franklin Gothic"),
                                   ),
                                 ),
                               ),
@@ -1609,8 +1703,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           }
                                         },
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              right: 6.sp, bottom: 0.sp),
+                                          padding:
+                                              EdgeInsets.only(bottom: 0.sp),
                                           child: productController
                                                   .isEstimateDate.value
                                               ? SizedBox(
@@ -1620,13 +1714,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       child:
                                                           CircularProgressIndicator()),
                                                 )
-                                              : const AppText(
-                                                  text: 'Check',
-                                                  textAlign: TextAlign.center,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: blackColor,
-                                                  fontSize: 14,
+                                              : Container(
+                                                  color: homeAppBarColor,
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.sp,
+                                                            vertical: 6.sp),
+                                                    child: const AppText(
+                                                      text: 'Check',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: whiteColor,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
                                                 ),
                                         ),
                                       ),
@@ -1652,13 +1758,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               "Franklin Gothic Regular"),
                                     ),
                                     style: TextStyle(
-                                        color: colorPrimary, fontSize: 14.sp),
+                                        color: blackColor,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Franklin Gothic"),
                                   ),
                                 ),
                               ),
                             ),
                     ),
-                    Obx(() => productController.isAddress.value
+                    /*   Obx(() => productController.isAddress.value
                         ? const DummySaveAddress(
                             size: 1,
                           )
@@ -1865,13 +1973,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ],
                                 ),
                               )),
+                    */
                     Obx(
                       () => productController.isEstimateDate.value
                           ? Column(
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                      top: 25.0.sp, left: 12.sp, right: 12.sp),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -1942,7 +2051,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             )
                           : Padding(
                               padding: EdgeInsets.only(
-                                  top: 18.0.sp, left: 12.sp, right: 12.sp),
+                                  top: 25.0.sp, left: 12.sp, right: 12.sp),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1965,8 +2074,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       right: 12.0.sp),
                                                   child: Image.asset(
                                                     walletBlack,
-                                                    height: 18.sp,
-                                                    width: 18.sp,
+                                                    height: 22.sp,
+                                                    width: 22.sp,
                                                   ),
                                                 ),
                                                 AppText(
@@ -1974,7 +2083,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w500,
-                                                  color: blackColor,
+                                                  color: titleColor,
                                                   maxLines: 1,
                                                   fontSize: 14,
                                                 ),
@@ -1987,7 +2096,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w500,
-                                                    color: blackColor,
+                                                    color: titleColor,
                                                     maxLines: 1,
                                                     textAlign: TextAlign.center,
                                                     fontSize: 14,
@@ -2031,8 +2140,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               EdgeInsets.only(right: 12.0.sp),
                                           child: Image.asset(
                                             getItByIcon,
-                                            height: 18.sp,
-                                            width: 18.sp,
+                                            height: 22.sp,
+                                            width: 22.sp,
                                           ),
                                         ),
                                         Expanded(
@@ -2044,7 +2153,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w500,
-                                            color: blackColor,
+                                            color: titleColor,
                                             maxLines: 2,
                                             fontSize: 14,
                                           ),
@@ -2057,6 +2166,32 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             : SizedBox(
                                 height: 0,
                               )),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 18.0.sp, left: 12.sp, right: 12.sp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 12.0.sp),
+                            child: Image.asset(
+                              walletBlack,
+                              height: 22.sp,
+                              width: 22.sp,
+                            ),
+                          ),
+                          AppText(
+                            text: "Pay on delivery available",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: titleColor,
+                            maxLines: 1,
+                            fontSize: 14,
+                          ),
+                        ],
+                      ),
+                    ),
                     Obx(
                       () => productController.isDetails.value
                           ? SizedBox(
@@ -2117,8 +2252,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             EdgeInsets.only(right: 12.0.sp),
                                         child: Image.asset(
                                           exchangeItemImage,
-                                          height: 16.sp,
-                                          width: 16.sp,
+                                          height: 20.sp,
+                                          color: titleColor,
+                                          width: 20.sp,
                                         ),
                                       ),
                                       Expanded(
@@ -2131,7 +2267,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w500,
                                           maxLines: 1,
-                                          color: blackColor,
+                                          color: titleColor,
                                           fontSize: 14,
                                         ),
                                       )
@@ -2165,8 +2301,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               EdgeInsets.only(right: 12.0.sp),
                                           child: Image.asset(
                                             getItByIcon,
-                                            height: 18.sp,
-                                            width: 18.sp,
+                                            height: 22.sp,
+                                            width: 22.sp,
                                           ),
                                         ),
                                         Expanded(
@@ -2179,7 +2315,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w500,
-                                            color: blackColor,
+                                            color: titleColor,
                                             maxLines: 2,
                                             fontSize: 14,
                                           ),
@@ -2234,7 +2370,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           text: 'Express Delivery',
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w500,
-                                          color: blackColor,
+                                          color: titleColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -2333,8 +2469,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     right: 12.0.sp),
                                                 child: Image.asset(
                                                   walletBlack,
-                                                  height: 18.sp,
-                                                  width: 18.sp,
+                                                  height: 22.sp,
+                                                  width: 22.sp,
                                                 ),
                                               ),
                                               AppText(
@@ -2356,7 +2492,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w500,
-                                                  color: blackColor,
+                                                  color: titleColor,
                                                   maxLines: 1,
                                                   textAlign: TextAlign.center,
                                                   fontSize: 14,
@@ -2382,7 +2518,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               height: 0,
                             )
                           : Padding(
-                              padding: EdgeInsets.only(top: 40.sp),
+                              padding: EdgeInsets.only(top: 20.sp),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -2406,7 +2542,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             Colors.transparent),
                                                 child: ExpansionTile(
                                                   title: AppText(
-                                                    text: 'Product Description',
+                                                    text: 'More Details',
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w500,
@@ -2645,35 +2781,28 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         color: colorSecondary,
                       ),
                     ),
-                    /*  Align(
-                      alignment: Alignment.center,
-                      heightFactor: 2.0,
-                      child: AppText(
-                        text: 'LaFetch ID: 27384720',
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
-                        color: textHintColor,
-                        fontSize: 12.sp,
-                      ),
+                    Obx(
+                      () => productController.errorMsg.value != ""
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  right: 16.sp,
+                                  top: 16.sp,
+                                  bottom: 16.sp),
+                              child: AppText(
+                                text: productController.errorMsg.value,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: deepRed,
+                                maxLines: 5,
+                                fontSize: 12,
+                              ),
+                            )
+                          : SizedBox(
+                              height: 0,
+                            ),
                     ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      color: backWhite,
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      child: AppText(
-                        text:
-                            'You will earn 10 LaFetch coins on this purchase',
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
-                        color: expressText,
-                        fontSize: 12.sp,
-                      ),
-                    ), */
-                    Padding(
+                    /*  Padding(
                       padding: EdgeInsets.symmetric(
                           vertical: 30.0.sp, horizontal: 12.0.sp),
                       child: Column(
@@ -2681,7 +2810,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          AppText(
+                           AppText(
                             text: 'Customer Reviews',
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w500,
@@ -3596,30 +3725,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   : SizedBox(
                                       height: 0,
                                     )),
-                          Obx(
-                            () => productController.errorMsg.value != ""
-                                ? Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 16.sp,
-                                        right: 16.sp,
-                                        top: 16.sp,
-                                        bottom: 16.sp),
-                                    child: AppText(
-                                      text: productController.errorMsg.value,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: deepRed,
-                                      maxLines: 5,
-                                      fontSize: 12,
-                                    ),
-                                  )
-                                : SizedBox(
-                                    height: 0,
-                                  ),
-                          )
+                          
                         ],
                       ),
-                    )
+                    ) */
                   ],
                 ),
               ),
@@ -3631,7 +3740,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Obx(
+                  /*   Obx(
                     () => wishlistController.isProductWishlist.value
                         ? Padding(
                             padding: EdgeInsets.all(10.0.sp),
@@ -3705,6 +3814,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       width: 30.sp,
                                     ))),
                   ),
+                 */
                   Obx(
                     () => productController.isDetails.value
                         ? const SizedBox(
