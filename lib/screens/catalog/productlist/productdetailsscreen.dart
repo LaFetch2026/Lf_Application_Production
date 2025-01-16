@@ -3965,9 +3965,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ? const SizedBox(
                         height: 0,
                       )
-                    : Expanded(
-                        flex: 1,
-                        child: productController
+                    :productController
                                     .productDetails["total_stock_count"] ==
                                 0
                             ? SizedBox(
@@ -4064,7 +4062,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       }
                                     },
                                     controller: productController)),
-              ),
             ),
           ],
         ),
