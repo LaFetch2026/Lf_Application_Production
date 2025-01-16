@@ -500,14 +500,23 @@ class AccountScreenState extends State<AccountScreen> {
                                 ), */
                                     SettingWidgets(
                                       onPressedDelete: () {
-                                        Get.to(DeleteAccountScreen(
-                                          account_requested: controller
-                                                          .profileDetails[
-                                                      "account_deletion_requested_at"] !=
-                                                  null
-                                              ? true
-                                              : false,
-                                        ));
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        DeleteAccountScreen(
+                                                          account_requested:
+                                                              controller.profileDetails[
+                                                                          "account_deletion_requested_at"] !=
+                                                                      null
+                                                                  ? true
+                                                                  : false,
+                                                        )))
+                                            .then((value) => setState(
+                                                  () async {
+                                                    controller.getProfileData();
+                                                  },
+                                                ));
                                       },
                                       onPressedNotification: () {
                                         if (controller.profileDetails[
