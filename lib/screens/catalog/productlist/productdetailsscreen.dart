@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar%20copy.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/commonwidget/doublebutton_iconnew.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
@@ -248,7 +249,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 imageUrl: productController.imageList[i]["name"],
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     DummyContainer(
-                        height: MediaQuery.of(context).size.height * 0.7,
+                        height: MediaQuery.of(context).size.height * 0.6,
                         width: MediaQuery.of(context).size.width),
                 errorWidget: (context, url, error) =>
                     Image.asset(downloadImage, fit: BoxFit.fitHeight),
@@ -823,7 +824,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.7,
+                                                0.6,
                                             child: PageView(
                                                 allowImplicitScrolling: true,
                                                 scrollDirection:
@@ -2529,8 +2530,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Divider(
-                                              color: colorSecondary,
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.sp),
+                                              child: const Divider(
+                                                color: colorSecondary,
+                                              ),
                                             ),
                                             Padding(
                                               padding: EdgeInsets.symmetric(
@@ -2802,6 +2807,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               height: 0,
                             ),
                     ),
+                    SizedBox(
+                      height: 20.sp,
+                    )
                     /*  Padding(
                       padding: EdgeInsets.symmetric(
                           vertical: 30.0.sp, horizontal: 12.0.sp),
@@ -3733,7 +3741,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            /*    SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 80.sp,
               child: Row(
@@ -3890,34 +3898,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 flex: 1,
                                 child: Stack(
                                   children: [
-                                    /*  productController.isDetails.value
-                              ? const SizedBox(
-                                  height: 0,
-                                )
-                              : isImage(productController
-                                      .productDetails["images"][0]["name"])
-                                  ? Container(
-                                      height: 40.sp,
-                                      width: 40.sp,
-                                      margin: EdgeInsets.only(left: 150.sp),
-                                      key: widgetKey,
-                                      color: colorSecondary,
-                                      child: Image.network(
-                                          productController
-                                                  .productDetails["images"][0]
-                                              ["name"],
-                                          fit: BoxFit.fitHeight))
-                                  : Container(
-                                      height: 40.sp,
-                                      width: 40.sp,
-                                      margin: EdgeInsets.only(left: 150.sp),
-                                      key: widgetKey,
-                                      color: colorSecondary,
-                                      child: Image.network(
-                                          productController
-                                                  .productDetails["images"][1]
-                                              ["name"],
-                                          fit: BoxFit.fitHeight)), */
                                     getSingleButton(
                                         label: "Go to bag",
                                         left: 0,
@@ -3948,7 +3928,117 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   )
                 ],
               ),
-            )
+            ),
+           */
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(top: 2.sp),
+              child: Obx(
+                () => productController.isDetails.value
+                    ? const SizedBox(
+                        height: 0,
+                      )
+                    : Expanded(
+                        flex: 1,
+                        child: productController
+                                    .productDetails["total_stock_count"] ==
+                                0
+                            ? SizedBox(
+                                height: 50.sp,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 8.0.sp),
+                                      child: Image.asset(
+                                        cartNewImage,
+                                        color: homeAppBarColor,
+                                        height: 18.sp,
+                                        width: 18.sp,
+                                      ),
+                                    ),
+                                    AppText(
+                                      text: "Out of stock".toUpperCase(),
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                      color: homeAppBarColor,
+                                      maxLines: 2,
+                                      fontSize: 13,
+                                    )
+                                  ],
+                                ),
+                              )
+                            : productController
+                                        .productDetails["added_to_cart"] ||
+                                    productController.addToCart.value
+                                ? DoubleButtonIconNew(
+                                    firstText: "Go to BAG".toUpperCase(),
+                                    secondText: "Buy Now".toUpperCase(),
+                                    onPressedFirst: () async {
+                                      Get.to(CartScreen());
+                                      await analytics.logEvent(
+                                        name: 'productDetails_btnGotocart',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'productDetails_btnGotocart',
+                                        },
+                                      );
+                                      productController.addToCart.value = false;
+                                    },
+                                    onPressedSecond: () {
+                                      if (productController
+                                          .checkDetailsValidation()) {
+                                        productController.callAddtoCart(
+                                            1, "buy now");
+                                      }
+                                    },
+                                    controller: productController)
+                                : DoubleButtonIconNew(
+                                    firstText: widget.type == "add"
+                                        ? "Add to bag".toUpperCase()
+                                        : "Move to bag".toUpperCase(),
+                                    secondText: "Buy Now".toUpperCase(),
+                                    onPressedFirst: () async {
+                                      if (widget.type == "add") {
+                                        if (productController
+                                            .checkDetailsValidation()) {
+                                          productController.callAddtoCart(
+                                              1, "");
+                                        }
+                                      } else {
+                                        if (productController
+                                            .checkDetailsValidation()) {
+                                          wishlistController.callMovetoCart(
+                                              widget.boardId,
+                                              widget.wishlistProductId,
+                                              productController
+                                                  .sizeInventoryId.value,
+                                              1);
+                                          productController.addToCart.value =
+                                              true;
+                                          //  listClick(widgetKey);
+                                        }
+                                      }
+                                      await analytics.logEvent(
+                                        name: 'productDetails_btnaddtocart',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'productDetails_btnaddtocart',
+                                        },
+                                      );
+                                    },
+                                    onPressedSecond: () {
+                                      if (productController
+                                          .checkDetailsValidation()) {
+                                        productController.callAddtoCart(
+                                            1, "buy now");
+                                      }
+                                    },
+                                    controller: productController)),
+              ),
+            ),
           ],
         ),
       ),

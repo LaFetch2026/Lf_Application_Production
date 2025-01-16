@@ -2469,6 +2469,9 @@ class ProductController extends BaseController {
         } /*  else {
           getSnackBar("Product added to cart");
         } */
+        if (type == "buy now") {
+          Get.to(CartScreen());
+        }
       } else if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {
         var responseData = json.decode(response.body);
