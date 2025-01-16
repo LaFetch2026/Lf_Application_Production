@@ -196,6 +196,8 @@ const shipIcon = 'assets/images/ship_icon.png';
 const qualityNewImage = 'assets/images/quality_new.png';
 const priorityNewImage = 'assets/images/priority_new.png';
 const exchangeNewimage = 'assets/images/exchange_new.png';
+const shareNewimage = 'assets/images/share_new.png';
+const redHeartimage = 'assets/images/red_heart.png';
 
 class ApiConstants {
   ApiConstants._();

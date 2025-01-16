@@ -74,6 +74,9 @@ class CartController extends BaseController {
             couponText.value = responseData["discount"]["code"];
             couponSave.value =
                 responseData["discount"]["saved_total"].toString();
+          } else {
+            couponText.value = "Apply Coupon";
+            couponSave.value = "";
           }
         }
       } else if (response.statusCode == 500) {

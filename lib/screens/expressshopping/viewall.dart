@@ -575,8 +575,9 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                             vertical: 5.sp),
                                                     child: AppText(
                                                       text: productController
-                                                                  .productExpressBrandList[
-                                                              index]["name"] ??
+                                                                      .productExpressBrandList[
+                                                                  index]
+                                                              ["brand_name"] ??
                                                           "",
                                                       color: nameText,
                                                       maxLines: 1,
@@ -593,7 +594,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                                                             horizontal: 10.sp),
                                                     child: AppText(
                                                       text:
-                                                          "${productController.productExpressBrandList[index]["short_description"]} \n"
+                                                          "${productController.productExpressBrandList[index]["name"]} \n"
                                                           "",
                                                       color: nameText,
                                                       maxLines: 2,

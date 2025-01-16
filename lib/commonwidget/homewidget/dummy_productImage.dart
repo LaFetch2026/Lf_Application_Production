@@ -25,19 +25,12 @@ class DummyProductImage extends StatelessWidget {
               child: Stack(
                 children: [
                   Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0.sp),
+                      padding: EdgeInsets.only(
+                          left: 16.sp, right: 16.sp, top: 10.sp),
                       child: DummyContainer(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height * 0.7,
                       )),
-                  Positioned(
-                    bottom: 30.sp,
-                    right: 16.sp,
-                    child: DummyContainer(
-                      width: 60.sp,
-                      height: 30.sp,
-                    ),
-                  )
                 ],
               ),
             ),

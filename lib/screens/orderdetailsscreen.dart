@@ -1572,7 +1572,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                   horizontal: 5.sp,
                                                                                 ),
                                                                                 child: AppText(
-                                                                                  text: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
+                                                                                  text: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["brand_name"] : "",
                                                                                   maxLines: 1,
                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                   fontWeight: FontWeight.w400,
@@ -1583,7 +1583,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                 child: AppText(
-                                                                                  text: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["short_description"] : "",
+                                                                                  text: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
                                                                                   color: greyTextColor,
                                                                                   maxLines: 2,
                                                                                   fontSize: 12,
@@ -1692,7 +1692,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                               : "",
                                                                                                           orderId: orderController.orderDetails["orders"][index]["id"],
                                                                                                           sizeId: orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["id"] ?? 0,
-                                                                                                          productDescription: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["short_description"] : ""));
+                                                                                                          productDescription: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["brand_name"] : ""));
                                                                                                       await analytics.logEvent(
                                                                                                         name: 'order_exchangeClick',
                                                                                                         parameters: <String, Object>{
@@ -2487,7 +2487,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         horizontal: 5.sp,
                                                                                       ),
                                                                                       child: AppText(
-                                                                                        text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                        text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["brand_name"] : "",
                                                                                         maxLines: 1,
                                                                                         fontFamily: "Franklin Gothic Regular",
                                                                                         fontWeight: FontWeight.w400,
@@ -2498,7 +2498,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                     Padding(
                                                                                       padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
                                                                                       child: AppText(
-                                                                                        text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : "",
+                                                                                        text: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
                                                                                         color: greyTextColor,
                                                                                         maxLines: 2,
                                                                                         fontSize: 12,
@@ -2612,7 +2612,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                                     : "",
                                                                                                                 orderId: orderController.orderDetails["id"],
                                                                                                                 sizeId: orderController.orderDetails["order_lines"][index]["inventory"]["id"] ?? 0,
-                                                                                                                productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["short_description"] : ""));
+                                                                                                                productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["brand_name"] : ""));
                                                                                                             await analytics.logEvent(
                                                                                                               name: 'order_exchangeClick',
                                                                                                               parameters: <String, Object>{

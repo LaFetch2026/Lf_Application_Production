@@ -1,64 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
-import '../app_text.dart';
 
-class ProductdetailsAppbar extends StatelessWidget {
-  final String text;
+class ProductdetailsAppbar extends StatefulWidget {
+  final Function? onPressedShare;
+  final Function? onPressedHeart;
+
   const ProductdetailsAppbar({
-    required this.text,
+    this.onPressedShare,
+    this.onPressedHeart,
     Key? key,
   }) : super(key: key);
 
   @override
+  State<ProductdetailsAppbar> createState() => _ProductdetailsAppbarState();
+}
+
+class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
+  final wishlistController = Get.put(WishlistController());
+  @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90.sp,
+      height: 80.sp,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(color: whiteTextColor),
+      color: whiteColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 16.sp),
+          padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              GestureDetector(
-                onTap: () {
+              IconButton(
+                icon: Image.asset(
+                  backWhiteArrow,
+                  height: 16.sp,
+                  color: homeAppBarColor,
+                  width: 16.sp,
+                ),
+                onPressed: () {
                   Get.back();
                 },
+              ),
+              const Expanded(
+                child: SizedBox(
+                  height: 0,
+                ),
+              ),
+              Visibility(
+                visible: true,
                 child: Padding(
-                  padding:
-                      EdgeInsets.only(left: 10.sp, right: 10.sp, top: 40.sp),
-                  child: Image.asset(backArrowImage,
-                      height: 16.sp, width: 10.sp, fit: BoxFit.cover),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 40.sp, left: 10.sp, right: 20.sp),
-                child: Container(
-                  width: 30.0,
-                  height: 30.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(appLogoImage),
-                    ),
+                  padding: EdgeInsets.only(left: 35.sp, right: 10.sp),
+                  child: Image.asset(
+                    lafetchLogoImage,
+                    color: homeAppBarColor,
+                    height: 25.sp,
+                    width: 20.sp,
                   ),
-                  child: null,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 40.sp),
-                child: AppText(
-                  text: text,
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w400,
-                  color: appbarText,
-                  fontSize: 16,
+              const Expanded(
+                child: SizedBox(
+                  height: 0,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  widget.onPressedHeart?.call();
+                },
+                child: Obx(
+                  () => Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: wishlistController.isProductWishlist.value
+                          ? DummyContainer(
+                              height: 18,
+                              width: 18,
+                            )
+                          : wishlistController.wishListDetails["wishlisted"]
+                              ? ImageIcon(
+                                  AssetImage(redHeartimage),
+                                  color: redColor,
+                                  size: 20.sp,
+                                )
+                              : ImageIcon(
+                                  AssetImage(wishlistBottomIcon),
+                                  color: homeAppBarColor,
+                                  size: 16.sp,
+                                )),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  widget.onPressedShare?.call();
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5.sp),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3.sp),
+                        child: Image.asset(
+                          shareNewimage,
+                          color: homeAppBarColor,
+                          height: 18.sp,
+                          width: 18.sp,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

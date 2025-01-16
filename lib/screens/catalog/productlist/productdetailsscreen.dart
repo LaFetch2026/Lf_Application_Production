@@ -678,40 +678,40 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(widget.productId, widget.Slug));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.frequentlyBoughtController.addListener(() {
         productController.fetchFrequentlyMoreData(
             "frequently-bought", widget.productId);
         productController.update();
       });
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    }); */
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.frequentlyBoughtHasnextpage.value = true;
       productController.frequentlyBoughtLoadMore.value = false;
       productController.isFrequentlyBought.value = false;
       productController.frequentlyBoughtPage.value = 1;
       productController.inventoryId.value = 0;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    }); */
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.recommendedController.addListener(() {
         productController.fetchMoreRecommendedProductData(widget.productId);
         productController.update();
       });
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    }); */
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.recommendedHasnextpage.value = true;
       productController.recommendedLoadMore.value = false;
       productController.isRecommendations.value = false;
       productController.recommendedPage.value = 1;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getFrequentlyProductData("frequently-bought", widget.productId));
+    }); */
+    /*   WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getFrequentlyProductData("frequently-bought", widget.productId)); */
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => wishlistController.getWishlistProductDetails(widget.productId));
-    WidgetsBinding.instance.addPostFrameCallback(
+    /* WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductReview(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductRecommendations(widget.productId));
+        (_) => productController.getProductRecommendations(widget.productId)); */
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -752,7 +752,46 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         body: Column(
           children: [
             ProductdetailsAppbar(
-              text: widget.brandName,
+              onPressedHeart: () async {
+                if (wishlistController.wishListDetails["wishlisted"]) {
+                  wishlistController.callAddProductToWishlist(
+                      wishlistController.wishListDetails["wishlist_id"],
+                      productController.productDetails["id"]);
+                  await analytics.logEvent(
+                    name: 'productdetails_wishlist_remove',
+                    parameters: <String, Object>{
+                      'page_name': 'productdetails_wishlist_remove',
+                    },
+                  );
+                } else {
+                  scaffoldKey.currentState
+                      ?.showBottomSheet((context) => BottomWishlist(
+                          controller: wishlistController,
+                          onPressed: (p0) {
+                            wishlistController.callAddProductToWishlist(
+                                p0, productController.productDetails["id"]);
+                          },
+                          wishlistList: wishlistController.wishlistList));
+                  await analytics.logEvent(
+                    name: 'productdetails_wishlist_add',
+                    parameters: <String, Object>{
+                      'page_name': 'productdetails_wishlist_add',
+                    },
+                  );
+                }
+              },
+              onPressedShare: () async {
+                Share.share(productController.productDetails["share_link"]);
+                await analytics.logEvent(
+                  name: 'share_product',
+                  parameters: <String, Object>{
+                    'page_name': 'share_product',
+                  },
+                );
+              },
+            ),
+            const Divider(
+              color: dividerColor,
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -773,8 +812,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   child: Stack(
                                     children: [
                                       Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 0.sp),
+                                          padding: EdgeInsets.only(
+                                              left: 16.sp,
+                                              right: 16.sp,
+                                              top: 10.sp),
                                           child: SizedBox(
                                             width: MediaQuery.of(context)
                                                 .size
@@ -801,13 +842,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 },
                                                 children: getListForPageView()),
                                           )),
-                                      Container(
+                                      /* Container(
                                         width:
                                             MediaQuery.of(context).size.width,
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 0.15,
-                                        // height: 80,
                                         alignment: Alignment.center,
                                         child: Padding(
                                           padding: EdgeInsets.only(
@@ -819,32 +859,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              /* IconButton(
-                                                icon: Image.asset(
-                                                  arrowBack,
-                                                  height: 24.sp,
-                                                  width: 24.sp,
-                                                ),
-                                                onPressed: () {
-                                                  Get.back();
-                                                },
-                                              ), */
                                               SizedBox(
                                                 height: 0,
                                               ),
                                               Column(
                                                 children: [
-                                                  /*   IconButton(
-                                                    icon: CircleAvatar(
-                                                        backgroundColor:
-                                                            colorPrimary,
-                                                        child: Image.asset(
-                                                            cartIconWhite)),
-                                                    onPressed: () {
-                                                      Get.to(
-                                                          const CartScreen());
-                                                    },
-                                                  ), */
                                                   GestureDetector(
                                                     onTap: () async {
                                                       Get.to(
@@ -858,11 +877,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         },
                                                       );
                                                     },
-                                                    child:
-                                                        //  AddToCartIcon(
-                                                        //  key: cartKey,
-                                                        //   icon:
-                                                        SizedBox(
+                                                    child: SizedBox(
                                                       height: 36.sp,
                                                       width: 36.sp,
                                                       child: CircleAvatar(
@@ -875,13 +890,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             width: 22.sp,
                                                           )),
                                                     ),
-                                                    //   badgeOptions:
-                                                    /*   const BadgeOptions(
-                                                        active: false,
-                                                        backgroundColor:
-                                                            Colors.red,
-                                                      ), */
-                                                    //   ),
                                                   ),
                                                   GestureDetector(
                                                     onTap: () async {
@@ -981,6 +989,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               ],
                                             ),
                                           ))
+                                    */
                                     ],
                                   ),
                                 ),
