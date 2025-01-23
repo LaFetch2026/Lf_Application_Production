@@ -161,24 +161,32 @@ class LoginScreenState extends State<LoginScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: appbarColor,
-              /*  title: Align(
+              title: Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
                   onTap: () {
-                    /*   Get.to(
-                      () => const BottomNavScreen(),
-                    ); */
+                    loginController.callGuestUser();
                   },
-                  child: const AppText(
-                    text: "Skip",
-                    textAlign: TextAlign.right,
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: whiteTextColor,
-                    fontSize: 14,
-                  ),
+                  child: Obx(() => loginController.isGuest.value
+                      ? Transform.scale(
+                          scale: 0.3.sp,
+                          child: const CircularProgressIndicator(
+                            color: whiteColor,
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: AppText(
+                            text: "Skip".toUpperCase(),
+                            textAlign: TextAlign.right,
+                            fontFamily: "Franklin Gothic bold",
+                            fontWeight: FontWeight.w600,
+                            color: searchTextColor,
+                            fontSize: 12,
+                          ),
+                        )),
                 ),
-              ), */
+              ),
               bottom: PreferredSize(
                   preferredSize: Size.fromHeight(40.sp),
                   child: Align(

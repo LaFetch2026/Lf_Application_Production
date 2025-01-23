@@ -94,7 +94,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                               color: nameText,
                               size: 30.sp,
                             ),
-                            fillColor: whiteTextColor,
+                            fillColor: whiteColor,
                             focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: borderColor)),
                             border: OutlineInputBorder(
@@ -186,7 +186,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                     )
                                                   : Padding(
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 16,
                                                           vertical: 2),
                                                       child: Container(

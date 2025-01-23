@@ -309,7 +309,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               color: nameText,
                               size: 30.sp,
                             ),
-                            fillColor: whiteTextColor,
+                            fillColor: whiteColor,
                             focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: borderColor)),
                             border: OutlineInputBorder(

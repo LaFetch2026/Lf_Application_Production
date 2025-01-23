@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/home_controller.dart';
+import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bottomnavscreen.dart';
@@ -19,6 +20,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   final homeController = Get.put(HomeController());
   String? token;
   String? name;
+  String? phone;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token');
     name = prefs.getString('name');
+    phone = prefs.getString('phonenumber');
     if (prefs.getInt('gender') != null) {
       int id = prefs.getInt('gender')!;
       if (id == 1) {
@@ -50,9 +53,17 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
           () => const BottomNavScreen(),
         );
       } else {
-        Get.off(
-          () => const UserDetailsScreen(),
-        );
+        if (phone == null) {
+          Get.off(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+        } else {
+          Get.off(
+            () => const UserDetailsScreen(),
+          );
+        }
       }
     } else {
       Get.offAll(

@@ -26,6 +26,7 @@ class LoginController extends BaseController {
   RxString otp = "".obs;
   // RxBool otpClear = false.obs;
   RxBool showButton = false.obs;
+  RxBool isGuest = false.obs;
   RxBool enableResend = false.obs;
   final Rx<OtpFieldControllerV2> controller = OtpFieldControllerV2().obs;
 
@@ -275,6 +276,43 @@ class LoginController extends BaseController {
       print(e.toString());
     }
     hideLoading();
+  }
+
+  callGuestUser() async {
+    isGuest.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.post(
+        Uri.parse("${ApiConstants.baseUrl}/login/guest"),
+      );
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print(responseData);
+        prefs.setString('token', responseData['meta']['access_token']);
+        Get.to(
+          () => const BottomNavScreen(),
+        );
+      } else if (response.statusCode == 201) {
+        print(responseData);
+        prefs.setString('token', responseData['meta']['access_token']);
+        Get.to(
+          () => const BottomNavScreen(),
+        );
+      } else if (response.statusCode == 400) {
+        if (responseData['errors']['otp'] != null) {
+          print(responseData);
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        // getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("guest failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    isGuest.value = false;
   }
 
   callVerifyOtp(String phone) async {

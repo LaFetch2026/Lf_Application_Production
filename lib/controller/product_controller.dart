@@ -436,12 +436,13 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.offAll(
+        /* Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
           ),
         );
-        getSnackBar("Authentication failed");
+        getSnackBar("Authentication failed"); */
+        print(response.statusCode);
       } else {
         getSnackBar("get product failed");
       }
@@ -564,12 +565,13 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.offAll(
+        /*  Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
           ),
         );
-        getSnackBar("Authentication failed");
+        getSnackBar("Authentication failed"); */
+        print(response.statusCode);
       } else {
         getSnackBar("get tag product failed");
       }
@@ -1009,12 +1011,12 @@ class ProductController extends BaseController {
         } else if (response.statusCode == 500) {
           getSnackBar("Server Error");
         } else if (response.statusCode == 401) {
-          Get.offAll(
+          Get.to(
             () => const LoginScreen(
               initialTab: 0,
             ),
           );
-          getSnackBar("Authentication failed");
+          // getSnackBar("Authentication failed");
         } else {
           getSnackBar("fetch express product failed");
         }
@@ -1240,12 +1242,13 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.offAll(
+        /*  Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
           ),
         );
-        getSnackBar("Authentication failed");
+        getSnackBar("Authentication failed"); */
+        print(response..statusCode);
       } else {
         getSnackBar("get product failed");
       }
@@ -1362,12 +1365,13 @@ class ProductController extends BaseController {
         } else if (response.statusCode == 500) {
           getSnackBar("Server Error");
         } else if (response.statusCode == 401) {
-          Get.offAll(
+          /*  Get.offAll(
             () => const LoginScreen(
               initialTab: 0,
             ),
           );
-          getSnackBar("Authentication failed");
+          getSnackBar("Authentication failed"); */
+          print(response..statusCode);
         } else {
           getSnackBar("fetch category product failed");
         }
@@ -2127,12 +2131,13 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.offAll(
+        /*  Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
           ),
         );
-        getSnackBar("Authentication failed");
+        getSnackBar("Authentication failed"); */
+        print(response.statusCode);
       } else {
         getSnackBar("get product details failed");
       }
@@ -2241,12 +2246,13 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.offAll(
+        /*  Get.to(
           () => const LoginScreen(
             initialTab: 0,
           ),
-        );
-        getSnackBar("Authentication failed");
+        ); */
+        // getSnackBar("Authentication failed");
+        print(response..statusCode);
       } else {
         getSnackBar("get product failed");
       }
@@ -2754,7 +2760,7 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
       } else {
         print(response.statusCode);
       }
