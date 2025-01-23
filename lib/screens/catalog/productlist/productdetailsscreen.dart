@@ -1198,7 +1198,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
                                                         top: 8.0.sp,
-                                                        bottom: 10.0.sp,
+                                                        bottom: 8.0.sp,
                                                         left: 10.sp,
                                                         right: 8.sp),
                                                     child: Row(
@@ -1237,8 +1237,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ],
                                     )),
                                 Visibility(
-                                  visible: productController.productDetails[
-                                              "short_description"] !=
+                                  visible: productController
+                                              .productDetails["name"] !=
                                           null
                                       ? true
                                       : false,
@@ -1246,20 +1246,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 12.sp, vertical: 14.sp),
                                     child: AppText(
-                                      text: productController.productDetails[
-                                              "short_description"] ??
+                                      text: productController
+                                              .productDetails["name"] ??
                                           "",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: subtitleColor,
-                                      maxLines: 4,
+                                      maxLines: 2,
                                       fontSize: 14,
                                     ),
                                   ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      top: 12.0.sp, left: 12.sp, right: 12.sp),
+                                      top: 10.0.sp, left: 12.sp, right: 12.sp),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.max,
@@ -1550,7 +1550,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       child: AppText(
                         text: 'Delivery options'.toUpperCase(),
                         fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                         color: appBarColor,
                         fontSize: 12,
                       ),
@@ -1630,8 +1630,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 10.sp,
                                                             vertical: 6.sp),
-                                                    child: const AppText(
-                                                      text: 'Check',
+                                                    child: AppText(
+                                                      text:
+                                                          "Check".toUpperCase(),
                                                       textAlign:
                                                           TextAlign.center,
                                                       fontFamily:
@@ -1665,8 +1666,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       hintStyle: TextStyle(
                                           fontSize: 14.sp,
                                           color: textHintColor,
-                                          fontFamily:
-                                              "Franklin Gothic Regular"),
+                                          fontFamily: "Franklin Gothic"),
                                     ),
                                     style: TextStyle(
                                         color: blackColor,
@@ -1749,8 +1749,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         EdgeInsets.symmetric(
                                                             horizontal: 10.sp,
                                                             vertical: 6.sp),
-                                                    child: const AppText(
-                                                      text: 'Check',
+                                                    child: AppText(
+                                                      text:
+                                                          "Check".toUpperCase(),
                                                       textAlign:
                                                           TextAlign.center,
                                                       fontFamily:
@@ -1782,8 +1783,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       hintStyle: TextStyle(
                                           fontSize: 14.sp,
                                           color: textHintColor,
-                                          fontFamily:
-                                              "Franklin Gothic Regular"),
+                                          fontFamily: "Franklin Gothic"),
                                     ),
                                     style: TextStyle(
                                         color: blackColor,
@@ -3960,108 +3960,97 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.only(top: 2.sp),
-              child: Obx(
-                () => productController.isDetails.value
-                    ? const SizedBox(
-                        height: 0,
-                      )
-                    :productController
-                                    .productDetails["total_stock_count"] ==
-                                0
-                            ? SizedBox(
-                                height: 50.sp,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 8.0.sp),
-                                      child: Image.asset(
-                                        cartNewImage,
-                                        color: homeAppBarColor,
-                                        height: 18.sp,
-                                        width: 18.sp,
-                                      ),
-                                    ),
-                                    AppText(
-                                      text: "Out of stock".toUpperCase(),
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
-                                      color: homeAppBarColor,
-                                      maxLines: 2,
-                                      fontSize: 13,
-                                    )
-                                  ],
+              child: Obx(() => productController.isDetails.value
+                  ? const SizedBox(
+                      height: 0,
+                    )
+                  : productController.productDetails["total_stock_count"] == 0
+                      ? SizedBox(
+                          height: 50.sp,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 8.0.sp),
+                                child: Image.asset(
+                                  cartNewImage,
+                                  color: homeAppBarColor,
+                                  height: 18.sp,
+                                  width: 18.sp,
                                 ),
+                              ),
+                              AppText(
+                                text: "Out of stock".toUpperCase(),
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                                color: homeAppBarColor,
+                                maxLines: 2,
+                                fontSize: 13,
                               )
-                            : productController
-                                        .productDetails["added_to_cart"] ||
-                                    productController.addToCart.value
-                                ? DoubleButtonIconNew(
-                                    firstText: "Go to BAG".toUpperCase(),
-                                    secondText: "Buy Now".toUpperCase(),
-                                    onPressedFirst: () async {
-                                      Get.to(CartScreen());
-                                      await analytics.logEvent(
-                                        name: 'productDetails_btnGotocart',
-                                        parameters: <String, Object>{
-                                          'page_name':
-                                              'productDetails_btnGotocart',
-                                        },
-                                      );
-                                      productController.addToCart.value = false;
-                                    },
-                                    onPressedSecond: () {
-                                      if (productController
-                                          .checkDetailsValidation()) {
-                                        productController.callAddtoCart(
-                                            1, "buy now");
-                                      }
-                                    },
-                                    controller: productController)
-                                : DoubleButtonIconNew(
-                                    firstText: widget.type == "add"
-                                        ? "Add to bag".toUpperCase()
-                                        : "Move to bag".toUpperCase(),
-                                    secondText: "Buy Now".toUpperCase(),
-                                    onPressedFirst: () async {
-                                      if (widget.type == "add") {
-                                        if (productController
-                                            .checkDetailsValidation()) {
-                                          productController.callAddtoCart(
-                                              1, "");
-                                        }
-                                      } else {
-                                        if (productController
-                                            .checkDetailsValidation()) {
-                                          wishlistController.callMovetoCart(
-                                              widget.boardId,
-                                              widget.wishlistProductId,
-                                              productController
-                                                  .sizeInventoryId.value,
-                                              1);
-                                          productController.addToCart.value =
-                                              true;
-                                          //  listClick(widgetKey);
-                                        }
-                                      }
-                                      await analytics.logEvent(
-                                        name: 'productDetails_btnaddtocart',
-                                        parameters: <String, Object>{
-                                          'page_name':
-                                              'productDetails_btnaddtocart',
-                                        },
-                                      );
-                                    },
-                                    onPressedSecond: () {
-                                      if (productController
-                                          .checkDetailsValidation()) {
-                                        productController.callAddtoCart(
-                                            1, "buy now");
-                                      }
-                                    },
-                                    controller: productController)),
+                            ],
+                          ),
+                        )
+                      : productController.productDetails["added_to_cart"] ||
+                              productController.addToCart.value
+                          ? DoubleButtonIconNew(
+                              firstText: "Go to BAG".toUpperCase(),
+                              secondText: "Buy Now".toUpperCase(),
+                              onPressedFirst: () async {
+                                Get.to(CartScreen());
+                                await analytics.logEvent(
+                                  name: 'productDetails_btnGotocart',
+                                  parameters: <String, Object>{
+                                    'page_name': 'productDetails_btnGotocart',
+                                  },
+                                );
+                                productController.addToCart.value = false;
+                              },
+                              onPressedSecond: () {
+                                if (productController
+                                    .checkDetailsValidation()) {
+                                  productController.callAddtoCart(1, "buy now");
+                                }
+                              },
+                              controller: productController)
+                          : DoubleButtonIconNew(
+                              firstText: widget.type == "add"
+                                  ? "Add to bag".toUpperCase()
+                                  : "Move to bag".toUpperCase(),
+                              secondText: "Buy Now".toUpperCase(),
+                              onPressedFirst: () async {
+                                if (widget.type == "add") {
+                                  if (productController
+                                      .checkDetailsValidation()) {
+                                    productController.callAddtoCart(1, "");
+                                  }
+                                } else {
+                                  if (productController
+                                      .checkDetailsValidation()) {
+                                    wishlistController.callMovetoCart(
+                                        widget.boardId,
+                                        widget.wishlistProductId,
+                                        productController.sizeInventoryId.value,
+                                        1);
+                                    productController.addToCart.value = true;
+                                    //  listClick(widgetKey);
+                                  }
+                                }
+                                await analytics.logEvent(
+                                  name: 'productDetails_btnaddtocart',
+                                  parameters: <String, Object>{
+                                    'page_name': 'productDetails_btnaddtocart',
+                                  },
+                                );
+                              },
+                              onPressedSecond: () {
+                                if (productController
+                                    .checkDetailsValidation()) {
+                                  productController.callAddtoCart(1, "buy now");
+                                }
+                              },
+                              controller: productController)),
             ),
           ],
         ),

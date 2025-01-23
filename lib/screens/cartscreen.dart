@@ -1511,7 +1511,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             .sp),
                                                                 child: AppText(
                                                                   text:
-                                                                      "Total MRP",
+                                                                      "Total Price",
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
                                                                   fontWeight:
@@ -1662,7 +1662,7 @@ class CartScreenState extends State<CartScreen> {
                                                             : SizedBox(
                                                                 height: 0,
                                                               ),
-                                                        Padding(
+                                                        /*    Padding(
                                                           padding:
                                                               EdgeInsets.only(
                                                                   top: 12.sp),
@@ -1712,6 +1712,7 @@ class CartScreenState extends State<CartScreen> {
                                                             ],
                                                           ),
                                                         ),
+                                                        */
                                                         controller.cartDetails[
                                                                     "coupon_discount"] ==
                                                                 "0.00"
