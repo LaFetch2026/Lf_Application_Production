@@ -950,7 +950,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 8.0.sp),
                                               height: 30.sp,
-                                              width: 50.sp,
+                                              width: 47.sp,
                                               decoration: BoxDecoration(
                                                   color:
                                                       const Color(0x80FFFFFF),
@@ -969,14 +969,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             horizontal: 2.sp),
-                                                    child: AppText(
-                                                      text: "\u{2605}",
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: homeAppBarColor,
-                                                      fontSize: 14,
+                                                    child: Image.asset(
+                                                      ratingImage,
+                                                      height: 10.sp,
+                                                      width: 10.sp,
                                                     ),
                                                   ),
                                                   Padding(

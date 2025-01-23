@@ -199,6 +199,7 @@ const exchangeNewimage = 'assets/images/exchange_new.png';
 const shareNewimage = 'assets/images/share_new.png';
 const redHeartimage = 'assets/images/red_heart.png';
 const colorSelectimage = 'assets/images/color_select.png';
+const ratingImage = 'assets/images/star.png';
 
 class ApiConstants {
   ApiConstants._();

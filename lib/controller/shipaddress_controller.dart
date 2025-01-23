@@ -361,7 +361,7 @@ class ShipAddressController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (cartId != 0) {
-          getEstimateDelivery(cartId);
+          // getEstimateDelivery(cartId);
         }
         print(responseData);
         if (responseData != null) {
