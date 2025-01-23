@@ -9,7 +9,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar%20copy.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 //import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/doublebutton_iconnew.dart';
@@ -406,8 +406,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ? colorPrimary
                                             : whiteColor),
                                     child: SizedBox(
-                                      width: 40.sp,
-                                      height: 40.sp,
+                                      width: 48.sp,
+                                      height: 48.sp,
                                       child: Align(
                                         alignment: Alignment.center,
                                         child: AppText(
@@ -524,35 +524,41 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         .selectedProductColor["id"]);
                                 //   movetoNextScreen(i['product_id']);
                               },
-                              child: CircleAvatar(
-                                child: Container(
-                                  height: 50.sp,
-                                  width: 50.sp,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: searchTextColor, width: 1),
-                                      shape: BoxShape.circle,
-                                      color: Color(int.parse(i['color_code']))),
-                                  child: Visibility(
-                                    visible: productController
-                                                .selectedProductColor
-                                                .isNotEmpty &&
-                                            productController
-                                                        .selectedProductColor[
-                                                    'id'] ==
-                                                i['id']
-                                        ? true
-                                        : false,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0.sp),
-                                      child: Center(
-                                        child: Image.asset(
-                                          colorSelectimage,
-                                          height: 14,
-                                          width: 14,
-                                          color: i['color_code'] == "0xFFFFFFFF"
-                                              ? blackColor
-                                              : whiteColor,
+                              child: SizedBox(
+                                height: 48.sp,
+                                width: 48.sp,
+                                child: CircleAvatar(
+                                  child: Container(
+                                    height: 48.sp,
+                                    width: 48.sp,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: searchTextColor, width: 1),
+                                        shape: BoxShape.circle,
+                                        color:
+                                            Color(int.parse(i['color_code']))),
+                                    child: Visibility(
+                                      visible: productController
+                                                  .selectedProductColor
+                                                  .isNotEmpty &&
+                                              productController
+                                                          .selectedProductColor[
+                                                      'id'] ==
+                                                  i['id']
+                                          ? true
+                                          : false,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(4.0.sp),
+                                        child: Center(
+                                          child: Image.asset(
+                                            colorSelectimage,
+                                            height: 14,
+                                            width: 14,
+                                            color:
+                                                i['color_code'] == "0xFFFFFFFF"
+                                                    ? blackColor
+                                                    : whiteColor,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -664,8 +670,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         ));
   }
 
+  void setStatusBarColor() {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
+    ));
+  }
+
   @override
   void initState() {
+    // setStatusBarColor();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.errorMsg.value = "";
       productController.brandDetails = "";
@@ -796,7 +809,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 );
               },
             ),
-            const Divider(
+            Container(
+              height: 1.sp,
               color: dividerColor,
             ),
             Expanded(
@@ -1343,148 +1357,179 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 ),
                                 productController.sizeInventoryList.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 30.0.sp,
-                                                  bottom: 0.0.sp,
-                                                  left: 12.sp,
-                                                  right: 12.sp),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  AppText(
-                                                    text: 'Select size'
-                                                        .toUpperCase(),
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: blackColor,
-                                                    fontSize: 16,
-                                                  ),
-                                                  productController
-                                                                  .productDetails[
-                                                              "productSizeChart"] !=
-                                                          null
-                                                      ? GestureDetector(
-                                                          onTap: () {
-                                                            scaffoldKey
-                                                                .currentState
-                                                                ?.showBottomSheet(
-                                                                    (context) =>
-                                                                        BottomSizeChart(
-                                                                          productSizeChart:
-                                                                              productController.productDetails["productSizeChart"]["image"],
-                                                                          productName:
-                                                                              productController.productDetails["name"],
-                                                                        ));
-                                                          },
-                                                          child: Text(
-                                                            "View Size chart"
-                                                                .toUpperCase(),
-                                                            style: TextStyle(
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .underline,
+                                    ? Visibility(
+                                        visible: productController
+                                                .sizeInventoryList
+                                                .where((element) =>
+                                                    int.parse(element['stocks']
+                                                        .toString()) >
+                                                    0)
+                                                .toList()
+                                                .isNotEmpty
+                                            ? true
+                                            : false,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 30.0.sp,
+                                                    bottom: 0.0.sp,
+                                                    left: 12.sp,
+                                                    right: 12.sp),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    AppText(
+                                                      text: 'Select size'
+                                                          .toUpperCase(),
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: blackColor,
+                                                      fontSize: 16,
+                                                    ),
+                                                    productController
+                                                                    .productDetails[
+                                                                "productSizeChart"] !=
+                                                            null
+                                                        ? GestureDetector(
+                                                            onTap: () {
+                                                              scaffoldKey
+                                                                  .currentState
+                                                                  ?.showBottomSheet(
+                                                                      (context) =>
+                                                                          BottomSizeChart(
+                                                                            productSizeChart:
+                                                                                productController.productDetails["productSizeChart"]["image"],
+                                                                            productName:
+                                                                                productController.productDetails["name"],
+                                                                          ));
+                                                            },
+                                                            child: Text(
+                                                              "View Size chart"
+                                                                  .toUpperCase(),
+                                                              style: TextStyle(
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .underline,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color:
+                                                                    appBarColor,
+                                                                fontSize: 10.sp,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : SizedBox(
+                                                            height: 0,
+                                                          )
+                                                  ],
+                                                )),
+                                            productController.showSizeList.value
+                                                ? getListForProductSize()
+                                                : Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 12.0.sp,
+                                                        left: 12.sp,
+                                                        right: 12.sp),
+                                                    child: Container(
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color:
+                                                                    btnTextColor,
+                                                                width: 1.sp),
+                                                            color:
+                                                                colorPrimary),
+                                                        child: SizedBox(
+                                                          width: 80.sp,
+                                                          height: 30.sp,
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: AppText(
+                                                              text: "default",
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
-                                                              color:
-                                                                  appBarColor,
-                                                              fontSize: 10.sp,
+                                                              color: whiteColor,
+                                                              fontSize: 14,
                                                             ),
                                                           ),
-                                                        )
-                                                      : SizedBox(
-                                                          height: 0,
-                                                        )
-                                                ],
-                                              )),
-                                          productController.showSizeList.value
-                                              ? getListForProductSize()
-                                              : Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 12.0.sp,
-                                                      left: 12.sp,
-                                                      right: 12.sp),
-                                                  child: Container(
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                              color:
-                                                                  btnTextColor,
-                                                              width: 1.sp),
-                                                          color: colorPrimary),
-                                                      child: SizedBox(
-                                                        width: 80.sp,
-                                                        height: 30.sp,
-                                                        child: Align(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: AppText(
-                                                            text: "default",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: whiteColor,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      )),
-                                                ),
-                                        ],
+                                                        )),
+                                                  ),
+                                          ],
+                                        ),
                                       )
                                     : const SizedBox(
                                         height: 0,
                                       ),
                                 productController.colorInventoryList.isNotEmpty
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 14.0, horizontal: 12),
-                                            child: Divider(
-                                              color: colorSecondary,
+                                    ? Visibility(
+                                        visible: productController
+                                                .colorInventoryList
+                                                .where((element) =>
+                                                    int.parse(element['stocks']
+                                                        .toString()) >
+                                                    0)
+                                                .toList()
+                                                .isNotEmpty
+                                            ? true
+                                            : false,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 14.0,
+                                                  horizontal: 12),
+                                              child: Divider(
+                                                color: colorSecondary,
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                              padding: EdgeInsets.only(
-                                                  bottom: 0.0.sp,
-                                                  left: 12.sp,
-                                                  right: 12.sp),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  AppText(
-                                                    text: 'Select color'
-                                                        .toUpperCase(),
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: blackColor,
-                                                    fontSize: 16,
-                                                  ),
-                                                ],
-                                              )),
-                                          getListForProductColor(),
-                                        ],
+                                            Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 0.0.sp,
+                                                    left: 12.sp,
+                                                    right: 12.sp),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    AppText(
+                                                      text: 'Select color'
+                                                          .toUpperCase(),
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: blackColor,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ],
+                                                )),
+                                            getListForProductColor(),
+                                          ],
+                                        ),
                                       )
                                     : const SizedBox(
                                         height: 0,

@@ -2506,7 +2506,7 @@ class CartScreenState extends State<CartScreen> {
                           },
                           child: Container(
                             width: double.infinity,
-                            height: 80.sp,
+                            height: 50.sp,
                             color: homeAppBarColor,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -2529,15 +2529,6 @@ class CartScreenState extends State<CartScreen> {
                                               color: Colors.white,
                                               fontFamily: 'Franklin Gothic'))),
                                 ),
-                                Container(
-                                  height: 5.sp,
-                                  width: 140.sp,
-                                  margin: EdgeInsets.only(top: 34.sp),
-                                  decoration: BoxDecoration(
-                                      color: whiteColor,
-                                      borderRadius:
-                                          BorderRadius.circular(5.sp)),
-                                )
                               ],
                             ),
                           ),

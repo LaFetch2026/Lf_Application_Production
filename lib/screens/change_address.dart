@@ -520,7 +520,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                 .callCartAddressUpdate(
                                                                     "update");
                                                             productController.callSaveAddress(
-                                                                "express",
+                                                                "",
                                                                 controller.addressList[index]
                                                                     ["id"],
                                                                 controller.addressList[index]

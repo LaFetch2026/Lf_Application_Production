@@ -645,15 +645,6 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                               double.parse(productController
                                                       .addressList[index]
                                                   ["longitude"]);
-                                          productController
-                                              .getBrandExpressProductData(
-                                                  productController
-                                                      .brand_id.value,
-                                                  productController
-                                                      .expressSortBy.value,
-                                                  productController
-                                                      .filterExpressEnable
-                                                      .value);
                                           final prefs = await SharedPreferences
                                               .getInstance();
                                           prefs.setDouble("latitude",

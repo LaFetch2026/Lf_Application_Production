@@ -675,7 +675,7 @@ class MapScreenState extends State<MapScreen> {
           },
           child: Container(
             width: double.infinity,
-            height: 80.sp,
+            height: 50.sp,
             color: homeAppBarColor,
             margin: EdgeInsets.only(top: 20.sp),
             child: Column(
@@ -689,14 +689,6 @@ class MapScreenState extends State<MapScreen> {
                           color: Colors.white,
                           fontFamily: 'Franklin Gothic')),
                 ),
-                Container(
-                  height: 5.sp,
-                  width: 140.sp,
-                  margin: EdgeInsets.only(top: 34.sp),
-                  decoration: BoxDecoration(
-                      color: whiteColor,
-                      borderRadius: BorderRadius.circular(5.sp)),
-                )
               ],
             ),
           ),

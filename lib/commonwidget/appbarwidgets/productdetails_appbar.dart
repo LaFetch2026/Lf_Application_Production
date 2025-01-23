@@ -26,7 +26,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
     return Container(
       height: 80.sp,
       width: MediaQuery.of(context).size.width,
-      color: whiteColor,
+      color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
@@ -53,7 +53,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
               Visibility(
                 visible: true,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 35.sp, right: 10.sp),
+                  padding: EdgeInsets.only(left: 25.sp, right: 10.sp),
                   child: Image.asset(
                     lafetchLogoImage,
                     color: homeAppBarColor,

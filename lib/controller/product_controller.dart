@@ -2733,8 +2733,22 @@ class ProductController extends BaseController {
           getBrandExpressProductData(
               brand_id.value, expressSortBy.value, filterExpressEnable.value);
         }
+        if (screenType == "express") {
+          getBrandExpressProductData(
+              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+        }
       } else if (response.statusCode == 201) {
         print(responseData);
+        if (screenType == "change address") {
+          getDefaultAddressData(0, context);
+          Get.back();
+          getBrandExpressProductData(
+              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+        }
+        if (screenType == "express") {
+          getBrandExpressProductData(
+              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

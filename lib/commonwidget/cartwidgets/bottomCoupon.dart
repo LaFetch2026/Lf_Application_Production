@@ -843,14 +843,6 @@ class BottomCouponState extends State<BottomCoupon> {
                               )),
                         ],
                       ),
-                      Container(
-                        height: 5.sp,
-                        width: 140.sp,
-                        margin: EdgeInsets.only(top: 5.sp),
-                        decoration: BoxDecoration(
-                            color: homeAppBarColor,
-                            borderRadius: BorderRadius.circular(5.sp)),
-                      )
                     ],
                   ),
                 )
