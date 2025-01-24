@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/doublebtn.dart';
 import 'package:lafetch/commonwidget/welcomewidgets/welcomebackground.dart';
+import 'package:lafetch/controller/login_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -20,6 +21,7 @@ class WelcomeScreen extends StatefulWidget {
 class WelcomeScreenState extends State<WelcomeScreen>
     with TickerProviderStateMixin {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final loginController = Get.put(LoginController());
   /*  late AnimationController _controller;
   late Animation<Offset> _animation;
   late AnimationController _longtextcontroller;
@@ -130,7 +132,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 30.sp, bottom: 40.sp),
+              padding: EdgeInsets.only(top: 30.sp),
               child: DoubleButton(
                 firstText: "Create Account",
                 secondText: "Sign In",
@@ -167,6 +169,30 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   );
                 },
               ),
+            ),
+            GestureDetector(
+              onTap: () {
+                loginController.callGuestUser();
+              },
+              child: Obx(() => loginController.isGuest.value
+                  ? Transform.scale(
+                      scale: 0.3.sp,
+                      child: const CircularProgressIndicator(
+                        color: whiteColor,
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.only(
+                          top: 12.sp, left: 12.sp, right: 12.sp, bottom: 40.sp),
+                      child: AppText(
+                        text: "Skip".toUpperCase(),
+                        textAlign: TextAlign.right,
+                        fontFamily: "Franklin Gothic bold",
+                        fontWeight: FontWeight.w600,
+                        color: whiteColor,
+                        fontSize: 12,
+                      ),
+                    )),
             ),
           ],
         ),
