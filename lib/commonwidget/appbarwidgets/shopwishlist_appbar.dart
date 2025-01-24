@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../utils/constants.dart';
 
 class ShopWishlistAppbar extends StatefulWidget {
@@ -35,12 +36,8 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
               Padding(
                 padding: EdgeInsets.only(right: 10),
                 child: IconButton(
-                  icon: Image.asset(
-                    backWhiteArrow,
-                    height: 16.sp,
-                    width: 16.sp,
-                    color: homeAppBarColor,
-                  ),
+                  icon: SvgPicture.asset(arrowBack,
+                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                   onPressed: () {
                     widget.onPressedBackButton?.call();
                   },

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:photo_view/photo_view.dart';
@@ -172,11 +173,10 @@ class ProductImageScreenState extends State<ProductImageScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     IconButton(
-                                      icon: Image.asset(
-                                        arrowBack,
-                                        height: 24.sp,
-                                        width: 24.sp,
-                                      ),
+                                      icon: SvgPicture.asset(arrowBack,
+                                          height: 15.sp,
+                                          width: 15.sp,
+                                          fit: BoxFit.cover),
                                       onPressed: () {
                                         Get.back();
                                       },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
@@ -33,11 +34,8 @@ class SaveAddressAppbar extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(
                       left: 16.sp, right: 12.sp, top: 53.sp, bottom: 10.sp),
-                  child: Image.asset(arrowBack,
-                      color: homeAppBarColor,
-                      height: 24.sp,
-                      width: 24.sp,
-                      fit: BoxFit.cover),
+                  child: SvgPicture.asset(arrowBack,
+                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/wishlist_controller.dart';
@@ -35,12 +36,8 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                icon: Image.asset(
-                  backWhiteArrow,
-                  height: 16.sp,
-                  color: homeAppBarColor,
-                  width: 16.sp,
-                ),
+                icon: SvgPicture.asset(arrowBack,
+                    height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                 onPressed: () {
                   Get.back();
                 },

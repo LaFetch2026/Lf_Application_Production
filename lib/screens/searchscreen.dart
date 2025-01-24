@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
@@ -114,11 +115,12 @@ class SearchScreenState extends State<SearchScreen> {
                         Padding(
                           padding: EdgeInsets.only(right: 10),
                           child: IconButton(
-                            icon: Image.asset(
-                              backWhiteArrow,
-                              height: 16.sp,
-                              width: 16.sp,
-                            ),
+                            icon: SvgPicture.asset(arrowBack,
+                                // ignore: deprecated_member_use
+                                color: whiteColor,
+                                height: 15.sp,
+                                width: 15.sp,
+                                fit: BoxFit.cover),
                             onPressed: () {
                               Get.back();
                             },
@@ -943,11 +945,10 @@ class SearchScreenState extends State<SearchScreen> {
                                 onTap: () {
                                   Get.back();
                                 },
-                                child: ImageIcon(
-                                  AssetImage(backWhiteArrow),
-                                  color: colorPrimary,
-                                  size: 16.sp,
-                                ),
+                                child: SvgPicture.asset(arrowBack,
+                                    height: 15.sp,
+                                    width: 15.sp,
+                                    fit: BoxFit.cover),
                               ),
                               MediaQuery.of(context).size.width < 600
                                   ? Expanded(

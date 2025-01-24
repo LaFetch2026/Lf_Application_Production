@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,12 +42,11 @@ class CatalogProductAppbar extends StatelessWidget {
                   prefs.remove("lower");
                   prefs.remove("sortby");
                 },
-                child: Image.asset(
-                  arrowBack,
-                  height: 20.sp,
-                  width: 20.sp,
-                  color: whiteColor,
-                ),
+                child: SvgPicture.asset(arrowBack,
+                    color: whiteColor,
+                    height: 15.sp,
+                    width: 15.sp,
+                    fit: BoxFit.cover),
               ),
               const Expanded(
                 child: SizedBox(

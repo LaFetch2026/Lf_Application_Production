@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/cart_controller.dart';
@@ -40,11 +41,8 @@ class _CartAppbarState extends State<CartAppbar> {
                 child: Padding(
                   padding: EdgeInsets.only(
                       left: 16.sp, right: 12.sp, top: 48.sp, bottom: 10.sp),
-                  child: Image.asset(arrowBack,
-                      color: homeAppBarColor,
-                      height: 24.sp,
-                      width: 24.sp,
-                      fit: BoxFit.cover),
+                  child: SvgPicture.asset(arrowBack,
+                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                 ),
               ),
             ),

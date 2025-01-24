@@ -7,6 +7,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../controller/order_controller.dart';
@@ -169,12 +170,8 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen>
                           onTap: () {
                             Get.back();
                           },
-                          child: Image.asset(
-                            backWhiteArrow,
-                            height: 16.sp,
-                            width: 16.sp,
-                            color: colorPrimary,
-                          )),
+                          child: SvgPicture.asset(arrowBack,
+                              height: 15.sp, width: 15.sp, fit: BoxFit.cover)),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
