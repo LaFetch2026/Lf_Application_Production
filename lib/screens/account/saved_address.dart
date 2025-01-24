@@ -674,21 +674,30 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                           ),
                                                   ],
                                                 ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 16.sp,
-                                                      right: 16.sp,
-                                                      top: 8.sp),
-                                                  child: AppText(
-                                                    text: controller
-                                                                .addressList[
-                                                            index]["address"] ??
-                                                        "",
-                                                    color: subtitleColor,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2.sp,
+                                                  height: 20.sp,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 16.sp,
+                                                        right: 16.sp,
+                                                        top: 8.sp),
+                                                    child: AppText(
+                                                      text:
+                                                          controller.addressList[
+                                                                      index]
+                                                                  ["address"] ??
+                                                              "",
+                                                      color: subtitleColor,
+                                                      fontSize: 12,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(
