@@ -185,7 +185,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                       padding: EdgeInsets.only(
                           top: 12.sp, left: 12.sp, right: 12.sp, bottom: 40.sp),
                       child: AppText(
-                        text: "Skip".toUpperCase(),
+                        text: "CONTINUE AS GUEST".toUpperCase(),
                         textAlign: TextAlign.right,
                         fontFamily: "Franklin Gothic bold",
                         fontWeight: FontWeight.w600,
