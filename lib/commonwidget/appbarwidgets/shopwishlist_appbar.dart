@@ -24,7 +24,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
     return Container(
       height: 80.sp,
       width: MediaQuery.of(context).size.width,
-      color: whiteColor,
+      color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),

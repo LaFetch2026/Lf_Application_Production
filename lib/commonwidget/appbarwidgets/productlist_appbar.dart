@@ -30,7 +30,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
     return Container(
       height: 80.sp,
       width: MediaQuery.of(context).size.width,
-      color: whiteColor,
+      color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
@@ -71,7 +71,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
               Visibility(
                 visible: !widget.isHandPicked,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 35.sp, right: 10.sp),
+                  padding: EdgeInsets.only(left: 42.sp, right: 10.sp),
                   child: Image.asset(
                     lafetchLogoImage,
                     color: homeAppBarColor,

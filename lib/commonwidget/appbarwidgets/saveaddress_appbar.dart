@@ -18,7 +18,7 @@ class SaveAddressAppbar extends StatelessWidget {
     return Container(
       height: 90.sp,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(color: whiteColor),
+      decoration: BoxDecoration(color: statusBarColor),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(
           mainAxisSize: MainAxisSize.max,

@@ -130,8 +130,9 @@ class CartScreenState extends State<CartScreen> {
               ));
             },
           ),
-          const Divider(
+          Container(
             color: dividerColor,
+            height: 1.sp,
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -687,13 +688,14 @@ class CartScreenState extends State<CartScreen> {
                                                                                                     },
                                                                                                     child: Container(
                                                                                                       decoration: BoxDecoration(color: Color(0xffF3F4F6), border: Border.all(width: 1, color: Color(0xFFE5E7EB))),
-                                                                                                      height: 40.sp,
+                                                                                                      height: 30.sp,
                                                                                                       width: 85.sp,
                                                                                                       child: Row(
                                                                                                         children: [
                                                                                                           Padding(
-                                                                                                            padding: EdgeInsets.only(left: 8.sp, right: 8.sp, top: 5.sp, bottom: 5.sp),
+                                                                                                            padding: EdgeInsets.only(left: 8.sp, right: 5.sp, top: 5.sp, bottom: 5.sp),
                                                                                                             child: AppText(
+                                                                                                              //  text: "Size : XXXL",
                                                                                                               text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
                                                                                                               color: titleColor,
                                                                                                               fontSize: 10,
@@ -704,7 +706,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                           ImageIcon(
                                                                                                             AssetImage(dropdownImage),
                                                                                                             color: nameText,
-                                                                                                            size: 16.sp,
+                                                                                                            size: 14.sp,
                                                                                                           ),
                                                                                                         ],
                                                                                                       ),
@@ -757,7 +759,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                             padding: EdgeInsets.only(left: 10.sp, top: 5.sp, bottom: 5.sp),
                                                                                             child: Container(
                                                                                               decoration: BoxDecoration(color: Color(0xffF3F4F6), border: Border.all(width: 1, color: Color(0xFFE5E7EB))),
-                                                                                              height: 40.sp,
+                                                                                              height: 30.sp,
                                                                                               width: 85.sp,
                                                                                               child: Row(
                                                                                                 children: [
@@ -774,7 +776,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   ImageIcon(
                                                                                                     AssetImage(dropdownImage),
                                                                                                     color: nameText,
-                                                                                                    size: 16.sp,
+                                                                                                    size: 14.sp,
                                                                                                   ),
                                                                                                 ],
                                                                                               ),

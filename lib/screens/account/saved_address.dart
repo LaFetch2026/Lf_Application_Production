@@ -71,14 +71,18 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
               ));
             },
           ),
-          const Divider(
+          Container(
             color: dividerColor,
+            height: 1.sp,
           ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 10.sp,
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 16.sp, vertical: 10.sp),

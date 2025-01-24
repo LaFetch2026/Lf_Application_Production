@@ -186,7 +186,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 ));
               },
             ),
-            Divider(
+            Container(
               color: dividerColor,
               height: 1.sp,
             ),

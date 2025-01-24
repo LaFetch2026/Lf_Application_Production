@@ -61,7 +61,7 @@ class BottomCouponState extends State<BottomCoupon> {
               ));
             },
           ),
-          Divider(
+          Container(
             color: dividerColor,
             height: 1.sp,
           ),

@@ -25,7 +25,7 @@ class _CartAppbarState extends State<CartAppbar> {
     return Container(
       height: 90.sp,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(color: whiteColor),
+      decoration: BoxDecoration(color: statusBarColor),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(
           mainAxisSize: MainAxisSize.max,
@@ -39,7 +39,7 @@ class _CartAppbarState extends State<CartAppbar> {
               child: Container(
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: 16.sp, right: 12.sp, top: 53.sp, bottom: 10.sp),
+                      left: 16.sp, right: 12.sp, top: 48.sp, bottom: 10.sp),
                   child: Image.asset(arrowBack,
                       color: homeAppBarColor,
                       height: 24.sp,
@@ -56,7 +56,7 @@ class _CartAppbarState extends State<CartAppbar> {
             Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 45.sp),
+                  padding: EdgeInsets.only(top: 40.sp),
                   child: AppText(
                     text: widget.text.toUpperCase(),
                     fontFamily: "Franklin Gothic Semibold",
@@ -93,7 +93,7 @@ class _CartAppbarState extends State<CartAppbar> {
               child: Container(
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: 45.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
+                      top: 40.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
                   child: ImageIcon(
                     AssetImage(wishlistBottomIcon),
                     color: homeAppBarColor,

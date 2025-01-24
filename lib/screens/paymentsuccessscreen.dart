@@ -70,7 +70,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                 );
               },
             ),
-            Divider(
+            Container(
               color: dividerColor,
               height: 1.sp,
             ),
