@@ -189,7 +189,7 @@ class CartController extends BaseController {
       if (response.statusCode == 200) {
         if (page == "addproduct") {
           print("addproduct");
-          getSnackBar("Product added to bag");
+          // getSnackBar("Product added to bag");
           getCartData();
         } else if (page == "remove") {
           print("remove");
@@ -197,11 +197,11 @@ class CartController extends BaseController {
           orderList.clear();
           getCartData();
         } else if (page == "quantity") {
-          getSnackBar("Quantity updated");
+          //getSnackBar("Quantity updated");
           Get.close(1);
           getCartData();
         } else if (page == "size") {
-          getSnackBar("Size updated");
+          //  getSnackBar("Size updated");
           Get.close(1);
           getCartData();
         } else if (page == "express") {

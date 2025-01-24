@@ -284,17 +284,24 @@ class LoginController extends BaseController {
     try {
       var response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/login/guest"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
       );
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
         prefs.setString('token', responseData['meta']['access_token']);
+        prefs.setBool("skip", true);
         Get.to(
           () => const BottomNavScreen(),
         );
       } else if (response.statusCode == 201) {
         print(responseData);
         prefs.setString('token', responseData['meta']['access_token']);
+        prefs.setBool("skip", true);
         Get.to(
           () => const BottomNavScreen(),
         );
@@ -319,11 +326,17 @@ class LoginController extends BaseController {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response =
-          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+      final Map<String, dynamic> sendData = {
         "phone": phone,
         "otp": otp.value,
-      });
+      };
+      var response = await http.post(Uri.parse("${ApiConstants.baseUrl}/login"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          },
+          body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
@@ -340,6 +353,7 @@ class LoginController extends BaseController {
         if (responseData['data']['gender'] != null) {
           prefs.setInt('gender', responseData['data']['gender']);
         }
+        prefs.setBool("skip", false);
         if (responseData['data']['name'] != null) {
           prefs.setString('name', responseData['data']['name']);
           Get.offAll(
@@ -365,6 +379,7 @@ class LoginController extends BaseController {
         if (responseData['data']['gender'] != null) {
           prefs.setInt('gender', responseData['data']['gender']);
         }
+        prefs.setBool("skip", false);
         if (responseData['data']['name'] != null) {
           prefs.setString('name', responseData['data']['name']);
           Get.offAll(

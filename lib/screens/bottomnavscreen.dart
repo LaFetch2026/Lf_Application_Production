@@ -5,9 +5,11 @@ import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/home/women/homescreen.dart';
+import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/product_controller.dart';
 
@@ -23,6 +25,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final productController = Get.put(ProductController());
   int _currentIndex = 0;
+  bool? skipValue;
   var screen = [
     const HomeScreen(),
     const BrandsScreen(
@@ -60,7 +63,16 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     if (widget.index != null) {
       _currentIndex = widget.index!;
     }
+    getPrefrenceValue();
     super.initState();
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("skip") == true) {
+      skipValue = true;
+      setState(() {});
+    }
   }
 
   void changeTab(index) {
@@ -421,9 +433,16 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               minWidth: MediaQuery.of(context).size.width % 5.sp,
               color: homeAppBarColor,
               onPressed: () async {
-                setState(() {
-                  _currentIndex = 4;
-                });
+                if (skipValue == true) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => const LoginScreen(
+                            initialTab: 0,
+                          )));
+                } else {
+                  setState(() {
+                    _currentIndex = 4;
+                  });
+                }
                 await analytics.logEvent(
                   name: 'express_page',
                   parameters: <String, Object>{
@@ -512,9 +531,17 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               minWidth: MediaQuery.of(context).size.width % 5.sp,
               color: homeAppBarColor,
               onPressed: () async {
-                setState(() {
-                  _currentIndex = 3;
-                });
+                if (skipValue == true) {
+                  Get.to(
+                    () => const LoginScreen(
+                      initialTab: 0,
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    _currentIndex = 3;
+                  });
+                }
                 await analytics.logEvent(
                   name: 'account_page',
                   parameters: <String, Object>{

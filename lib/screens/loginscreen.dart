@@ -175,7 +175,8 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                         )
                       : Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.sp, horizontal: 12.sp),
                           child: AppText(
                             text: "Skip".toUpperCase(),
                             textAlign: TextAlign.right,

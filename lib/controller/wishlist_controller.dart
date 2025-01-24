@@ -93,11 +93,11 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.to(
+        /*  Get.to(
           () => const LoginScreen(
             initialTab: 0,
           ),
-        );
+        ); */
         // getSnackBar("Authentication failed");
         print(response..statusCode);
       } else {

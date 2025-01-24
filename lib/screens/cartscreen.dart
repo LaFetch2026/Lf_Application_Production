@@ -19,9 +19,11 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
+import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/common_widgets.dart';
 //import '../commonwidget/homewidget/dummy_product_list.dart';
@@ -55,8 +57,7 @@ class CartScreenState extends State<CartScreen> {
       controller.selected = List.generate(50, (i) => false).obs;
       controller.getCouponData();
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => controller.getCartData());
+    getPrefrenceValue();
     /*  WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant")); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -75,6 +76,20 @@ class CartScreenState extends State<CartScreen> {
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
     super.initState();
+  }
+
+  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("skip") == true) {
+      Get.to(
+        () => const LoginScreen(
+          initialTab: 0,
+        ),
+      );
+    } else {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => controller.getCartData());
+    }
   }
 
   void handlePaymentSuccess(PaymentSuccessResponse response) {

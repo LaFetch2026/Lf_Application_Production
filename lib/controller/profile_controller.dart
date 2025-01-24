@@ -127,11 +127,11 @@ class ProfileController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
-        Get.to(
+        /*  Get.to(
           () => const LoginScreen(
             initialTab: 0,
           ),
-        );
+        ); */
         //getSnackBar("Authentication failed");
       } else {
         getSnackBar("get product failed");
