@@ -210,10 +210,10 @@ class ApiConstants {
   static const String baseUrl =
       "https://api.la-fetch.com/customer/api"; //production
 
-  // static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
+  static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
 
   // static const String baseUrl =
   // "https://staging-api.la-fetch.com/customer/api"; //staging
 
-  static const String razorPayKey = "rzp_test_eUuJKYtCTi2iSH"; //staging
+  // static const String razorPayKey = "rzp_test_eUuJKYtCTi2iSH"; //staging
 }
