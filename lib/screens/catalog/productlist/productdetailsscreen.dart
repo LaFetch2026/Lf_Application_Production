@@ -1453,13 +1453,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             color:
                                                                 colorPrimary),
                                                         child: SizedBox(
-                                                          width: 80.sp,
-                                                          height: 30.sp,
+                                                          width: 48.sp,
+                                                          height: 48.sp,
                                                           child: Align(
                                                             alignment: Alignment
                                                                 .center,
                                                             child: AppText(
-                                                              text: "default",
+                                                              text: "FS",
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
                                                               fontWeight:

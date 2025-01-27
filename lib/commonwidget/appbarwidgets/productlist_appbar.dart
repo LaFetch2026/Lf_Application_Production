@@ -68,7 +68,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
               Visibility(
                 visible: !widget.isHandPicked,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 42.sp, right: 10.sp),
+                  padding: EdgeInsets.only(left: 48.sp, right: 10.sp),
                   child: Image.asset(
                     lafetchLogoImage,
                     color: homeAppBarColor,

@@ -49,7 +49,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 5.sp),
+                padding: EdgeInsets.only(left: 8.sp),
                 child: Image.asset(
                   lafetchLogoImage,
                   color: homeAppBarColor,
@@ -71,7 +71,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   child: ImageIcon(
                     AssetImage(wishlistBottomIcon),
                     color: homeAppBarColor,
-                    size: 20.sp,
+                    size: 16.sp,
                   ),
                 ),
               ),
@@ -86,8 +86,8 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                     child: Image.asset(
                       cartNewImage,
                       color: homeAppBarColor,
-                      height: 20.sp,
-                      width: 20.sp,
+                      height: 16.sp,
+                      width: 16.sp,
                     ),
                   ),
                 ),
