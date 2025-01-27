@@ -6,7 +6,9 @@ import '../../utils/constants.dart';
 import '../app_text.dart';
 
 class DummyGridMostSearch extends StatelessWidget {
+  final String text;
   const DummyGridMostSearch({
+    required this.text,
     Key? key,
   }) : super(key: key);
 
@@ -16,27 +18,27 @@ class DummyGridMostSearch extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 30.sp, left: 16.sp),
+          padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
           child: AppText(
-            text: "Most Searched",
-            fontFamily: "Franklin Gothic Regular",
+            text: text.toUpperCase(),
+            fontFamily: "Franklin Gothic Semibold",
             fontWeight: FontWeight.w400,
-            color: bottomnavBack,
+            color: blackColor,
             fontSize: 16,
           ),
         ),
         Padding(
           padding: EdgeInsets.only(
-              left: 16.sp, right: 16.sp, top: 20.sp, bottom: 10.sp),
+              left: 16.sp, right: 16.sp, top: 12.sp, bottom: 10.sp),
           child: GridView.count(
             shrinkWrap: true,
-            crossAxisCount: 4,
+            crossAxisCount: 3,
             scrollDirection: Axis.vertical,
             padding: EdgeInsets.zero,
-            childAspectRatio: 0.7,
+            childAspectRatio: 0.6,
             physics: const ScrollPhysics(),
-            crossAxisSpacing: 5.sp,
-            mainAxisSpacing: 1.sp,
+            crossAxisSpacing: 7.sp,
+            mainAxisSpacing: 0.sp,
             children: List.generate(
               8,
               (index) {
@@ -47,13 +49,13 @@ class DummyGridMostSearch extends StatelessWidget {
                       children: [
                         Center(
                           child: DummyContainer(
-                            height: 72,
-                            width: 80,
+                            width: 104,
+                            height: 130,
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 10.sp, vertical: 5.sp),
+                              horizontal: 5.sp, vertical: 6.sp),
                           child: InkWell(
                             child: DummyContainer(
                               height: 16,

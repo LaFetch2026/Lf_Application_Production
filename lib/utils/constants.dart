@@ -201,6 +201,9 @@ const shareNewimage = 'assets/images/share_new.png';
 const redHeartimage = 'assets/images/red_heart.png';
 const colorSelectimage = 'assets/images/color_select.png';
 const ratingImage = 'assets/images/star.png';
+const crossSearchImage = 'assets/images/cross_search.svg';
+const arrowSearchImage = 'assets/images/search_arrow.svg';
+const searchSvgImage = 'assets/images/search_svg.svg';
 
 class ApiConstants {
   ApiConstants._();
