@@ -331,6 +331,7 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           HomeAppbar(
             onPressedSearch: () async {
+              searchController.searchController.clear();
               Navigator.push(context, scaleIn(const SearchScreen()))
                   .then((value) => setState(
                         () {

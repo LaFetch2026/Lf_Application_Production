@@ -54,7 +54,7 @@ class _BottomCategoryState extends State<BottomCategory> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 260.sp,
+      height: 270.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
@@ -69,6 +69,9 @@ class _BottomCategoryState extends State<BottomCategory> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 10.sp,
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 12.sp,
@@ -103,7 +106,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                                   decoration: TextDecoration.underline,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: appBarColor,
+                                  color: subtitleColor,
                                   fontSize: 10.sp,
                                 ),
                               ),
@@ -117,7 +120,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                     children: [
                       Radio(
                           value: "Men",
-                          activeColor: colorPrimary,
+                          activeColor: homeAppBarColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -135,7 +138,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                         child: Text(
                           "Men",
                           style: TextStyle(
-                            color: colorPrimary,
+                            color: subtitleColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -148,7 +151,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                     children: [
                       Radio(
                           value: "Women",
-                          activeColor: colorPrimary,
+                          activeColor: homeAppBarColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -167,7 +170,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                         child: Text(
                           "Women",
                           style: TextStyle(
-                            color: colorPrimary,
+                            color: subtitleColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -180,7 +183,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                     children: [
                       Radio(
                           value: "Accessories",
-                          activeColor: colorPrimary,
+                          activeColor: homeAppBarColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -198,7 +201,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                         child: Text(
                           "Accesories",
                           style: TextStyle(
-                            color: colorPrimary,
+                            color: subtitleColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,

@@ -48,7 +48,7 @@ class _BottomSortByState extends State<BottomSortBy> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 350.sp,
+      height: 360.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
@@ -64,8 +64,8 @@ class _BottomSortByState extends State<BottomSortBy> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 16.sp, vertical: 10.sp),
                     child: Row(
                       children: [
                         Expanded(

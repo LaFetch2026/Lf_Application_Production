@@ -750,7 +750,7 @@ class ViewAllScreenState extends State<ViewAllScreen> {
                             isScrollControlled: true,
                             constraints: BoxConstraints(
                               maxWidth: double.infinity,
-                              maxHeight: 350.sp,
+                              maxHeight: 360.sp,
                             ),
                             builder: (ctx) {
                               return BottomSortBy(
