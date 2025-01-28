@@ -7,7 +7,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/home/womenscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -129,15 +128,15 @@ class DemoscreenState extends State<Demoscreen> {
                   },
                 );
               },
-              onPressedCatalog: () async {
+              onPressedHeart: () async {
                 // Get.to(const CatalogScreen());
-                Navigator.push(context, scaleIn(const CatalogScreen()));
+                /*  Navigator.push(context, scaleIn(const CatalogScreen()));
                 await analytics.logEvent(
                   name: 'catalog_page',
                   parameters: <String, Object>{
                     'page_name': 'catalog_page',
                   },
-                );
+                ); */
               },
               onPressedCart: () async {
                 Navigator.push(context, scaleIn(const CartScreen()));

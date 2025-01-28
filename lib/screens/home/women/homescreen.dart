@@ -21,7 +21,6 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
-import 'package:lafetch/screens/catalogscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
@@ -348,14 +347,14 @@ class HomeScreenState extends State<HomeScreen> {
                 },
               );
             },
-            onPressedCatalog: () async {
-              Navigator.push(context, scaleIn(const CatalogScreen()));
+            onPressedHeart: () async {
+              /*  Navigator.push(context, scaleIn(const CatalogScreen()));
               await analytics.logEvent(
                 name: 'catalog_page',
                 parameters: <String, Object>{
                   'page_name': 'catalog_page',
                 },
-              );
+              ); */
             },
             onPressedCart: () async {
               Navigator.push(context, scaleIn(const CartScreen()));
@@ -389,7 +388,7 @@ class HomeScreenState extends State<HomeScreen> {
                         () => SizedBox(
                           height: 40.sp,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               GestureDetector(
                                 onTap: () {

@@ -9,14 +9,14 @@ import '../../utils/constants.dart';
 class HomeAppbar extends StatefulWidget {
   final Function? onPressedCart;
   final Function? onPressedSearch;
-  final Function? onPressedCatalog;
+  final Function? onPressedHeart;
   final Function? onPressedDropDown;
   final bool showGender;
 
   const HomeAppbar(
       {Key? key,
       this.onPressedCart,
-      this.onPressedCatalog,
+      this.onPressedHeart,
       this.onPressedSearch,
       this.showGender = false,
       this.onPressedDropDown})
@@ -32,12 +32,13 @@ class _HomeAppbarState extends State<HomeAppbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100.sp,
+      // height: 100.sp,
       width: MediaQuery.of(context).size.width,
       color: whiteColor,
       child: Column(children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 60.sp, right: 16.sp),
+          padding: EdgeInsets.only(
+              left: 16.sp, top: 56.sp, right: 10.sp, bottom: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -104,7 +105,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        widget.onPressedCatalog?.call();
+                        widget.onPressedHeart?.call();
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.sp),
@@ -117,11 +118,12 @@ class _HomeAppbarState extends State<HomeAppbar> {
                         widget.onPressedCart?.call();
                       },
                       child: Padding(
-                        padding: EdgeInsets.only(left: 5.sp),
+                        padding: EdgeInsets.only(right: 6.sp),
                         child: Stack(
                           children: [
                             Padding(
-                                padding: EdgeInsets.only(bottom: 3.sp),
+                                padding:
+                                    EdgeInsets.only(bottom: 3.sp, left: 5.sp),
                                 child: SvgPicture.asset(cartSvgImage,
                                     height: 18.sp,
                                     width: 18.sp,

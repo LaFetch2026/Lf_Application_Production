@@ -19,7 +19,6 @@ import '../utils/constants.dart';
 import 'Brands/categoryproduct.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
-import 'catalogscreen.dart';
 
 class BrandsScreen extends StatefulWidget {
   final String? screen;
@@ -129,14 +128,14 @@ class BrandsScreenState extends State<BrandsScreen> {
                         },
                       );
                     },
-                    onPressedCatalog: () async {
-                      Get.to(const CatalogScreen());
+                    onPressedHeart: () async {
+                      /*  Get.to(const CatalogScreen());
                       await analytics.logEvent(
                         name: 'catalog_page',
                         parameters: <String, Object>{
                           'page_name': 'catalog_page',
                         },
-                      );
+                      ); */
                     },
                     onPressedCart: () async {
                       Get.to(const CartScreen());
