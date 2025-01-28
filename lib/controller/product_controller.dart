@@ -2743,6 +2743,9 @@ class ProductController extends BaseController {
           getBrandExpressProductData(
               brand_id.value, expressSortBy.value, filterExpressEnable.value);
         }
+        if (screenType == "") {
+          Get.back();
+        }
       } else if (response.statusCode == 201) {
         print(responseData);
         if (screenType == "change address") {
@@ -2754,6 +2757,9 @@ class ProductController extends BaseController {
         if (screenType == "express") {
           getBrandExpressProductData(
               brand_id.value, expressSortBy.value, filterExpressEnable.value);
+        }
+        if (screenType == "") {
+          Get.back();
         }
       } else if (response.statusCode == 400) {
         print(response.body);
