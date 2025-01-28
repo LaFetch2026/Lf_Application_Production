@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/controller/home_controller.dart';
+import 'package:lafetch/controller/cart_controller.dart';
 
 import '../../utils/constants.dart';
 
@@ -28,7 +27,8 @@ class HomeAppbar extends StatefulWidget {
 }
 
 class _HomeAppbarState extends State<HomeAppbar> {
-  final homeController = Get.put(HomeController());
+  // final homeController = Get.put(HomeController());
+  final controller = Get.put(CartController());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -117,9 +117,51 @@ class _HomeAppbarState extends State<HomeAppbar> {
                         widget.onPressedCart?.call();
                       },
                       child: Padding(
-                          padding: EdgeInsets.only(left: 5.sp),
-                          child: SvgPicture.asset(cartSvgImage,
-                              height: 18.sp, width: 18.sp, fit: BoxFit.cover)),
+                        padding: EdgeInsets.only(left: 5.sp),
+                        child: Stack(
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.only(bottom: 3.sp),
+                                child: SvgPicture.asset(cartSvgImage,
+                                    height: 18.sp,
+                                    width: 18.sp,
+                                    fit: BoxFit.cover)),
+                            Obx(() => controller.cartTotalValue.value != 0
+                                ? Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 10.sp,
+                                      height: 10.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: homeAppBarColor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              controller.cartTotalValue.value
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 8,
+                                                  color: whiteColor,
+                                                  fontFamily:
+                                                      "Libre Franklin Regular",
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ), // inner content
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  ))
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -75,6 +75,8 @@ class HomeScreenState extends State<HomeScreen> {
           homeController.homeGenderValue.value;
       checkUserConnection();
     });
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => cartController.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsHasnextpage.value = true;
       productController.tagsLoadMore.value = false;

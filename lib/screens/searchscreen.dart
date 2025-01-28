@@ -360,7 +360,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                     icon: SvgPicture.asset(
                                                                         crossSearchImage,
                                                                         color:
-                                                                            homeAppBarColor,
+                                                                            subtitleColor,
                                                                         height: 13
                                                                             .sp,
                                                                         width: 13
@@ -544,7 +544,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                       childAspectRatio: 0.6,
                                                       physics:
                                                           const ScrollPhysics(),
-                                                      crossAxisSpacing: 7.sp,
+                                                      crossAxisSpacing: 12.sp,
                                                       mainAxisSpacing: 0.sp,
                                                       children: List.generate(
                                                         controller.suggestedList
@@ -641,11 +641,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         color:
                                                                             blackColor,
                                                                         fontSize:
-                                                                            12,
+                                                                            13,
                                                                         textAlign:
                                                                             TextAlign.center,
                                                                         maxLines:
-                                                                            2,
+                                                                            1,
                                                                         fontFamily:
                                                                             "Franklin Gothic",
                                                                         fontWeight:
@@ -703,7 +703,7 @@ class SearchScreenState extends State<SearchScreen> {
                                             padding: EdgeInsets.zero,
                                             childAspectRatio: 0.6,
                                             physics: const ScrollPhysics(),
-                                            crossAxisSpacing: 7.sp,
+                                            crossAxisSpacing: 12.sp,
                                             mainAxisSpacing: 0.sp,
                                             children: List.generate(
                                               productController
@@ -856,7 +856,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       ["name"]
                                                                   .toUpperCase(),
                                                               color: blackColor,
-                                                              fontSize: 12,
+                                                              fontSize: 13,
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
