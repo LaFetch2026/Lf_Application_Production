@@ -396,35 +396,63 @@ class SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                     Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 16.sp,
-                                            bottom: 10.sp,
-                                            right: 16.sp,
-                                            top: 20.sp),
-                                        child: SizedBox(
-                                          height: 30.sp,
-                                          width: double.infinity,
-                                          child: ListView.builder(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              itemCount: 5,
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder: (ctx, index) {
-                                                return Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 5.sp),
-                                                  width: 100.sp,
-                                                  height: 30.sp,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withOpacity(0.04),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.sp),
-                                                  ),
-                                                );
-                                              }),
-                                        )),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.sp),
+                                      child: ListView.builder(
+                                          primary: false,
+                                          shrinkWrap: true,
+                                          physics: const ScrollPhysics(),
+                                          itemCount: 2,
+                                          padding: EdgeInsets.zero,
+                                          scrollDirection: Axis.vertical,
+                                          itemBuilder: (ctx, i) {
+                                            return Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4.sp),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 0.sp,
+                                                    vertical: 1.sp),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 16.sp),
+                                                        child: DummyContainer(
+                                                            height: 20,
+                                                            width: 60),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: SizedBox(
+                                                        height: 0,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  16.sp),
+                                                      child: DummyContainer(
+                                                          height: 15,
+                                                          width: 15),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
                                   ],
                                 )
                               : controller.recentSearchList.isNotEmpty
@@ -462,32 +490,33 @@ class SearchScreenState extends State<SearchScreen> {
                                                       vertical: 4.sp),
                                                   child: GestureDetector(
                                                     onTap: () async {
-                                                      if (isSearch) {
-                                                      } else {
-                                                        Navigator.of(context)
-                                                            .push(MaterialPageRoute(
-                                                                builder: (BuildContext context) => ProductDetailsScreen(
-                                                                    brandName: controller.recentSearchList[i]
-                                                                            ["product"]
-                                                                        [
-                                                                        "brand_name"],
-                                                                    productId: controller.recentSearchList[i]
-                                                                            ["product"]
-                                                                        ["id"],
-                                                                    type:
-                                                                        "add")))
-                                                            .then((value) =>
-                                                                setState(
-                                                                  () {
-                                                                    controller
-                                                                        .isRecentSearch
-                                                                        .value = false;
-                                                                    productController;
-                                                                    controller
-                                                                        .getRecentSearchData();
-                                                                  },
-                                                                ));
-                                                      }
+                                                      /*  if (isSearch) {
+                                                      } else { */
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(
+                                                              builder: (BuildContext context) => ProductDetailsScreen(
+                                                                  brandName: controller
+                                                                              .recentSearchList[i]
+                                                                          ["product"]
+                                                                      [
+                                                                      "brand_name"],
+                                                                  productId: controller
+                                                                              .recentSearchList[i]
+                                                                          ["product"]
+                                                                      ["id"],
+                                                                  type: "add")))
+                                                          .then((value) =>
+                                                              setState(
+                                                                () {
+                                                                  controller
+                                                                      .isRecentSearch
+                                                                      .value = false;
+                                                                  productController;
+                                                                  controller
+                                                                      .getRecentSearchData();
+                                                                },
+                                                              ));
+                                                      //   }
                                                       await analytics.logEvent(
                                                         name:
                                                             "search_page_recentsearch_details",
@@ -1068,7 +1097,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
-                                                              maxLines: 2,
+                                                              maxLines: 1,
                                                               fontFamily:
                                                                   "Franklin Gothic",
                                                               fontWeight:
@@ -1496,12 +1525,18 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         horizontal:
                                                                             10.sp),
                                                                 hintText:
-                                                                    "Search",
-                                                                hintStyle: TextStyle(
-                                                                    color:
-                                                                        subtitleColor,
-                                                                    fontSize:
-                                                                        14.sp),
+                                                                    "Search for 'Bag'",
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      subtitleColor,
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
@@ -1607,12 +1642,18 @@ class SearchScreenState extends State<SearchScreen> {
                                                                 /*   contentPadding: EdgeInsets.symmetric(
                                                     horizontal: 10.sp), */
                                                                 hintText:
-                                                                    "Search",
-                                                                hintStyle: TextStyle(
-                                                                    color:
-                                                                        subtitleColor,
-                                                                    fontSize:
-                                                                        14.sp),
+                                                                    "Search for 'Bag'",
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      subtitleColor,
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
                                                               ),
                                                             ),
                                                           ),

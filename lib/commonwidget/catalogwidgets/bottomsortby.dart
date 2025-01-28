@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/doublebutton_new.dart';
 import 'package:lafetch/controller/cart_controller.dart';
@@ -86,10 +89,10 @@ class _BottomSortByState extends State<BottomSortBy> {
                           },
                           child: Container(
                             color: Colors.transparent,
-                            child: Image.asset(blackCrossImage,
-                                height: 18.sp,
-                                width: 18.sp,
-                                color: appBarColor,
+                            child: SvgPicture.asset(crossSearchImage,
+                                color: subtitleColor,
+                                height: 13.sp,
+                                width: 13.sp,
                                 fit: BoxFit.cover),
                           ),
                         ),

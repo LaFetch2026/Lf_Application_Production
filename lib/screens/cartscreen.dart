@@ -1619,66 +1619,56 @@ class CartScreenState extends State<CartScreen> {
                                                             ),
                                                           ),
                                                     */
-                                                        controller.cartDetails[
-                                                                    "shipping_cost"] !=
-                                                                "0.00"
-                                                            ? Padding(
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 12.sp),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Padding(
                                                                 padding: EdgeInsets
                                                                     .only(
-                                                                        top: 12
+                                                                        right: 4
                                                                             .sp),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          right:
-                                                                              4.sp),
-                                                                      child:
-                                                                          AppText(
-                                                                        text:
-                                                                            "Delivery Charges",
-                                                                        fontFamily:
-                                                                            "Franklin Gothic Regular",
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
-                                                                        color:
-                                                                            subtitleColor,
-                                                                        fontSize:
-                                                                            12,
-                                                                      ),
-                                                                    ),
-                                                                    const Expanded(
-                                                                      child:
-                                                                          SizedBox(
-                                                                        height:
-                                                                            0,
-                                                                      ),
-                                                                    ),
-                                                                    AppText(
-                                                                      text:
-                                                                          "\u{20B9}${double.parse(controller.cartDetails["shipping_cost"]) + double.parse(controller.cartDetails["express_delivery_charges"])}",
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color:
-                                                                          homeAppBarColor,
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
-                                                                  ],
+                                                                child: AppText(
+                                                                  text:
+                                                                      "Delivery Charges",
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  color:
+                                                                      subtitleColor,
+                                                                  fontSize: 12,
                                                                 ),
-                                                              )
-                                                            : SizedBox(
-                                                                height: 0,
                                                               ),
+                                                              const Expanded(
+                                                                child: SizedBox(
+                                                                  height: 0,
+                                                                ),
+                                                              ),
+                                                              AppText(
+                                                                text:
+                                                                    "\u{20B9}${double.parse(controller.cartDetails["shipping_cost"]) + double.parse(controller.cartDetails["express_delivery_charges"])}",
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color:
+                                                                    homeAppBarColor,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                         /*    Padding(
                                                           padding:
                                                               EdgeInsets.only(
