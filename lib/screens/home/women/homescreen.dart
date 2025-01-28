@@ -385,12 +385,62 @@ class HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // const SaleCardWidget(),
-                      /*   Obx(
+                      Obx(
                         () => SizedBox(
                           height: 40.sp,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              GestureDetector(
+                                onTap: () {
+                                  homeController.homeGenderValue.value = 2;
+                                  homeController.currentPage.value = 0;
+                                  productController.current.value = 50;
+                                  productController.tagId.value = 0;
+                                  productController.tagname.value =
+                                      "We think you might also like";
+                                  productController.productCategory = [];
+                                  productController.productTags = [];
+                                  productController.getTagsData(2);
+                                  homeController.getCategoryData(2);
+                                },
+                                child: SizedBox(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      AppText(
+                                        text: "Men".toUpperCase(),
+                                        color: homeController
+                                                    .homeGenderValue.value ==
+                                                2
+                                            ? homeAppBarColor
+                                            : searchTextColor,
+                                        fontSize: 13,
+                                        fontFamily: homeController
+                                                    .homeGenderValue.value ==
+                                                2
+                                            ? "Franklin Gothic Semibold"
+                                            : "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 10.sp),
+                                        child: Container(
+                                          color: homeController
+                                                      .homeGenderValue.value ==
+                                                  2
+                                              ? homeAppBarColor
+                                              : Colors.transparent,
+                                          width: 110.sp,
+                                          height: 2.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                               GestureDetector(
                                 onTap: () {
                                   homeController.homeGenderValue.value = 3;
@@ -413,14 +463,18 @@ class HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       AppText(
-                                        text: "Women",
+                                        text: "WOMEN".toUpperCase(),
                                         color: homeController
                                                     .homeGenderValue.value ==
                                                 3
-                                            ? btnTextColor
-                                            : textHintColor,
-                                        fontSize: 14,
-                                        fontFamily: "Franklin Gothic",
+                                            ? homeAppBarColor
+                                            : searchTextColor,
+                                        fontSize: 13,
+                                        fontFamily: homeController
+                                                    .homeGenderValue.value ==
+                                                3
+                                            ? "Franklin Gothic Semibold"
+                                            : "Franklin Gothic",
                                         fontWeight: FontWeight.w500,
                                       ),
                                       Padding(
@@ -429,54 +483,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           color: homeController
                                                       .homeGenderValue.value ==
                                                   3
-                                              ? btnTextColor
-                                              : whiteColor,
-                                          width: 110.sp,
-                                          height: 2.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  homeController.homeGenderValue.value = 2;
-                                  homeController.currentPage.value = 0;
-                                  productController.current.value = 50;
-                                  productController.tagId.value = 0;
-                                  productController.tagname.value =
-                                      "We think you might also like";
-                                  productController.productCategory = [];
-                                  productController.productTags = [];
-                                  productController.getTagsData(2);
-                                  homeController.getCategoryData(2);
-                                },
-                                child: SizedBox(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      AppText(
-                                        text: "Men",
-                                        color: homeController
-                                                    .homeGenderValue.value ==
-                                                2
-                                            ? btnTextColor
-                                            : textHintColor,
-                                        fontSize: 14,
-                                        fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10.sp),
-                                        child: Container(
-                                          color: homeController
-                                                      .homeGenderValue.value ==
-                                                  2
-                                              ? btnTextColor
-                                              : whiteColor,
+                                              ? homeAppBarColor
+                                              : Colors.transparent,
                                           width: 110.sp,
                                           height: 2.sp,
                                         ),
@@ -505,14 +513,18 @@ class HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       AppText(
-                                        text: "Accessories",
+                                        text: "Accessories".toUpperCase(),
                                         color: homeController
                                                     .homeGenderValue.value ==
                                                 1
-                                            ? btnTextColor
-                                            : textHintColor,
-                                        fontSize: 14,
-                                        fontFamily: "Franklin Gothic",
+                                            ? homeAppBarColor
+                                            : searchTextColor,
+                                        fontSize: 13,
+                                        fontFamily: homeController
+                                                    .homeGenderValue.value ==
+                                                1
+                                            ? "Franklin Gothic Semibold"
+                                            : "Franklin Gothic",
                                         fontWeight: FontWeight.w500,
                                       ),
                                       Padding(
@@ -521,8 +533,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           color: homeController
                                                       .homeGenderValue.value ==
                                                   1
-                                              ? btnTextColor
-                                              : whiteColor,
+                                              ? homeAppBarColor
+                                              : Colors.transparent,
                                           width: 110.sp,
                                           height: 2.sp,
                                         ),
@@ -537,9 +549,9 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                       Container(
                         width: double.infinity,
-                        color: lightText,
-                        height: 1.sp,
-                      ), */
+                        color: lightgreyColor,
+                        height: 2.sp,
+                      ),
                       Obx(() => productController.istags.value
                           ? Padding(
                               padding: EdgeInsets.only(
