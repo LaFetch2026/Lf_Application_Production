@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/controller/home_controller.dart';
@@ -33,7 +34,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
     return Container(
       height: 100.sp,
       width: MediaQuery.of(context).size.width,
-      color: homeAppBarColor,
+      color: whiteColor,
       child: Column(children: [
         Padding(
           padding: EdgeInsets.only(left: 16.sp, top: 60.sp, right: 16.sp),
@@ -41,7 +42,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              widget.showGender
+              /*  widget.showGender
                   ? GestureDetector(
                       onTap: () {
                         widget.onPressedDropDown?.call();
@@ -78,20 +79,13 @@ class _HomeAppbarState extends State<HomeAppbar> {
                     )
                   : SizedBox(
                       height: 0,
-                    ),
+                    ), */
+
+              SvgPicture.asset(applogSvgImage,
+                  height: 28.sp, width: 70.sp, fit: BoxFit.cover),
               Expanded(
                 child: SizedBox(
                   height: 0,
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.only(right: 16.sp),
-                  child: Center(
-                    child: Image.asset(appNameImage,
-                        height: 26.sp, width: 70.sp, fit: BoxFit.cover),
-                  ),
                 ),
               ),
               Padding(
@@ -104,11 +98,8 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                        child: ImageIcon(
-                          AssetImage(searchNewImage),
-                          color: Color(0XFFF3F4F6),
-                          size: 20.sp,
-                        ),
+                        child: SvgPicture.asset(searchSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ),
                     GestureDetector(
@@ -117,11 +108,8 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                        child: ImageIcon(
-                          AssetImage(saveIcon),
-                          color: Color(0XFFF3F4F6),
-                          size: 18.sp,
-                        ),
+                        child: SvgPicture.asset(heartSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ),
                     GestureDetector(
@@ -130,11 +118,8 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       },
                       child: Padding(
                           padding: EdgeInsets.only(left: 5.sp),
-                          child: ImageIcon(
-                            AssetImage(cartNewImage),
-                            color: Color(0XFFF3F4F6),
-                            size: 18.sp,
-                          )),
+                          child: SvgPicture.asset(cartSvgImage,
+                              height: 18.sp, width: 18.sp, fit: BoxFit.cover)),
                     ),
                   ],
                 ),

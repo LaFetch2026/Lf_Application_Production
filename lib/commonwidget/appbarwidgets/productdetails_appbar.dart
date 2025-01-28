@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,15 +23,19 @@ class ProductdetailsAppbar extends StatefulWidget {
 
 class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
   final wishlistController = Get.put(WishlistController());
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.sp,
+      height: Platform.isAndroid ? 80.sp : 90.sp,
       width: MediaQuery.of(context).size.width,
       color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
+          padding: EdgeInsets.only(
+              left: 6.sp,
+              right: 16.sp,
+              top: Platform.isAndroid ? 30.sp : 40.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
