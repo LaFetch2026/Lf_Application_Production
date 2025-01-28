@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:io';
 
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
@@ -6,10 +6,11 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/home_product_list.dart';
@@ -38,7 +39,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 //import '../../account/customercare.dart';
 
 class HomeScreen extends StatefulWidget {
-  final Function? onPressed;
+  final Function(int)? onPressed;
   const HomeScreen({
     this.onPressed,
     super.key,
@@ -88,8 +89,8 @@ class HomeScreenState extends State<HomeScreen> {
       productController.isHandPicked.value = false;
       productController.handpickedPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getTagsData(homeController.homeGenderValue.value));
+    /*  WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getTagsData(homeController.homeGenderValue.value)); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar1Data();
     });
@@ -101,8 +102,8 @@ class HomeScreenState extends State<HomeScreen> {
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
-    /*  WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getCategoryData(3)); */
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => homeController.getCategoryData(2));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getConfigurationData();
     });
@@ -249,7 +250,6 @@ class HomeScreenState extends State<HomeScreen> {
                 height: 210.sp,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.04),
                 ),
               ),
@@ -400,7 +400,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       "We think you might also like";
                                   productController.productCategory = [];
                                   productController.productTags = [];
-                                  productController.getTagsData(2);
+                                  // productController.getTagsData(2);
                                   homeController.getCategoryData(2);
                                 },
                                 child: SizedBox(
@@ -551,7 +551,7 @@ class HomeScreenState extends State<HomeScreen> {
                         color: lightgreyColor,
                         height: 2.sp,
                       ),
-                      Obx(() => productController.istags.value
+                      /*   Obx(() => productController.istags.value
                           ? Padding(
                               padding: EdgeInsets.only(
                                   left: 16.sp,
@@ -763,6 +763,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     )),
                               ),
                             )),
+                      */
                       /*  Obx(() => homeController.isBanner1.value
                           ? Padding(
                               padding: EdgeInsets.only(
@@ -982,9 +983,9 @@ class HomeScreenState extends State<HomeScreen> {
                           ? Padding(
                               padding: EdgeInsets.only(
                                   left: 16.sp,
-                                  bottom: 10.sp,
+                                  bottom: 12.sp,
                                   right: 16.sp,
-                                  top: 6.sp),
+                                  top: 16.sp),
                               child: SizedBox(
                                 height: 210.sp,
                                 width: double.infinity,
@@ -1011,9 +1012,9 @@ class HomeScreenState extends State<HomeScreen> {
                                     Padding(
                                         padding: EdgeInsets.only(
                                             left: 16.sp,
-                                            bottom: 10.sp,
+                                            bottom: 12.sp,
                                             right: 16.sp,
-                                            top: 6.sp),
+                                            top: 16.sp),
                                         child: /*  CarouselSlider.builder(
                                         itemCount:
                                             homeController.banner1List.length,
@@ -1177,6 +1178,201 @@ class HomeScreenState extends State<HomeScreen> {
                               : const SizedBox(
                                   height: 0,
                                 )),
+                      Obx(() => homeController.isCategory.value
+                          ? const DummyGridMostSearch(
+                              text: "",
+                            )
+                          : homeController.categoryList.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 24.sp, left: 16.sp),
+                                      child: Center(
+                                        child: AppText(
+                                          text:
+                                              "SHOP BY CATEGORY".toUpperCase(),
+                                          fontFamily:
+                                              "Franklin Gothic Semibold",
+                                          fontWeight: FontWeight.w400,
+                                          color: blackColor,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        top: 16.sp,
+                                        right: 16.sp,
+                                      ),
+                                      child: Center(
+                                        child: GridView.count(
+                                          shrinkWrap: true,
+                                          crossAxisCount: 3,
+                                          scrollDirection: Axis.vertical,
+                                          padding: EdgeInsets.zero,
+                                          childAspectRatio: 0.5,
+                                          physics: const ScrollPhysics(),
+                                          crossAxisSpacing: 12.sp,
+                                          mainAxisSpacing: 0.sp,
+                                          children: List.generate(
+                                            homeController.categoryList.length,
+                                            (index) {
+                                              return Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () async {},
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        homeController
+                                                                    .categoryList[
+                                                                        index][
+                                                                        "thumbnail"]
+                                                                    .isNotEmpty &&
+                                                                homeController.categoryList[
+                                                                            index]
+                                                                        [
+                                                                        "thumbnail"] !=
+                                                                    null
+                                                            ? SizedBox(
+                                                                width: 104.sp,
+                                                                height: 130.sp,
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  imageUrl: isImage(
+                                                                          homeController.categoryList[index]
+                                                                              [
+                                                                              "thumbnail"])
+                                                                      ? homeController
+                                                                              .categoryList[index]
+                                                                          [
+                                                                          "thumbnail"]
+                                                                      : homeController
+                                                                              .categoryList[index]
+                                                                          [
+                                                                          "thumbnail"],
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    downloadImage,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width:
+                                                                        104.sp,
+                                                                    height:
+                                                                        130.sp,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Center(
+                                                                child: Image.asset(
+                                                                    dummyWishlistImage,
+                                                                    width:
+                                                                        104.sp,
+                                                                    height:
+                                                                        130.sp,
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                              ),
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      5.sp,
+                                                                  vertical:
+                                                                      6.sp),
+                                                          child: AppText(
+                                                            text: homeController
+                                                                .categoryList[
+                                                                    index]
+                                                                    ["name"]
+                                                                .toUpperCase(),
+                                                            color: blackColor,
+                                                            fontSize: 13,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            maxLines: 2,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        widget.onPressed?.call(2);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16.sp),
+                                        child: Container(
+                                          height: 42.sp,
+                                          color: homeAppBarColor,
+                                          width: double.infinity,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 8.sp),
+                                                child: AppText(
+                                                  text:
+                                                      "VIEW ALL".toUpperCase(),
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: whiteColor,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.sp),
+                                                child: SvgPicture.asset(
+                                                    arrowSearchImage,
+                                                    color: whiteColor,
+                                                    height: 7.sp,
+                                                    width: 7.sp,
+                                                    fit: BoxFit.cover),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : SizedBox(
+                                  height: 0.sp,
+                                )),
                       /*  Obx(() => productController.isExpress.value
                           ? const DummyProductList(text: "Express Delivery")
                           : productController.expressProductList.isNotEmpty
@@ -1241,7 +1437,7 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            widget.onPressed?.call();
+                                            widget.onPressed?.call(1);
                                           },
                                           child: Container(
                                             child: Padding(

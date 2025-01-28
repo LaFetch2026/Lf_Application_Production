@@ -41,8 +41,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     analytics.setAnalyticsCollectionEnabled(true);
     screen = [
       HomeScreen(
-        onPressed: () {
-          changeTab(1);
+        onPressed: (p0) {
+          changeTab(p0);
         },
       ),
       const BrandsScreen(
