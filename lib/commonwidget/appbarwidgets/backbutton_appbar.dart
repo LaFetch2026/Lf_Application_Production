@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
@@ -44,8 +45,8 @@ class BackButtonAppbar extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(
                         left: 16.sp, right: 16.sp, top: 48.sp, bottom: 10.sp),
-                    child: Image.asset(backArrowImage,
-                        height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                    child: SvgPicture.asset(arrowBack,
+                        height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                   ),
                 ),
               ),
