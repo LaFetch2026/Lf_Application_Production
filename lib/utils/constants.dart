@@ -50,6 +50,12 @@ const Color dividerColor = Color(0XFFE5E7EB);
 const Color searchTextColor = Color(0XFF9CA3AF);
 const Color lightgreyColor = Color(0xffF3F4F6);
 const Color statusBarColor = Color(0xffF9FAFB);
+const Color purpleColor = Color(0xff7268BF);
+const Color expressSearchBarBorderColor = Color(0xff4B556380);
+const Color expressDeliveryBanner = Color(0xff353059);
+const Color expressDeliveryGradientDividerColor = Color(0xff726C97);
+const Color expressDeliveryFeaturedBrandsColor = Color(0xffF5F3FF);
+
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';

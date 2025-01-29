@@ -340,241 +340,266 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: [
-            MaterialButton(
-              height: 80.sp,
-              color: homeAppBarColor,
-              minWidth: MediaQuery.of(context).size.width % 5.sp,
-              onPressed: () async {
-                setState(() {
-                  _currentIndex = 0;
-                });
-                await analytics.logEvent(
-                  name: 'home_page',
-                  parameters: <String, Object>{
-                    'page_name': 'home_page',
-                    'page_index': _currentIndex,
-                  },
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      _currentIndex == 0 ? homeBottomIcon : homeBottomIcon,
-                      color:
-                          _currentIndex == 0 ? whiteColor : Color(0xFF9CA3AF),
-                      height: 16.sp,
-                      width: 16.sp,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 7.sp),
-                      child: Text(
-                        "Home".toUpperCase(),
-                        style: TextStyle(
-                            color: _currentIndex == 0
-                                ? whiteColor
-                                : Color(0xFF9CA3AF),
-                            fontSize: 8.sp,
-                            fontFamily: "Franklin Gothic"),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            MaterialButton(
-              height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width % 5.sp,
-              color: homeAppBarColor,
-              onPressed: () async {
-                setState(() {
-                  _currentIndex = 1;
-                });
-                await analytics.logEvent(
-                  name: 'shop_page',
-                  parameters: <String, Object>{
-                    'page_name': 'brand_page',
-                    'page_index': _currentIndex,
-                  },
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      _currentIndex == 1 ? shopBottomIcon : shopBottomIcon,
-                      color:
-                          _currentIndex == 1 ? whiteColor : Color(0xFF9CA3AF),
-                      height: 16.sp,
-                      width: 16.sp,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 7.sp),
-                      child: Text(
-                        "Shop".toUpperCase(),
-                        style: TextStyle(
-                            color: _currentIndex == 1
-                                ? whiteColor
-                                : Color(0xFF9CA3AF),
-                            fontSize: 8.sp,
-                            fontFamily: "Franklin Gothic"),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            MaterialButton(
-              height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width % 5.sp,
-              color: homeAppBarColor,
-              onPressed: () async {
-                if (skipValue == true) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => const LoginScreen(
-                            initialTab: 0,
-                          )));
-                } else {
+            Expanded(
+              child: MaterialButton(
+                height: 80.sp,
+                color: homeAppBarColor,
+                minWidth: MediaQuery.of(context).size.width % 5.sp,
+                onPressed: () async {
                   setState(() {
-                    _currentIndex = 4;
+                    _currentIndex = 0;
                   });
-                }
-                await analytics.logEvent(
-                  name: 'express_page',
-                  parameters: <String, Object>{
-                    'page_name': 'brand_page',
-                    'page_index': _currentIndex,
-                  },
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      _currentIndex == 4 ? expressImage : expressImage,
-                      color: _currentIndex == 4
-                          ? Color(0xFFDFC5FE)
-                          : Color(0xFFDFC5FE),
-                      height: 18.sp,
-                      width: 18.sp,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 7.sp),
-                      child: Text(
-                        "Express".toUpperCase(),
-                        style: TextStyle(
-                            color: _currentIndex == 4
-                                ? Color(0xFFDFC5FE)
-                                : Color(0xFFDFC5FE),
-                            fontSize: 8.sp,
-                            fontFamily: "Franklin Gothic"),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            MaterialButton(
-              height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width % 5.sp,
-              color: homeAppBarColor,
-              onPressed: () async {
-                setState(() {
-                  _currentIndex = 2;
-                });
-                await analytics.logEvent(
-                  name: 'wishlist_page',
-                  parameters: <String, Object>{
-                    'page_name': 'wishlist_page',
-                    'page_index': _currentIndex,
-                  },
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      _currentIndex == 2
-                          ? wishlistBottomIcon
-                          : wishlistBottomIcon,
-                      color:
-                          _currentIndex == 2 ? whiteColor : Color(0xFF9CA3AF),
-                      height: 16.sp,
-                      width: 16.sp,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 7.sp),
-                      child: Text(
-                        "Wishlist".toUpperCase(),
-                        style: TextStyle(
-                            color: _currentIndex == 2
-                                ? whiteColor
-                                : Color(0xFF9CA3AF),
-                            fontSize: 8.sp,
-                            fontFamily: "Franklin Gothic"),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            MaterialButton(
-              height: 80.sp,
-              minWidth: MediaQuery.of(context).size.width % 5.sp,
-              color: homeAppBarColor,
-              onPressed: () async {
-                if (skipValue == true) {
-                  Get.to(
-                    () => const LoginScreen(
-                      initialTab: 0,
-                    ),
+                  await analytics.logEvent(
+                    name: 'home_page',
+                    parameters: <String, Object>{
+                      'page_name': 'home_page',
+                      'page_index': _currentIndex,
+                    },
                   );
-                } else {
-                  setState(() {
-                    _currentIndex = 3;
-                  });
-                }
-                await analytics.logEvent(
-                  name: 'account_page',
-                  parameters: <String, Object>{
-                    'page_name': 'account_page',
-                    'page_index': _currentIndex,
-                  },
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      _currentIndex == 3 ? shopBottomIcon : shopBottomIcon,
-                      color:
-                          _currentIndex == 3 ? whiteColor : Color(0xFF9CA3AF),
-                      height: 16.sp,
-                      width: 16.sp,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 7.sp),
-                      child: Text(
-                        "Account".toUpperCase(),
-                        style: TextStyle(
-                            color: _currentIndex == 3
-                                ? whiteColor
-                                : Color(0xFF9CA3AF),
-                            fontSize: 8.sp,
-                            fontFamily: "Franklin Gothic"),
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        _currentIndex == 0 ? homeBottomIcon : homeBottomIcon,
+                        color:
+                            _currentIndex == 0 ? whiteColor : Color(0xFF9CA3AF),
+                        height: 16.sp,
+                        width: 16.sp,
                       ),
-                    )
-                  ],
+                      Padding(
+                        padding: EdgeInsets.only(top: 7.sp),
+                        child: FittedBox(
+                           fit: BoxFit.scaleDown,
+                          child: Text(
+                            "Home".toUpperCase(),
+                            style: TextStyle(
+                                color: _currentIndex == 0
+                                    ? whiteColor
+                                    : Color(0xFF9CA3AF),
+                                fontSize: 8.sp,
+                                fontFamily: "Franklin Gothic"),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: 80.sp,
+                minWidth: MediaQuery.of(context).size.width % 5.sp,
+                color: homeAppBarColor,
+                onPressed: () async {
+                  setState(() {
+                    _currentIndex = 1;
+                  });
+                  await analytics.logEvent(
+                    name: 'shop_page',
+                    parameters: <String, Object>{
+                      'page_name': 'brand_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        _currentIndex == 1 ? shopBottomIcon : shopBottomIcon,
+                        color:
+                            _currentIndex == 1 ? whiteColor : Color(0xFF9CA3AF),
+                        height: 16.sp,
+                        width: 16.sp,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 7.sp),
+                        child: FittedBox(
+                           fit: BoxFit.scaleDown,
+                          child: Text(
+                            "Shop".toUpperCase(),
+                            style: TextStyle(
+                                color: _currentIndex == 1
+                                    ? whiteColor
+                                    : Color(0xFF9CA3AF),
+                                fontSize: 8.sp,
+                                fontFamily: "Franklin Gothic"),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: 80.sp,
+                minWidth: MediaQuery.of(context).size.width % 5.sp,
+                color: homeAppBarColor,
+                onPressed: () async {
+                  if (skipValue == true) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => const LoginScreen(
+                              initialTab: 0,
+                            )));
+                  } else {
+                    setState(() {
+                      _currentIndex = 4;
+                    });
+                  }
+                  await analytics.logEvent(
+                    name: 'express_page',
+                    parameters: <String, Object>{
+                      'page_name': 'brand_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        _currentIndex == 4 ? expressImage : expressImage,
+                        color: _currentIndex == 4
+                            ? Color(0xFFDFC5FE)
+                            : Color(0xFFDFC5FE),
+                        height: 18.sp,
+                        width: 18.sp,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 7.sp),
+                        child: FittedBox(
+                           fit: BoxFit.scaleDown,
+                          child: Text(
+                            "Express".toUpperCase(),
+                            style: TextStyle(
+                                color: _currentIndex == 4
+                                    ? Color(0xFFDFC5FE)
+                                    : Color(0xFFDFC5FE),
+                                fontSize: 8.sp,
+                                fontFamily: "Franklin Gothic"),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: 80.sp,
+                minWidth: MediaQuery.of(context).size.width % 5.sp,
+                color: homeAppBarColor,
+                onPressed: () async {
+                  setState(() {
+                    _currentIndex = 2;
+                  });
+                  await analytics.logEvent(
+                    name: 'wishlist_page',
+                    parameters: <String, Object>{
+                      'page_name': 'wishlist_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        _currentIndex == 2
+                            ? wishlistBottomIcon
+                            : wishlistBottomIcon,
+                        color:
+                            _currentIndex == 2 ? whiteColor : Color(0xFF9CA3AF),
+                        height: 16.sp,
+                        width: 16.sp,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 7.sp),
+                        child: FittedBox(
+                           fit: BoxFit.scaleDown,
+                          child: Text(
+                            "Wishlist".toUpperCase(),
+                            style: TextStyle(
+                                color: _currentIndex == 2
+                                    ? whiteColor
+                                    : Color(0xFF9CA3AF),
+                                fontSize: 8.sp,
+                                fontFamily: "Franklin Gothic"),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: MaterialButton(
+                height: 80.sp,
+                minWidth: MediaQuery.of(context).size.width % 5.sp,
+                color: homeAppBarColor,
+                onPressed: () async {
+                  if (skipValue == true) {
+                    Get.to(
+                      () => const LoginScreen(
+                        initialTab: 0,
+                      ),
+                    );
+                  } else {
+                    setState(() {
+                      _currentIndex = 3;
+                    });
+                  }
+                  await analytics.logEvent(
+                    name: 'account_page',
+                    parameters: <String, Object>{
+                      'page_name': 'account_page',
+                      'page_index': _currentIndex,
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        _currentIndex == 3 ? shopBottomIcon : shopBottomIcon,
+                        color:
+                            _currentIndex == 3 ? whiteColor : Color(0xFF9CA3AF),
+                        height: 16.sp,
+                        width: 16.sp,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 7.sp),
+                        child: FittedBox(
+                           fit: BoxFit.scaleDown,
+                          child: Text(
+                            "Account".toUpperCase(),
+                            style: TextStyle(
+                                color: _currentIndex == 3
+                                    ? whiteColor
+                                    : Color(0xFF9CA3AF),
+                                fontSize: 8.sp,
+                                fontFamily: "Franklin Gothic"),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
