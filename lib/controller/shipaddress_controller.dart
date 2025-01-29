@@ -333,7 +333,7 @@ class ShipAddressController extends BaseController {
         if (type == "update") {
           Get.back();
         }
-        // getAddressDetails(responseData["address"]["id"], 1, responseData["id"]);
+        getAddressDetails(responseData["address"]["id"], 1, responseData["id"]);
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

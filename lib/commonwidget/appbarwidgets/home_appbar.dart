@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/controller/home_controller.dart';
+import 'package:lafetch/controller/cart_controller.dart';
 
 import '../../utils/constants.dart';
 
 class HomeAppbar extends StatefulWidget {
   final Function? onPressedCart;
   final Function? onPressedSearch;
-  final Function? onPressedCatalog;
+  final Function? onPressedHeart;
   final Function? onPressedDropDown;
   final bool showGender;
 
   const HomeAppbar(
       {Key? key,
       this.onPressedCart,
-      this.onPressedCatalog,
+      this.onPressedHeart,
       this.onPressedSearch,
       this.showGender = false,
       this.onPressedDropDown})
@@ -27,21 +27,23 @@ class HomeAppbar extends StatefulWidget {
 }
 
 class _HomeAppbarState extends State<HomeAppbar> {
-  final homeController = Get.put(HomeController());
+  // final homeController = Get.put(HomeController());
+  final controller = Get.put(CartController());
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100.sp,
+      // height: 100.sp,
       width: MediaQuery.of(context).size.width,
-      color: homeAppBarColor,
+      color: whiteColor,
       child: Column(children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 60.sp, right: 16.sp),
+          padding: EdgeInsets.only(
+              left: 16.sp, top: 56.sp, right: 10.sp, bottom: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              widget.showGender
+              /*  widget.showGender
                   ? GestureDetector(
                       onTap: () {
                         widget.onPressedDropDown?.call();
@@ -78,20 +80,13 @@ class _HomeAppbarState extends State<HomeAppbar> {
                     )
                   : SizedBox(
                       height: 0,
-                    ),
+                    ), */
+
+              SvgPicture.asset(applogSvgImage,
+                  height: 28.sp, width: 70.sp, fit: BoxFit.cover),
               Expanded(
                 child: SizedBox(
                   height: 0,
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: EdgeInsets.only(right: 16.sp),
-                  child: Center(
-                    child: Image.asset(appNameImage,
-                        height: 26.sp, width: 70.sp, fit: BoxFit.cover),
-                  ),
                 ),
               ),
               Padding(
@@ -104,24 +99,18 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                        child: ImageIcon(
-                          AssetImage(searchNewImage),
-                          color: Color(0XFFF3F4F6),
-                          size: 20.sp,
-                        ),
+                        child: SvgPicture.asset(searchSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        widget.onPressedCatalog?.call();
+                        widget.onPressedHeart?.call();
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                        child: ImageIcon(
-                          AssetImage(saveIcon),
-                          color: Color(0XFFF3F4F6),
-                          size: 18.sp,
-                        ),
+                        child: SvgPicture.asset(heartSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ),
                     GestureDetector(
@@ -129,12 +118,52 @@ class _HomeAppbarState extends State<HomeAppbar> {
                         widget.onPressedCart?.call();
                       },
                       child: Padding(
-                          padding: EdgeInsets.only(left: 5.sp),
-                          child: ImageIcon(
-                            AssetImage(cartNewImage),
-                            color: Color(0XFFF3F4F6),
-                            size: 18.sp,
-                          )),
+                        padding: EdgeInsets.only(right: 6.sp),
+                        child: Stack(
+                          children: [
+                            Padding(
+                                padding:
+                                    EdgeInsets.only(bottom: 3.sp, left: 5.sp),
+                                child: SvgPicture.asset(cartSvgImage,
+                                    height: 18.sp,
+                                    width: 18.sp,
+                                    fit: BoxFit.cover)),
+                            Obx(() => controller.cartTotalValue.value != 0
+                                ? Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 10.sp,
+                                      height: 10.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: homeAppBarColor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              controller.cartTotalValue.value
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 8,
+                                                  color: whiteColor,
+                                                  fontFamily:
+                                                      "Libre Franklin Regular",
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ), // inner content
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  ))
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

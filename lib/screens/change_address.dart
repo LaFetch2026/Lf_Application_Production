@@ -516,9 +516,9 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                     .cartId
                                                                     .value =
                                                                 widget.cartId;
-                                                            shipController
+                                                            /*   shipController
                                                                 .callCartAddressUpdate(
-                                                                    "update");
+                                                                    "update"); */
                                                             productController.callSaveAddress(
                                                                 "",
                                                                 controller.addressList[index]

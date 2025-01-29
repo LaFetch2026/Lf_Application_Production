@@ -17,7 +17,6 @@ import '../controller/wishlist_controller.dart';
 import '../utils/constants.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
-import 'catalogscreen.dart';
 
 class WishlistScreen extends StatefulWidget {
   final Function? onPressed;
@@ -81,14 +80,14 @@ class WishlistScreenState extends State<WishlistScreen> {
                   },
                 );
               },
-              onPressedCatalog: () async {
-                Get.to(const CatalogScreen());
+              onPressedHeart: () async {
+                /*  Get.to(const CatalogScreen());
                 await analytics.logEvent(
                   name: 'catalog_page',
                   parameters: <String, Object>{
                     'page_name': 'catalog_page',
                   },
-                );
+                ); */
               },
               onPressedCart: () async {
                 Get.to(const CartScreen());

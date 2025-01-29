@@ -171,7 +171,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                   decoration: TextDecoration.underline,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: appBarColor,
+                                  color: subtitleColor,
                                   fontSize: 10.sp,
                                 ),
                               ),

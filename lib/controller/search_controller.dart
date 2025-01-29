@@ -24,7 +24,7 @@ class SearchScreenController extends BaseController {
   List<bool> selected = List.generate(50, (i) => false).obs;
   RxString searchText = "Search for products".obs;
 
-  getSearchData() async {
+  getSearchData(BuildContext context) async {
     isSearchItem.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -44,12 +44,14 @@ class SearchScreenController extends BaseController {
         } else {
           searchText.value = "No product found";
           searchList.clear();
+          FocusScope.of(context).unfocus();
         }
         if (responseData["categories"] != null &&
             responseData["categories"].isNotEmpty) {
           categoryList = responseData["categories"];
           searchText.value = "Search for products";
         } else {
+          FocusScope.of(context).unfocus();
           searchText.value = "No product found";
           categoryList.clear();
         }

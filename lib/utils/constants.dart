@@ -210,16 +210,19 @@ const ratingImage = 'assets/images/star.png';
 const crossSearchImage = 'assets/images/cross_search.svg';
 const arrowSearchImage = 'assets/images/search_arrow.svg';
 const searchSvgImage = 'assets/images/search_svg.svg';
+const heartSvgImage = 'assets/images/heart_svg.svg';
+const cartSvgImage = 'assets/images/cart_svg.svg';
+const applogSvgImage = 'assets/images/applogo_svg.svg';
 
 class ApiConstants {
   ApiConstants._();
   static const String baseUrl =
       "https://api.la-fetch.com/customer/api"; //production
 
- // static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
+  // static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
 
   // static const String baseUrl =
   // "https://staging-api.la-fetch.com/customer/api"; //staging
 
-   static const String razorPayKey = "rzp_test_eUuJKYtCTi2iSH"; //staging
+  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }

@@ -678,7 +678,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         isScrollControlled: true,
                         constraints: BoxConstraints(
                           maxWidth: double.infinity,
-                          maxHeight: 350.sp,
+                          maxHeight: 360.sp,
                         ),
                         builder: (ctx) {
                           return BottomSortBy(
@@ -739,7 +739,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         isScrollControlled: true,
                         constraints: BoxConstraints(
                           maxWidth: double.infinity,
-                          maxHeight: 260.sp,
+                          maxHeight: 270.sp,
                         ),
                         builder: (ctx) {
                           return BottomCategory(

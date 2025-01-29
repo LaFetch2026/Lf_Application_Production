@@ -20,7 +20,6 @@ import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
-import 'catalogscreen.dart';
 import 'mapscreen.dart';
 
 class ExpressShoppingScreen extends StatefulWidget {
@@ -261,14 +260,14 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                   },
                 );
               },
-              onPressedCatalog: () async {
-                Get.to(const CatalogScreen());
+              onPressedHeart: () async {
+                /*  Get.to(const CatalogScreen());
                 await analytics.logEvent(
                   name: 'catalog_page',
                   parameters: <String, Object>{
                     'page_name': 'catalog_page',
                   },
-                );
+                ); */
               },
               onPressedCart: () async {
                 Get.to(const CartScreen());

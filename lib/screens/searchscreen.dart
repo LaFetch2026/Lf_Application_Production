@@ -12,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../utils/constants.dart';
 import '../commonwidget/common_widgets.dart';
@@ -38,7 +39,7 @@ class SearchScreenState extends State<SearchScreen> {
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
-      controller.getSearchData();
+      controller.getSearchData(context);
       setState(() {});
     });
   }
@@ -105,7 +106,7 @@ class SearchScreenState extends State<SearchScreen> {
           children: [
             Column(
               children: [
-                Container(
+                /*  Container(
                   width: MediaQuery.of(context).size.width,
                   color: statusBarColor,
                   child: Padding(
@@ -162,6 +163,213 @@ class SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 ),
+                */
+                Container(
+                  color: statusBarColor,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 40.sp, left: 16.sp, bottom: 10.sp),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                /*  setState(() {
+                                  isSearch = false;
+                                  controller.searchList.clear();
+                                  controller.searchController.clear();
+                                  controller.searchText.value =
+                                      "Search for products";
+                                }); */
+                                Get.back();
+                              },
+                              child: SvgPicture.asset(arrowBack,
+                                  height: 15.sp,
+                                  width: 15.sp,
+                                  fit: BoxFit.cover),
+                            ),
+                            MediaQuery.of(context).size.width < 600
+                                ? Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      height: 40.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 4.sp),
+                                        child: RawKeyboardListener(
+                                          focusNode: FocusNode(),
+                                          onKey: (value) {
+                                            print(value);
+                                            if (value is RawKeyDownEvent) {
+                                              if (controller.searchController
+                                                  .text.isEmpty) {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              }
+                                              setState(() {
+                                                isSearch = false;
+                                                controller.searchText.value =
+                                                    "Search for products";
+                                              });
+                                            }
+                                          },
+                                          child: TextField(
+                                            textCapitalization:
+                                                TextCapitalization.words,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: homeAppBarColor,
+                                                fontFamily: "Franklin Gothic",
+                                                fontSize: 14.sp),
+                                            controller:
+                                                controller.searchController,
+                                            onChanged: onSearchChanged,
+                                            keyboardType: TextInputType.text,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true,
+                                              fillColor: statusBarColor,
+                                              suffixIcon: IconButton(
+                                                icon: SvgPicture.asset(
+                                                    crossSearchImage,
+                                                    color: homeAppBarColor,
+                                                    height: 13.sp,
+                                                    width: 13.sp,
+                                                    fit: BoxFit.cover),
+                                                onPressed: () {
+                                                  controller.searchController
+                                                      .clear();
+                                                  controller
+                                                      .getSearchData(context);
+                                                  controller.searchText.value =
+                                                      "Search for products";
+                                                },
+                                              ),
+                                              focusedBorder:
+                                                  const OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color:
+                                                              statusBarColor)),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                                borderSide: const BorderSide(
+                                                    color: statusBarColor),
+                                              ),
+                                              counterText: "",
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      horizontal: 10.sp),
+                                              hintText: "Search for 'Bag'",
+                                              hintStyle: TextStyle(
+                                                color: subtitleColor,
+                                                fontSize: 14,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      height: 40.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 4.sp),
+                                        child: RawKeyboardListener(
+                                          focusNode: FocusNode(),
+                                          onKey: (value) {
+                                            print(value);
+                                            if (value is RawKeyDownEvent) {
+                                              if (controller.searchController
+                                                  .text.isEmpty) {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                              }
+                                              setState(() {
+                                                isSearch = false;
+                                                controller.searchText.value =
+                                                    "Search for products";
+                                              });
+                                            }
+                                          },
+                                          child: TextField(
+                                            textCapitalization:
+                                                TextCapitalization.words,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                color: homeAppBarColor,
+                                                fontFamily: "Franklin Gothic",
+                                                fontSize: 14.sp),
+                                            controller:
+                                                controller.searchController,
+                                            onChanged: onSearchChanged,
+                                            keyboardType: TextInputType.text,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              isDense: true,
+                                              suffixIcon: IconButton(
+                                                icon: SvgPicture.asset(
+                                                    crossSearchImage,
+                                                    color: homeAppBarColor,
+                                                    height: 13.sp,
+                                                    width: 13.sp,
+                                                    fit: BoxFit.cover),
+                                                onPressed: () {
+                                                  controller.searchController
+                                                      .clear();
+                                                  controller
+                                                      .getSearchData(context);
+                                                  controller.searchText.value =
+                                                      "Search for products";
+                                                },
+                                              ),
+                                              fillColor: statusBarColor,
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(1),
+                                                borderSide: const BorderSide(
+                                                    color: statusBarColor),
+                                              ),
+                                              counterText: "",
+                                              /*   contentPadding: EdgeInsets.symmetric(
+                                                    horizontal: 10.sp), */
+                                              hintText: "Search for 'Bag'",
+                                              hintStyle: TextStyle(
+                                                color: subtitleColor,
+                                                fontSize: 14,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1.sp,
+                        color: dividerColor,
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
                   height: 1.sp,
                   color: dividerColor,
@@ -188,35 +396,63 @@ class SearchScreenState extends State<SearchScreen> {
                                       ),
                                     ),
                                     Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 16.sp,
-                                            bottom: 10.sp,
-                                            right: 16.sp,
-                                            top: 20.sp),
-                                        child: SizedBox(
-                                          height: 30.sp,
-                                          width: double.infinity,
-                                          child: ListView.builder(
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              itemCount: 5,
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder: (ctx, index) {
-                                                return Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 5.sp),
-                                                  width: 100.sp,
-                                                  height: 30.sp,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withOpacity(0.04),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.sp),
-                                                  ),
-                                                );
-                                              }),
-                                        )),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.sp),
+                                      child: ListView.builder(
+                                          primary: false,
+                                          shrinkWrap: true,
+                                          physics: const ScrollPhysics(),
+                                          itemCount: 2,
+                                          padding: EdgeInsets.zero,
+                                          scrollDirection: Axis.vertical,
+                                          itemBuilder: (ctx, i) {
+                                            return Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4.sp),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 0.sp,
+                                                    vertical: 1.sp),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 16.sp),
+                                                        child: DummyContainer(
+                                                            height: 20,
+                                                            width: 60),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: SizedBox(
+                                                        height: 0,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  16.sp),
+                                                      child: DummyContainer(
+                                                          height: 15,
+                                                          width: 15),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
                                   ],
                                 )
                               : controller.recentSearchList.isNotEmpty
@@ -254,32 +490,33 @@ class SearchScreenState extends State<SearchScreen> {
                                                       vertical: 4.sp),
                                                   child: GestureDetector(
                                                     onTap: () async {
-                                                      if (isSearch) {
-                                                      } else {
-                                                        Navigator.of(context)
-                                                            .push(MaterialPageRoute(
-                                                                builder: (BuildContext context) => ProductDetailsScreen(
-                                                                    brandName: controller.recentSearchList[i]
-                                                                            ["product"]
-                                                                        [
-                                                                        "brand_name"],
-                                                                    productId: controller.recentSearchList[i]
-                                                                            ["product"]
-                                                                        ["id"],
-                                                                    type:
-                                                                        "add")))
-                                                            .then((value) =>
-                                                                setState(
-                                                                  () {
-                                                                    controller
-                                                                        .isRecentSearch
-                                                                        .value = false;
-                                                                    productController;
-                                                                    controller
-                                                                        .getRecentSearchData();
-                                                                  },
-                                                                ));
-                                                      }
+                                                      /*  if (isSearch) {
+                                                      } else { */
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(
+                                                              builder: (BuildContext context) => ProductDetailsScreen(
+                                                                  brandName: controller
+                                                                              .recentSearchList[i]
+                                                                          ["product"]
+                                                                      [
+                                                                      "brand_name"],
+                                                                  productId: controller
+                                                                              .recentSearchList[i]
+                                                                          ["product"]
+                                                                      ["id"],
+                                                                  type: "add")))
+                                                          .then((value) =>
+                                                              setState(
+                                                                () {
+                                                                  controller
+                                                                      .isRecentSearch
+                                                                      .value = false;
+                                                                  productController;
+                                                                  controller
+                                                                      .getRecentSearchData();
+                                                                },
+                                                              ));
+                                                      //   }
                                                       await analytics.logEvent(
                                                         name:
                                                             "search_page_recentsearch_details",
@@ -360,7 +597,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                     icon: SvgPicture.asset(
                                                                         crossSearchImage,
                                                                         color:
-                                                                            homeAppBarColor,
+                                                                            subtitleColor,
                                                                         height: 13
                                                                             .sp,
                                                                         width: 13
@@ -544,7 +781,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                       childAspectRatio: 0.6,
                                                       physics:
                                                           const ScrollPhysics(),
-                                                      crossAxisSpacing: 7.sp,
+                                                      crossAxisSpacing: 12.sp,
                                                       mainAxisSpacing: 0.sp,
                                                       children: List.generate(
                                                         controller.suggestedList
@@ -641,11 +878,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         color:
                                                                             blackColor,
                                                                         fontSize:
-                                                                            12,
+                                                                            13,
                                                                         textAlign:
                                                                             TextAlign.center,
                                                                         maxLines:
-                                                                            2,
+                                                                            1,
                                                                         fontFamily:
                                                                             "Franklin Gothic",
                                                                         fontWeight:
@@ -703,7 +940,7 @@ class SearchScreenState extends State<SearchScreen> {
                                             padding: EdgeInsets.zero,
                                             childAspectRatio: 0.6,
                                             physics: const ScrollPhysics(),
-                                            crossAxisSpacing: 7.sp,
+                                            crossAxisSpacing: 12.sp,
                                             mainAxisSpacing: 0.sp,
                                             children: List.generate(
                                               productController
@@ -856,11 +1093,11 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       ["name"]
                                                                   .toUpperCase(),
                                                               color: blackColor,
-                                                              fontSize: 12,
+                                                              fontSize: 13,
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
-                                                              maxLines: 2,
+                                                              maxLines: 1,
                                                               fontFamily:
                                                                   "Franklin Gothic",
                                                               fontWeight:
@@ -1139,302 +1376,316 @@ class SearchScreenState extends State<SearchScreen> {
                 ),
               ],
             ),
-            isSearch
+            controller.searchController.text.isNotEmpty
                 ? Container(
                     color: whiteColor,
                     height: MediaQuery.of(context).size.height,
                     child: Column(
                       children: [
-                        Container(
-                          color: statusBarColor,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: 40.sp, left: 16.sp, bottom: 10.sp),
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
+                        Obx(() => controller.isSearchItem.value
+                            ? SizedBox(
+                                height: 0,
+                              )
+                            : controller.searchList.isNotEmpty
+                                ? Container(
+                                    color: statusBarColor,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 40.sp,
+                                              left: 16.sp,
+                                              bottom: 10.sp),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  /*  setState(() {
                                           isSearch = false;
                                           controller.searchList.clear();
                                           controller.searchController.clear();
                                           controller.searchText.value =
                                               "Search for products";
-                                        });
-                                      },
-                                      child: SvgPicture.asset(arrowBack,
-                                          height: 15.sp,
-                                          width: 15.sp,
-                                          fit: BoxFit.cover),
-                                    ),
-                                    MediaQuery.of(context).size.width < 600
-                                        ? Expanded(
-                                            flex: 1,
-                                            child: SizedBox(
-                                              height: 40.sp,
-                                              child: Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 4.sp),
-                                                child: RawKeyboardListener(
-                                                  focusNode: FocusNode(),
-                                                  onKey: (value) {
-                                                    print(value);
-                                                    if (value
-                                                        is RawKeyDownEvent) {
-                                                      setState(() {
-                                                        isSearch = false;
-                                                        controller.searchText
-                                                                .value =
-                                                            "Search for products";
-                                                      });
-                                                    }
-                                                  },
-                                                  child: TextField(
-                                                    textCapitalization:
-                                                        TextCapitalization
-                                                            .words,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                        color: homeAppBarColor,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontSize: 14.sp),
-                                                    controller: controller
-                                                        .searchController,
-                                                    onChanged: onSearchChanged,
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                    decoration: InputDecoration(
-                                                      filled: true,
-                                                      isDense: true,
-                                                      fillColor: statusBarColor,
-                                                      suffixIcon: IconButton(
-                                                        icon: SvgPicture.asset(
-                                                            crossSearchImage,
-                                                            color:
-                                                                homeAppBarColor,
-                                                            height: 13.sp,
-                                                            width: 13.sp,
-                                                            fit: BoxFit.cover),
-                                                        onPressed: () {
-                                                          controller
-                                                              .searchController
-                                                              .clear();
-                                                          controller
-                                                              .getSearchData();
-                                                          controller.searchText
-                                                                  .value =
-                                                              "Search for products";
-                                                        },
-                                                      ),
-                                                      focusedBorder:
-                                                          const OutlineInputBorder(
-                                                              borderSide:
-                                                                  BorderSide(
+                                        }); */
+                                                  Get.back();
+                                                },
+                                                child: SvgPicture.asset(
+                                                    arrowBack,
+                                                    height: 15.sp,
+                                                    width: 15.sp,
+                                                    fit: BoxFit.cover),
+                                              ),
+                                              MediaQuery.of(context)
+                                                          .size
+                                                          .width <
+                                                      600
+                                                  ? Expanded(
+                                                      flex: 1,
+                                                      child: SizedBox(
+                                                        height: 40.sp,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 4.sp),
+                                                          child:
+                                                              RawKeyboardListener(
+                                                            focusNode:
+                                                                FocusNode(),
+                                                            onKey: (value) {
+                                                              print(value);
+                                                              if (value
+                                                                  is RawKeyDownEvent) {
+                                                                setState(() {
+                                                                  isSearch =
+                                                                      false;
+                                                                  controller
+                                                                          .searchText
+                                                                          .value =
+                                                                      "Search for products";
+                                                                });
+                                                              }
+                                                            },
+                                                            child: TextField(
+                                                              textCapitalization:
+                                                                  TextCapitalization
+                                                                      .words,
+                                                              maxLines: 1,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      homeAppBarColor,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic",
+                                                                  fontSize:
+                                                                      14.sp),
+                                                              controller: controller
+                                                                  .searchController,
+                                                              onChanged:
+                                                                  onSearchChanged,
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .text,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                filled: true,
+                                                                isDense: true,
+                                                                fillColor:
+                                                                    statusBarColor,
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  icon: SvgPicture.asset(
+                                                                      crossSearchImage,
                                                                       color:
-                                                                          statusBarColor)),
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(1),
+                                                                          homeAppBarColor,
+                                                                      height:
+                                                                          13.sp,
+                                                                      width:
+                                                                          13.sp,
+                                                                      fit: BoxFit
+                                                                          .cover),
+                                                                  onPressed:
+                                                                      () {
+                                                                    controller
+                                                                        .searchController
+                                                                        .clear();
+                                                                    controller
+                                                                        .getSearchData(
+                                                                            context);
+                                                                    controller
+                                                                            .searchText
+                                                                            .value =
+                                                                        "Search for products";
+                                                                  },
+                                                                ),
+                                                                focusedBorder: const OutlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                            color:
+                                                                                statusBarColor)),
+                                                                border:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              1),
+                                                                ),
+                                                                enabledBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              1),
+                                                                  borderSide:
+                                                                      const BorderSide(
+                                                                          color:
+                                                                              statusBarColor),
+                                                                ),
+                                                                counterText: "",
+                                                                contentPadding:
+                                                                    EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10.sp),
+                                                                hintText:
+                                                                    "Search for 'Bag'",
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      subtitleColor,
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
-                                                      enabledBorder:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(1),
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    statusBarColor),
-                                                      ),
-                                                      counterText: "",
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  10.sp),
-                                                      hintText: "Search",
-                                                      hintStyle: TextStyle(
-                                                          color: subtitleColor,
-                                                          fontSize: 14.sp),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : Expanded(
-                                            flex: 1,
-                                            child: SizedBox(
-                                              height: 40.sp,
-                                              child: Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 4.sp),
-                                                child: RawKeyboardListener(
-                                                  focusNode: FocusNode(),
-                                                  onKey: (value) {
-                                                    print(value);
-                                                    if (value
-                                                        is RawKeyDownEvent) {
-                                                      setState(() {
-                                                        isSearch = false;
-                                                        controller.searchText
-                                                                .value =
-                                                            "Search for products";
-                                                      });
-                                                    }
-                                                  },
-                                                  child: TextField(
-                                                    textCapitalization:
-                                                        TextCapitalization
-                                                            .words,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                        color: homeAppBarColor,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontSize: 14.sp),
-                                                    controller: controller
-                                                        .searchController,
-                                                    onChanged: onSearchChanged,
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                    decoration: InputDecoration(
-                                                      filled: true,
-                                                      isDense: true,
-                                                      suffixIcon: IconButton(
-                                                        icon: SvgPicture.asset(
-                                                            crossSearchImage,
-                                                            color:
-                                                                homeAppBarColor,
-                                                            height: 13.sp,
-                                                            width: 13.sp,
-                                                            fit: BoxFit.cover),
-                                                        onPressed: () {
-                                                          controller
-                                                              .searchController
-                                                              .clear();
-                                                          controller
-                                                              .getSearchData();
-                                                          controller.searchText
-                                                                  .value =
-                                                              "Search for products";
-                                                        },
-                                                      ),
-                                                      fillColor: statusBarColor,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(1),
-                                                      ),
-                                                      enabledBorder:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(1),
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color:
-                                                                    statusBarColor),
-                                                      ),
-                                                      counterText: "",
-                                                      /*   contentPadding: EdgeInsets.symmetric(
+                                                    )
+                                                  : Expanded(
+                                                      flex: 1,
+                                                      child: SizedBox(
+                                                        height: 40.sp,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 4.sp),
+                                                          child:
+                                                              RawKeyboardListener(
+                                                            focusNode:
+                                                                FocusNode(),
+                                                            onKey: (value) {
+                                                              print(value);
+                                                              if (value
+                                                                  is RawKeyDownEvent) {
+                                                                setState(() {
+                                                                  isSearch =
+                                                                      false;
+                                                                  controller
+                                                                          .searchText
+                                                                          .value =
+                                                                      "Search for products";
+                                                                });
+                                                              }
+                                                            },
+                                                            child: TextField(
+                                                              textCapitalization:
+                                                                  TextCapitalization
+                                                                      .words,
+                                                              maxLines: 1,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      homeAppBarColor,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic",
+                                                                  fontSize:
+                                                                      14.sp),
+                                                              controller: controller
+                                                                  .searchController,
+                                                              onChanged:
+                                                                  onSearchChanged,
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .text,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                filled: true,
+                                                                isDense: true,
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  icon: SvgPicture.asset(
+                                                                      crossSearchImage,
+                                                                      color:
+                                                                          homeAppBarColor,
+                                                                      height:
+                                                                          13.sp,
+                                                                      width:
+                                                                          13.sp,
+                                                                      fit: BoxFit
+                                                                          .cover),
+                                                                  onPressed:
+                                                                      () {
+                                                                    controller
+                                                                        .searchController
+                                                                        .clear();
+                                                                    controller
+                                                                        .getSearchData(
+                                                                            context);
+                                                                    controller
+                                                                            .searchText
+                                                                            .value =
+                                                                        "Search for products";
+                                                                  },
+                                                                ),
+                                                                fillColor:
+                                                                    statusBarColor,
+                                                                border:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              1),
+                                                                ),
+                                                                enabledBorder:
+                                                                    OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              1),
+                                                                  borderSide:
+                                                                      const BorderSide(
+                                                                          color:
+                                                                              statusBarColor),
+                                                                ),
+                                                                counterText: "",
+                                                                /*   contentPadding: EdgeInsets.symmetric(
                                                     horizontal: 10.sp), */
-                                                      hintText: "Search",
-                                                      hintStyle: TextStyle(
-                                                          color: subtitleColor,
-                                                          fontSize: 14.sp),
+                                                                hintText:
+                                                                    "Search for 'Bag'",
+                                                                hintStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      subtitleColor,
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 1.sp,
-                                color: dividerColor,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Visibility(
-                              visible: controller.searchController.text
-                                      .toString()
-                                      .trim()
-                                      .isNotEmpty
-                                  ? true
-                                  : false,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 30.sp),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 16.sp),
-                                            child: AppText(
-                                              text:
-                                                  "Search for '${controller.searchController.text.toString()}'",
-                                              maxLines: 1,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                              color: homeAppBarColor,
-                                            ),
+                                            ],
                                           ),
                                         ),
-                                        /*  AppText(
-                                            text: controller.searchList.length
-                                                .toString(),
-                                            maxLines: 1,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14,
-                                            color: homeAppBarColor,
-                                          ), */
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16.sp),
-                                          child: SvgPicture.asset(
-                                              searchSvgImage,
-                                              height: 16.sp,
-                                              width: 16.sp,
-                                              fit: BoxFit.cover),
+                                        Container(
+                                          height: 1.sp,
+                                          color: dividerColor,
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.sp, vertical: 10.sp),
-                                    child: Container(
-                                      height: 1.sp,
-                                      color: dividerColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  )),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 20.sp,
                             ),
                             Obx(() => controller.isSearchItem.value
                                 ? SizedBox(
-                                    height: 260.sp,
+                                    //  height: 260.sp,
                                     child: Padding(
                                       padding: EdgeInsets.only(
-                                          bottom: 5.sp, top: 5.sp, left: 16.sp),
+                                          bottom: 5.sp,
+                                          top: 80.sp,
+                                          left: 16.sp),
                                       child: ListView.builder(
                                           primary: false,
                                           shrinkWrap: true,
@@ -1501,6 +1752,199 @@ class SearchScreenState extends State<SearchScreen> {
                                                   physics:
                                                       const NeverScrollableScrollPhysics(),
                                                   itemCount: controller
+                                                      .categoryList.length,
+                                                  padding: EdgeInsets.zero,
+                                                  //  scrollDirection: Axis.vertical,
+                                                  itemBuilder: (ctx, i) {
+                                                    return Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 4.sp),
+                                                      child: GestureDetector(
+                                                        onTap: () async {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                                  MaterialPageRoute(
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          CategoryProductScreen(
+                                                                            categoryName:
+                                                                                controller.categoryList[i]["name"],
+                                                                            categoryId:
+                                                                                controller.categoryList[i]["id"],
+                                                                            brandId:
+                                                                                0,
+                                                                            genderType:
+                                                                                0,
+                                                                            genderName:
+                                                                                "",
+                                                                            tagIds: const [],
+                                                                            categoryList: [],
+                                                                          )))
+                                                              .then(
+                                                                  (value) =>
+                                                                      setState(
+                                                                        () {
+                                                                          controller
+                                                                              .searchController
+                                                                              .clear();
+                                                                          controller
+                                                                              .getSearchData(context);
+                                                                          isSearch =
+                                                                              false;
+                                                                          controller
+                                                                              .searchText
+                                                                              .value = "Search for products";
+                                                                        },
+                                                                      ));
+
+                                                          /*  setState(() {
+                                                            isSearch = false;
+                                                            controller.searchText
+                                                                    .value =
+                                                                "Search for products";
+                                                          }); */
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                "search_page_searchcategory",
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'search_page_searchcategory',
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      6.sp),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              /*  SizedBox(
+                                                                height: 20.sp,
+                                                                width: 20.sp,
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  imageUrl: controller
+                                                                          .categoryList[i]
+                                                                      [
+                                                                      "thumbnail"],
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    downloadImage,
+                                                                    height:
+                                                                        20.sp,
+                                                                    width:
+                                                                        20.sp,
+                                                                  ),
+                                                                ),
+                                                              ), */
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: Padding(
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              0.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text: controller.categoryList[i]
+                                                                            [
+                                                                            "name"] ??
+                                                                        "",
+                                                                    maxLines: 1,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        14,
+                                                                    color:
+                                                                        homeAppBarColor,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              AppText(
+                                                                text: controller
+                                                                    .categoryList[
+                                                                        i][
+                                                                        "product_count"]
+                                                                    .toString(),
+                                                                maxLines: 1,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 14,
+                                                                color:
+                                                                    homeAppBarColor,
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left: 8
+                                                                            .sp,
+                                                                        right: 16
+                                                                            .sp),
+                                                                child: SvgPicture.asset(
+                                                                    searchSvgImage,
+                                                                    height:
+                                                                        16.sp,
+                                                                    width:
+                                                                        16.sp,
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }),
+                                              Visibility(
+                                                visible: controller
+                                                        .categoryList.isNotEmpty
+                                                    ? true
+                                                    : false,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 16.sp,
+                                                      bottom: 10.sp,
+                                                      top: 10.sp),
+                                                  child: Container(
+                                                    height: 1.sp,
+                                                    color: dividerColor,
+                                                  ),
+                                                ),
+                                              ),
+                                              ListView.builder(
+                                                  primary: false,
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  itemCount: controller
                                                       .searchList.length,
                                                   padding: EdgeInsets.zero,
                                                   itemBuilder: (ctx, index) {
@@ -1523,21 +1967,22 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               "id"],
                                                                       type:
                                                                           "add")))
-                                                              .then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      controller
-                                                                          .isRecentSearch
-                                                                          .value = false;
-                                                                      controller
-                                                                          .getRecentSearchData();
-                                                                      controller
-                                                                          .searchController
-                                                                          .clear();
-                                                                      controller
-                                                                          .getSearchData();
-                                                                    },
-                                                                  ));
+                                                              .then(
+                                                                  (value) =>
+                                                                      setState(
+                                                                        () {
+                                                                          controller
+                                                                              .isRecentSearch
+                                                                              .value = false;
+                                                                          controller
+                                                                              .getRecentSearchData();
+                                                                          controller
+                                                                              .searchController
+                                                                              .clear();
+                                                                          controller
+                                                                              .getSearchData(context);
+                                                                        },
+                                                                      ));
                                                           controller.callRecentSearch(
                                                               controller
                                                                       .searchList[
@@ -1651,180 +2096,83 @@ class SearchScreenState extends State<SearchScreen> {
                                                       ),
                                                     );
                                                   }),
-                                              ListView.builder(
-                                                  primary: false,
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  itemCount: controller
-                                                      .categoryList.length,
-                                                  padding: EdgeInsets.zero,
-                                                  //  scrollDirection: Axis.vertical,
-                                                  itemBuilder: (ctx, i) {
-                                                    return Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 4.sp),
-                                                      child: GestureDetector(
-                                                        onTap: () async {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                                  MaterialPageRoute(
-                                                                      builder: (BuildContext
-                                                                              context) =>
-                                                                          CategoryProductScreen(
-                                                                            categoryName:
-                                                                                controller.categoryList[i]["name"],
-                                                                            categoryId:
-                                                                                controller.categoryList[i]["id"],
-                                                                            brandId:
-                                                                                0,
-                                                                            genderType:
-                                                                                0,
-                                                                            genderName:
-                                                                                "",
-                                                                            tagIds: const [],
-                                                                            categoryList: [],
-                                                                          )))
-                                                              .then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      controller
-                                                                          .searchController
-                                                                          .clear();
-                                                                      controller
-                                                                          .getSearchData();
-                                                                      isSearch =
-                                                                          false;
-                                                                      controller
-                                                                          .searchText
-                                                                          .value = "Search for products";
-                                                                    },
-                                                                  ));
-
-                                                          /*  setState(() {
-                                                            isSearch = false;
-                                                            controller.searchText
-                                                                    .value =
-                                                                "Search for products";
-                                                          }); */
-                                                          await analytics
-                                                              .logEvent(
-                                                            name:
-                                                                "search_page_searchcategory",
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'search_page_searchcategory',
-                                                            },
-                                                          );
-                                                        },
-                                                        child: Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical:
-                                                                      6.sp),
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              /*  SizedBox(
-                                                                height: 20.sp,
-                                                                width: 20.sp,
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  cacheManager: CacheManager(Config(
-                                                                      "customCacheKey",
-                                                                      stalePeriod: const Duration(
-                                                                          days:
-                                                                              15),
-                                                                      maxNrOfCacheObjects:
-                                                                          100)),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  imageUrl: controller
-                                                                          .categoryList[i]
-                                                                      [
-                                                                      "thumbnail"],
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    downloadImage,
-                                                                    height:
-                                                                        20.sp,
-                                                                    width:
-                                                                        20.sp,
-                                                                  ),
-                                                                ),
-                                                              ), */
-                                                              Expanded(
-                                                                flex: 1,
-                                                                child: Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              0.sp),
-                                                                  child:
-                                                                      AppText(
-                                                                    text: controller.categoryList[i]
-                                                                            [
-                                                                            "name"] ??
-                                                                        "",
-                                                                    maxLines: 1,
-                                                                    fontFamily:
-                                                                        "Franklin Gothic Regular",
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontSize:
-                                                                        14,
-                                                                    color:
-                                                                        homeAppBarColor,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            16.sp),
-                                                                child: SvgPicture.asset(
-                                                                    arrowSearchImage,
-                                                                    color:
-                                                                        homeAppBarColor,
-                                                                    height:
-                                                                        13.sp,
-                                                                    width:
-                                                                        13.sp,
-                                                                    fit: BoxFit
-                                                                        .cover),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }),
                                             ],
                                           ),
                                         ),
                                       )
                                     : Container(
-                                        margin: EdgeInsets.only(top: 100.sp),
-                                        child: Center(
-                                          child: Text(
-                                              controller.searchText.value,
-                                              style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: Colors.black,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular")),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 50.sp,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 10.sp, left: 16.sp),
+                                              child: Row(
+                                                children: [
+                                                  AppText(
+                                                    text:
+                                                        "No results found for",
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: subtitleColor,
+                                                    fontSize: 16,
+                                                  ),
+                                                  AppText(
+                                                    text:
+                                                        " '${controller.searchController.text.toString()}'",
+                                                    fontFamily:
+                                                        "Franklin Gothic Semibold",
+                                                    fontWeight: FontWeight.w400,
+                                                    color: subtitleColor,
+                                                    fontSize: 16,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 2.sp, left: 16.sp),
+                                              child: AppText(
+                                                text: "0 items",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: subtitleColor,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 80.sp),
+                                              child: Center(
+                                                child: Image.asset(errorImage,
+                                                    height: 200.sp,
+                                                    width: 220.sp,
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 20.sp),
+                                              child: getSingleButton(
+                                                  width: double.infinity,
+                                                  label: "Back to home"
+                                                      .toUpperCase(),
+                                                  textColor: whiteColor,
+                                                  fontSize: 13,
+                                                  backgroundColor:
+                                                      homeAppBarColor,
+                                                  onPressed: () {
+                                                    Get.off(BottomNavScreen());
+                                                  },
+                                                  borderColor: colorPrimary),
+                                            )
+                                          ],
                                         ),
                                       )),
                           ],
