@@ -34,7 +34,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
     token = prefs.getString('token');
     name = prefs.getString('name');
     phone = prefs.getString('phonenumber');
-    if (prefs.getInt('gender') != null) {
+    /* if (prefs.getInt('gender') != null) {
       int id = prefs.getInt('gender')!;
       if (id == 1) {
         homeController.homeGenderValue.value = 3;
@@ -43,7 +43,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
         homeController.homeGenderValue.value = 2;
         homeController.genderText.value = "Men";
       } else {}
-    }
+    } */
   }
 
   navigateToScreen() {

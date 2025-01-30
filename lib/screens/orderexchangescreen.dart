@@ -1041,6 +1041,23 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           ),
                                                                         ),
                                                                       ],
+                                                                      /* const Expanded(
+                                                                        child:
+                                                                            SizedBox(
+                                                                          width:
+                                                                              0,
+                                                                        ),
+                                                                      ), */
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              16.sp),
+                                                                  child: Row(
+                                                                    children: [
                                                                       const Expanded(
                                                                         child:
                                                                             SizedBox(
@@ -1130,7 +1147,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             )
                                                                           ],
                                                                         ],
-                                                                      )
+                                                                      ),
                                                                     ],
                                                                   ),
                                                                 ),

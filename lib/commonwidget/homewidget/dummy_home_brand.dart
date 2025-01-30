@@ -18,7 +18,7 @@ class DummyHomeBrand extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 22.sp, left: 16.sp),
+            padding: EdgeInsets.only(top: 48.sp, left: 16.sp),
             child: DummyContainer(
               width: 150,
               height: 20,
