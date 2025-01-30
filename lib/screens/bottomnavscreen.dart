@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/expressshopscreen.dart';
@@ -84,7 +87,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: homeAppBarColor,
+      backgroundColor: whiteColor,
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       /* floatingActionButton: GestureDetector(
         onTap: () async {
@@ -334,18 +337,15 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         // notchMargin: -15.sp,
         // shape: const CircularNotchedRectangle(),
         padding: EdgeInsets.zero,
-        color: homeAppBarColor,
+        color: whiteColor,
         height: 80.sp, //0.074
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
-              child: MaterialButton(
-                height: 80.sp,
-                color: homeAppBarColor,
-                minWidth: MediaQuery.of(context).size.width % 5.sp,
-                onPressed: () async {
+              child: InkWell(
+                onTap: () async {
                   setState(() {
                     _currentIndex = 0;
                   });
@@ -357,31 +357,36 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     },
                   );
                 },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Container(
+                  height: 80.sp,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      /*  Image.asset(
                         _currentIndex == 0 ? homeBottomIcon : homeBottomIcon,
                         color:
                             _currentIndex == 0 ? whiteColor : Color(0xFF9CA3AF),
                         height: 16.sp,
                         width: 16.sp,
+                      ), */
+                      SvgPicture.asset(
+                        _currentIndex == 0
+                            ? homeSelectedSvgImage
+                            : homeSvgImage,
+                        height: 17.sp,
+                        width: 15.sp,
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 7.sp),
-                        child: FittedBox(
-                           fit: BoxFit.scaleDown,
-                          child: Text(
-                            "Home".toUpperCase(),
-                            style: TextStyle(
-                                color: _currentIndex == 0
-                                    ? whiteColor
-                                    : Color(0xFF9CA3AF),
-                                fontSize: 8.sp,
-                                fontFamily: "Franklin Gothic"),
-                          ),
+                        child: Text(
+                          "Home".toUpperCase(),
+                          style: TextStyle(
+                              color: _currentIndex == 0
+                                  ? homeAppBarColor
+                                  : searchTextColor,
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
                         ),
                       )
                     ],
@@ -390,11 +395,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               ),
             ),
             Expanded(
-              child: MaterialButton(
-                height: 80.sp,
-                minWidth: MediaQuery.of(context).size.width % 5.sp,
-                color: homeAppBarColor,
-                onPressed: () async {
+              child: InkWell(
+                onTap: () async {
                   setState(() {
                     _currentIndex = 1;
                   });
@@ -406,31 +408,36 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     },
                   );
                 },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Container(
+                  height: 80.sp,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      /*  Image.asset(
                         _currentIndex == 1 ? shopBottomIcon : shopBottomIcon,
                         color:
                             _currentIndex == 1 ? whiteColor : Color(0xFF9CA3AF),
                         height: 16.sp,
                         width: 16.sp,
+                      ), */
+                      SvgPicture.asset(
+                        _currentIndex == 1
+                            ? brandSelectedSvgImage
+                            : brandSvgImage,
+                        height: 20.sp,
+                        width: 20.sp,
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 7.sp),
-                        child: FittedBox(
-                           fit: BoxFit.scaleDown,
-                          child: Text(
-                            "Shop".toUpperCase(),
-                            style: TextStyle(
-                                color: _currentIndex == 1
-                                    ? whiteColor
-                                    : Color(0xFF9CA3AF),
-                                fontSize: 8.sp,
-                                fontFamily: "Franklin Gothic"),
-                          ),
+                        child: Text(
+                          "Brands".toUpperCase(),
+                          style: TextStyle(
+                              color: _currentIndex == 1
+                                  ? homeAppBarColor
+                                  : Color(0xFF9CA3AF),
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
                         ),
                       )
                     ],
@@ -439,11 +446,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               ),
             ),
             Expanded(
-              child: MaterialButton(
-                height: 80.sp,
-                minWidth: MediaQuery.of(context).size.width % 5.sp,
-                color: homeAppBarColor,
-                onPressed: () async {
+              child: InkWell(
+                onTap: () async {
                   if (skipValue == true) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => const LoginScreen(
@@ -462,32 +466,38 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     },
                   );
                 },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Container(
+                  height: 80.sp,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      /*  Image.asset(
                         _currentIndex == 4 ? expressImage : expressImage,
                         color: _currentIndex == 4
                             ? Color(0xFFDFC5FE)
                             : Color(0xFFDFC5FE),
                         height: 18.sp,
                         width: 18.sp,
+                      ), */
+                      SvgPicture.asset(
+                        quickSvgImage,
+                        color: _currentIndex == 4
+                            ? Color(0xFF988AFF)
+                            : Color(0xFF988AFF),
+                        height: 19.sp,
+                        width: 13.sp,
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 7.sp),
-                        child: FittedBox(
-                           fit: BoxFit.scaleDown,
-                          child: Text(
-                            "Express".toUpperCase(),
-                            style: TextStyle(
-                                color: _currentIndex == 4
-                                    ? Color(0xFFDFC5FE)
-                                    : Color(0xFFDFC5FE),
-                                fontSize: 8.sp,
-                                fontFamily: "Franklin Gothic"),
-                          ),
+                        child: Text(
+                          "Quick".toUpperCase(),
+                          style: TextStyle(
+                              color: _currentIndex == 4
+                                  ? Color(0xFF988AFF)
+                                  : Color(0xFF988AFF),
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
                         ),
                       )
                     ],
@@ -496,11 +506,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               ),
             ),
             Expanded(
-              child: MaterialButton(
-                height: 80.sp,
-                minWidth: MediaQuery.of(context).size.width % 5.sp,
-                color: homeAppBarColor,
-                onPressed: () async {
+              child: InkWell(
+                onTap: () async {
                   setState(() {
                     _currentIndex = 2;
                   });
@@ -512,12 +519,13 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     },
                   );
                 },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Container(
+                  height: 80.sp,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      /*  Image.asset(
                         _currentIndex == 2
                             ? wishlistBottomIcon
                             : wishlistBottomIcon,
@@ -525,20 +533,24 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             _currentIndex == 2 ? whiteColor : Color(0xFF9CA3AF),
                         height: 16.sp,
                         width: 16.sp,
+                      ), */
+                      SvgPicture.asset(
+                        _currentIndex == 2
+                            ? categorySelectedSvgImage
+                            : categorySvgImage,
+                        height: 17.sp,
+                        width: 17.sp,
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 7.sp),
-                        child: FittedBox(
-                           fit: BoxFit.scaleDown,
-                          child: Text(
-                            "Wishlist".toUpperCase(),
-                            style: TextStyle(
-                                color: _currentIndex == 2
-                                    ? whiteColor
-                                    : Color(0xFF9CA3AF),
-                                fontSize: 8.sp,
-                                fontFamily: "Franklin Gothic"),
-                          ),
+                        child: Text(
+                          "Category".toUpperCase(),
+                          style: TextStyle(
+                              color: _currentIndex == 2
+                                  ? homeAppBarColor
+                                  : Color(0xFF9CA3AF),
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
                         ),
                       )
                     ],
@@ -547,11 +559,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
               ),
             ),
             Expanded(
-              child: MaterialButton(
-                height: 80.sp,
-                minWidth: MediaQuery.of(context).size.width % 5.sp,
-                color: homeAppBarColor,
-                onPressed: () async {
+              child: InkWell(
+                onTap: () async {
                   if (skipValue == true) {
                     Get.to(
                       () => const LoginScreen(
@@ -571,31 +580,36 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                     },
                   );
                 },
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.sp, top: 10.sp),
+                child: Container(
+                  height: 80.sp,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      /*  Image.asset(
                         _currentIndex == 3 ? shopBottomIcon : shopBottomIcon,
                         color:
                             _currentIndex == 3 ? whiteColor : Color(0xFF9CA3AF),
                         height: 16.sp,
                         width: 16.sp,
+                      ), */
+                      SvgPicture.asset(
+                        _currentIndex == 3
+                            ? profileSelectedSvgImage
+                            : profileSvgImage,
+                        height: 17.sp,
+                        width: 14.sp,
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 7.sp),
-                        child: FittedBox(
-                           fit: BoxFit.scaleDown,
-                          child: Text(
-                            "Account".toUpperCase(),
-                            style: TextStyle(
-                                color: _currentIndex == 3
-                                    ? whiteColor
-                                    : Color(0xFF9CA3AF),
-                                fontSize: 8.sp,
-                                fontFamily: "Franklin Gothic"),
-                          ),
+                        child: Text(
+                          "Profile".toUpperCase(),
+                          style: TextStyle(
+                              color: _currentIndex == 3
+                                  ? homeAppBarColor
+                                  : Color(0xFF9CA3AF),
+                              fontSize: 10.sp,
+                              fontFamily: "Franklin Gothic"),
                         ),
                       )
                     ],

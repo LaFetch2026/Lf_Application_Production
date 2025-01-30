@@ -214,6 +214,15 @@ const heartSvgImage = 'assets/images/heart_svg.svg';
 const cartSvgImage = 'assets/images/cart_svg.svg';
 const applogSvgImage = 'assets/images/applogo_svg.svg';
 const arrowViewAllImage = 'assets/images/arrow_viewall.svg';
+const homeSelectedSvgImage = 'assets/images/home_selected.svg';
+const brandSvgImage = 'assets/images/brand_unselected.svg';
+const quickSvgImage = 'assets/images/quick_selected.svg';
+const categorySvgImage = 'assets/images/category_unselected.svg';
+const profileSvgImage = 'assets/images/profile_unselected.svg';
+const homeSvgImage = 'assets/images/home_unselected.svg';
+const brandSelectedSvgImage = 'assets/images/brand_selected.svg';
+const categorySelectedSvgImage = 'assets/images/category_selected.svg';
+const profileSelectedSvgImage = 'assets/images/profile_selected.svg';
 
 class ApiConstants {
   ApiConstants._();
