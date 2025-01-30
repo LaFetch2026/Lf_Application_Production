@@ -1213,7 +1213,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           crossAxisCount: 3,
                                           scrollDirection: Axis.vertical,
                                           padding: EdgeInsets.zero,
-                                          childAspectRatio: 0.5,
+                                          childAspectRatio: 0.55,
                                           physics: const ScrollPhysics(),
                                           crossAxisSpacing: 12.sp,
                                           mainAxisSpacing: 0.sp,
@@ -1420,7 +1420,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 22.sp, left: 16.sp),
+                                              top: 48.sp, left: 16.sp),
                                           child: AppText(
                                             text:
                                                 "Featured brands".toUpperCase(),
@@ -1442,7 +1442,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           child: Container(
                                             child: Padding(
                                               padding: EdgeInsets.only(
-                                                  top: 22.sp,
+                                                  top: 48.sp,
                                                   right: 12.sp,
                                                   left: 16.sp,
                                                   bottom: 2.sp),

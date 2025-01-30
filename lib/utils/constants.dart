@@ -207,6 +207,7 @@ const searchSvgImage = 'assets/images/search_svg.svg';
 const heartSvgImage = 'assets/images/heart_svg.svg';
 const cartSvgImage = 'assets/images/cart_svg.svg';
 const applogSvgImage = 'assets/images/applogo_svg.svg';
+const arrowViewAllImage = 'assets/images/arrow_viewall.svg';
 
 class ApiConstants {
   ApiConstants._();
