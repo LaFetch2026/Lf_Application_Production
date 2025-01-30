@@ -23,7 +23,7 @@ class HomeProductList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 16.sp, bottom: 32.sp),
+          padding: EdgeInsets.only(top: 16.sp, bottom: 32.sp),
           child: SizedBox(
             width: double.infinity,
             height: 220.sp,
@@ -43,7 +43,7 @@ class HomeProductList extends StatelessWidget {
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
-                            margin: EdgeInsets.only(right: 16.sp),
+                            margin: EdgeInsets.only(left: 16.sp),
                             width: 136.sp,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

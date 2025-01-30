@@ -1499,7 +1499,6 @@ class HomeScreenState extends State<HomeScreen> {
                                     Padding(
                                       padding: EdgeInsets.only(
                                         top: 4.sp,
-                                        left: 16.sp,
                                       ),
                                       child: SizedBox(
                                         height: 100.sp,
@@ -1551,7 +1550,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsets.only(
-                                                                right: 12.sp),
+                                                                left: 16.sp),
                                                         child: Container(
                                                           height: 80.sp,
                                                           width: 80.sp,
