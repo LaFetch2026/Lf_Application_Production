@@ -5,10 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/accountscreen.dart';
-import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
+import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/home/women/homescreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
+//import 'package:lafetch/screens/quickscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -481,10 +482,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         width: 18.sp,
                       ), */
                       SvgPicture.asset(
-                        quickSvgImage,
-                        color: _currentIndex == 4
-                            ? Color(0xFF988AFF)
-                            : Color(0xFF988AFF),
+                        _currentIndex == 4
+                            ? quickSelectedSvgImage
+                            : quickSvgImage,
                         height: 19.sp,
                         width: 13.sp,
                       ),

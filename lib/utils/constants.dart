@@ -56,6 +56,7 @@ const Color expressDeliveryBanner = Color(0xff353059);
 const Color expressDeliveryGradientDividerColor = Color(0xff726C97);
 const Color expressDeliveryFeaturedBrandsColor = Color(0xffF5F3FF);
 const Color productSubtitleColor = Color(0xffd1d5db);
+const Color lightPurpleColor = Color(0xFF988AFF);
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';
@@ -216,23 +217,31 @@ const applogSvgImage = 'assets/images/applogo_svg.svg';
 const arrowViewAllImage = 'assets/images/arrow_viewall.svg';
 const homeSelectedSvgImage = 'assets/images/home_selected.svg';
 const brandSvgImage = 'assets/images/brand_unselected.svg';
-const quickSvgImage = 'assets/images/quick_selected.svg';
+const quickSelectedSvgImage = 'assets/images/quick_selected.svg';
+const quickSvgImage = 'assets/images/quick_unselected.svg';
 const categorySvgImage = 'assets/images/category_unselected.svg';
 const profileSvgImage = 'assets/images/profile_unselected.svg';
 const homeSvgImage = 'assets/images/home_unselected.svg';
 const brandSelectedSvgImage = 'assets/images/brand_selected.svg';
 const categorySelectedSvgImage = 'assets/images/category_selected.svg';
 const profileSelectedSvgImage = 'assets/images/profile_selected.svg';
+const quickBackImage = 'assets/images/quick_back.svg';
+const quickBackCircleImage = 'assets/images/quick_back_circle.svg';
+const dropdownSvgImage = 'assets/images/dropdown_svg.svg';
+const pumaSvgImage = 'assets/images/puma_svg.svg';
+const fullLineSvgImage = 'assets/images/full_line.svg';
+const rightLineSvgImage = 'assets/images/right_line.svg';
+const leftLineSvgImage = 'assets/images/left_line.svg';
 
 class ApiConstants {
   ApiConstants._();
   static const String baseUrl =
       "https://api.la-fetch.com/customer/api"; //production
 
-  // static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
+  static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
 
   // static const String baseUrl =
   // "https://staging-api.la-fetch.com/customer/api"; //staging
 
-  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
+  //static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }
