@@ -55,7 +55,7 @@ const Color expressSearchBarBorderColor = Color(0xff4B556380);
 const Color expressDeliveryBanner = Color(0xff353059);
 const Color expressDeliveryGradientDividerColor = Color(0xff726C97);
 const Color expressDeliveryFeaturedBrandsColor = Color(0xffF5F3FF);
-
+const Color productSubtitleColor = Color(0xffd1d5db);
 
 const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';

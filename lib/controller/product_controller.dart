@@ -18,6 +18,7 @@ class ProductController extends BaseController {
   RxBool isProduct = false.obs;
   RxBool isFilter = false.obs;
   RxBool isMostSearch = false.obs;
+  RxBool isHomeProduct = false.obs;
   RxBool istags = false.obs;
   RxString errorMsg = "".obs;
   RxBool isCategoryProduct = false.obs;
@@ -47,6 +48,7 @@ class ProductController extends BaseController {
   RxString returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List tagsList = [].obs;
+  List homeProductList = [].obs;
   List handPickedProductList = [].obs;
   List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
@@ -199,6 +201,43 @@ class ProductController extends BaseController {
       return false;
     } */
     return true;
+  }
+
+  getHomeProduct(int gender) async {
+    isHomeProduct.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/tags/sections?gender_type=$gender"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData.isNotEmpty) {
+          homeProductList = responseData;
+        } else {
+          homeProductList = [];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        /* Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed"); */
+        print(response.statusCode);
+      } else {
+        getSnackBar("get home product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isHomeProduct.value = false;
   }
 
   getProductData(String type) async {

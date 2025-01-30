@@ -39,7 +39,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                 child: Center(
                   child: SizedBox(
                       width: (MediaQuery.of(context).size.width / 2),
-                      height: 50.sp,
+                      height: 56.sp,
                       child: /* (controller.pageState == PageState.LOADING)
                           ? Center(
                               child: Transform.scale(
@@ -88,7 +88,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                 child: Center(
                   child: Container(
                       width: (MediaQuery.of(context).size.width / 2),
-                      height: 50.sp,
+                      height: 56.sp,
                       color: homeAppBarColor,
                       child: /* (controller.pageState == PageState.LOADING)
                               ? Center(

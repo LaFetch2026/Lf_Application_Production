@@ -13,7 +13,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
-import 'package:lafetch/commonwidget/homewidget/home_product_list.dart';
+import 'package:lafetch/commonwidget/homewidget/homelist.dart';
 //import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
@@ -22,7 +22,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
-import 'package:lafetch/screens/home/women/productviewscreen.dart';
+//import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -104,6 +104,8 @@ class HomeScreenState extends State<HomeScreen> {
     }); */
     WidgetsBinding.instance
         .addPostFrameCallback((_) => homeController.getCategoryData(2));
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.getHomeProduct(2));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getConfigurationData();
     });
@@ -141,7 +143,7 @@ class HomeScreenState extends State<HomeScreen> {
       //  productController.isExpress.value = false;
       productController.expressPage.value = 1;
     }); */
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.homeTagshasnextpage.value = true;
       productController.homeTagsloadMore.value = false;
       // productController.istags.value = false;
@@ -153,7 +155,7 @@ class HomeScreenState extends State<HomeScreen> {
             .fetchMoreTagsData(homeController.homeGenderValue.value);
         productController.update();
       });
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       determinePosition();
     });
@@ -392,16 +394,19 @@ class HomeScreenState extends State<HomeScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
+                                  homeController.genderText.value = "Men";
                                   homeController.homeGenderValue.value = 2;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
-                                  productController.tagname.value =
-                                      "We think you might also like";
+                                  /*  productController.tagname.value =
+                                      "We think you might also like"; */
                                   productController.productCategory = [];
                                   productController.productTags = [];
                                   // productController.getTagsData(2);
                                   homeController.getCategoryData(2);
+                                  homeController.getBannar1Data();
+                                  productController.getHomeProduct(2);
                                 },
                                 child: SizedBox(
                                   child: Column(
@@ -442,18 +447,18 @@ class HomeScreenState extends State<HomeScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  homeController.genderText.value = "Women";
                                   homeController.homeGenderValue.value = 3;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
-                                  productController.tagname.value =
-                                      "We think you might also like";
+                                  /* productController.tagname.value =
+                                      "We think you might also like"; */
                                   productController.productCategory = [];
                                   productController.productTags = [];
-                                  productController.getTagsData(3);
-                                  homeController.getBannar1Data();
-                                  homeController.getBannar2Data();
+                                  //  productController.getTagsData(3);
                                   homeController.getCategoryData(3);
+                                  productController.getHomeProduct(3);
                                 },
                                 child: SizedBox(
                                   child: Column(
@@ -494,16 +499,19 @@ class HomeScreenState extends State<HomeScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  homeController.genderText.value =
+                                      "Accessories";
                                   homeController.homeGenderValue.value = 1;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
-                                  productController.tagname.value =
-                                      "We think you might also like";
+                                  /*  productController.tagname.value =
+                                      "We think you might also like"; */
                                   productController.productCategory = [];
                                   productController.productTags = [];
-                                  productController.getTagsData(1);
+                                  // productController.getTagsData(1);
                                   homeController.getCategoryData(1);
+                                  productController.getHomeProduct(1);
                                 },
                                 child: SizedBox(
                                   child: Column(
@@ -1223,7 +1231,39 @@ class HomeScreenState extends State<HomeScreen> {
                                               return Column(
                                                 children: [
                                                   GestureDetector(
-                                                    onTap: () async {},
+                                                    onTap: () async {
+                                                      Navigator.push(
+                                                          context,
+                                                          scaleIn(CategoryProductScreen(
+                                                              categoryName:
+                                                                  homeController
+                                                                              .categoryList[
+                                                                          index]
+                                                                      ["name"],
+                                                              genderName:
+                                                                  homeController
+                                                                      .genderText
+                                                                      .value,
+                                                              categoryId: homeController
+                                                                      .categoryList[
+                                                                  index]["id"],
+                                                              brandId: 0,
+                                                              genderType:
+                                                                  homeController
+                                                                      .homeGenderValue
+                                                                      .value,
+                                                              categoryList: [],
+                                                              tagIds: const [])));
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            'categories_home_page',
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'categories_home_page',
+                                                        },
+                                                      );
+                                                    },
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -1446,11 +1486,11 @@ class HomeScreenState extends State<HomeScreen> {
                                                   right: 12.sp,
                                                   left: 16.sp,
                                                   bottom: 2.sp),
-                                              child: Image.asset(
-                                                rightBlackArrow,
-                                                height: 30.sp,
-                                                width: 30.sp,
-                                              ),
+                                              child: SvgPicture.asset(
+                                                  arrowViewAllImage,
+                                                  height: 11.sp,
+                                                  width: 7.sp,
+                                                  fit: BoxFit.cover),
                                             ),
                                           ),
                                         ),
@@ -1584,7 +1624,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             }),
                                       ),
                                     ),
-                                    Padding(
+                                    /* Padding(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 10.sp),
                                       child: Container(
@@ -1592,150 +1632,52 @@ class HomeScreenState extends State<HomeScreen> {
                                         color: colorSecondary,
                                         height: 1,
                                       ),
-                                    ),
+                                    ), */
                                   ],
                                 )
                               : SizedBox(
                                   height: 0,
                                 )),
-                      Obx(() => productController.istagsProduct.value
+                      Obx(() => productController.isHomeProduct.value
                           ? Padding(
-                              padding: EdgeInsets.only(top: 6.sp),
+                              padding: EdgeInsets.only(top: 24.sp),
                               child: DummyProductList(
                                   visibleSubtitle: true,
                                   text: "${productController.tagname.value}"
                                       .toUpperCase()),
                             )
-                          : productController.tagProductList.isNotEmpty
-                              ? Column(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 6.sp),
-                                      child: HomeProductList(
-                                        text:
-                                            "${productController.tagname.value}"
-                                                .toUpperCase(),
-                                        visibleViewAll: true,
-                                        visibleSubtitle: true,
-                                        text1:
-                                            "Selected styles for a limited time only",
-                                        controller: productController
-                                            .tagsProductController,
-                                        height: 230.sp,
-                                        onPressedViewAll: () async {
-                                          final prefs = await SharedPreferences
-                                              .getInstance();
-                                          prefs.remove("brandList");
-                                          prefs.remove("colorList");
-                                          prefs.remove("sizeList");
-                                          prefs.remove("upper");
-                                          prefs.remove("lower");
-                                          prefs.remove("sortby");
-                                          prefs.remove("category");
-                                          productController.sortBy.value = "";
-                                          productController.filterEnable.value =
-                                              false;
-                                          productController.size_ids.clear();
-                                          productController.color_ids.clear();
-                                          productController.brand_ids.clear();
-                                          productController.productCategory
-                                              .clear();
-                                          productController.productTags.clear();
-                                          productController.productTags =
-                                              productController.tagId.value == 0
-                                                  ? []
-                                                  : [
-                                                      productController
-                                                          .tagId.value
-                                                    ];
-                                          Navigator.push(
-                                              context,
-                                              scaleIn(
-                                                CategoryProductScreen(
-                                                  genderName: homeController
-                                                      .genderText.value,
-                                                  categoryName: productController
-                                                              .tagId.value ==
-                                                          0
-                                                      ? "We think you might also like"
-                                                      : productController
-                                                          .tagname.value,
-                                                  categoryId: 0,
-                                                  brandId: 0,
-                                                  genderType: homeController
-                                                      .homeGenderValue.value,
-                                                  tagIds: productController
-                                                              .tagId.value ==
-                                                          0
-                                                      ? []
-                                                      : [
-                                                          productController
-                                                              .tagId.value
-                                                        ],
-                                                  categoryList: [],
-                                                ),
-                                              )).then((value) => setState(
-                                                () {
-                                                  productController
-                                                      .getTagsProductData(
-                                                          productController
-                                                              .tagId.value,
-                                                          homeController
-                                                              .homeGenderValue
-                                                              .value,
-                                                          0);
-                                                },
-                                              ));
-                                        },
-                                        onPressed: (p0, p1) async {
-                                          Navigator.push(
-                                              context,
-                                              scaleIn(
-                                                ProductDetailsScreen(
-                                                  productId: p0,
-                                                  type: "add",
-                                                  brandName: p1,
-                                                ),
-                                              )).then((value) => setState(
-                                                () {
-                                                  productController
-                                                      .tagsHasnextpage
-                                                      .value = true;
-                                                  productController.tagsLoadMore
-                                                      .value = false;
-                                                  productController
-                                                      .istagsProduct
-                                                      .value = false;
-                                                  productController
-                                                      .tagsPage.value = 1;
-                                                },
-                                              ));
-                                          await analytics.logEvent(
-                                            name:
-                                                'product_tabid_details_home_page',
-                                            parameters: <String, Object>{
-                                              'page_name':
-                                                  'product_tabid_details_home_page',
-                                            },
-                                          );
-                                        },
-                                        list: productController.tagProductList,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 10.sp),
-                                      child: Container(
-                                        width: double.infinity,
-                                        color: colorSecondary,
-                                        height: 1,
-                                      ),
-                                    ),
-                                  ],
-                                )
+                          : productController.homeProductList.isNotEmpty
+                              ? HomeList(
+                                  onPressed: (p0) async {
+                                    Navigator.push(
+                                        context,
+                                        scaleIn(
+                                          ProductDetailsScreen(
+                                            productId: p0,
+                                            type: "add",
+                                            brandName: "",
+                                          ),
+                                        )).then((value) => setState(
+                                          () {
+                                            cartController.getCartData();
+                                          },
+                                        ));
+                                    await analytics.logEvent(
+                                      name: 'product_tabid_details_home_page',
+                                      parameters: <String, Object>{
+                                        'page_name':
+                                            'product_tabid_details_home_page',
+                                      },
+                                    );
+                                  },
+                                  list: productController.homeProductList)
                               : const SizedBox(
                                   height: 0,
                                 )),
-                      Obx(() => productController.isHandPicked.value
+                      SizedBox(
+                        height: 40.sp,
+                      )
+                      /*  Obx(() => productController.isHandPicked.value
                           ? Padding(
                               padding: EdgeInsets.only(top: 6.sp),
                               child: DummyProductList(
@@ -1861,7 +1803,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 )
                               : const SizedBox(
                                   height: 0,
-                                )),
+                                )), */
                       /*  Obx(
                         () => homeController.isCategory.value
                             ? const DummyProductList(text: "Popular Categories")
@@ -2580,9 +2522,6 @@ class HomeScreenState extends State<HomeScreen> {
                           },
                           icon: questionIcon),
                       */
-                      SizedBox(
-                        height: 40.sp,
-                      )
                     ],
                   ),
                 ),

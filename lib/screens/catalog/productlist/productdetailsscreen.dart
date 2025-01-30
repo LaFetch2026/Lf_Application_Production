@@ -44,7 +44,7 @@ class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
-      required this.brandName,
+      this.brandName = "",
       required this.type,
       this.boardId = 0,
       this.Slug = "",
