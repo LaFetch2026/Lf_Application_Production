@@ -501,148 +501,126 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                                           Container(
-                                                              height: 80.sp,
-                                                              width: 80.sp,
-                                                              padding: EdgeInsets.all(8.sp),
-                                                              child: CircleAvatar(
-                                                                backgroundColor:
-                                                                    homeAppBarColor,
-                                                                child: Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width: 1.sp,
-                                                                        color: expressDeliveryGradientDividerColor),
-                                                                  ),
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(16.0
-                                                                                .sp),
-                                                                    child:
-                                                                      Image.network(
-                                          'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width, // Optional: set the width
-                                          height: 128.sp, // Optional: set the height
-                                          fit: BoxFit.fill, // Optional: fit the image
-                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                          
                               Container(
-                                                              height: 80.sp,
-                                                              width: 80.sp,
-                                                              padding: EdgeInsets.all(8.sp),
-                                                              child: CircleAvatar(
-                                                                backgroundColor:
-                                                                    homeAppBarColor,
-                                                                child: Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width: 1.sp,
-                                                                        color: expressDeliveryGradientDividerColor),
-                                                                  ),
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(16.0
-                                                                                .sp),
-                                                                    child:
-                                                                      Image.network(
-                                          'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width, // Optional: set the width
-                                          height: 128.sp, // Optional: set the height
-                                          fit: BoxFit.fill, // Optional: fit the image
-                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                          
+                                height: 80.sp,
+                                width: 80.sp,
+                                padding: EdgeInsets.all(8.sp),
+                                child: CircleAvatar(
+                                  backgroundColor: homeAppBarColor,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          width: 1.sp,
+                                          color:
+                                              expressDeliveryGradientDividerColor),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0.sp),
+                                      child: Image.network(
+                                        'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
+                                        width: MediaQuery.of(context)
+                                            .size
+                                            .width, // Optional: set the width
+                                        height:
+                                            128.sp, // Optional: set the height
+                                        fit: BoxFit
+                                            .fill, // Optional: fit the image
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                               Container(
-                                                              height: 80.sp,
-                                                              width: 80.sp,
-                                                              padding: EdgeInsets.all(8.sp),
-                                                              child: CircleAvatar(
-                                                                backgroundColor:
-                                                                    homeAppBarColor,
-                                                                child: Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width: 1.sp,
-                                                                        color: expressDeliveryGradientDividerColor),
-                                                                  ),
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(16.0
-                                                                                .sp),
-                                                                    child:
-                                                                      Image.network(
-                                          'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width, // Optional: set the width
-                                          height: 128.sp, // Optional: set the height
-                                          fit: BoxFit.fill, // Optional: fit the image
-                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                          
+                                height: 80.sp,
+                                width: 80.sp,
+                                padding: EdgeInsets.all(8.sp),
+                                child: CircleAvatar(
+                                  backgroundColor: homeAppBarColor,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          width: 1.sp,
+                                          color:
+                                              expressDeliveryGradientDividerColor),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0.sp),
+                                      child: Image.network(
+                                        'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
+                                        width: MediaQuery.of(context)
+                                            .size
+                                            .width, // Optional: set the width
+                                        height:
+                                            128.sp, // Optional: set the height
+                                        fit: BoxFit
+                                            .fill, // Optional: fit the image
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                               Container(
-                                                              height: 80.sp,
-                                                              width: 80.sp,
-                                                              padding: EdgeInsets.all(8.sp),
-                                                              child: CircleAvatar(
-                                                                backgroundColor:
-                                                                    homeAppBarColor,
-                                                                child: Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width: 1.sp,
-                                                                        color: expressDeliveryGradientDividerColor),
-                                                                  ),
-                                                                  child: Padding(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(16.0
-                                                                                .sp),
-                                                                    child:
-                                                                      Image.network(
-                                          'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width, // Optional: set the width
-                                          height: 128.sp, // Optional: set the height
-                                          fit: BoxFit.fill, // Optional: fit the image
-                                        ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                          
-                          
-                          
+                                height: 80.sp,
+                                width: 80.sp,
+                                padding: EdgeInsets.all(8.sp),
+                                child: CircleAvatar(
+                                  backgroundColor: homeAppBarColor,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          width: 1.sp,
+                                          color:
+                                              expressDeliveryGradientDividerColor),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0.sp),
+                                      child: Image.network(
+                                        'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
+                                        width: MediaQuery.of(context)
+                                            .size
+                                            .width, // Optional: set the width
+                                        height:
+                                            128.sp, // Optional: set the height
+                                        fit: BoxFit
+                                            .fill, // Optional: fit the image
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 80.sp,
+                                width: 80.sp,
+                                padding: EdgeInsets.all(8.sp),
+                                child: CircleAvatar(
+                                  backgroundColor: homeAppBarColor,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          width: 1.sp,
+                                          color:
+                                              expressDeliveryGradientDividerColor),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0.sp),
+                                      child: Image.network(
+                                        'https://la-fetch.s3.ap-south-1.amazonaws.com/catalogs/thumbnails/thumbnail_photo_67580cdadb3e4.jpg', // Image URL
+                                        width: MediaQuery.of(context)
+                                            .size
+                                            .width, // Optional: set the width
+                                        height:
+                                            128.sp, // Optional: set the height
+                                        fit: BoxFit
+                                            .fill, // Optional: fit the image
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -676,7 +654,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                   ],
                 ),
               ), */
-       
+
               Stack(
                 children: [
                   Obx(

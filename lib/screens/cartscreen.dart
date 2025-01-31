@@ -55,7 +55,6 @@ class CartScreenState extends State<CartScreen> {
       controller.couponList.clear();
       controller.selected.clear();
       controller.selected = List.generate(50, (i) => false).obs;
-      controller.getCouponData();
     });
     getPrefrenceValue();
     /*  WidgetsBinding.instance.addPostFrameCallback(
@@ -1302,18 +1301,8 @@ class CartScreenState extends State<CartScreen> {
                                                                         controller
                                                                             .callRemoveCoupon();
                                                                       } else {
-                                                                        Get.to(
-                                                                            BottomCoupon(
-                                                                          list:
-                                                                              controller.couponList,
-                                                                          onPressed:
-                                                                              (p0) {
-                                                                            controller.couponText.value =
-                                                                                p0;
-                                                                            controller.callAddCoupon(p0,
-                                                                                "cart");
-                                                                          },
-                                                                        ));
+                                                                        controller
+                                                                            .getCouponData();
                                                                       }
                                                                     },
                                                                     child: controller

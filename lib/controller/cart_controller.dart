@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/cartwidgets/bottomCoupon.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -112,6 +113,13 @@ class CartController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           couponList = responseData;
+          Get.to(BottomCoupon(
+            list: couponList,
+            onPressed: (p0) {
+              couponText.value = p0;
+              callAddCoupon(p0, "cart");
+            },
+          ));
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

@@ -13,6 +13,7 @@ import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
+import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import '../utils/constants.dart';
 
 class QuickScreen extends StatefulWidget {
@@ -35,6 +36,9 @@ class QuickScreenState extends State<QuickScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getHandPickedProduct("", false, false, 0));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      brandController.getBrandData("brand");
+    });
     super.initState();
   }
 
@@ -91,25 +95,28 @@ class QuickScreenState extends State<QuickScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                AppText(
-                                  text: "Deliver to Akash",
-                                  color: whiteColor,
-                                  fontSize: 12,
-                                  fontFamily: "Franklin Gothic Semibold",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 4.sp),
-                                  child: SvgPicture.asset(
-                                    dropdownSvgImage,
-                                    height: 6.sp,
-                                    width: 8.sp,
+                            InkWell(
+                              onTap: () {},
+                              child: Row(
+                                children: [
+                                  AppText(
+                                    text: "Deliver to Akash",
+                                    color: whiteColor,
+                                    fontSize: 12,
+                                    fontFamily: "Franklin Gothic Semibold",
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                ),
-                              ],
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 4.sp),
+                                    child: SvgPicture.asset(
+                                      dropdownSvgImage,
+                                      height: 6.sp,
+                                      width: 8.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             Container(
                               width:
@@ -185,10 +192,30 @@ class QuickScreenState extends State<QuickScreen> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 24.sp),
-                  child: SvgPicture.asset(
-                    pumaSvgImage,
+                  child: Image.asset(
+                    pumaImage,
                     height: 128.sp,
                     width: MediaQuery.of(context).size.width,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 24.sp),
+                  child: Container(
+                    height: 30.sp,
+                    color: expressDeliveryBanner,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Text(
+                        'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN 30 MINS ✦ MORE THAN 50 HOMEGROWN BRANDS',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: Colors.white, // Text color
+                          fontSize: 12, // Text size
+                          fontWeight: FontWeight.w400, // Text weight
+                        ),
+                        textAlign: TextAlign.center, // Center align text
+                      ),
+                    ),
                   ),
                 ),
                 Obx(() => homeController.isBrand.value
@@ -542,7 +569,13 @@ class QuickScreenState extends State<QuickScreen> {
                                                       ),
                                                     ),
                                                     InkWell(
-                                                      onTap: () {},
+                                                      onTap: () {
+                                                        Get.to(BrandViewProductScreen(
+                                                            title: value
+                                                                    .brandList[
+                                                                index]["name"],
+                                                            genderName: "Men"));
+                                                      },
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsets.only(
@@ -560,7 +593,13 @@ class QuickScreenState extends State<QuickScreen> {
                                                       ),
                                                     ),
                                                     InkWell(
-                                                      onTap: () {},
+                                                      onTap: () {
+                                                        Get.to(BrandViewProductScreen(
+                                                            title: value
+                                                                    .brandList[
+                                                                index]["name"],
+                                                            genderName: "Men"));
+                                                      },
                                                       child: Padding(
                                                         padding:
                                                             EdgeInsets.only(

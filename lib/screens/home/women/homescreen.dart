@@ -97,8 +97,8 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    /* WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false)); */
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false, false, 0));
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */

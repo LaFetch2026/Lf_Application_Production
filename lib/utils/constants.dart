@@ -233,6 +233,8 @@ const pumaSvgImage = 'assets/images/puma_svg.svg';
 const fullLineSvgImage = 'assets/images/full_line.svg';
 const rightLineSvgImage = 'assets/images/right_line.svg';
 const leftLineSvgImage = 'assets/images/left_line.svg';
+const bagSvgImage = 'assets/images/bag_unselected.svg';
+const pumaImage = 'assets/images/puma_image.png';
 
 class ApiConstants {
   ApiConstants._();
