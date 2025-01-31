@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,10 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
 import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import '../utils/constants.dart';
@@ -31,6 +34,9 @@ class QuickScreenState extends State<QuickScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      homeController.getBannar2Data();
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
@@ -190,14 +196,153 @@ class QuickScreenState extends State<QuickScreen> {
                     ),
                   ),
                 ),
-                Padding(
+                /* Padding(
                   padding: EdgeInsets.symmetric(vertical: 24.sp),
                   child: Image.asset(
                     pumaImage,
                     height: 128.sp,
                     width: MediaQuery.of(context).size.width,
                   ),
-                ),
+                ), */
+                Obx(() => homeController.isBanner2.value
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.sp),
+                        child: SizedBox(
+                          height: 128.sp,
+                          width: double.infinity,
+                          child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: 5,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (ctx, index) {
+                                return Container(
+                                  height: 128.sp,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    color: cardBg,
+                                  ),
+                                );
+                              }),
+                        ))
+                    : homeController.banner2List.isNotEmpty
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 24.sp),
+                                child: CarouselSlider.builder(
+                                  itemCount: homeController.banner2List.length,
+                                  options: CarouselOptions(
+                                    height: 128.sp,
+                                    viewportFraction: 1.0,
+                                    aspectRatio: 2.0,
+                                    autoPlay: true,
+                                    onPageChanged: (index, reason) {
+                                      homeController.currentPage.value = index;
+                                      homeController.update();
+                                    },
+                                    autoPlayInterval:
+                                        const Duration(seconds: 3),
+                                    enlargeCenterPage: true,
+                                  ),
+                                  itemBuilder: (BuildContext context,
+                                          int itemIndex, int pageViewIndex) =>
+                                      GestureDetector(
+                                    onTap: () async {
+                                      homeController.bannerTag1Id.clear();
+                                      homeController.bannerCategory1Id.clear();
+                                      productController.productCategory.clear();
+                                      productController.productTags.clear();
+
+                                      for (var i = 0;
+                                          i <
+                                              homeController
+                                                  .banner2List[itemIndex]
+                                                      ["tags"]
+                                                  .length;
+                                          i++) {
+                                        homeController.bannerTag1Id.add(
+                                            homeController
+                                                    .banner2List[itemIndex]
+                                                ["tags"][i]["id"]);
+                                      }
+                                      for (var i = 0;
+                                          i <
+                                              homeController
+                                                  .banner2List[itemIndex]
+                                                      ["categories"]
+                                                  .length;
+                                          i++) {
+                                        homeController.bannerCategory1Id.add(
+                                            homeController
+                                                    .banner2List[itemIndex]
+                                                ["categories"][i]["id"]);
+                                      }
+                                      productController.productCategory =
+                                          homeController.bannerCategory1Id;
+                                      productController.productTags =
+                                          homeController.bannerTag1Id;
+                                      Navigator.push(
+                                          context,
+                                          scaleIn(
+                                            CategoryProductScreen(
+                                              genderName: "",
+                                              categoryName: homeController
+                                                      .banner2List[itemIndex]
+                                                  ["name"],
+                                              categoryId: 0,
+                                              brandId: 0,
+                                              genderType: homeController
+                                                  .homeGenderValue.value,
+                                              tagIds:
+                                                  homeController.bannerTag1Id,
+                                              categoryList: homeController
+                                                  .bannerCategory1Id,
+                                            ),
+                                          ));
+                                      await analytics.logEvent(
+                                        name: 'banner_home_page',
+                                        parameters: <String, Object>{
+                                          'page_name': 'banner_home_page',
+                                        },
+                                      );
+                                    },
+                                    child: CachedNetworkImage(
+                                      cacheManager: CacheManager(Config(
+                                          "customCacheKey",
+                                          stalePeriod: const Duration(days: 15),
+                                          maxNrOfCacheObjects: 100)),
+                                      fit: BoxFit.fill,
+                                      imageUrl: homeController
+                                          .banner2List[itemIndex]["image"],
+                                      height: 128.sp,
+                                      width: MediaQuery.of(context).size.width,
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) =>
+                                              Center(
+                                        child: Container(
+                                          height: 128.sp,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          decoration: BoxDecoration(
+                                            color: cardBg,
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                        downloadImage,
+                                        height: 128.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          )),
                 Padding(
                   padding: EdgeInsets.only(bottom: 24.sp),
                   child: Container(

@@ -195,9 +195,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         return GestureDetector(
                                           onTap: () async {
                                             Get.to(ProductDetailsScreen(
+                                                    backgroundcolor:
+                                                        homeAppBarColor,
                                                     brandName: productController
                                                             .handPickedProductList[
-                                                        index]["brand_name"],
+                                                        index]["name"],
                                                     productId: productController
                                                             .handPickedProductList[
                                                         index]["id"],

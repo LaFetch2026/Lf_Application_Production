@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar.dart';
@@ -41,9 +42,11 @@ class ProductDetailsScreen extends StatefulWidget {
   final int wishlistProductId;
   final int boardId;
   final String Slug;
+  final Color backgroundcolor;
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
+      this.backgroundcolor = whiteColor,
       this.brandName = "",
       required this.type,
       this.boardId = 0,
@@ -767,51 +770,89 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: whiteColor,
+        backgroundColor: widget.backgroundcolor,
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProductdetailsAppbar(
-              onPressedHeart: () async {
-                if (wishlistController.wishListDetails["wishlisted"]) {
-                  wishlistController.callAddProductToWishlist(
-                      wishlistController.wishListDetails["wishlist_id"],
-                      productController.productDetails["id"]);
-                  await analytics.logEvent(
-                    name: 'productdetails_wishlist_remove',
-                    parameters: <String, Object>{
-                      'page_name': 'productdetails_wishlist_remove',
-                    },
-                  );
-                } else {
-                  scaffoldKey.currentState
-                      ?.showBottomSheet((context) => BottomWishlist(
-                          controller: wishlistController,
-                          onPressed: (p0) {
-                            wishlistController.callAddProductToWishlist(
-                                p0, productController.productDetails["id"]);
+            widget.backgroundcolor == whiteColor
+                ? ProductdetailsAppbar(
+                    onPressedHeart: () async {
+                      if (wishlistController.wishListDetails["wishlisted"]) {
+                        wishlistController.callAddProductToWishlist(
+                            wishlistController.wishListDetails["wishlist_id"],
+                            productController.productDetails["id"]);
+                        await analytics.logEvent(
+                          name: 'productdetails_wishlist_remove',
+                          parameters: <String, Object>{
+                            'page_name': 'productdetails_wishlist_remove',
                           },
-                          wishlistList: wishlistController.wishlistList));
-                  await analytics.logEvent(
-                    name: 'productdetails_wishlist_add',
-                    parameters: <String, Object>{
-                      'page_name': 'productdetails_wishlist_add',
+                        );
+                      } else {
+                        scaffoldKey.currentState
+                            ?.showBottomSheet((context) => BottomWishlist(
+                                controller: wishlistController,
+                                onPressed: (p0) {
+                                  wishlistController.callAddProductToWishlist(
+                                      p0,
+                                      productController.productDetails["id"]);
+                                },
+                                wishlistList: wishlistController.wishlistList));
+                        await analytics.logEvent(
+                          name: 'productdetails_wishlist_add',
+                          parameters: <String, Object>{
+                            'page_name': 'productdetails_wishlist_add',
+                          },
+                        );
+                      }
                     },
-                  );
-                }
-              },
-              onPressedShare: () async {
-                Share.share(productController.productDetails["share_link"]);
-                await analytics.logEvent(
-                  name: 'share_product',
-                  parameters: <String, Object>{
-                    'page_name': 'share_product',
-                  },
-                );
-              },
-            ),
-            Container(
-              height: 1.sp,
-              color: dividerColor,
+                    onPressedShare: () async {
+                      Share.share(
+                          productController.productDetails["share_link"]);
+                      await analytics.logEvent(
+                        name: 'share_product',
+                        parameters: <String, Object>{
+                          'page_name': 'share_product',
+                        },
+                      );
+                    },
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          icon: SvgPicture.asset(arrowBack,
+                              color: whiteColor,
+                              height: 15.sp,
+                              width: 15.sp,
+                              fit: BoxFit.cover),
+                          onPressed: () {
+                            Get.back();
+                          },
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 80.sp,
+                          child: AppText(
+                            text: widget.brandName.toUpperCase(),
+                            color: whiteColor,
+                            fontSize: 16,
+                            maxLines: 1,
+                            fontFamily: "Franklin Gothic Semibold",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+            Visibility(
+              visible: widget.backgroundcolor == whiteColor ? true : false,
+              child: Container(
+                height: 1.sp,
+                color: dividerColor,
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(

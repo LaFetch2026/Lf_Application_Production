@@ -92,9 +92,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       backgroundColor: whiteColor,
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
-        color: _currentIndex == 4 ? homeAppBarColor : whiteColor,
+        color: _currentIndex == 4 || _currentIndex == 5
+            ? homeAppBarColor
+            : whiteColor,
         height: 80.sp,
-        child: _currentIndex == 4
+        child: _currentIndex == 4 || _currentIndex == 5
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.min,
@@ -148,7 +150,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () async {
-                        /*  if (skipValue == true) {
+                        if (skipValue == true) {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   const LoginScreen(
@@ -165,7 +167,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                             'page_name': 'brand_page',
                             'page_index': _currentIndex,
                           },
-                        ); */
+                        );
                       },
                       child: Container(
                         height: 80.sp,
@@ -177,6 +179,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                               _currentIndex == 4
                                   ? quickSelectedSvgImage
                                   : quickSvgImage,
+                              color: _currentIndex == 4
+                                  ? Color(0xFF988AFF)
+                                  : subtitleColor,
                               height: 19.sp,
                               width: 13.sp,
                             ),
@@ -187,7 +192,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                                 style: TextStyle(
                                     color: _currentIndex == 4
                                         ? Color(0xFF988AFF)
-                                        : Color(0xFF988AFF),
+                                        : subtitleColor,
                                     fontSize: 10.sp,
                                     fontFamily: "Franklin Gothic"),
                               ),
@@ -200,7 +205,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () async {
-                        Get.to(CartScreen());
+                        setState(() {
+                          _currentIndex = 5;
+                        });
                       },
                       child: Container(
                         height: 80.sp,
@@ -210,7 +217,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                           children: [
                             SvgPicture.asset(
                               bagSvgImage,
-                              color: subtitleColor,
+                              color: _currentIndex != 5
+                                  ? subtitleColor
+                                  : lightPurpleColor,
                               height: 24.sp,
                               width: 19.sp,
                             ),
@@ -219,7 +228,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                               child: Text(
                                 "Bag".toUpperCase(),
                                 style: TextStyle(
-                                    color: subtitleColor,
+                                    color: _currentIndex != 5
+                                        ? subtitleColor
+                                        : lightPurpleColor,
                                     fontSize: 10.sp,
                                     fontFamily: "Franklin Gothic"),
                               ),
@@ -512,7 +523,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                 ],
               ),
       ),
-      body: screen[_currentIndex],
+      body: _currentIndex == 5 ? CartScreen() : screen[_currentIndex],
     );
   }
 }
