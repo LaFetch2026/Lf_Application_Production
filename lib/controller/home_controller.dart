@@ -295,7 +295,7 @@ class HomeController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/banners?type=1"),
+          Uri.parse("${ApiConstants.baseUrl}/banners?type=2"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

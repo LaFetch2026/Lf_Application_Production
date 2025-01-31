@@ -26,6 +26,7 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:marquee/marquee.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1186,6 +1187,37 @@ class HomeScreenState extends State<HomeScreen> {
                               : const SizedBox(
                                   height: 0,
                                 )),
+                      Padding(
+                        padding: EdgeInsets.only(top: 16.sp),
+                        child: Container(
+                          height: 30.sp,
+                          color: Color(0xff7A6ECC),
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.sp),
+                            child: Marquee(
+                              text:
+                                  'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN 30 MINS ✦ MORE THAN 50 HOMEGROWN BRANDS',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                              ),
+                              scrollAxis: Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              blankSpace: 20.0,
+                              velocity: 100.0,
+                              pauseAfterRound: Duration(seconds: 1),
+                              startPadding: 10.0,
+                              accelerationDuration: Duration(seconds: 1),
+                              accelerationCurve: Curves.linear,
+                              decelerationDuration: Duration(milliseconds: 500),
+                              decelerationCurve: Curves.easeOut,
+                            ),
+                          ),
+                        ),
+                      ),
                       Obx(() => homeController.isCategory.value
                           ? const DummyGridMostSearch(
                               text: "",

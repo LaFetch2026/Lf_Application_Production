@@ -17,6 +17,7 @@ import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
+import 'package:marquee/marquee.dart';
 import '../utils/constants.dart';
 
 class QuickScreen extends StatefulWidget {
@@ -349,16 +350,27 @@ class QuickScreenState extends State<QuickScreen> {
                     height: 30.sp,
                     color: expressDeliveryBanner,
                     width: MediaQuery.of(context).size.width,
-                    child: Center(
-                      child: Text(
-                        'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN 30 MINS ✦ MORE THAN 50 HOMEGROWN BRANDS',
-                        maxLines: 1,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.sp),
+                      child: Marquee(
+                        text:
+                            'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN 30 MINS ✦ MORE THAN 50 HOMEGROWN BRANDS',
                         style: TextStyle(
-                          color: Colors.white, // Text color
-                          fontSize: 12, // Text size
-                          fontWeight: FontWeight.w400, // Text weight
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
                         ),
-                        textAlign: TextAlign.center, // Center align text
+                        scrollAxis: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        blankSpace: 20.0,
+                        velocity: 100.0,
+                        pauseAfterRound: Duration(seconds: 1),
+                        startPadding: 10.0,
+                        accelerationDuration: Duration(seconds: 1),
+                        accelerationCurve: Curves.linear,
+                        decelerationDuration: Duration(milliseconds: 500),
+                        decelerationCurve: Curves.easeOut,
                       ),
                     ),
                   ),
