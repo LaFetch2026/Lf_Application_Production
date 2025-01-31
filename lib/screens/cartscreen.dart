@@ -2502,7 +2502,7 @@ class CartScreenState extends State<CartScreen> {
                           },
                           child: Container(
                             width: double.infinity,
-                            height: 50.sp,
+                            height: 70.sp,
                             color: homeAppBarColor,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,

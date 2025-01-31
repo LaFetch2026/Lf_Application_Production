@@ -675,7 +675,7 @@ class MapScreenState extends State<MapScreen> {
           },
           child: Container(
             width: double.infinity,
-            height: 50.sp,
+            height: 70.sp,
             color: homeAppBarColor,
             margin: EdgeInsets.only(top: 20.sp),
             child: Column(

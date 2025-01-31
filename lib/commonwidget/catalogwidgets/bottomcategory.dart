@@ -12,11 +12,13 @@ class BottomCategory extends StatefulWidget {
   final String gender;
   final Function(String) onPressedButton;
   final Function onPressedFilter;
+  final Color backgroundColor;
 
   const BottomCategory({
     Key? key,
     required this.gender,
     required this.onPressedButton,
+    this.backgroundColor = whiteColor,
     required this.onPressedFilter,
   }) : super(key: key);
 
@@ -57,7 +59,7 @@ class _BottomCategoryState extends State<BottomCategory> {
       height: 270.sp,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: whiteColor,
+        color: widget.backgroundColor,
         /*   borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.sp), topRight: Radius.circular(16.sp)), */
       ),
@@ -85,7 +87,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                             child: Text(
                               "Category".toUpperCase(),
                               style: TextStyle(
-                                color: blackColor,
+                                color: widget.backgroundColor == whiteColor
+                                    ? blackColor
+                                    : whiteColor,
                                 fontSize: 16.sp,
                                 fontFamily: "Franklin Gothic Semibold",
                                 fontWeight: FontWeight.w600,
@@ -106,7 +110,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                                   decoration: TextDecoration.underline,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: subtitleColor,
+                                  color: widget.backgroundColor == whiteColor
+                                      ? subtitleColor
+                                      : whiteColor,
                                   fontSize: 10.sp,
                                 ),
                               ),
@@ -120,7 +126,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                     children: [
                       Radio(
                           value: "Men",
-                          activeColor: homeAppBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? homeAppBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -138,7 +146,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                         child: Text(
                           "Men",
                           style: TextStyle(
-                            color: subtitleColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? subtitleColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -151,7 +161,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                     children: [
                       Radio(
                           value: "Women",
-                          activeColor: homeAppBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? homeAppBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -170,7 +182,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                         child: Text(
                           "Women",
                           style: TextStyle(
-                            color: subtitleColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? subtitleColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -183,7 +197,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                     children: [
                       Radio(
                           value: "Accessories",
-                          activeColor: homeAppBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? homeAppBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -201,7 +217,9 @@ class _BottomCategoryState extends State<BottomCategory> {
                         child: Text(
                           "Accesories",
                           style: TextStyle(
-                            color: subtitleColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? subtitleColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -217,6 +235,9 @@ class _BottomCategoryState extends State<BottomCategory> {
           DoubleButtonNew(
             firstText: "CLOSE",
             secondText: "APPLY",
+            lineColor: widget.backgroundColor == whiteColor
+                ? dividerColor
+                : homeAppBarColor,
             controller: controller,
             onPressedFirst: () {
               Get.back();

@@ -450,6 +450,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         ),
                         builder: (ctx) {
                           return BottomSortBy(
+                            backgroundColor: homeAppBarColor,
                             onPressedButton: (p0) {
                               productController.productSortBy.value = p0;
                               productController.getHandPickedProduct(
@@ -512,6 +513,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         ),
                         builder: (ctx) {
                           return BottomCategory(
+                            backgroundColor: homeAppBarColor,
                             gender: widget.genderName,
                             onPressedButton: (p0) {
                               if (p0 == "Women") {
@@ -538,6 +540,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 ),
                                 builder: (ctx) {
                                   return BottomFilters(
+                                    backgroundColor: homeAppBarColor,
                                     btnclearAll: () async {
                                       productController.brand_ids.clear();
                                       productController.color_ids.clear();
@@ -643,6 +646,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         ),
                         builder: (ctx) {
                           return BottomFilters(
+                            backgroundColor: homeAppBarColor,
                             btnclearAll: () async {
                               productController.brand_ids.clear();
                               productController.color_ids.clear();

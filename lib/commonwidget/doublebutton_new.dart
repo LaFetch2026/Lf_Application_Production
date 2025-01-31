@@ -13,10 +13,12 @@ class DoubleButtonNew extends StatelessWidget {
   final dynamic controller;
   final Function? onPressedFirst;
   final Function? onPressedSecond;
+  final Color lineColor;
 
   const DoubleButtonNew(
       {Key? key,
       required this.firstText,
+      this.lineColor = dividerColor,
       required this.secondText,
       required this.controller,
       this.fontFamily = "Franklin Gothic",
@@ -31,7 +33,7 @@ class DoubleButtonNew extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            color: dividerColor,
+            color: lineColor == dividerColor ? dividerColor : titleColor,
             width: double.infinity,
             height: 1.sp,
           ),
@@ -48,11 +50,17 @@ class DoubleButtonNew extends StatelessWidget {
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(0))),
                               side: MaterialStateProperty.all(
-                                BorderSide(width: 1, color: whiteColor),
+                                BorderSide(
+                                    width: 1,
+                                    color: lineColor == dividerColor
+                                        ? whiteColor
+                                        : homeAppBarColor),
                               ),
                               elevation: MaterialStateProperty.all(0.0),
-                              backgroundColor:
-                                  MaterialStateProperty.all(whiteColor),
+                              backgroundColor: MaterialStateProperty.all(
+                                  lineColor == dividerColor
+                                      ? whiteColor
+                                      : homeAppBarColor),
                               textStyle: MaterialStateProperty.all(TextStyle(
                                   color: titleColor,
                                   fontSize: 13.sp,
@@ -63,7 +71,9 @@ class DoubleButtonNew extends StatelessWidget {
                           child: Text(
                             firstText,
                             style: TextStyle(
-                                color: titleColor,
+                                color: lineColor == dividerColor
+                                    ? titleColor
+                                    : whiteColor,
                                 fontFamily: fontFamily,
                                 fontSize: 13.sp),
                           ))),
@@ -74,7 +84,9 @@ class DoubleButtonNew extends StatelessWidget {
                       child: Container(
                           width: (MediaQuery.of(context).size.width / 2),
                           height: 50.sp,
-                          color: homeAppBarColor,
+                          color: lineColor == dividerColor
+                              ? homeAppBarColor
+                              : lightPurpleColor,
                           child: (controller.pageState == PageState.LOADING)
                               ? Center(
                                   child: Transform.scale(
@@ -86,24 +98,24 @@ class DoubleButtonNew extends StatelessWidget {
                                 )
                               : ElevatedButton(
                                   style: ButtonStyle(
-                                      shape: MaterialStateProperty.all(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(0))),
-                                      side: MaterialStateProperty.all(
-                                          BorderSide(
-                                              color: homeAppBarColor,
-                                              width: 1.0,
-                                              style: BorderStyle.solid)),
+                                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(0))),
+                                      side: MaterialStateProperty.all(BorderSide(
+                                          color: lineColor == dividerColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor,
+                                          width: 1.0,
+                                          style: BorderStyle.solid)),
                                       elevation: MaterialStateProperty.all(0.0),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              homeAppBarColor),
-                                      textStyle: MaterialStateProperty.all(
-                                          TextStyle(
-                                              color: whiteColor,
-                                              fontSize: 13.sp,
-                                              fontFamily: fontFamily))),
+                                      backgroundColor: MaterialStateProperty.all(
+                                          lineColor == dividerColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor),
+                                      textStyle: MaterialStateProperty.all(TextStyle(
+                                          color: whiteColor,
+                                          fontSize: 13.sp,
+                                          fontFamily: fontFamily))),
                                   onPressed: () {
                                     onPressedSecond?.call();
                                   },

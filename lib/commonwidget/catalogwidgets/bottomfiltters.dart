@@ -13,9 +13,11 @@ class BottomFilters extends StatefulWidget {
   final Function btnclearAll;
   final int containerHeight;
   final int listHeight;
+  final Color backgroundColor;
   const BottomFilters({
     required this.onClick,
     required this.btnclearAll,
+    this.backgroundColor = whiteColor,
     this.containerHeight = 396,
     this.listHeight = 350,
     Key? key,
@@ -110,8 +112,8 @@ class BottomFiltersState extends State<BottomFilters> {
       height: 500.sp,
       constraints: BoxConstraints.expand(),
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        color: whiteColor,
+      decoration: BoxDecoration(
+        color: widget.backgroundColor,
       ),
       child: Column(
         children: [
@@ -120,7 +122,9 @@ class BottomFiltersState extends State<BottomFilters> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  color: Color(0xFFF9FAFB),
+                  color: widget.backgroundColor == whiteColor
+                      ? Color(0xFFF9FAFB)
+                      : lightPurpleColor,
                   child: Padding(
                     padding:
                         EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp),
@@ -131,7 +135,9 @@ class BottomFiltersState extends State<BottomFilters> {
                           child: Text(
                             "Filters".toUpperCase(),
                             style: TextStyle(
-                              color: blackColor,
+                              color: widget.backgroundColor == whiteColor
+                                  ? blackColor
+                                  : whiteColor,
                               fontSize: 16.sp,
                               decoration: TextDecoration.none,
                               fontFamily: "Franklin Gothic Semibold",
@@ -171,7 +177,9 @@ class BottomFiltersState extends State<BottomFilters> {
                                   decoration: TextDecoration.underline,
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
-                                  color: subtitleColor,
+                                  color: widget.backgroundColor == whiteColor
+                                      ? subtitleColor
+                                      : whiteColor,
                                   fontSize: 10.sp,
                                 ),
                               ),
@@ -185,7 +193,9 @@ class BottomFiltersState extends State<BottomFilters> {
                 Row(
                   children: [
                     Container(
-                      color: Color(0xFFF3F4F6),
+                      color: widget.backgroundColor == whiteColor
+                          ? Color(0xFFF3F4F6)
+                          : cardBg,
                       width: 150.sp,
                       height: widget.containerHeight.sp,
                       child: Padding(
@@ -256,8 +266,14 @@ class BottomFiltersState extends State<BottomFilters> {
                                           width:
                                               MediaQuery.of(context).size.width,
                                           color: selected[index]
-                                              ? whiteColor
-                                              : Color(0xFFF3F4F6),
+                                              ? widget.backgroundColor ==
+                                                      whiteColor
+                                                  ? whiteColor
+                                                  : homeAppBarColor
+                                              : widget.backgroundColor ==
+                                                      whiteColor
+                                                  ? Color(0xFFF3F4F6)
+                                                  : cardBg,
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 10.sp),
@@ -270,8 +286,14 @@ class BottomFiltersState extends State<BottomFilters> {
                                                 brands[index],
                                                 style: TextStyle(
                                                   color: selected[index]
-                                                      ? homeAppBarColor
-                                                      : appBarColor,
+                                                      ? widget.backgroundColor ==
+                                                              whiteColor
+                                                          ? homeAppBarColor
+                                                          : dividerColor
+                                                      : widget.backgroundColor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : dividerColor,
                                                   decoration:
                                                       TextDecoration.none,
                                                   fontSize: 14.sp,
@@ -291,7 +313,9 @@ class BottomFiltersState extends State<BottomFilters> {
                       ),
                     ),
                     Container(
-                      color: whiteColor,
+                      color: widget.backgroundColor == whiteColor
+                          ? whiteColor
+                          : homeAppBarColor,
                       width: MediaQuery.of(context).size.width - 150.sp,
                       height: widget.containerHeight.sp,
                       child: Padding(
@@ -323,7 +347,11 @@ class BottomFiltersState extends State<BottomFilters> {
                                               child: Text(
                                                 "Selected Price Range",
                                                 style: TextStyle(
-                                                  color: textColor,
+                                                  color:
+                                                      widget.backgroundColor ==
+                                                              whiteColor
+                                                          ? textColor
+                                                          : dividerColor,
                                                   fontSize: 14.sp,
                                                   decoration:
                                                       TextDecoration.none,
@@ -338,14 +366,22 @@ class BottomFiltersState extends State<BottomFilters> {
                                               child: SizedBox(
                                                 width: double.maxFinite,
                                                 child: Material(
-                                                  color: whiteColor,
+                                                  color:
+                                                      widget.backgroundColor ==
+                                                              whiteColor
+                                                          ? whiteColor
+                                                          : homeAppBarColor,
                                                   child: RangeSlider(
                                                     values: values,
                                                     min: 500,
                                                     max: 500000,
                                                     // divisions: 5,
                                                     inactiveColor: Colors.grey,
-                                                    activeColor: btnTextColor,
+                                                    activeColor:
+                                                        widget.backgroundColor ==
+                                                                whiteColor
+                                                            ? btnTextColor
+                                                            : lightPurpleColor,
                                                     labels: labels,
                                                     onChanged: (newValue) {
                                                       productController
@@ -381,7 +417,11 @@ class BottomFiltersState extends State<BottomFilters> {
                                                   child: Text(
                                                     "\u{20B9} ${lowerValue} - \u{20B9} ${UpperValue}",
                                                     style: TextStyle(
-                                                      color: textColor,
+                                                      color:
+                                                          widget.backgroundColor ==
+                                                                  whiteColor
+                                                              ? textColor
+                                                              : dividerColor,
                                                       fontSize: 14.sp,
                                                       decoration:
                                                           TextDecoration.none,
@@ -459,11 +499,19 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                   horizontal:
                                                                       5),
                                                           child: Material(
+                                                            color:
+                                                                widget.backgroundColor ==
+                                                                        whiteColor
+                                                                    ? whiteColor
+                                                                    : cardBg,
                                                             child: Container(
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  color:
-                                                                      whiteColor,
+                                                                  color: widget
+                                                                              .backgroundColor ==
+                                                                          whiteColor
+                                                                      ? whiteColor
+                                                                      : cardBg,
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -473,23 +521,31 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     top: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     left: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     right: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     bottom: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                   ),
                                                                 ),
                                                                 width: 20,
@@ -556,11 +612,19 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                   horizontal:
                                                                       5.sp),
                                                           child: Material(
+                                                            color:
+                                                                widget.backgroundColor ==
+                                                                        whiteColor
+                                                                    ? whiteColor
+                                                                    : cardBg,
                                                             child: Container(
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  color:
-                                                                      whiteColor,
+                                                                  color: widget
+                                                                              .backgroundColor ==
+                                                                          whiteColor
+                                                                      ? whiteColor
+                                                                      : cardBg,
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -570,23 +634,31 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     top: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     left: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     right: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     bottom: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                   ),
                                                                 ),
                                                                 width: 20,
@@ -653,11 +725,19 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                   horizontal:
                                                                       5.sp),
                                                           child: Material(
+                                                            color:
+                                                                widget.backgroundColor ==
+                                                                        whiteColor
+                                                                    ? whiteColor
+                                                                    : cardBg,
                                                             child: Container(
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  color:
-                                                                      whiteColor,
+                                                                  color: widget
+                                                                              .backgroundColor ==
+                                                                          whiteColor
+                                                                      ? whiteColor
+                                                                      : cardBg,
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -667,23 +747,31 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                     top: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     left: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     right: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                     bottom: BorderSide(
                                                                         width: 2.0
                                                                             .sp,
-                                                                        color:
-                                                                            titleColor),
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : cardBg),
                                                                   ),
                                                                 ),
                                                                 width: 20,
@@ -750,7 +838,11 @@ class BottomFiltersState extends State<BottomFilters> {
                                                         child: Text(
                                                           "Select All",
                                                           style: TextStyle(
-                                                            color: titleColor,
+                                                            color: widget
+                                                                        .backgroundColor ==
+                                                                    whiteColor
+                                                                ? titleColor
+                                                                : dividerColor,
                                                             decoration:
                                                                 TextDecoration
                                                                     .none,
@@ -796,15 +888,19 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                               5),
                                                                       child:
                                                                           Material(
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? whiteColor
+                                                                            : cardBg,
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
-                                                                              color: whiteColor,
+                                                                              color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
                                                                               borderRadius: BorderRadius.circular(3),
                                                                               border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                left: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                right: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
                                                                               ),
                                                                             ),
                                                                             width: 20,
@@ -837,15 +933,19 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                               5.sp),
                                                                       child:
                                                                           Material(
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? whiteColor
+                                                                            : cardBg,
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
-                                                                              color: whiteColor,
+                                                                              color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
                                                                               borderRadius: BorderRadius.circular(3),
                                                                               border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                left: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                right: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
                                                                               ),
                                                                             ),
                                                                             width: 20,
@@ -878,15 +978,19 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                               5.sp),
                                                                       child:
                                                                           Material(
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? whiteColor
+                                                                            : cardBg,
                                                                         child: Container(
                                                                             decoration: BoxDecoration(
-                                                                              color: whiteColor,
+                                                                              color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
                                                                               borderRadius: BorderRadius.circular(3),
                                                                               border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                left: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                right: BorderSide(width: 2.0.sp, color: titleColor),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: titleColor),
+                                                                                top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
                                                                               ),
                                                                             ),
                                                                             width: 20,
@@ -922,8 +1026,10 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                           "name"],
                                                                       style:
                                                                           TextStyle(
-                                                                        color:
-                                                                            titleColor,
+                                                                        color: widget.backgroundColor ==
+                                                                                whiteColor
+                                                                            ? titleColor
+                                                                            : dividerColor,
                                                                         decoration:
                                                                             TextDecoration.none,
                                                                         fontSize:
@@ -955,6 +1061,9 @@ class BottomFiltersState extends State<BottomFilters> {
             ),
           ),
           FilterButton(
+            lineColor: widget.backgroundColor == whiteColor
+                ? dividerColor
+                : homeAppBarColor,
             onPresedApply: () async {
               final prefs = await SharedPreferences.getInstance();
               List<String> brandList =

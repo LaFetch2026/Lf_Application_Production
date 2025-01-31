@@ -571,10 +571,24 @@ class QuickScreenState extends State<QuickScreen> {
                                                     InkWell(
                                                       onTap: () {
                                                         Get.to(BrandViewProductScreen(
-                                                            title: value
-                                                                    .brandList[
-                                                                index]["name"],
-                                                            genderName: "Men"));
+                                                                title:
+                                                                    value.brandList[
+                                                                            index]
+                                                                        [
+                                                                        "name"],
+                                                                genderName:
+                                                                    "Men"))
+                                                            ?.then(
+                                                                (value) =>
+                                                                    setState(
+                                                                      () {
+                                                                        productController.getHandPickedProduct(
+                                                                            "",
+                                                                            false,
+                                                                            false,
+                                                                            0);
+                                                                      },
+                                                                    ));
                                                       },
                                                       child: Padding(
                                                         padding:
@@ -595,10 +609,24 @@ class QuickScreenState extends State<QuickScreen> {
                                                     InkWell(
                                                       onTap: () {
                                                         Get.to(BrandViewProductScreen(
-                                                            title: value
-                                                                    .brandList[
-                                                                index]["name"],
-                                                            genderName: "Men"));
+                                                                title:
+                                                                    value.brandList[
+                                                                            index]
+                                                                        [
+                                                                        "name"],
+                                                                genderName:
+                                                                    "Men"))
+                                                            ?.then(
+                                                                (value) =>
+                                                                    setState(
+                                                                      () {
+                                                                        productController.getHandPickedProduct(
+                                                                            "",
+                                                                            false,
+                                                                            false,
+                                                                            0);
+                                                                      },
+                                                                    ));
                                                       },
                                                       child: Padding(
                                                         padding:

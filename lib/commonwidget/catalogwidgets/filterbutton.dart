@@ -8,7 +8,13 @@ import '../../utils/constants.dart';
 
 class FilterButton extends StatefulWidget {
   final Function onPresedApply;
-  const FilterButton({Key? key, required this.onPresedApply}) : super(key: key);
+  final Color lineColor;
+
+  const FilterButton({
+    Key? key,
+    required this.onPresedApply,
+    this.lineColor = dividerColor,
+  }) : super(key: key);
 
   @override
   State<FilterButton> createState() => _FilterButtonState();
@@ -38,13 +44,21 @@ class _FilterButtonState extends State<FilterButton> {
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(0))),
                             side: MaterialStateProperty.all(
-                              BorderSide(width: 1, color: whiteColor),
+                              BorderSide(
+                                  width: 1,
+                                  color: widget.lineColor == dividerColor
+                                      ? whiteColor
+                                      : homeAppBarColor),
                             ),
                             elevation: MaterialStateProperty.all(0.0),
-                            backgroundColor:
-                                MaterialStateProperty.all(whiteColor),
+                            backgroundColor: MaterialStateProperty.all(
+                                widget.lineColor == dividerColor
+                                    ? whiteColor
+                                    : homeAppBarColor),
                             textStyle: MaterialStateProperty.all(TextStyle(
-                                color: titleColor,
+                                color: widget.lineColor == dividerColor
+                                    ? titleColor
+                                    : whiteColor,
                                 fontSize: 13.sp,
                                 fontFamily: "Franklin Gothic"))),
                         onPressed: () {
@@ -53,7 +67,9 @@ class _FilterButtonState extends State<FilterButton> {
                         child: Text(
                           "CLOSE",
                           style: TextStyle(
-                              color: titleColor,
+                              color: widget.lineColor == dividerColor
+                                  ? titleColor
+                                  : whiteColor,
                               fontFamily: "Franklin Gothic",
                               fontSize: 13.sp),
                         ))),
@@ -64,7 +80,9 @@ class _FilterButtonState extends State<FilterButton> {
                 child: Container(
                     width: (MediaQuery.of(context).size.width / 2),
                     height: 50.sp,
-                    color: homeAppBarColor,
+                    color: widget.lineColor == dividerColor
+                        ? homeAppBarColor
+                        : lightPurpleColor,
                     child: isFilter
                         ? Center(
                             child: SizedBox(
@@ -83,12 +101,16 @@ class _FilterButtonState extends State<FilterButton> {
                                         borderRadius:
                                             BorderRadius.circular(0))),
                                 side: MaterialStateProperty.all(BorderSide(
-                                    color: homeAppBarColor,
+                                    color: widget.lineColor == dividerColor
+                                        ? homeAppBarColor
+                                        : lightPurpleColor,
                                     width: 1.0,
                                     style: BorderStyle.solid)),
                                 elevation: MaterialStateProperty.all(0.0),
-                                backgroundColor:
-                                    MaterialStateProperty.all(homeAppBarColor),
+                                backgroundColor: MaterialStateProperty.all(
+                                    widget.lineColor == dividerColor
+                                        ? homeAppBarColor
+                                        : lightPurpleColor),
                                 textStyle: MaterialStateProperty.all(TextStyle(
                                     color: whiteColor,
                                     fontSize: 13.sp,

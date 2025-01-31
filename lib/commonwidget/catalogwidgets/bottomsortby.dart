@@ -13,9 +13,11 @@ import '../../utils/constants.dart';
 
 class BottomSortBy extends StatefulWidget {
   final Function(String) onPressedButton;
+  final Color backgroundColor;
 
   const BottomSortBy({
     Key? key,
+    this.backgroundColor = whiteColor,
     required this.onPressedButton,
   }) : super(key: key);
 
@@ -54,7 +56,7 @@ class _BottomSortByState extends State<BottomSortBy> {
       height: 360.sp,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: whiteColor,
+        color: widget.backgroundColor,
         /*  borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.sp), topRight: Radius.circular(16.sp)), */
       ),
@@ -76,7 +78,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                           child: Text(
                             "SORT BY",
                             style: TextStyle(
-                              color: blackColor,
+                              color: widget.backgroundColor == whiteColor
+                                  ? blackColor
+                                  : whiteColor,
                               fontSize: 16.sp,
                               fontFamily: "Franklin Gothic Semibold",
                               fontWeight: FontWeight.w600,
@@ -90,7 +94,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                           child: Container(
                             color: Colors.transparent,
                             child: SvgPicture.asset(crossSearchImage,
-                                color: subtitleColor,
+                                color: widget.backgroundColor == whiteColor
+                                    ? subtitleColor
+                                    : dividerColor,
                                 height: 13.sp,
                                 width: 13.sp,
                                 fit: BoxFit.cover),
@@ -103,7 +109,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                     children: [
                       Radio(
                           value: "recommended",
-                          activeColor: appBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? appBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -122,7 +130,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                         child: Text(
                           "Recommended",
                           style: TextStyle(
-                            color: appBarColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? appBarColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -135,7 +145,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                     children: [
                       Radio(
                           value: "low-to-high",
-                          activeColor: appBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? appBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -153,7 +165,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                         child: Text(
                           "Price - low to high",
                           style: TextStyle(
-                            color: appBarColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? appBarColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -166,7 +180,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                     children: [
                       Radio(
                           value: "whats-new",
-                          activeColor: appBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? appBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -184,7 +200,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                         child: Text(
                           "What’s new",
                           style: TextStyle(
-                            color: appBarColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? appBarColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -197,7 +215,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                     children: [
                       Radio(
                           value: "high-to-low",
-                          activeColor: appBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? appBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -215,7 +235,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                         child: Text(
                           "Price - high to low",
                           style: TextStyle(
-                            color: appBarColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? appBarColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -228,7 +250,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                     children: [
                       Radio(
                           value: "customer-rating",
-                          activeColor: appBarColor,
+                          activeColor: widget.backgroundColor == whiteColor
+                              ? appBarColor
+                              : dividerColor,
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -246,7 +270,9 @@ class _BottomSortByState extends State<BottomSortBy> {
                         child: Text(
                           "Customer rating",
                           style: TextStyle(
-                            color: appBarColor,
+                            color: widget.backgroundColor == whiteColor
+                                ? appBarColor
+                                : dividerColor,
                             fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
@@ -262,6 +288,9 @@ class _BottomSortByState extends State<BottomSortBy> {
           DoubleButtonNew(
             firstText: "CLOSE",
             secondText: "APPLY",
+            lineColor: widget.backgroundColor == whiteColor
+                ? dividerColor
+                : homeAppBarColor,
             controller: controller,
             onPressedFirst: () {
               Get.back();
