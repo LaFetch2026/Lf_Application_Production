@@ -338,8 +338,8 @@ class HomeScreenState extends State<HomeScreen> {
                         () {
                           productController.categoryFilter.value =
                               homeController.homeGenderValue.value;
-                          productController.getHandPickedProduct(
-                              "", false, false, productController.tagId.value);
+                          /*   productController.getHandPickedProduct(
+                              "", false, false, productController.tagId.value); */
                         },
                       ));
               await analytics.logEvent(
