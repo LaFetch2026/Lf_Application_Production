@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lafetch/utils/constants.dart';
 
 class DoubleButtonIconNew extends StatelessWidget {
@@ -11,6 +12,7 @@ class DoubleButtonIconNew extends StatelessWidget {
   final dynamic controller;
   final Function? onPressedFirst;
   final Function? onPressedSecond;
+  final Color lineColor;
 
   const DoubleButtonIconNew(
       {Key? key,
@@ -18,6 +20,7 @@ class DoubleButtonIconNew extends StatelessWidget {
       required this.secondText,
       required this.controller,
       this.fontFamily = "Franklin Gothic",
+      this.lineColor = dividerColor,
       this.onPressedFirst,
       this.onPressedSecond})
       : super(key: key);
@@ -29,7 +32,7 @@ class DoubleButtonIconNew extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            color: dividerColor,
+            color: lineColor == dividerColor ? dividerColor : titleColor,
             width: double.infinity,
             height: 1.sp,
           ),
@@ -51,25 +54,35 @@ class DoubleButtonIconNew extends StatelessWidget {
                             )
                           : */
                           ElevatedButton.icon(
-                              icon: ImageIcon(
-                                AssetImage(cartNewImage),
-                                color: homeAppBarColor,
-                                size: 18.sp,
-                              ),
+                              icon: SvgPicture.asset(cartSvgImage,
+                                  height: 18.sp,
+                                  color: lineColor == dividerColor
+                                      ? homeAppBarColor
+                                      : whiteColor,
+                                  width: 15.sp,
+                                  fit: BoxFit.cover),
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(0))),
                                   side: MaterialStateProperty.all(
-                                    BorderSide(width: 1, color: whiteColor),
+                                    BorderSide(
+                                        width: 1,
+                                        color: lineColor == dividerColor
+                                            ? whiteColor
+                                            : homeAppBarColor),
                                   ),
                                   elevation: MaterialStateProperty.all(0.0),
-                                  backgroundColor:
-                                      MaterialStateProperty.all(whiteColor),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      lineColor == dividerColor
+                                          ? whiteColor
+                                          : homeAppBarColor),
                                   textStyle: MaterialStateProperty.all(
                                       TextStyle(
-                                          color: titleColor,
+                                          color: lineColor == dividerColor
+                                              ? titleColor
+                                              : whiteColor,
                                           fontSize: 13.sp,
                                           fontFamily: fontFamily))),
                               onPressed: () {
@@ -78,7 +91,9 @@ class DoubleButtonIconNew extends StatelessWidget {
                               label: Text(
                                 firstText,
                                 style: TextStyle(
-                                    color: titleColor,
+                                    color: lineColor == dividerColor
+                                        ? titleColor
+                                        : whiteColor,
                                     fontFamily: fontFamily,
                                     fontSize: 13.sp),
                               ))),
@@ -100,28 +115,37 @@ class DoubleButtonIconNew extends StatelessWidget {
                                   ),
                                 )
                               : */
-                          ElevatedButton(
+                          ElevatedButton.icon(
+                              icon: lineColor == dividerColor
+                                  ? null
+                                  : SvgPicture.asset(buyNowSvgImage,
+                                      height: 18.sp,
+                                      width: 18.sp,
+                                      fit: BoxFit.cover),
                               style: ButtonStyle(
                                   shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(0))),
                                   side: MaterialStateProperty.all(BorderSide(
-                                      color: homeAppBarColor,
+                                      color: lineColor == dividerColor
+                                          ? homeAppBarColor
+                                          : lightPurpleColor,
                                       width: 1.0,
                                       style: BorderStyle.solid)),
                                   elevation: MaterialStateProperty.all(0.0),
                                   backgroundColor: MaterialStateProperty.all(
-                                      homeAppBarColor),
-                                  textStyle: MaterialStateProperty.all(
-                                      TextStyle(
-                                          color: whiteColor,
-                                          fontSize: 13.sp,
-                                          fontFamily: fontFamily))),
+                                      lineColor == dividerColor
+                                          ? homeAppBarColor
+                                          : lightPurpleColor),
+                                  textStyle: MaterialStateProperty.all(TextStyle(
+                                      color: whiteColor,
+                                      fontSize: 13.sp,
+                                      fontFamily: fontFamily))),
                               onPressed: () {
                                 onPressedSecond?.call();
                               },
-                              child: Text(
+                              label: Text(
                                 secondText,
                                 style: TextStyle(
                                     fontFamily: fontFamily,

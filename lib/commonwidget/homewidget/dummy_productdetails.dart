@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
-import 'package:lafetch/utils/constants.dart';
+//import 'package:lafetch/utils/constants.dart';
 
 class DummyProductDetails extends StatelessWidget {
   const DummyProductDetails({
@@ -67,7 +67,7 @@ class DummyProductDetails extends StatelessWidget {
                   height: 20,
                 ),
               ),
-              Container(
+              /*  Container(
                 decoration: BoxDecoration(
                   color: whiteColor,
                   borderRadius: BorderRadius.circular(18),
@@ -80,7 +80,7 @@ class DummyProductDetails extends StatelessWidget {
                     height: 20,
                   ),
                 ),
-              )
+              ) */
             ],
           ),
         ),

@@ -18,6 +18,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:marquee/marquee.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
 
 class QuickScreen extends StatefulWidget {
@@ -726,7 +727,21 @@ class QuickScreenState extends State<QuickScreen> {
                                                       ),
                                                     ),
                                                     InkWell(
-                                                      onTap: () {
+                                                      onTap: () async {
+                                                        final prefs =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        prefs.remove(
+                                                            "brandList");
+                                                        prefs.remove(
+                                                            "colorList");
+                                                        prefs
+                                                            .remove("sizeList");
+                                                        prefs.remove("upper");
+                                                        prefs.remove("lower");
+                                                        prefs.remove("sortby");
+                                                        prefs
+                                                            .remove("category");
                                                         Get.to(BrandViewProductScreen(
                                                                 title:
                                                                     value.brandList[

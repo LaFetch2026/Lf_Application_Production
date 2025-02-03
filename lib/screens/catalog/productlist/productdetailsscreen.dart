@@ -1006,6 +1006,60 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ), */
                                       Visibility(
                                         visible:
+                                            widget.backgroundcolor == whiteColor
+                                                ? false
+                                                : true,
+                                        child: Positioned(
+                                            bottom: 20.sp,
+                                            left: 30.sp,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.0.sp),
+                                              height: 30.sp,
+                                              width: 74.sp,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0x80FFFFFF),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              20.sp))),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 2.sp),
+                                                    child: SvgPicture.asset(
+                                                        expressHourSvgImage,
+                                                        height: 10.sp,
+                                                        width: 10.sp,
+                                                        fit: BoxFit.cover),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 1.sp, left: 2.sp),
+                                                    child: AppText(
+                                                      text: "2 HOUR",
+                                                      fontFamily:
+                                                          "Franklin Gothic",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: homeAppBarColor,
+                                                      fontSize: 10,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )),
+                                      ),
+                                      Visibility(
+                                        visible:
                                             productController.productDetails[
                                                         "aggregated_rating"] !=
                                                     0
@@ -1081,7 +1135,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 ],
                                               ),
                                             )),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -1685,7 +1739,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                            padding: EdgeInsets.only(left: 12.sp, top: 24.sp),
                             child: AppText(
                               text: 'Delivery options'.toUpperCase(),
                               fontFamily: "Franklin Gothic Regular",
@@ -3036,6 +3090,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         dividerColor:
                                                             Colors.transparent),
                                                 child: ExpansionTile(
+                                                  collapsedIconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
+                                                  iconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
                                                   title: AppText(
                                                     text: 'About the Brand',
                                                     fontFamily:
@@ -4283,6 +4347,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       : productController.productDetails["added_to_cart"] ||
                               productController.addToCart.value
                           ? DoubleButtonIconNew(
+                              lineColor: titleColor,
                               firstText: "Go to BAG".toUpperCase(),
                               secondText: "Buy Now".toUpperCase(),
                               onPressedFirst: () async {
@@ -4303,6 +4368,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               },
                               controller: productController)
                           : DoubleButtonIconNew(
+                              lineColor: titleColor,
                               firstText: widget.type == "add"
                                   ? "Add to bag".toUpperCase()
                                   : "Move to bag".toUpperCase(),

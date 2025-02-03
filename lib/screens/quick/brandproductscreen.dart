@@ -14,7 +14,6 @@ import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_black.dart';
 import 'package:lafetch/controller/cart_controller.dart';
-import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
@@ -423,14 +422,14 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 padding: EdgeInsets.only(top: 20.sp),
                                 child: getSingleButton(
                                     width: double.infinity,
-                                    label: "Back to home".toUpperCase(),
+                                    label: "Back to Quick".toUpperCase(),
                                     textColor: whiteColor,
                                     fontSize: 13,
                                     backgroundColor: homeAppBarColor,
                                     onPressed: () {
-                                      Get.off(BottomNavScreen());
+                                      Get.back();
                                     },
-                                    borderColor: colorPrimary),
+                                    borderColor: whiteColor),
                               )
                             ],
                           ),
