@@ -75,7 +75,7 @@ class QuickScreenState extends State<QuickScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(8.sp)),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(4.sp),
+                          padding: EdgeInsets.all(1.sp),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
