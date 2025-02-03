@@ -76,9 +76,15 @@ class QuickScreenState extends State<QuickScreen> {
       backgroundColor: homeAppBarColor,
       body: Stack(
         children: [
-          /*  SvgPicture.asset(
-            quickBackCircleImage,
-          ), */
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Image.asset(
+              quickBack,
+              height: 250.sp,
+              width: 300.sp,
+            ),
+          ),
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

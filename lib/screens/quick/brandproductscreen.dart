@@ -94,516 +94,522 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
     return Scaffold(
         key: scaffoldKey,
         backgroundColor: homeAppBarColor,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        body: Stack(
           children: [
-            Padding(
-              padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    icon: SvgPicture.asset(arrowBack,
-                        color: whiteColor,
-                        height: 15.sp,
-                        width: 15.sp,
-                        fit: BoxFit.cover),
-                    onPressed: () {
-                      Get.back();
-                    },
-                  ),
-                  AppText(
-                    text: widget.title,
-                    color: whiteColor,
-                    fontSize: 16,
-                    fontFamily: "Franklin Gothic Semibold",
-                    fontWeight: FontWeight.w500,
-                  ),
-                ],
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Image.asset(
+                quickBackCircle,
+                height: 250.sp,
+                width: 300.sp,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: 16.sp, top: 35.sp, right: 16.sp, bottom: 30.sp),
-              child: Container(
-                color: loginText,
-                // height: 50.sp,
-                child: RawKeyboardListener(
-                  focusNode: FocusNode(),
-                  onKey: (value) {
-                    print(value);
-                    if (value is RawKeyDownEvent) {
-                      productController.getBrandDetailsProduct(
-                          productController.productSortBy.value,
-                          productController.filterProductEnable.value,
-                          false,
-                          widget.brand_id);
-                    }
-                  },
-                  child: TextField(
-                    textCapitalization: TextCapitalization.words,
-                    style: TextStyle(
-                        color: colorSecondary,
-                        fontFamily: "Franklin Gothic Regular",
-                        fontSize: 14.sp),
-                    controller: productController.branddetailsSearchController,
-                    onChanged: onSearchChanged,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      filled: true,
-                      isDense: true,
-                      fillColor: homeAppBarColor,
-                      prefixIcon: IconButton(
-                        icon: SvgPicture.asset(searchSvgImage,
-                            color: searchTextColor,
-                            height: 17.sp,
-                            width: 17.sp,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: SvgPicture.asset(arrowBack,
+                            color: whiteColor,
+                            height: 15.sp,
+                            width: 15.sp,
                             fit: BoxFit.cover),
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.back();
+                        },
                       ),
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: searchTextColor)),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.sp),
+                      AppText(
+                        text: widget.title,
+                        color: whiteColor,
+                        fontSize: 16,
+                        fontFamily: "Franklin Gothic Semibold",
+                        fontWeight: FontWeight.w500,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.sp),
-                        borderSide: const BorderSide(color: searchTextColor),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 16.sp, top: 35.sp, right: 16.sp, bottom: 30.sp),
+                  child: Container(
+                    color: loginText,
+                    // height: 50.sp,
+                    child: RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      onKey: (value) {
+                        print(value);
+                        if (value is RawKeyDownEvent) {
+                          productController.getBrandDetailsProduct(
+                              productController.productSortBy.value,
+                              productController.filterProductEnable.value,
+                              false,
+                              widget.brand_id);
+                        }
+                      },
+                      child: TextField(
+                        textCapitalization: TextCapitalization.words,
+                        style: TextStyle(
+                            color: colorSecondary,
+                            fontFamily: "Franklin Gothic Regular",
+                            fontSize: 14.sp),
+                        controller:
+                            productController.branddetailsSearchController,
+                        onChanged: onSearchChanged,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          filled: true,
+                          isDense: true,
+                          fillColor: homeAppBarColor,
+                          prefixIcon: IconButton(
+                            icon: SvgPicture.asset(searchSvgImage,
+                                color: searchTextColor,
+                                height: 17.sp,
+                                width: 17.sp,
+                                fit: BoxFit.cover),
+                            onPressed: () {},
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: searchTextColor)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.sp),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.sp),
+                            borderSide:
+                                const BorderSide(color: searchTextColor),
+                          ),
+                          counterText: "",
+                          hintText: "Search for 'Brands'",
+                          hintStyle: TextStyle(
+                              fontSize: 14.sp, color: searchTextColor),
+                        ),
                       ),
-                      counterText: "",
-                      hintText: "Search for 'Brands'",
-                      hintStyle:
-                          TextStyle(fontSize: 14.sp, color: searchTextColor),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Obx(
-              () => productController.isProductBrand.value
-                  ? Expanded(
-                      child: const DummyGridBlack(
-                        size: 2,
-                      ),
-                    )
-                  : productController.brandProductDetailsList.isNotEmpty
+                Obx(
+                  () => productController.isProductBrand.value
                       ? Expanded(
-                          child: SingleChildScrollView(
-                            controller:
-                                productController.brandDetailsController,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16.sp,
-                                  ),
-                                  child: GridView.count(
-                                    shrinkWrap: true,
-                                    crossAxisCount: 2,
-                                    controller: productController
-                                        .brandDetailsController,
-                                    scrollDirection: Axis.vertical,
-                                    padding: EdgeInsets.zero,
-                                    childAspectRatio: 0.6,
-                                    physics: const ScrollPhysics(),
-                                    crossAxisSpacing: 12.sp,
-                                    mainAxisSpacing: 0.sp,
-                                    children: List.generate(
-                                      productController
-                                          .brandProductDetailsList.length,
-                                      (index) {
-                                        return GestureDetector(
-                                          onTap: () async {
-                                            Get.to(ProductDetailsScreen(
-                                                    expresshour:
-                                                        widget.expresshour,
-                                                    backgroundcolor:
-                                                        homeAppBarColor,
-                                                    brandName: productController
-                                                            .brandProductDetailsList[
-                                                        index]["name"],
-                                                    productId: productController
-                                                            .brandProductDetailsList[
-                                                        index]["id"],
-                                                    type: "add"))
-                                                ?.then((value) => setState(
-                                                      () {
-                                                        productController
-                                                            .brandProductHasnextpage
-                                                            .value = true;
-                                                        productController
-                                                            .brandProductLoadMore
-                                                            .value = false;
-                                                        productController
-                                                            .isProductBrand
-                                                            .value = false;
-                                                        productController
-                                                            .brandProductPage
-                                                            .value = 1;
-                                                        controller
-                                                            .getCartData();
-                                                      },
-                                                    ));
-                                            await analytics.logEvent(
-                                              name: 'category_product_details',
-                                              parameters: <String, Object>{
-                                                'page_name':
-                                                    'category_product_details',
-                                              },
-                                            );
-                                          },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Center(
-                                                    child: productController
-                                                                .brandProductDetailsList[index]
-                                                                    ["images"]
-                                                                .isNotEmpty &&
+                          child: const DummyGridBlack(
+                            size: 2,
+                          ),
+                        )
+                      : productController.brandProductDetailsList.isNotEmpty
+                          ? Expanded(
+                              child: SingleChildScrollView(
+                                controller:
+                                    productController.brandDetailsController,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.sp,
+                                      ),
+                                      child: GridView.count(
+                                        shrinkWrap: true,
+                                        crossAxisCount: 2,
+                                        controller: productController
+                                            .brandDetailsController,
+                                        scrollDirection: Axis.vertical,
+                                        padding: EdgeInsets.zero,
+                                        childAspectRatio: 0.6,
+                                        physics: const ScrollPhysics(),
+                                        crossAxisSpacing: 12.sp,
+                                        mainAxisSpacing: 0.sp,
+                                        children: List.generate(
+                                          productController
+                                              .brandProductDetailsList.length,
+                                          (index) {
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                Get.to(ProductDetailsScreen(
+                                                        expresshour:
+                                                            widget.expresshour,
+                                                        backgroundcolor:
+                                                            homeAppBarColor,
+                                                        brandName: productController
+                                                                .brandProductDetailsList[
+                                                            index]["name"],
+                                                        productId: productController
+                                                                .brandProductDetailsList[
+                                                            index]["id"],
+                                                        type: "add"))
+                                                    ?.then((value) => setState(
+                                                          () {
                                                             productController
-                                                                        .brandProductDetailsList[index]
-                                                                    [
-                                                                    "images"] !=
-                                                                null
-                                                        ? ClipRRect(
-                                                            borderRadius: BorderRadius.only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        8.sp),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        8.sp)),
-                                                            child: SizedBox(
-                                                              height: (MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      2) +
-                                                                  10.sp,
-                                                              width: (MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      2) -
-                                                                  24.sp,
-                                                              child:
-                                                                  CachedNetworkImage(
-                                                                cacheManager: CacheManager(Config(
-                                                                    "customCacheKey",
-                                                                    stalePeriod:
-                                                                        const Duration(
-                                                                            days:
-                                                                                15),
-                                                                    maxNrOfCacheObjects:
-                                                                        100)),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                imageUrl: isImage(productController.brandProductDetailsList[index]
-                                                                            ["images"][0]
-                                                                        [
-                                                                        "name"])
-                                                                    ? productController.brandProductDetailsList[index]
-                                                                            ["images"][0]
-                                                                        ["name"]
-                                                                    : productController.brandProductDetailsList[index]
-                                                                            ["images"][1]
-                                                                        [
-                                                                        "name"],
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                                  downloadImage,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  height: (MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          2) +
-                                                                      10.sp,
-                                                                  width: (MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          2) -
-                                                                      24.sp,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        : Image.asset(
-                                                            dummyWishlistImage,
-                                                            height: (MediaQuery.of(context)
-                                                                        .size
-                                                                        .width /
-                                                                    2) +
-                                                                10.sp,
-                                                            width: (MediaQuery.of(context)
-                                                                        .size
-                                                                        .width /
-                                                                    2) -
-                                                                24.sp,
-                                                            fit: BoxFit.cover),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 8.sp),
-                                                child: AppText(
-                                                  text:
-                                                      "${productController.brandProductDetailsList[index]["name"]}",
-                                                  color: productSubtitleColor,
-                                                  maxLines: 1,
-                                                  fontSize: 11,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                  top: 8.sp,
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    Visibility(
-                                                      visible: productController
-                                                                      .brandProductDetailsList[
-                                                                  index]["mrp"] !=
-                                                              null
-                                                          ? true
-                                                          : false,
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 6.sp),
-                                                        child: Text(
-                                                          "\u{20B9} ${productController.brandProductDetailsList[index]["mrp"] ?? ""}",
-                                                          style: TextStyle(
-                                                            color:
-                                                                searchTextColor,
-                                                            fontSize: 11.sp,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
+                                                                .brandProductHasnextpage
+                                                                .value = true;
+                                                            productController
+                                                                .brandProductLoadMore
+                                                                .value = false;
+                                                            productController
+                                                                .isProductBrand
+                                                                .value = false;
+                                                            productController
+                                                                .brandProductPage
+                                                                .value = 1;
+                                                            controller
+                                                                .getCartData();
+                                                          },
+                                                        ));
+                                                await analytics.logEvent(
+                                                  name:
+                                                      'category_product_details',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'category_product_details',
+                                                  },
+                                                );
+                                              },
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      Center(
+                                                        child:
+                                                            productController
+                                                                        .brandProductDetailsList[
+                                                                            index][
+                                                                            "images"]
+                                                                        .isNotEmpty &&
+                                                                    productController.brandProductDetailsList[index][
+                                                                            "images"] !=
+                                                                        null
+                                                                ? ClipRRect(
+                                                                    borderRadius: BorderRadius.only(
+                                                                        topLeft:
+                                                                            Radius.circular(8
+                                                                                .sp),
+                                                                        topRight:
+                                                                            Radius.circular(8.sp)),
+                                                                    child:
+                                                                        SizedBox(
+                                                                      height: (MediaQuery.of(context).size.width /
+                                                                              2) +
+                                                                          10.sp,
+                                                                      width: (MediaQuery.of(context).size.width /
+                                                                              2) -
+                                                                          24.sp,
+                                                                      child:
+                                                                          CachedNetworkImage(
+                                                                        cacheManager: CacheManager(Config(
+                                                                            "customCacheKey",
+                                                                            stalePeriod:
+                                                                                const Duration(days: 15),
+                                                                            maxNrOfCacheObjects: 100)),
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        imageUrl: isImage(productController.brandProductDetailsList[index]["images"][0]["name"])
+                                                                            ? productController.brandProductDetailsList[index]["images"][0]["name"]
+                                                                            : productController.brandProductDetailsList[index]["images"][1]["name"],
+                                                                        errorWidget: (context,
+                                                                                url,
+                                                                                error) =>
+                                                                            Image.asset(
+                                                                          downloadImage,
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          height:
+                                                                              (MediaQuery.of(context).size.width / 2) + 10.sp,
+                                                                          width:
+                                                                              (MediaQuery.of(context).size.width / 2) - 24.sp,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Image.asset(
+                                                                    dummyWishlistImage,
+                                                                    height: (MediaQuery.of(context).size.width /
+                                                                            2) +
+                                                                        10.sp,
+                                                                    width: (MediaQuery.of(context).size.width /
+                                                                            2) -
+                                                                        24.sp,
+                                                                    fit: BoxFit
+                                                                        .cover),
                                                       ),
-                                                    ),
-                                                    AppText(
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 8.sp),
+                                                    child: AppText(
                                                       text:
-                                                          "\u{20B9} ${productController.brandProductDetailsList[index]["price"] ?? ""}",
-                                                      color: whiteColor,
-                                                      maxLines: 2,
+                                                          "${productController.brandProductDetailsList[index]["name"]}",
+                                                      color:
+                                                          productSubtitleColor,
+                                                      maxLines: 1,
                                                       fontSize: 11,
                                                       fontFamily:
-                                                          "Franklin Gothic",
+                                                          "Franklin Gothic Regular",
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                      top: 8.sp,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Visibility(
+                                                          visible: productController
+                                                                              .brandProductDetailsList[
+                                                                          index]
+                                                                      ["mrp"] !=
+                                                                  null
+                                                              ? true
+                                                              : false,
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        6.sp),
+                                                            child: Text(
+                                                              "\u{20B9} ${productController.brandProductDetailsList[index]["mrp"] ?? ""}",
+                                                              style: TextStyle(
+                                                                color:
+                                                                    searchTextColor,
+                                                                fontSize: 11.sp,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .lineThrough,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        AppText(
+                                                          text:
+                                                              "\u{20B9} ${productController.brandProductDetailsList[index]["price"] ?? ""}",
+                                                          color: whiteColor,
+                                                          maxLines: 2,
+                                                          fontSize: 11,
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                productController.brandProductLoadMore.value
-                                    ? DummyGridBlack()
-                                    : const SizedBox(
-                                        height: 0,
+                                            );
+                                          },
+                                        ),
                                       ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20.sp),
-                                  child: Center(
-                                    child: Image.asset(errorImage,
-                                        height: 200.sp,
-                                        width: 220.sp,
-                                        fit: BoxFit.cover),
-                                  ),
+                                    ),
+                                    productController.brandProductLoadMore.value
+                                        ? DummyGridBlack()
+                                        : const SizedBox(
+                                            height: 0,
+                                          ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20.sp),
-                                  child: getSingleButton(
-                                      width: double.infinity,
-                                      label: "Back to Quick".toUpperCase(),
-                                      textColor: whiteColor,
-                                      fontSize: 13,
-                                      backgroundColor: homeAppBarColor,
-                                      onPressed: () {
-                                        Get.back();
-                                      },
-                                      borderColor: whiteColor),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 360.sp,
-                        ),
-                        builder: (ctx) {
-                          return BottomSortBy(
-                            backgroundColor: homeAppBarColor,
-                            onPressedButton: (p0) {
-                              productController.productSortBy.value = p0;
-                              productController.getBrandDetailsProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  false,
-                                  widget.brand_id);
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              sortbyIcon,
-                              color: whiteColor,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "SORT BY",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: whiteColor,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          : Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 20.sp),
+                                      child: Center(
+                                        child: Image.asset(errorImage,
+                                            height: 200.sp,
+                                            width: 220.sp,
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 20.sp),
+                                      child: getSingleButton(
+                                          width: double.infinity,
+                                          label: "Back to Quick".toUpperCase(),
+                                          textColor: whiteColor,
+                                          fontSize: 13,
+                                          backgroundColor: homeAppBarColor,
+                                          onPressed: () {
+                                            Get.back();
+                                          },
+                                          borderColor: whiteColor),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            constraints: BoxConstraints(
+                              maxWidth: double.infinity,
+                              maxHeight: 360.sp,
+                            ),
+                            builder: (ctx) {
+                              return BottomSortBy(
+                                backgroundColor: homeAppBarColor,
+                                onPressedButton: (p0) {
+                                  productController.productSortBy.value = p0;
+                                  productController.getBrandDetailsProduct(
+                                      productController.productSortBy.value,
+                                      productController
+                                          .filterProductEnable.value,
+                                      false,
+                                      widget.brand_id);
+                                },
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.sp, horizontal: 5.sp),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  sortbyIcon,
+                                  color: whiteColor,
+                                  height: 20.sp,
+                                  width: 20.sp,
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.sp),
+                                  child: Text(
+                                    "SORT BY",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: whiteColor,
+                                      decoration: TextDecoration.none,
+                                      fontSize: 13.sp,
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                    child: Container(
-                      width: 1.sp,
-                      color: borderColor,
-                      height: 40.sp,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 270.sp,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 0.sp),
+                        child: Container(
+                          width: 1.sp,
+                          color: borderColor,
+                          height: 40.sp,
                         ),
-                        builder: (ctx) {
-                          return BottomCategory(
-                            backgroundColor: homeAppBarColor,
-                            gender: widget.genderName,
-                            onPressedButton: (p0) {
-                              if (p0 == "Women") {
-                                productController.categoryFilter.value = 3;
-                              } else if (p0 == "Men") {
-                                productController.categoryFilter.value = 2;
-                              } else {
-                                productController.categoryFilter.value = 1;
-                              }
-                              productController.getBrandDetailsProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  false,
-                                  widget.brand_id);
-                            },
-                            onPressedFilter: () {
-                              Get.back();
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                constraints: BoxConstraints(
-                                  maxWidth: double.infinity,
-                                  maxHeight: 500.sp,
-                                ),
-                                builder: (ctx) {
-                                  return BottomFilters(
-                                    backgroundColor: homeAppBarColor,
-                                    btnclearAll: () async {
-                                      productController.brand_ids.clear();
-                                      productController.color_ids.clear();
-                                      productController.size_ids.clear();
-                                      productController.productSortBy.value =
-                                          "";
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            constraints: BoxConstraints(
+                              maxWidth: double.infinity,
+                              maxHeight: 270.sp,
+                            ),
+                            builder: (ctx) {
+                              return BottomCategory(
+                                backgroundColor: homeAppBarColor,
+                                gender: widget.genderName,
+                                onPressedButton: (p0) {
+                                  if (p0 == "Women") {
+                                    productController.categoryFilter.value = 3;
+                                  } else if (p0 == "Men") {
+                                    productController.categoryFilter.value = 2;
+                                  } else {
+                                    productController.categoryFilter.value = 1;
+                                  }
+                                  productController.getBrandDetailsProduct(
+                                      productController.productSortBy.value,
                                       productController
-                                          .filterProductEnable.value = false;
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      prefs.remove("brandList");
-                                      prefs.remove("colorList");
-                                      prefs.remove("sizeList");
-                                      prefs.remove("upper");
-                                      prefs.remove("lower");
-                                      prefs.remove("sortby");
-                                      prefs.remove("category");
-                                      productController.getBrandDetailsProduct(
-                                          productController.productSortBy.value,
+                                          .filterProductEnable.value,
+                                      false,
+                                      widget.brand_id);
+                                },
+                                onPressedFilter: () {
+                                  Get.back();
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    constraints: BoxConstraints(
+                                      maxWidth: double.infinity,
+                                      maxHeight: 500.sp,
+                                    ),
+                                    builder: (ctx) {
+                                      return BottomFilters(
+                                        backgroundColor: homeAppBarColor,
+                                        btnclearAll: () async {
+                                          productController.brand_ids.clear();
+                                          productController.color_ids.clear();
+                                          productController.size_ids.clear();
                                           productController
-                                              .filterProductEnable.value,
-                                          false,
-                                          widget.brand_id);
-                                    },
-                                    onClick: (p0, p1) {
-                                      productController
-                                          .filterProductEnable.value = true;
-                                      productController.lowPrice.value = p0;
-                                      productController.highPrice.value = p1;
-                                      productController.getBrandDetailsProduct(
-                                          productController.productSortBy.value,
+                                              .productSortBy.value = "";
+                                          productController.filterProductEnable
+                                              .value = false;
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          prefs.remove("brandList");
+                                          prefs.remove("colorList");
+                                          prefs.remove("sizeList");
+                                          prefs.remove("upper");
+                                          prefs.remove("lower");
+                                          prefs.remove("sortby");
+                                          prefs.remove("category");
                                           productController
-                                              .filterProductEnable.value,
-                                          true,
-                                          widget.brand_id);
+                                              .getBrandDetailsProduct(
+                                                  productController
+                                                      .productSortBy.value,
+                                                  productController
+                                                      .filterProductEnable
+                                                      .value,
+                                                  false,
+                                                  widget.brand_id);
+                                        },
+                                        onClick: (p0, p1) {
+                                          productController
+                                              .filterProductEnable.value = true;
+                                          productController.lowPrice.value = p0;
+                                          productController.highPrice.value =
+                                              p1;
+                                          productController
+                                              .getBrandDetailsProduct(
+                                                  productController
+                                                      .productSortBy.value,
+                                                  productController
+                                                      .filterProductEnable
+                                                      .value,
+                                                  true,
+                                                  widget.brand_id);
+                                        },
+                                      );
                                     },
                                   );
                                 },
@@ -611,141 +617,146 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                             },
                           );
                         },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "CATEGORY",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: whiteColor,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: widget.genderName == "" ? false : true,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5.sp, right: 5.sp, top: 1.sp),
-                                child: Text(
-                                  widget.genderName.toUpperCase(),
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: whiteColor,
-                                    fontSize: 10.sp,
+                        child: Container(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.sp, horizontal: 5.sp),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.sp),
+                                  child: Text(
+                                    "CATEGORY",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: whiteColor,
+                                      decoration: TextDecoration.none,
+                                      fontSize: 13.sp,
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
+                                Visibility(
+                                  visible:
+                                      widget.genderName == "" ? false : true,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 5.sp, right: 5.sp, top: 1.sp),
+                                    child: Text(
+                                      widget.genderName.toUpperCase(),
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: whiteColor,
+                                        fontSize: 10.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                    child: Container(
-                      width: 1.sp,
-                      color: borderColor,
-                      height: 40.sp,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 500.sp,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 0.sp),
+                        child: Container(
+                          width: 1.sp,
+                          color: borderColor,
+                          height: 40.sp,
                         ),
-                        builder: (ctx) {
-                          return BottomFilters(
-                            backgroundColor: homeAppBarColor,
-                            btnclearAll: () async {
-                              productController.brand_ids.clear();
-                              productController.color_ids.clear();
-                              productController.size_ids.clear();
-                              productController.productSortBy.value = "";
-                              productController.filterProductEnable.value =
-                                  false;
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove("brandList");
-                              prefs.remove("colorList");
-                              prefs.remove("sizeList");
-                              prefs.remove("upper");
-                              prefs.remove("lower");
-                              prefs.remove("sortby");
-                              prefs.remove("category");
-                              productController.getBrandDetailsProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  false,
-                                  widget.brand_id);
-                            },
-                            onClick: (p0, p1) {
-                              productController.filterProductEnable.value =
-                                  true;
-                              productController.lowPrice.value = p0;
-                              productController.highPrice.value = p1;
-                              productController.getBrandDetailsProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  true,
-                                  widget.brand_id);
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            constraints: BoxConstraints(
+                              maxWidth: double.infinity,
+                              maxHeight: 500.sp,
+                            ),
+                            builder: (ctx) {
+                              return BottomFilters(
+                                backgroundColor: homeAppBarColor,
+                                btnclearAll: () async {
+                                  productController.brand_ids.clear();
+                                  productController.color_ids.clear();
+                                  productController.size_ids.clear();
+                                  productController.productSortBy.value = "";
+                                  productController.filterProductEnable.value =
+                                      false;
+                                  final prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.remove("brandList");
+                                  prefs.remove("colorList");
+                                  prefs.remove("sizeList");
+                                  prefs.remove("upper");
+                                  prefs.remove("lower");
+                                  prefs.remove("sortby");
+                                  prefs.remove("category");
+                                  productController.getBrandDetailsProduct(
+                                      productController.productSortBy.value,
+                                      productController
+                                          .filterProductEnable.value,
+                                      false,
+                                      widget.brand_id);
+                                },
+                                onClick: (p0, p1) {
+                                  productController.filterProductEnable.value =
+                                      true;
+                                  productController.lowPrice.value = p0;
+                                  productController.highPrice.value = p1;
+                                  productController.getBrandDetailsProduct(
+                                      productController.productSortBy.value,
+                                      productController
+                                          .filterProductEnable.value,
+                                      true,
+                                      widget.brand_id);
+                                },
+                              );
                             },
                           );
                         },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              filterIcon,
-                              color: whiteColor,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "FILTERS",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
+                        child: Container(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.sp, horizontal: 5.sp),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  filterIcon,
                                   color: whiteColor,
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
+                                  height: 20.sp,
+                                  width: 20.sp,
                                 ),
-                              ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.sp),
+                                  child: Text(
+                                    "FILTERS",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: whiteColor,
+                                      decoration: TextDecoration.none,
+                                      fontSize: 13.sp,
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )
+                )
+              ],
+            ),
           ],
         ));
   }

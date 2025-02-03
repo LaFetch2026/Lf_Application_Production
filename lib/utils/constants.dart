@@ -237,6 +237,8 @@ const bagSvgImage = 'assets/images/bag_unselected.svg';
 const buyNowSvgImage = 'assets/images/buy_now_svg.svg';
 const pumaImage = 'assets/images/puma_image.png';
 const expressHourSvgImage = 'assets/images/express_hour.svg';
+const quickBack = 'assets/images/quick_back_circle.png';
+const quickBackCircle = 'assets/images/quick_back.png';
 
 class ApiConstants {
   ApiConstants._();
