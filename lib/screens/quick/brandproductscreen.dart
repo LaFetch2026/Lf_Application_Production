@@ -430,33 +430,35 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           ),
                         )
                       : Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 0.sp),
-                                child: Center(
-                                  child: Image.asset(errorImage,
-                                      height: 200.sp,
-                                      width: 220.sp,
-                                      fit: BoxFit.cover),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 20.sp),
+                                  child: Center(
+                                    child: Image.asset(errorImage,
+                                        height: 200.sp,
+                                        width: 220.sp,
+                                        fit: BoxFit.cover),
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 20.sp),
-                                child: getSingleButton(
-                                    width: double.infinity,
-                                    label: "Back to Quick".toUpperCase(),
-                                    textColor: whiteColor,
-                                    fontSize: 13,
-                                    backgroundColor: homeAppBarColor,
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    borderColor: whiteColor),
-                              )
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(top: 20.sp),
+                                  child: getSingleButton(
+                                      width: double.infinity,
+                                      label: "Back to Quick".toUpperCase(),
+                                      textColor: whiteColor,
+                                      fontSize: 13,
+                                      backgroundColor: homeAppBarColor,
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      borderColor: whiteColor),
+                                )
+                              ],
+                            ),
                           ),
                         ),
             ),

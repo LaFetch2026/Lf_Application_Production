@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
@@ -82,6 +83,41 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
               color: dividerColor,
             ),
           ),
+          Visibility(
+            visible: widget.cartId == 0 ? true : false,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "SELECT ADDRESS",
+                      style: TextStyle(
+                        color: blackColor,
+                        fontSize: 16.sp,
+                        fontFamily: "Franklin Gothic Semibold",
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      child: SvgPicture.asset(crossSearchImage,
+                          color: subtitleColor,
+                          height: 13.sp,
+                          width: 13.sp,
+                          fit: BoxFit.cover),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -137,123 +173,105 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                   SizedBox(
                     height: 10.sp,
                   ),
-                  widget.cartId != 0
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                              top: 10.sp, left: 16.sp, right: 16.sp),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .pushReplacement(MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          MapScreen(
-                                            addressId: 0,
-                                            cartId: widget.cartId,
-                                          )))
-                                  .then((value) => setState(
-                                        () {
-                                          controller.getAddressData();
-                                        },
-                                      ));
-                            },
-                            child: Row(
-                              children: [
-                                ImageIcon(
-                                  AssetImage(currentLocationIcon),
-                                  color: homeAppBarColor,
-                                  size: 18.sp,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 5.sp),
-                                  child: AppText(
-                                    text: "Use my current location",
-                                    color: homeAppBarColor,
-                                    fontSize: 16,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 10.sp, left: 16.sp, right: 16.sp),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushReplacement(MaterialPageRoute(
+                                builder: (BuildContext context) => MapScreen(
+                                      addressId: 0,
+                                      cartId: widget.cartId,
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    controller.getAddressData();
+                                  },
+                                ));
+                      },
+                      child: Row(
+                        children: [
+                          ImageIcon(
+                            AssetImage(currentLocationIcon),
+                            color: homeAppBarColor,
+                            size: 18.sp,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.sp),
+                            child: AppText(
+                              text: "Use my current location",
+                              color: homeAppBarColor,
+                              fontSize: 16,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        )
-                      : SizedBox(
-                          height: 0.sp,
-                        ),
-                  widget.cartId == 0
-                      ? SizedBox(
-                          height: 0,
-                        )
-                      : Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.sp, vertical: 5.sp),
-                          child: const Divider(
-                            color: dividerColor,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+                    child: const Divider(
+                      color: dividerColor,
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 5.sp, left: 16.sp, right: 16.sp),
+                    child: GestureDetector(
+                      onTap: () async {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                                builder: (BuildContext context) => MapScreen(
+                                      addressId: 0,
+                                      cartId: widget.cartId,
+                                    )))
+                            .then((value) => setState(
+                                  () {
+                                    controller.getAddressData();
+                                    shipController.dailogSelected.clear();
+                                    shipController.dailogSelected =
+                                        List.generate(50, (i) => false);
+                                  },
+                                ));
+                        await analytics.logEvent(
+                          name: 'map_page',
+                          parameters: <String, Object>{
+                            'page_name': 'map_page',
+                          },
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          ImageIcon(
+                            AssetImage(addBoardImage),
+                            color: homeAppBarColor,
+                            size: 18.sp,
                           ),
-                        ),
-                  widget.cartId == 0
-                      ? SizedBox(
-                          height: 0,
-                        )
-                      : Padding(
-                          padding: EdgeInsets.only(
-                              top: 5.sp, left: 16.sp, right: 16.sp),
-                          child: GestureDetector(
-                            onTap: () async {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          MapScreen(
-                                            addressId: 0,
-                                            cartId: widget.cartId,
-                                          )))
-                                  .then((value) => setState(
-                                        () {
-                                          controller.getAddressData();
-                                          shipController.dailogSelected.clear();
-                                          shipController.dailogSelected =
-                                              List.generate(50, (i) => false);
-                                        },
-                                      ));
-                              await analytics.logEvent(
-                                name: 'map_page',
-                                parameters: <String, Object>{
-                                  'page_name': 'map_page',
-                                },
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                ImageIcon(
-                                  AssetImage(addBoardImage),
-                                  color: homeAppBarColor,
-                                  size: 18.sp,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 5.sp),
-                                  child: AppText(
-                                    text: "Add new address",
-                                    color: homeAppBarColor,
-                                    fontSize: 16,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.sp),
+                            child: AppText(
+                              text: "Add new address",
+                              color: homeAppBarColor,
+                              fontSize: 16,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ),
-                  widget.cartId == 0
-                      ? SizedBox(
-                          height: 0,
-                        )
-                      : Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.sp, vertical: 5.sp),
-                          child: const Divider(
-                            color: dividerColor,
-                          ),
-                        ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+                    child: const Divider(
+                      color: dividerColor,
+                    ),
+                  ),
                   Padding(
                     padding:
                         EdgeInsets.only(top: 30.sp, left: 16.sp, right: 16.sp),
@@ -444,6 +462,15 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                         onTap: () async {
                                                           if (widget.cartId ==
                                                               0) {
+                                                            shipController
+                                                                        .selected[
+                                                                    index] =
+                                                                !shipController
+                                                                        .selected[
+                                                                    index];
+                                                            shipController
+                                                                .update();
+                                                            setState(() {});
                                                             productController
                                                                     .lat.value =
                                                                 double.parse(controller

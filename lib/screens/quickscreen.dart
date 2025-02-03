@@ -18,6 +18,7 @@ import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -143,16 +144,31 @@ class QuickScreenState extends State<QuickScreen> {
                               ),
                             )
                           : productController.defaultAddress != ""
-                              ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Row(
+                              ? InkWell(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      constraints: BoxConstraints(
+                                          maxWidth: double.infinity,
+                                          maxHeight: 600.sp,
+                                          minHeight: 500.sp),
+                                      builder: (ctx) {
+                                        return ChangeAddressScreen(
+                                          cartId: 0,
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           children: [
                                             AppText(
                                               text: productController
@@ -174,26 +190,27 @@ class QuickScreenState extends State<QuickScreen> {
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                    2 +
-                                                40.sp,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 4.sp),
-                                          child: AppText(
-                                            text:
-                                                "${productController.defaultAddress["address"]},${productController.defaultAddress["city"]["name"]},${productController.defaultAddress["city"]["state"]["name"]}",
-                                            color: whiteColor,
-                                            fontSize: 12,
-                                            maxLines: 1,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2 +
+                                              40.sp,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(top: 4.sp),
+                                            child: AppText(
+                                              text:
+                                                  "${productController.defaultAddress["address"]},${productController.defaultAddress["city"]["name"]},${productController.defaultAddress["city"]["state"]["name"]}",
+                                              color: whiteColor,
+                                              fontSize: 12,
+                                              maxLines: 1,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 )
                               : SizedBox(

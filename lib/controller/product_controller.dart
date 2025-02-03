@@ -2482,9 +2482,9 @@ class ProductController extends BaseController {
                 context: cntx,
                 isScrollControlled: true,
                 constraints: BoxConstraints(
-                  maxWidth: double.infinity,
-                  maxHeight: 450.sp,
-                ),
+                    maxWidth: double.infinity,
+                    maxHeight: 600.sp,
+                    minHeight: 500.sp),
                 builder: (ctx) {
                   return ChangeAddressScreen(
                     cartId: 0,
@@ -2990,8 +2990,8 @@ class ProductController extends BaseController {
         if (screenType == "change address") {
           getDefaultAddressData(0, context);
           Get.back();
-          getBrandExpressProductData(
-              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+          /* getBrandExpressProductData(
+              brand_id.value, expressSortBy.value, filterExpressEnable.value); */
         }
         if (screenType == "express") {
           getBrandExpressProductData(
