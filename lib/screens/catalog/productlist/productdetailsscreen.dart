@@ -398,7 +398,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 child: Container(
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: btnTextColor, width: 1.sp),
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? btnTextColor
+                                                : searchTextColor,
+                                            width: 1.sp),
                                         color: productController
                                                     .selectedProductSize
                                                     .isNotEmpty &&
@@ -406,8 +410,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             .selectedProductSize[
                                                         'id'] ==
                                                     i['id']
-                                            ? colorPrimary
-                                            : whiteColor),
+                                            ? widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? colorPrimary
+                                                : lightPurpleColor
+                                            : widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? whiteColor
+                                                : homeAppBarColor),
                                     child: SizedBox(
                                       width: 48.sp,
                                       height: 48.sp,
@@ -426,7 +436,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           'id'] ==
                                                       i['id']
                                               ? whiteColor
-                                              : btnTextColor,
+                                              : widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? btnTextColor
+                                                  : searchTextColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -1199,7 +1212,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     .toUpperCase(),
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
-                                            color: blackColor,
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? blackColor
+                                                : whiteColor,
                                             maxLines: 1,
                                             fontSize: 16,
                                           ),
@@ -1302,7 +1318,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           "",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
-                                      color: subtitleColor,
+                                      color:
+                                          widget.backgroundcolor == whiteColor
+                                              ? subtitleColor
+                                              : productSubtitleColor,
                                       maxLines: 2,
                                       fontSize: 14,
                                     ),
@@ -1344,7 +1363,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         child: AppText(
                                           text:
                                               "\u{20B9} ${productController.productDetails["price"] ?? "0"}",
-                                          color: nameText,
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? nameText
+                                              : whiteColor,
                                           fontSize: 16,
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w500,
@@ -1372,7 +1394,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             child: AppText(
                                               text:
                                                   "${productController.productDetails["discount_percentage"] != null ? productController.productDetails["discount_percentage"].toString() : "0"} OFF",
-                                              color: expressText,
+                                              color: widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? expressText
+                                                  : homeAppBarColor,
                                               fontSize: 12,
                                               fontFamily: "Franklin Gothic",
                                               fontWeight: FontWeight.w500,
@@ -1391,7 +1416,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       right: 16.sp),
                                   child: AppText(
                                     text: "Price inclusive of all taxes",
-                                    color: subtitleColor,
+                                    color: widget.backgroundcolor == whiteColor
+                                        ? subtitleColor
+                                        : searchTextColor,
                                     fontSize: 12,
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
@@ -1435,7 +1462,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           "Franklin Gothic",
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      color: blackColor,
+                                                      color: widget
+                                                                  .backgroundcolor ==
+                                                              whiteColor
+                                                          ? blackColor
+                                                          : productSubtitleColor,
                                                       fontSize: 16,
                                                     ),
                                                     productController
@@ -1467,8 +1498,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
-                                                                color:
-                                                                    appBarColor,
+                                                                color: widget
+                                                                            .backgroundcolor ==
+                                                                        whiteColor
+                                                                    ? appBarColor
+                                                                    : productSubtitleColor,
                                                                 fontSize: 10.sp,
                                                               ),
                                                             ),
@@ -1488,11 +1522,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     child: Container(
                                                         decoration: BoxDecoration(
                                                             border: Border.all(
-                                                                color:
-                                                                    btnTextColor,
+                                                                color: widget
+                                                                            .backgroundcolor ==
+                                                                        whiteColor
+                                                                    ? btnTextColor
+                                                                    : searchTextColor,
                                                                 width: 1.sp),
-                                                            color:
-                                                                colorPrimary),
+                                                            color: widget
+                                                                        .backgroundcolor ==
+                                                                    whiteColor
+                                                                ? colorPrimary
+                                                                : lightPurpleColor),
                                                         child: SizedBox(
                                                           width: 48.sp,
                                                           height: 48.sp,
@@ -1534,12 +1574,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Padding(
+                                            Padding(
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 14.0,
                                                   horizontal: 12),
                                               child: Divider(
-                                                color: colorSecondary,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? colorSecondary
+                                                    : titleColor,
                                               ),
                                             ),
                                             Padding(
@@ -1563,7 +1606,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           "Franklin Gothic",
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      color: blackColor,
+                                                      color: widget
+                                                                  .backgroundcolor ==
+                                                              whiteColor
+                                                          ? blackColor
+                                                          : productSubtitleColor,
                                                       fontSize: 16,
                                                     ),
                                                   ],
@@ -1575,7 +1622,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     : const SizedBox(
                                         height: 0,
                                       ),
-                                productController.inventoryList.isNotEmpty
+                                /*  productController.inventoryList.isNotEmpty
                                     ? Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1585,7 +1632,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 vertical: 14.0.sp,
                                                 horizontal: 12.sp),
                                             child: Divider(
-                                              color: colorSecondary,
+                                              color: widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? colorSecondary
+                                                  : titleColor,
                                             ),
                                           ),
                                           Padding(
@@ -1623,260 +1673,283 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   child: Divider(
                                     color: colorSecondary,
                                   ),
-                                ),
+                                ), */
                               ],
                             ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                      child: AppText(
-                        text: 'Delivery options'.toUpperCase(),
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: appBarColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                    Obx(
-                      () => MediaQuery.of(context).size.width < 600
-                          ? Padding(
-                              padding: EdgeInsets.only(
-                                  top: 12.sp, left: 12.sp, right: 12.sp),
-                              child: SizedBox(
-                                width: double.infinity,
-                                height: 44.sp,
-                                child: RawKeyboardListener(
-                                  focusNode: FocusNode(),
-                                  onKey: (value) {
-                                    print(value);
-                                    if (value is RawKeyDownEvent) {
-                                      /*    productController.getItBy =
-                                          productController.productDetails[
-                                              "estimated_delivery_by"]; */
-                                    }
-                                  },
-                                  child: TextField(
-                                    controller:
-                                        productController.pincodeController,
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 6,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: whiteColor,
-                                      suffixIcon: TextButton(
-                                        onPressed: () async {
-                                          if (productController
-                                              .checkPinvalidation(
-                                                  productController
-                                                      .pincodeController.text
-                                                      .toString()
-                                                      .trim())) {
-                                            /* productController.getCheckPincode(
-                                          productController
-                                              .pincodeController.text
-                                              .toString()
-                                              .trim()); */
-                                            productController.getEstimateDate(
-                                                widget.productId,
-                                                productController
-                                                    .pincodeController.text
-                                                    .toString()
-                                                    .trim());
-                                            FocusScope.of(context).unfocus();
-                                            await analytics.logEvent(
-                                              name:
-                                                  'check_pincode_productdetails',
-                                              parameters: <String, Object>{
-                                                'page_name':
-                                                    'check_pincode_productdetails',
-                                              },
-                                            );
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: 0.sp),
-                                          child: productController
-                                                  .isEstimateDate.value
-                                              ? SizedBox(
-                                                  height: 10.sp,
-                                                  width: 10.sp,
-                                                  child: Center(
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                                )
-                                              : Container(
-                                                  color: homeAppBarColor,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.sp,
-                                                            vertical: 6.sp),
-                                                    child: AppText(
-                                                      text:
-                                                          "Check".toUpperCase(),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: whiteColor,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: borderColor)),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(1.sp),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(1.sp),
-                                        borderSide: const BorderSide(
-                                            color: borderColor),
-                                      ),
-                                      counterText: "",
-                                      contentPadding:
-                                          const EdgeInsets.only(left: 10),
-                                      hintText: 'Enter pincode',
-                                      hintStyle: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: textHintColor,
-                                          fontFamily: "Franklin Gothic"),
-                                    ),
-                                    style: TextStyle(
-                                        color: blackColor,
-                                        fontSize: 16.sp,
-                                        fontFamily: "Franklin Gothic"),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.only(
-                                  top: 12.sp, left: 12.sp, right: 12.sp),
-                              child: SizedBox(
-                                width: double.infinity,
-                                height: 44.sp,
-                                child: RawKeyboardListener(
-                                  focusNode: FocusNode(),
-                                  onKey: (value) {
-                                    print(value);
-                                    if (value is RawKeyDownEvent) {
-                                      /*   productController.getItBy.value =
-                                          productController.productDetails[
-                                              "estimated_delivery_by"]; */
-                                    }
-                                  },
-                                  child: TextField(
-                                    controller:
-                                        productController.pincodeController,
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 6,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: whiteColor,
-                                      suffixIcon: TextButton(
-                                        onPressed: () async {
-                                          if (productController
-                                              .checkPinvalidation(
-                                                  productController
-                                                      .pincodeController.text
-                                                      .toString()
-                                                      .trim())) {
-                                            /* productController.getCheckPincode(
-                                          productController
-                                              .pincodeController.text
-                                              .toString()
-                                              .trim()); */
-                                            productController.getEstimateDate(
-                                                widget.productId,
-                                                productController
-                                                    .pincodeController.text
-                                                    .toString()
-                                                    .trim());
-                                            FocusScope.of(context).unfocus();
-                                            await analytics.logEvent(
-                                              name:
-                                                  'check_pincode_productdetails',
-                                              parameters: <String, Object>{
-                                                'page_name':
-                                                    'check_pincode_productdetails',
-                                              },
-                                            );
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: 0.sp),
-                                          child: productController
-                                                  .isEstimateDate.value
-                                              ? SizedBox(
-                                                  height: 10.sp,
-                                                  width: 10.sp,
-                                                  child: Center(
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                                )
-                                              : Container(
-                                                  color: homeAppBarColor,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10.sp,
-                                                            vertical: 6.sp),
-                                                    child: AppText(
-                                                      text:
-                                                          "Check".toUpperCase(),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: whiteColor,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: borderColor)),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(1.sp),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(1.sp),
-                                        borderSide: const BorderSide(
-                                            color: borderColor),
-                                      ),
-                                      counterText: "",
-                                      hintText: 'Enter pincode',
-                                      hintStyle: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: textHintColor,
-                                          fontFamily: "Franklin Gothic"),
-                                    ),
-                                    style: TextStyle(
-                                        color: blackColor,
-                                        fontSize: 16.sp,
-                                        fontFamily: "Franklin Gothic"),
-                                  ),
-                                ),
-                              ),
+                    Visibility(
+                      visible:
+                          widget.backgroundcolor == whiteColor ? true : false,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                            child: AppText(
+                              text: 'Delivery options'.toUpperCase(),
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: appBarColor,
+                              fontSize: 12,
                             ),
-                    ),
-                    /*   Obx(() => productController.isAddress.value
+                          ),
+                          Obx(
+                            () => MediaQuery.of(context).size.width < 600
+                                ? Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 12.sp, left: 12.sp, right: 12.sp),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      height: 44.sp,
+                                      child: RawKeyboardListener(
+                                        focusNode: FocusNode(),
+                                        onKey: (value) {
+                                          print(value);
+                                          if (value is RawKeyDownEvent) {
+                                            /*    productController.getItBy =
+                                          productController.productDetails[
+                                              "estimated_delivery_by"]; */
+                                          }
+                                        },
+                                        child: TextField(
+                                          controller: productController
+                                              .pincodeController,
+                                          keyboardType: TextInputType.number,
+                                          maxLength: 6,
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: whiteColor,
+                                            suffixIcon: TextButton(
+                                              onPressed: () async {
+                                                if (productController
+                                                    .checkPinvalidation(
+                                                        productController
+                                                            .pincodeController
+                                                            .text
+                                                            .toString()
+                                                            .trim())) {
+                                                  /* productController.getCheckPincode(
+                                          productController
+                                              .pincodeController.text
+                                              .toString()
+                                              .trim()); */
+                                                  productController
+                                                      .getEstimateDate(
+                                                          widget.productId,
+                                                          productController
+                                                              .pincodeController
+                                                              .text
+                                                              .toString()
+                                                              .trim());
+                                                  FocusScope.of(context)
+                                                      .unfocus();
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        'check_pincode_productdetails',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'check_pincode_productdetails',
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 0.sp),
+                                                child: productController
+                                                        .isEstimateDate.value
+                                                    ? SizedBox(
+                                                        height: 10.sp,
+                                                        width: 10.sp,
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                      )
+                                                    : Container(
+                                                        color: homeAppBarColor,
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10.sp,
+                                                                  vertical:
+                                                                      6.sp),
+                                                          child: AppText(
+                                                            text: "Check"
+                                                                .toUpperCase(),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: whiteColor,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                              ),
+                                            ),
+                                            focusedBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: borderColor)),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(1.sp),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(1.sp),
+                                              borderSide: const BorderSide(
+                                                  color: borderColor),
+                                            ),
+                                            counterText: "",
+                                            contentPadding:
+                                                const EdgeInsets.only(left: 10),
+                                            hintText: 'Enter pincode',
+                                            hintStyle: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: textHintColor,
+                                                fontFamily: "Franklin Gothic"),
+                                          ),
+                                          style: TextStyle(
+                                              color: blackColor,
+                                              fontSize: 16.sp,
+                                              fontFamily: "Franklin Gothic"),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 12.sp, left: 12.sp, right: 12.sp),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      height: 44.sp,
+                                      child: RawKeyboardListener(
+                                        focusNode: FocusNode(),
+                                        onKey: (value) {
+                                          print(value);
+                                          if (value is RawKeyDownEvent) {
+                                            /*   productController.getItBy.value =
+                                          productController.productDetails[
+                                              "estimated_delivery_by"]; */
+                                          }
+                                        },
+                                        child: TextField(
+                                          controller: productController
+                                              .pincodeController,
+                                          keyboardType: TextInputType.number,
+                                          maxLength: 6,
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: whiteColor,
+                                            suffixIcon: TextButton(
+                                              onPressed: () async {
+                                                if (productController
+                                                    .checkPinvalidation(
+                                                        productController
+                                                            .pincodeController
+                                                            .text
+                                                            .toString()
+                                                            .trim())) {
+                                                  /* productController.getCheckPincode(
+                                          productController
+                                              .pincodeController.text
+                                              .toString()
+                                              .trim()); */
+                                                  productController
+                                                      .getEstimateDate(
+                                                          widget.productId,
+                                                          productController
+                                                              .pincodeController
+                                                              .text
+                                                              .toString()
+                                                              .trim());
+                                                  FocusScope.of(context)
+                                                      .unfocus();
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        'check_pincode_productdetails',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'check_pincode_productdetails',
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 0.sp),
+                                                child: productController
+                                                        .isEstimateDate.value
+                                                    ? SizedBox(
+                                                        height: 10.sp,
+                                                        width: 10.sp,
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                      )
+                                                    : Container(
+                                                        color: homeAppBarColor,
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10.sp,
+                                                                  vertical:
+                                                                      6.sp),
+                                                          child: AppText(
+                                                            text: "Check"
+                                                                .toUpperCase(),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: whiteColor,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                              ),
+                                            ),
+                                            focusedBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: borderColor)),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(1.sp),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(1.sp),
+                                              borderSide: const BorderSide(
+                                                  color: borderColor),
+                                            ),
+                                            counterText: "",
+                                            hintText: 'Enter pincode',
+                                            hintStyle: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: textHintColor,
+                                                fontFamily: "Franklin Gothic"),
+                                          ),
+                                          style: TextStyle(
+                                              color: blackColor,
+                                              fontSize: 16.sp,
+                                              fontFamily: "Franklin Gothic"),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          /*   Obx(() => productController.isAddress.value
                         ? const DummySaveAddress(
                             size: 1,
                           )
@@ -2084,238 +2157,267 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               )),
                     */
-                    Obx(
-                      () => productController.isEstimateDate.value
-                          ? Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 25.0.sp, left: 12.sp, right: 12.sp),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                          Obx(
+                            () => productController.isEstimateDate.value
+                                ? Column(
                                     children: [
                                       Padding(
-                                        padding:
-                                            EdgeInsets.only(right: 12.0.sp),
-                                        child: DummyContainer(
-                                          height: 18.sp,
-                                          width: 18.sp,
+                                        padding: EdgeInsets.only(
+                                            top: 25.0.sp,
+                                            left: 12.sp,
+                                            right: 12.sp),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 12.0.sp),
+                                              child: DummyContainer(
+                                                height: 18.sp,
+                                                width: 18.sp,
+                                              ),
+                                            ),
+                                            DummyContainer(
+                                              height: 18.sp,
+                                              width: 150.sp,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      DummyContainer(
-                                        height: 18.sp,
-                                        width: 150.sp,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 18.0.sp, left: 12.sp, right: 12.sp),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
                                       Padding(
-                                        padding:
-                                            EdgeInsets.only(right: 12.0.sp),
-                                        child: DummyContainer(
-                                          height: 18.sp,
-                                          width: 18.sp,
+                                        padding: EdgeInsets.only(
+                                            top: 18.0.sp,
+                                            left: 12.sp,
+                                            right: 12.sp),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 12.0.sp),
+                                              child: DummyContainer(
+                                                height: 18.sp,
+                                                width: 18.sp,
+                                              ),
+                                            ),
+                                            DummyContainer(
+                                              height: 18.sp,
+                                              width: 150.sp,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      DummyContainer(
-                                        height: 18.sp,
-                                        width: 150.sp,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 18.0.sp, left: 12.sp, right: 12.sp),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
                                       Padding(
-                                        padding:
-                                            EdgeInsets.only(right: 12.0.sp),
-                                        child: DummyContainer(
-                                          height: 18.sp,
-                                          width: 18.sp,
+                                        padding: EdgeInsets.only(
+                                            top: 18.0.sp,
+                                            left: 12.sp,
+                                            right: 12.sp),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 12.0.sp),
+                                              child: DummyContainer(
+                                                height: 18.sp,
+                                                width: 18.sp,
+                                              ),
+                                            ),
+                                            DummyContainer(
+                                              height: 18.sp,
+                                              width: 150.sp,
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      DummyContainer(
-                                        height: 18.sp,
-                                        width: 150.sp,
-                                      ),
+                                      )
                                     ],
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 25.0.sp,
+                                        left: 12.sp,
+                                        right: 12.sp),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        productController.getItBy != "" &&
+                                                productController.getItBy !=
+                                                    null
+                                            ? productController.getItBy[
+                                                        "show_shipping_cost"] &&
+                                                    !productController
+                                                        .isExpressDelivery.value
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 12.0.sp),
+                                                        child: Image.asset(
+                                                          walletBlack,
+                                                          height: 22.sp,
+                                                          width: 22.sp,
+                                                        ),
+                                                      ),
+                                                      AppText(
+                                                        text: "Shipping Cost :",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: titleColor,
+                                                        maxLines: 1,
+                                                        fontSize: 14,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 6),
+                                                        child: AppText(
+                                                          text:
+                                                              "\u{20B9} ${productController.getItBy["shipping_cost"].toString()}",
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: titleColor,
+                                                          maxLines: 1,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          fontSize: 14,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )
+                                                : SizedBox(
+                                                    height: 0,
+                                                  )
+                                            : SizedBox(
+                                                height: 0,
+                                              )
+                                      ],
+                                    ),
                                   ),
+                          ),
+                          Obx(() => productController.isEstimateDate.value
+                              ? SizedBox(
+                                  height: 0,
                                 )
-                              ],
-                            )
-                          : Padding(
-                              padding: EdgeInsets.only(
-                                  top: 25.0.sp, left: 12.sp, right: 12.sp),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  productController.getItBy != "" &&
-                                          productController.getItBy != null
-                                      ? productController.getItBy[
-                                                  "show_shipping_cost"] &&
-                                              !productController
-                                                  .isExpressDelivery.value
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 12.0.sp),
-                                                  child: Image.asset(
-                                                    walletBlack,
-                                                    height: 22.sp,
-                                                    width: 22.sp,
-                                                  ),
+                              : productController.getItBy != "" &&
+                                      productController.getItBy != null
+                                  ? Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 18.0.sp,
+                                          left: 12.sp,
+                                          right: 12.sp),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            // mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 12.0.sp),
+                                                child: Image.asset(
+                                                  getItByIcon,
+                                                  height: 22.sp,
+                                                  width: 22.sp,
                                                 ),
-                                                AppText(
-                                                  text: "Shipping Cost :",
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: AppText(
+                                                  text: productController
+                                                          .getItBy["message"] ??
+                                                      "Enter your pincode to get estimate delivery date",
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w500,
                                                   color: titleColor,
-                                                  maxLines: 1,
+                                                  maxLines: 2,
                                                   fontSize: 14,
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 6),
-                                                  child: AppText(
-                                                    text:
-                                                        "\u{20B9} ${productController.getItBy["shipping_cost"].toString()}",
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: titleColor,
-                                                    maxLines: 1,
-                                                    textAlign: TextAlign.center,
-                                                    fontSize: 14,
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          : SizedBox(
-                                              height: 0,
-                                            )
-                                      : SizedBox(
-                                          height: 0,
-                                        )
-                                ],
-                              ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      height: 0,
+                                    )),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 18.0.sp, left: 12.sp, right: 12.sp),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 12.0.sp),
+                                  child: Image.asset(
+                                    walletBlack,
+                                    height: 22.sp,
+                                    width: 22.sp,
+                                  ),
+                                ),
+                                AppText(
+                                  text: "Pay on delivery available",
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: titleColor,
+                                  maxLines: 1,
+                                  fontSize: 14,
+                                ),
+                              ],
                             ),
-                    ),
-                    Obx(() => productController.isEstimateDate.value
-                        ? SizedBox(
-                            height: 0,
-                          )
-                        : productController.getItBy != "" &&
-                                productController.getItBy != null
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                    top: 18.0.sp, left: 12.sp, right: 12.sp),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      // mainAxisSize: MainAxisSize.min,
+                          ),
+                          Obx(
+                            () => productController.isDetails.value
+                                ? SizedBox(
+                                    height: 0,
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 18.0.sp,
+                                        left: 12.sp,
+                                        right: 12.sp),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(right: 12.0.sp),
-                                          child: Image.asset(
-                                            getItByIcon,
-                                            height: 22.sp,
-                                            width: 22.sp,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: AppText(
-                                            text: productController
-                                                    .getItBy["message"] ??
-                                                "Enter your pincode to get estimate delivery date",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w500,
-                                            color: titleColor,
-                                            maxLines: 2,
-                                            fontSize: 14,
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              )
-                            : SizedBox(
-                                height: 0,
-                              )),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 18.0.sp, left: 12.sp, right: 12.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 12.0.sp),
-                            child: Image.asset(
-                              walletBlack,
-                              height: 22.sp,
-                              width: 22.sp,
-                            ),
-                          ),
-                          AppText(
-                            text: "Pay on delivery available",
-                            fontFamily: "Franklin Gothic Regular",
-                            fontWeight: FontWeight.w400,
-                            color: titleColor,
-                            maxLines: 1,
-                            fontSize: 14,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Obx(
-                      () => productController.isDetails.value
-                          ? SizedBox(
-                              height: 0,
-                            )
-                          : Padding(
-                              padding: EdgeInsets.only(
-                                  top: 18.0.sp, left: 12.sp, right: 12.sp),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  /*  productController.productDetails["has_cod"]
+                                        /*  productController.productDetails["has_cod"]
                                       ? Padding(
                                           padding: EdgeInsets.only(
                                               bottom: 18.0.sp),
@@ -2351,212 +2453,51 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           height: 0,
                                         ),
                                   */
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(right: 12.0.sp),
-                                        child: Image.asset(
-                                          exchangeItemImage,
-                                          height: 20.sp,
-                                          color: titleColor,
-                                          width: 20.sp,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: AppText(
-                                          text: productController
-                                                      .productDetails[
-                                                  "has_exchange"]
-                                              ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
-                                              : 'Exchange not available',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w500,
-                                          maxLines: 1,
-                                          color: titleColor,
-                                          fontSize: 14,
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                    ),
-                    Obx(() => productController.isDetails.value
-                        ? SizedBox(
-                            height: 0,
-                          )
-                        : productController.productDetails["express_delivery"]
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                    top: 18.0.sp, left: 12.sp, right: 12.sp),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(right: 12.0.sp),
-                                          child: Image.asset(
-                                            getItByIcon,
-                                            height: 22.sp,
-                                            width: 22.sp,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: AppText(
-                                            text: productController
-                                                        .productDetails[
-                                                    "express_delivery_estimation"] ??
-                                                "",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w500,
-                                            color: titleColor,
-                                            maxLines: 2,
-                                            fontSize: 14,
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              )
-                            : SizedBox(
-                                height: 0,
-                              )),
-                    Obx(
-                      () => productController.isDetails.value
-                          ? SizedBox(
-                              height: 0,
-                            )
-                          : productController.productDetails["express_delivery"]
-                              ? Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 18.0.sp,
-                                    left: 12.sp,
-                                    right: 12.sp,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(right: 12.0.sp),
-                                        child: Image.asset(
-                                          truckImage,
-                                          height: 18.sp,
-                                          width: 18.sp,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          if (productController
-                                              .isExpressDelivery.value) {
-                                            productController.isExpressDelivery
-                                                .value = false;
-                                            productController
-                                                .expressValue.value = 0;
-                                          } else {
-                                            productController
-                                                .isExpressDelivery.value = true;
-                                            productController
-                                                .expressValue.value = 1;
-                                          }
-                                        },
-                                        child: AppText(
-                                          text: 'Express Delivery',
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w500,
-                                          color: titleColor,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: const SizedBox(
-                                          width: 0,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 0.sp),
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(3.sp),
-                                              border: Border(
-                                                top: BorderSide(
-                                                    width: 2.0.sp,
-                                                    color: greyBorder),
-                                                left: BorderSide(
-                                                    width: 2.0.sp,
-                                                    color: greyBorder),
-                                                right: BorderSide(
-                                                    width: 2.0.sp,
-                                                    color: greyBorder),
-                                                bottom: BorderSide(
-                                                    width: 2.0.sp,
-                                                    color: greyBorder),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 12.0.sp),
+                                              child: Image.asset(
+                                                exchangeItemImage,
+                                                height: 20.sp,
+                                                color: titleColor,
+                                                width: 20.sp,
                                               ),
                                             ),
-                                            width: 20,
-                                            height: 20,
-                                            child: Checkbox(
-                                              value: productController
-                                                  .isExpressDelivery.value,
-                                              checkColor: btnTextColor,
-                                              activeColor: whiteBorderColor,
-                                              side: const BorderSide(
-                                                  color: btnTextColor,
-                                                  width: 0),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  productController
-                                                      .isExpressDelivery
-                                                      .value = value!;
-                                                  if (productController
-                                                      .isExpressDelivery
-                                                      .value) {
-                                                    productController
-                                                        .expressValue.value = 1;
-                                                  } else {
-                                                    productController
-                                                        .expressValue.value = 0;
-                                                  }
-                                                });
-                                              },
-                                            )),
-                                      ),
-                                    ],
+                                            Expanded(
+                                              child: AppText(
+                                                text: productController
+                                                            .productDetails[
+                                                        "has_exchange"]
+                                                    ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
+                                                    : 'Exchange not available',
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w500,
+                                                maxLines: 1,
+                                                color: titleColor,
+                                                fontSize: 14,
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                )
-                              : SizedBox(
+                          ),
+                          Obx(() => productController.isDetails.value
+                              ? SizedBox(
                                   height: 0,
-                                ),
-                    ),
-                    Obx(
-                      () => productController.isDetails.value
-                          ? SizedBox(
-                              height: 0,
-                            )
-                          : productController.productDetails["express_delivery"]
-                              ? !productController.isExpressDelivery.value
-                                  ? SizedBox(
-                                      height: 0,
-                                    )
-                                  : Padding(
+                                )
+                              : productController
+                                      .productDetails["express_delivery"]
+                                  ? Padding(
                                       padding: EdgeInsets.only(
                                           top: 18.0.sp,
                                           left: 12.sp,
@@ -2578,33 +2519,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 padding: EdgeInsets.only(
                                                     right: 12.0.sp),
                                                 child: Image.asset(
-                                                  walletBlack,
+                                                  getItByIcon,
                                                   height: 22.sp,
                                                   width: 22.sp,
                                                 ),
                                               ),
-                                              AppText(
-                                                text: "Express Delivery Cost :",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w500,
-                                                color: blackColor,
-                                                maxLines: 1,
-                                                fontSize: 14,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 6),
+                                              Expanded(
+                                                flex: 1,
                                                 child: AppText(
-                                                  text:
-                                                      "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
+                                                  text: productController
+                                                              .productDetails[
+                                                          "express_delivery_estimation"] ??
+                                                      "",
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w500,
                                                   color: titleColor,
-                                                  maxLines: 1,
-                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
                                                   fontSize: 14,
                                                 ),
                                               )
@@ -2613,9 +2544,204 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ],
                                       ),
                                     )
-                              : SizedBox(
-                                  height: 0,
-                                ),
+                                  : SizedBox(
+                                      height: 0,
+                                    )),
+                          Obx(
+                            () => productController.isDetails.value
+                                ? SizedBox(
+                                    height: 0,
+                                  )
+                                : productController
+                                        .productDetails["express_delivery"]
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 18.0.sp,
+                                          left: 12.sp,
+                                          right: 12.sp,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  right: 12.0.sp),
+                                              child: Image.asset(
+                                                truckImage,
+                                                height: 18.sp,
+                                                width: 18.sp,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                if (productController
+                                                    .isExpressDelivery.value) {
+                                                  productController
+                                                      .isExpressDelivery
+                                                      .value = false;
+                                                  productController
+                                                      .expressValue.value = 0;
+                                                } else {
+                                                  productController
+                                                      .isExpressDelivery
+                                                      .value = true;
+                                                  productController
+                                                      .expressValue.value = 1;
+                                                }
+                                              },
+                                              child: AppText(
+                                                text: 'Express Delivery',
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w500,
+                                                color: titleColor,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: const SizedBox(
+                                                width: 0,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 0.sp),
+                                              child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3.sp),
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          width: 2.0.sp,
+                                                          color: greyBorder),
+                                                      left: BorderSide(
+                                                          width: 2.0.sp,
+                                                          color: greyBorder),
+                                                      right: BorderSide(
+                                                          width: 2.0.sp,
+                                                          color: greyBorder),
+                                                      bottom: BorderSide(
+                                                          width: 2.0.sp,
+                                                          color: greyBorder),
+                                                    ),
+                                                  ),
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: Checkbox(
+                                                    value: productController
+                                                        .isExpressDelivery
+                                                        .value,
+                                                    checkColor: btnTextColor,
+                                                    activeColor:
+                                                        whiteBorderColor,
+                                                    side: const BorderSide(
+                                                        color: btnTextColor,
+                                                        width: 0),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        productController
+                                                            .isExpressDelivery
+                                                            .value = value!;
+                                                        if (productController
+                                                            .isExpressDelivery
+                                                            .value) {
+                                                          productController
+                                                              .expressValue
+                                                              .value = 1;
+                                                        } else {
+                                                          productController
+                                                              .expressValue
+                                                              .value = 0;
+                                                        }
+                                                      });
+                                                    },
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        height: 0,
+                                      ),
+                          ),
+                          Obx(
+                            () => productController.isDetails.value
+                                ? SizedBox(
+                                    height: 0,
+                                  )
+                                : productController
+                                        .productDetails["express_delivery"]
+                                    ? !productController.isExpressDelivery.value
+                                        ? SizedBox(
+                                            height: 0,
+                                          )
+                                        : Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 18.0.sp,
+                                                left: 12.sp,
+                                                right: 12.sp),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 12.0.sp),
+                                                      child: Image.asset(
+                                                        walletBlack,
+                                                        height: 22.sp,
+                                                        width: 22.sp,
+                                                      ),
+                                                    ),
+                                                    AppText(
+                                                      text:
+                                                          "Express Delivery Cost :",
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: blackColor,
+                                                      maxLines: 1,
+                                                      fontSize: 14,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 6),
+                                                      child: AppText(
+                                                        text:
+                                                            "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: titleColor,
+                                                        maxLines: 1,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        fontSize: 14,
+                                                      ),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                    : SizedBox(
+                                        height: 0,
+                                      ),
+                          ),
+                        ],
+                      ),
                     ),
                     Obx(
                       () => productController.isDetails.value
@@ -2642,8 +2768,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 12.sp),
-                                              child: const Divider(
-                                                color: colorSecondary,
+                                              child: Divider(
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? colorSecondary
+                                                    : titleColor,
                                               ),
                                             ),
                                             Padding(
@@ -2655,12 +2784,26 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         dividerColor:
                                                             Colors.transparent),
                                                 child: ExpansionTile(
+                                                  collapsedIconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
+                                                  iconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
                                                   title: AppText(
                                                     text: 'More Details',
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
+                                                    color: widget
+                                                                .backgroundcolor ==
+                                                            whiteColor
+                                                        ? colorPrimary
+                                                        : productSubtitleColor,
                                                     fontSize: 16,
                                                   ),
                                                   tilePadding:
@@ -2683,7 +2826,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         maxLines: 20,
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: colorPrimary,
+                                                        color: widget
+                                                                    .backgroundcolor ==
+                                                                whiteColor
+                                                            ? colorPrimary
+                                                            : productSubtitleColor,
                                                         fontSize: 12,
                                                       ),
                                                     ),
@@ -2707,7 +2854,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 12.sp),
                                               child: Divider(
-                                                color: colorSecondary,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? colorSecondary
+                                                    : titleColor,
                                               ),
                                             ),
                                             Padding(
@@ -2719,12 +2869,26 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         dividerColor:
                                                             Colors.transparent),
                                                 child: ExpansionTile(
+                                                  collapsedIconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
+                                                  iconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
                                                   title: AppText(
                                                     text: 'Composition & Care',
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
+                                                    color: widget
+                                                                .backgroundcolor ==
+                                                            whiteColor
+                                                        ? colorPrimary
+                                                        : productSubtitleColor,
                                                     fontSize: 16,
                                                   ),
                                                   tilePadding:
@@ -2747,7 +2911,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         maxLines: 20,
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: colorPrimary,
+                                                        color: widget
+                                                                    .backgroundcolor ==
+                                                                whiteColor
+                                                            ? colorPrimary
+                                                            : productSubtitleColor,
                                                         fontSize: 12,
                                                       ),
                                                     ),
@@ -2770,7 +2938,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 12.sp),
                                               child: Divider(
-                                                color: colorSecondary,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? colorSecondary
+                                                    : titleColor,
                                               ),
                                             ),
                                             Padding(
@@ -2782,12 +2953,26 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         dividerColor:
                                                             Colors.transparent),
                                                 child: ExpansionTile(
+                                                  collapsedIconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
+                                                  iconColor:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? appBarColor
+                                                          : whiteColor,
                                                   title: AppText(
                                                     text: 'Delivery & Returns',
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
+                                                    color: widget
+                                                                .backgroundcolor ==
+                                                            whiteColor
+                                                        ? colorPrimary
+                                                        : productSubtitleColor,
                                                     fontSize: 16,
                                                   ),
                                                   tilePadding:
@@ -2809,7 +2994,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         maxLines: 20,
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: colorPrimary,
+                                                        color: widget
+                                                                    .backgroundcolor ==
+                                                                whiteColor
+                                                            ? colorPrimary
+                                                            : productSubtitleColor,
                                                         fontSize: 12,
                                                       ),
                                                     ),
@@ -2832,7 +3021,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 12.sp),
                                               child: Divider(
-                                                color: colorSecondary,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? colorSecondary
+                                                    : titleColor,
                                               ),
                                             ),
                                             Padding(
@@ -2849,7 +3041,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
                                                     fontWeight: FontWeight.w500,
-                                                    color: colorPrimary,
+                                                    color: widget
+                                                                .backgroundcolor ==
+                                                            whiteColor
+                                                        ? colorPrimary
+                                                        : productSubtitleColor,
                                                     fontSize: 16,
                                                   ),
                                                   tilePadding:
@@ -2872,7 +3068,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         maxLines: 20,
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        color: colorPrimary,
+                                                        color: widget
+                                                                    .backgroundcolor ==
+                                                                whiteColor
+                                                            ? colorPrimary
+                                                            : productSubtitleColor,
                                                         fontSize: 12,
                                                       ),
                                                     ),
@@ -2892,7 +3092,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     Padding(
                       padding: EdgeInsets.all(8.0.sp),
                       child: Divider(
-                        color: colorSecondary,
+                        color: widget.backgroundcolor == whiteColor
+                            ? colorSecondary
+                            : titleColor,
                       ),
                     ),
                     Obx(
@@ -4058,7 +4260,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 padding: EdgeInsets.only(right: 8.0.sp),
                                 child: Image.asset(
                                   cartNewImage,
-                                  color: homeAppBarColor,
+                                  color: widget.backgroundcolor == whiteColor
+                                      ? homeAppBarColor
+                                      : productSubtitleColor,
                                   height: 18.sp,
                                   width: 18.sp,
                                 ),
@@ -4067,7 +4271,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 text: "Out of stock".toUpperCase(),
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
-                                color: homeAppBarColor,
+                                color: widget.backgroundcolor == whiteColor
+                                    ? homeAppBarColor
+                                    : productSubtitleColor,
                                 maxLines: 2,
                                 fontSize: 13,
                               )
