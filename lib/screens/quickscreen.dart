@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print, deprecated_member_use
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -11,11 +13,11 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
-import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,23 +33,29 @@ class QuickScreen extends StatefulWidget {
 class QuickScreenState extends State<QuickScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final homeController = Get.put(HomeController());
-  final brandController = Get.put(BrandController());
   final productController = Get.put(ProductController());
+  Timer? debounce;
 
   @override
   void initState() {
+    productController.brandController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false, 0));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      brandController.getBrandData("brand");
+      productController.getBrandProductData();
     });
     super.initState();
+  }
+
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      productController.getBrandProductData();
+    });
   }
 
   @override
@@ -156,7 +164,9 @@ class QuickScreenState extends State<QuickScreen> {
                       focusNode: FocusNode(),
                       onKey: (value) {
                         print(value);
-                        if (value is RawKeyDownEvent) {}
+                        if (value is RawKeyDownEvent) {
+                          productController.getBrandProductData();
+                        }
                       },
                       child: TextField(
                         textCapitalization: TextCapitalization.words,
@@ -164,8 +174,8 @@ class QuickScreenState extends State<QuickScreen> {
                             color: colorSecondary,
                             fontFamily: "Franklin Gothic Regular",
                             fontSize: 14.sp),
-                        //   controller: brandController.searchController,
-                        //   onChanged: onSearchChanged,
+                        controller: productController.brandController,
+                        onChanged: onSearchChanged,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           filled: true,
@@ -190,7 +200,7 @@ class QuickScreenState extends State<QuickScreen> {
                                 const BorderSide(color: searchTextColor),
                           ),
                           counterText: "",
-                          hintText: "Search for 'Kurta'",
+                          hintText: "Search for 'Brands'",
                           hintStyle: TextStyle(
                               fontSize: 14.sp, color: searchTextColor),
                         ),
@@ -198,14 +208,6 @@ class QuickScreenState extends State<QuickScreen> {
                     ),
                   ),
                 ),
-                /* Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.sp),
-                  child: Image.asset(
-                    pumaImage,
-                    height: 128.sp,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ), */
                 Obx(() => homeController.isBanner2.value
                     ? Padding(
                         padding: EdgeInsets.symmetric(vertical: 24.sp),
@@ -578,9 +580,115 @@ class QuickScreenState extends State<QuickScreen> {
                         : SizedBox(
                             height: 0,
                           )),
-                Obx(() => brandController.isBrand.value
-                    ? SizedBox(
-                        height: 0,
+                Obx(() => productController.isBrand.value
+                    ? Padding(
+                        padding: EdgeInsets.only(
+                            left: 16.sp,
+                            right: 16.sp,
+                            bottom: 10.sp,
+                            top: 10.sp),
+                        child: ListView.builder(
+                            primary: false,
+                            shrinkWrap: true,
+                            physics: const ScrollPhysics(),
+                            itemCount: 2,
+                            padding: EdgeInsets.zero,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (ctx, index) {
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 24.sp),
+                                    child: Container(
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.sp,
+                                                  vertical: 12.sp),
+                                              child: Container(
+                                                height: 20.sp,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width
+                                                    .sp,
+                                                decoration: BoxDecoration(
+                                                  color: cardBg,
+                                                ),
+                                              )),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 16.sp, bottom: 16.sp),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              height: 220.sp,
+                                              child: ListView.builder(
+                                                  shrinkWrap: true,
+                                                  primary: false,
+                                                  physics:
+                                                      const BouncingScrollPhysics(),
+                                                  itemCount: 3,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemBuilder: (ctx, index) {
+                                                    return Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          color: cardBg,
+                                                          height: 170.sp,
+                                                          width: 136.sp,
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 8.sp),
+                                                          child: Container(
+                                                            color: cardBg,
+                                                            height: 16.sp,
+                                                            width: 100.sp,
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 8.sp),
+                                                          child: Row(
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        right: 6
+                                                                            .sp),
+                                                                child:
+                                                                    Container(
+                                                                  color: cardBg,
+                                                                  height: 16.sp,
+                                                                  width: 40.sp,
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                color: cardBg,
+                                                                height: 16.sp,
+                                                                width: 40.sp,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
                       )
                     : Padding(
                         padding: EdgeInsets.only(
@@ -588,13 +696,13 @@ class QuickScreenState extends State<QuickScreen> {
                             right: 16.sp,
                             bottom: 10.sp,
                             top: 10.sp),
-                        child: GetBuilder<BrandController>(
+                        child: GetBuilder<ProductController>(
                           builder: (value) => ListView.builder(
                               primary: false,
                               shrinkWrap: true,
-                              controller: value.brandListController,
+                              // controller: value.brandListController,
                               physics: const ScrollPhysics(),
-                              itemCount: value.brandList.length,
+                              itemCount: value.brandProductList.length,
                               padding: EdgeInsets.zero,
                               scrollDirection: Axis.vertical,
                               itemBuilder: (ctx, index) {
@@ -622,7 +730,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    value.brandList[index]
+                                                    value.brandProductList[
+                                                                    index]
                                                                 ["logo"] !=
                                                             null
                                                         ? SizedBox(
@@ -657,7 +766,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                     fit: BoxFit
                                                                         .cover,
                                                                     imageUrl: value
-                                                                            .brandList[index]
+                                                                            .brandProductList[index]
                                                                         [
                                                                         "logo"],
                                                                     errorWidget: (context,
@@ -709,10 +818,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                           EdgeInsets.symmetric(
                                                               horizontal: 8.sp),
                                                       child: AppText(
-                                                        text: value.brandList[
-                                                                    index]
-                                                                ["name"] ??
-                                                            "",
+                                                        text:
+                                                            value.brandProductList[
+                                                                        index]
+                                                                    ["name"] ??
+                                                                "",
                                                         color: whiteColor,
                                                         fontSize: 16,
                                                         fontFamily:
@@ -742,12 +852,20 @@ class QuickScreenState extends State<QuickScreen> {
                                                         prefs.remove("sortby");
                                                         prefs
                                                             .remove("category");
+                                                        productController
+                                                            .productSortBy
+                                                            .value = "";
+                                                        productController
+                                                            .filterProductEnable
+                                                            .value = false;
                                                         Get.to(BrandViewProductScreen(
-                                                                title:
-                                                                    value.brandList[
+                                                                brand_id:
+                                                                    value.brandProductList[
                                                                             index]
-                                                                        [
-                                                                        "name"],
+                                                                        ["id"],
+                                                                title: value.brandProductList[
+                                                                        index]
+                                                                    ["name"],
                                                                 genderName:
                                                                     "Men"))
                                                             ?.then(
@@ -781,11 +899,13 @@ class QuickScreenState extends State<QuickScreen> {
                                                     InkWell(
                                                       onTap: () {
                                                         Get.to(BrandViewProductScreen(
-                                                                title:
-                                                                    value.brandList[
+                                                                brand_id:
+                                                                    value.brandProductList[
                                                                             index]
-                                                                        [
-                                                                        "name"],
+                                                                        ["id"],
+                                                                title: value.brandProductList[
+                                                                        index]
+                                                                    ["name"],
                                                                 genderName:
                                                                     "Men"))
                                                             ?.then(
@@ -817,8 +937,33 @@ class QuickScreenState extends State<QuickScreen> {
                                               ),
                                             ),
                                             BrandProductList(
-                                                list: productController
-                                                    .handPickedProductList)
+                                                onPressed: (p0) async {
+                                                  Get.to(ProductDetailsScreen(
+                                                          backgroundcolor:
+                                                              homeAppBarColor,
+                                                          brandName: "",
+                                                          productId: p0,
+                                                          type: "add"))
+                                                      ?.then(
+                                                          (value) => setState(
+                                                                () {
+                                                                  productController
+                                                                      .getBrandProductData();
+                                                                },
+                                                              ));
+                                                  await analytics.logEvent(
+                                                    name:
+                                                        'category_product_details',
+                                                    parameters: <String,
+                                                        Object>{
+                                                      'page_name':
+                                                          'category_product_details',
+                                                    },
+                                                  );
+                                                },
+                                                list: value
+                                                        .brandProductList[index]
+                                                    ["products"])
                                           ],
                                         ),
                                       ),

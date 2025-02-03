@@ -88,6 +88,7 @@ class ProductController extends BaseController {
   RxInt highPrice = 500000.obs;
   ScrollController listController = ScrollController();
   ScrollController handpickedController = ScrollController();
+  ScrollController brandProductController = ScrollController();
   ScrollController recentListController = ScrollController();
   RxBool expressLoadMore = false.obs;
   RxBool expressHasnextpage = true.obs;
@@ -97,7 +98,7 @@ class ProductController extends BaseController {
   RxInt handpickedPage = 1.obs;
   ScrollController expressListController = ScrollController();
   ScrollController categoryProductController = ScrollController();
-  ScrollController brandProductController = ScrollController();
+  ScrollController brandDetailsController = ScrollController();
   RxBool categoryProductLoadMore = false.obs;
   RxBool categoryProductHasnextpage = true.obs;
   RxInt categoryProductPage = 1.obs;
@@ -130,6 +131,11 @@ class ProductController extends BaseController {
   RxBool bestSellerLoadMore = false.obs;
   RxBool bestSellerHasnextpage = true.obs;
   RxInt bestSellerPage = 1.obs;
+  RxBool brandProductLoadMore = false.obs;
+  RxBool brandProductHasnextpage = true.obs;
+  RxInt brandProductPage = 1.obs;
+  List brandProductDetailsList = [].obs;
+  RxBool isProductBrand = false.obs;
   RxBool isVideoPlaying = true.obs;
   RxString sortBy = "".obs;
   RxString expressSortBy = "".obs;
@@ -156,14 +162,18 @@ class ProductController extends BaseController {
   RxInt expressValue = 0.obs;
   List productCategory = [].obs;
   List productTags = [].obs;
+  List brandProductList = [].obs;
   RxDouble lat = 0.0.obs;
   RxDouble lng = 0.0.obs;
   RxBool isBrandProduct = false.obs;
+  RxBool isBrand = false.obs;
   RxInt id = 0.obs;
   RxBool showAddressList = false.obs;
   RxString addressText = "".obs;
   RxString addressTypeValue = "".obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
+  TextEditingController brandController = TextEditingController();
+  TextEditingController branddetailsSearchController = TextEditingController();
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -238,6 +248,44 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isHomeProduct.value = false;
+  }
+
+  getBrandProductData() async {
+    isBrand.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      dynamic response;
+
+      response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/brands/products?q=${brandController.text.toString().trim()}"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          brandProductList = responseData;
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        /*  Get.to(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        ); */
+        // getSnackBar("Authentication failed");
+        print(response..statusCode);
+      } else {
+        getSnackBar("get brand failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isBrand.value = false;
   }
 
   getProductData(String type) async {
@@ -568,6 +616,173 @@ class ProductController extends BaseController {
         print("error$e");
       }
       handpickedLoadMore.value = false;
+    }
+  }
+
+  getBrandDetailsProduct(
+      String sortBy, bool filter, bool enableFilter, int brandId) async {
+    isProductBrand.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
+        int id = prefs.getInt('gender')!;
+        if (id == 1) {
+          categoryFilter.value = 3;
+        } else if (id == 2) {
+          categoryFilter.value = 2;
+        } else {
+          categoryFilter.value = 1;
+        }
+      }
+      dynamic response;
+      String colorString = color_ids.join(',');
+      String sizeString = size_ids.join(',');
+      String brandString = brand_ids.join(',');
+      if (sortBy.isNotEmpty) {
+        if (filter) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=all&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=all&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+      } else {
+        if (filter) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=all&q=${branddetailsSearchController.text.toString().trim()}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products?type=all&brand_id[]=${brandId == 0 ? "" : brandId}&q=${branddetailsSearchController.text.toString().trim()}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
+      }
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        handPickedProductList.clear();
+        if (responseData["data"] != null) {
+          brandProductDetailsList = responseData["data"];
+          brandProductHasnextpage.value = true;
+          brandProductLoadMore.value = false;
+          isProductBrand.value = false;
+          brandProductPage.value = 1;
+          if (enableFilter) {
+            Get.back();
+          }
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        /* Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed"); */
+        print(response.statusCode);
+      } else {
+        getSnackBar("get brand details failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isProductBrand.value = false;
+  }
+
+  fetchMoreBrandDetails(String sortBy, bool filter, int brandId) async {
+    if (brandProductHasnextpage.value == true &&
+        isProductBrand.value == false &&
+        brandProductLoadMore.value == false) {
+      brandProductLoadMore.value = true;
+      brandProductPage.value += 1;
+      print(brandProductPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        dynamic response;
+        String colorString = color_ids.join(',');
+        String sizeString = size_ids.join(',');
+        String brandString = brand_ids.join(',');
+        if (sortBy.isNotEmpty) {
+          if (filter) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&sort_by=$sortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&sort_by=$sortBy&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
+        } else {
+          if (filter) {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          } else {
+            response = await http.get(
+                Uri.parse(
+                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id[]=${brandId == 0 ? "" : brandId}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                });
+          }
+        }
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              brandProductDetailsList.addAll(responseData['data']);
+            } else {
+              brandProductHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Server Error");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch brand details product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      brandProductLoadMore.value = false;
     }
   }
 

@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +26,13 @@ import '../../../utils/constants.dart';
 class BrandViewProductScreen extends StatefulWidget {
   final String title;
   final String genderName;
+  final int brand_id;
 
-  const BrandViewProductScreen({
-    super.key,
-    required this.title,
-    required this.genderName,
-  });
+  const BrandViewProductScreen(
+      {super.key,
+      required this.title,
+      required this.genderName,
+      required this.brand_id});
 
   @override
   State<BrandViewProductScreen> createState() => BrandViewProductScreenState();
@@ -41,36 +44,47 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   final controller = Get.put(CartController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  Timer? debounce;
 
   @override
   void initState() {
-    productController.handPickedProductList.clear();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => wishlistController.getWishlistData());
+    productController.brandProductDetailsList.clear();
+    productController.branddetailsSearchController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.handpickedHasnextpage.value = true;
-      productController.handpickedLoadMore.value = false;
-      productController.isHandPicked.value = false;
-      productController.handpickedPage.value = 1;
+      productController.brandProductHasnextpage.value = true;
+      productController.brandProductLoadMore.value = false;
+      productController.isProductBrand.value = false;
+      productController.brandProductPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getHandPickedProduct(
+        productController.getBrandDetailsProduct(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
             false,
-            productController.tagId.value));
+            widget.brand_id));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.handpickedController.addListener(() {
-        productController.fetchMoreHandPickedProduct(
+      productController.brandDetailsController.addListener(() {
+        productController.fetchMoreBrandDetails(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
-            productController.tagId.value);
+            widget.brand_id);
         productController.update();
       });
     });
     super.initState();
+  }
+
+  onSearchChanged(String query) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      productController.getBrandDetailsProduct(
+          productController.productSortBy.value,
+          productController.filterProductEnable.value,
+          false,
+          widget.brand_id);
+    });
   }
 
   @override
@@ -117,7 +131,13 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                   focusNode: FocusNode(),
                   onKey: (value) {
                     print(value);
-                    if (value is RawKeyDownEvent) {}
+                    if (value is RawKeyDownEvent) {
+                      productController.getBrandDetailsProduct(
+                          productController.productSortBy.value,
+                          productController.filterProductEnable.value,
+                          false,
+                          widget.brand_id);
+                    }
                   },
                   child: TextField(
                     textCapitalization: TextCapitalization.words,
@@ -125,8 +145,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         color: colorSecondary,
                         fontFamily: "Franklin Gothic Regular",
                         fontSize: 14.sp),
-                    //   controller: brandController.searchController,
-                    //   onChanged: onSearchChanged,
+                    controller: productController.branddetailsSearchController,
+                    onChanged: onSearchChanged,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       filled: true,
@@ -150,7 +170,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         borderSide: const BorderSide(color: searchTextColor),
                       ),
                       counterText: "",
-                      hintText: "Search for 'Kurta'",
+                      hintText: "Search for 'Brands'",
                       hintStyle:
                           TextStyle(fontSize: 14.sp, color: searchTextColor),
                     ),
@@ -159,16 +179,17 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
               ),
             ),
             Obx(
-              () => productController.isHandPicked.value
+              () => productController.isProductBrand.value
                   ? Expanded(
                       child: const DummyGridBlack(
                         size: 2,
                       ),
                     )
-                  : productController.handPickedProductList.isNotEmpty
+                  : productController.brandProductDetailsList.isNotEmpty
                       ? Expanded(
                           child: SingleChildScrollView(
-                            controller: productController.handpickedController,
+                            controller:
+                                productController.brandDetailsController,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -179,8 +200,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                   child: GridView.count(
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
-                                    controller:
-                                        productController.handpickedController,
+                                    controller: productController
+                                        .brandDetailsController,
                                     scrollDirection: Axis.vertical,
                                     padding: EdgeInsets.zero,
                                     childAspectRatio: 0.6,
@@ -189,7 +210,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                     mainAxisSpacing: 0.sp,
                                     children: List.generate(
                                       productController
-                                          .handPickedProductList.length,
+                                          .brandProductDetailsList.length,
                                       (index) {
                                         return GestureDetector(
                                           onTap: () async {
@@ -197,25 +218,25 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                     backgroundcolor:
                                                         homeAppBarColor,
                                                     brandName: productController
-                                                            .handPickedProductList[
+                                                            .brandProductDetailsList[
                                                         index]["name"],
                                                     productId: productController
-                                                            .handPickedProductList[
+                                                            .brandProductDetailsList[
                                                         index]["id"],
                                                     type: "add"))
                                                 ?.then((value) => setState(
                                                       () {
                                                         productController
-                                                            .handpickedHasnextpage
+                                                            .brandProductHasnextpage
                                                             .value = true;
                                                         productController
-                                                            .handpickedLoadMore
+                                                            .brandProductLoadMore
                                                             .value = false;
                                                         productController
-                                                            .isHandPicked
+                                                            .isProductBrand
                                                             .value = false;
                                                         productController
-                                                            .handpickedPage
+                                                            .brandProductPage
                                                             .value = 1;
                                                         controller
                                                             .getCartData();
@@ -237,11 +258,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                 children: [
                                                   Center(
                                                     child: productController
-                                                                .handPickedProductList[index]
+                                                                .brandProductDetailsList[index]
                                                                     ["images"]
                                                                 .isNotEmpty &&
                                                             productController
-                                                                        .handPickedProductList[index]
+                                                                        .brandProductDetailsList[index]
                                                                     [
                                                                     "images"] !=
                                                                 null
@@ -278,14 +299,14 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                         100)),
                                                                 fit: BoxFit
                                                                     .cover,
-                                                                imageUrl: isImage(productController.handPickedProductList[index]
+                                                                imageUrl: isImage(productController.brandProductDetailsList[index]
                                                                             ["images"][0]
                                                                         [
                                                                         "name"])
-                                                                    ? productController.handPickedProductList[index]
+                                                                    ? productController.brandProductDetailsList[index]
                                                                             ["images"][0]
                                                                         ["name"]
-                                                                    : productController.handPickedProductList[index]
+                                                                    : productController.brandProductDetailsList[index]
                                                                             ["images"][1]
                                                                         [
                                                                         "name"],
@@ -331,7 +352,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                     EdgeInsets.only(top: 8.sp),
                                                 child: AppText(
                                                   text:
-                                                      "${productController.handPickedProductList[index]["name"]}",
+                                                      "${productController.brandProductDetailsList[index]["name"]}",
                                                   color: productSubtitleColor,
                                                   maxLines: 1,
                                                   fontSize: 11,
@@ -348,7 +369,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                   children: [
                                                     Visibility(
                                                       visible: productController
-                                                                      .handPickedProductList[
+                                                                      .brandProductDetailsList[
                                                                   index]["mrp"] !=
                                                               null
                                                           ? true
@@ -358,7 +379,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                             EdgeInsets.only(
                                                                 right: 6.sp),
                                                         child: Text(
-                                                          "\u{20B9} ${productController.handPickedProductList[index]["mrp"] ?? ""}",
+                                                          "\u{20B9} ${productController.brandProductDetailsList[index]["mrp"] ?? ""}",
                                                           style: TextStyle(
                                                             color:
                                                                 searchTextColor,
@@ -376,7 +397,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                     ),
                                                     AppText(
                                                       text:
-                                                          "\u{20B9} ${productController.handPickedProductList[index]["price"] ?? ""}",
+                                                          "\u{20B9} ${productController.brandProductDetailsList[index]["price"] ?? ""}",
                                                       color: whiteColor,
                                                       maxLines: 2,
                                                       fontSize: 11,
@@ -395,7 +416,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                     ),
                                   ),
                                 ),
-                                productController.handpickedLoadMore.value
+                                productController.brandProductLoadMore.value
                                     ? DummyGridBlack()
                                     : const SizedBox(
                                         height: 0,
@@ -454,11 +475,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                             backgroundColor: homeAppBarColor,
                             onPressedButton: (p0) {
                               productController.productSortBy.value = p0;
-                              productController.getHandPickedProduct(
+                              productController.getBrandDetailsProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   false,
-                                  productController.tagId.value);
+                                  widget.brand_id);
                             },
                           );
                         },
@@ -524,11 +545,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                               } else {
                                 productController.categoryFilter.value = 1;
                               }
-                              productController.getHandPickedProduct(
+                              productController.getBrandDetailsProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   false,
-                                  productController.tagId.value);
+                                  widget.brand_id);
                             },
                             onPressedFilter: () {
                               Get.back();
@@ -559,24 +580,24 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       prefs.remove("lower");
                                       prefs.remove("sortby");
                                       prefs.remove("category");
-                                      productController.getHandPickedProduct(
+                                      productController.getBrandDetailsProduct(
                                           productController.productSortBy.value,
                                           productController
                                               .filterProductEnable.value,
                                           false,
-                                          productController.tagId.value);
+                                          widget.brand_id);
                                     },
                                     onClick: (p0, p1) {
                                       productController
                                           .filterProductEnable.value = true;
                                       productController.lowPrice.value = p0;
                                       productController.highPrice.value = p1;
-                                      productController.getHandPickedProduct(
+                                      productController.getBrandDetailsProduct(
                                           productController.productSortBy.value,
                                           productController
                                               .filterProductEnable.value,
                                           true,
-                                          productController.tagId.value);
+                                          widget.brand_id);
                                     },
                                   );
                                 },
@@ -664,22 +685,22 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                               prefs.remove("lower");
                               prefs.remove("sortby");
                               prefs.remove("category");
-                              productController.getHandPickedProduct(
+                              productController.getBrandDetailsProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   false,
-                                  productController.tagId.value);
+                                  widget.brand_id);
                             },
                             onClick: (p0, p1) {
                               productController.filterProductEnable.value =
                                   true;
                               productController.lowPrice.value = p0;
                               productController.highPrice.value = p1;
-                              productController.getHandPickedProduct(
+                              productController.getBrandDetailsProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   true,
-                                  productController.tagId.value);
+                                  widget.brand_id);
                             },
                           );
                         },
