@@ -38,6 +38,7 @@ class HomeController extends BaseController {
   RxInt currentPage = 0.obs;
   RxInt homeGenderValue = 2.obs;
   List banners = [].obs;
+  RxString expressHour = "".obs;
   // RxBool loadMore = false.obs;
   // RxBool hasnextpage = true.obs;
   // RxInt page = 1.obs;
@@ -128,6 +129,9 @@ class HomeController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           prefs.setInt('tagId', responseData['new_arrival_tag_id']);
+          prefs.setString(
+              'expresshour', responseData['quick_delivery_estimated_hours']);
+          expressHour.value = responseData['quick_delivery_estimated_hours'];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

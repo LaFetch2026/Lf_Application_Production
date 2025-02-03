@@ -27,11 +27,13 @@ class BrandViewProductScreen extends StatefulWidget {
   final String title;
   final String genderName;
   final int brand_id;
+  final String expresshour;
 
   const BrandViewProductScreen(
       {super.key,
       required this.title,
       required this.genderName,
+      required this.expresshour,
       required this.brand_id});
 
   @override
@@ -215,6 +217,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         return GestureDetector(
                                           onTap: () async {
                                             Get.to(ProductDetailsScreen(
+                                                    expresshour:
+                                                        widget.expresshour,
                                                     backgroundcolor:
                                                         homeAppBarColor,
                                                     brandName: productController

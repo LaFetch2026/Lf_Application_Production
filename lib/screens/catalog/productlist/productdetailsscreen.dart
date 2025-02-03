@@ -43,6 +43,7 @@ class ProductDetailsScreen extends StatefulWidget {
   final int boardId;
   final String Slug;
   final Color backgroundcolor;
+  final String expresshour;
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
@@ -51,6 +52,7 @@ class ProductDetailsScreen extends StatefulWidget {
       required this.type,
       this.boardId = 0,
       this.Slug = "",
+      this.expresshour = "0",
       this.wishlistProductId = 0});
 
   @override
@@ -1045,7 +1047,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     padding: EdgeInsets.only(
                                                         top: 1.sp, left: 2.sp),
                                                     child: AppText(
-                                                      text: "2 HOUR",
+                                                      text:
+                                                          "${widget.expresshour} HOUR",
                                                       fontFamily:
                                                           "Franklin Gothic",
                                                       fontWeight:

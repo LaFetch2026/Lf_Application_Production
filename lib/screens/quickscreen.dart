@@ -39,6 +39,10 @@ class QuickScreenState extends State<QuickScreen> {
   @override
   void initState() {
     productController.brandController.clear();
+    // getPrefrenceValue();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.getDefaultAddressData(0, context);
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     });
@@ -57,6 +61,13 @@ class QuickScreenState extends State<QuickScreen> {
       productController.getBrandProductData();
     });
   }
+
+  /*  Future getPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString("expresshour") != null) {
+      homeController.expressHour.value = prefs.getString("expresshour")!;
+    }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -88,13 +99,13 @@ class QuickScreenState extends State<QuickScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              AppText(
-                                text: "2",
-                                color: whiteColor,
-                                fontSize: 18,
-                                fontFamily: "Franklin Gothic Semibold",
-                                fontWeight: FontWeight.w500,
-                              ),
+                              Obx(() => AppText(
+                                    text: "${homeController.expressHour.value}",
+                                    color: whiteColor,
+                                    fontSize: 18,
+                                    fontFamily: "Franklin Gothic Semibold",
+                                    fontWeight: FontWeight.w500,
+                                  )),
                               AppText(
                                 text: "HRS",
                                 color: whiteColor,
@@ -105,52 +116,89 @@ class QuickScreenState extends State<QuickScreen> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap: () {},
-                              child: Row(
+                      Obx(() => productController.isAddress.value
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  AppText(
-                                    text: "Deliver to Akash",
-                                    color: whiteColor,
-                                    fontSize: 12,
-                                    fontFamily: "Franklin Gothic Semibold",
-                                    fontWeight: FontWeight.w500,
+                                  Container(
+                                    height: 20.sp,
+                                    width: MediaQuery.of(context).size.width /
+                                        2.sp,
+                                    color: cardBg,
                                   ),
                                   Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 4.sp),
-                                    child: SvgPicture.asset(
-                                      dropdownSvgImage,
-                                      height: 6.sp,
-                                      width: 8.sp,
+                                    padding: EdgeInsets.only(top: 2.sp),
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width /
+                                              2 +
+                                          40.sp,
+                                      height: 20.sp,
+                                      color: cardBg,
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
-                            ),
-                            Container(
-                              width:
-                                  MediaQuery.of(context).size.width / 2 + 40.sp,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 4.sp),
-                                child: AppText(
-                                  text: "6 FLoor ,Lafetch,Universal Trade Tow",
-                                  color: whiteColor,
-                                  fontSize: 12,
-                                  maxLines: 1,
-                                  fontFamily: "Franklin Gothic Regular",
-                                ),
-                              ),
                             )
-                          ],
-                        ),
-                      )
+                          : productController.defaultAddress != ""
+                              ? Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Row(
+                                          children: [
+                                            AppText(
+                                              text: productController
+                                                  .defaultAddress["name"],
+                                              color: whiteColor,
+                                              fontSize: 12,
+                                              fontFamily:
+                                                  "Franklin Gothic Semibold",
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 4.sp),
+                                              child: SvgPicture.asset(
+                                                dropdownSvgImage,
+                                                height: 6.sp,
+                                                width: 8.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                    2 +
+                                                40.sp,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: 4.sp),
+                                          child: AppText(
+                                            text:
+                                                "${productController.defaultAddress["address"]},${productController.defaultAddress["city"]["name"]},${productController.defaultAddress["city"]["state"]["name"]}",
+                                            color: whiteColor,
+                                            fontSize: 12,
+                                            maxLines: 1,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : SizedBox(
+                                  height: 0,
+                                ))
                     ],
                   ),
                 ),
@@ -859,11 +907,16 @@ class QuickScreenState extends State<QuickScreen> {
                                                             .filterProductEnable
                                                             .value = false;
                                                         Get.to(BrandViewProductScreen(
-                                                                brand_id:
-                                                                    value.brandProductList[
-                                                                            index]
-                                                                        ["id"],
-                                                                title: value.brandProductList[
+                                                                expresshour:
+                                                                    homeController
+                                                                        .expressHour
+                                                                        .value,
+                                                                brand_id: value
+                                                                            .brandProductList[
+                                                                        index]
+                                                                    ["id"],
+                                                                title: value
+                                                                            .brandProductList[
                                                                         index]
                                                                     ["name"],
                                                                 genderName:
@@ -899,11 +952,16 @@ class QuickScreenState extends State<QuickScreen> {
                                                     InkWell(
                                                       onTap: () {
                                                         Get.to(BrandViewProductScreen(
-                                                                brand_id:
-                                                                    value.brandProductList[
-                                                                            index]
-                                                                        ["id"],
-                                                                title: value.brandProductList[
+                                                                expresshour:
+                                                                    homeController
+                                                                        .expressHour
+                                                                        .value,
+                                                                brand_id: value
+                                                                            .brandProductList[
+                                                                        index]
+                                                                    ["id"],
+                                                                title: value
+                                                                            .brandProductList[
                                                                         index]
                                                                     ["name"],
                                                                 genderName:
@@ -939,6 +997,10 @@ class QuickScreenState extends State<QuickScreen> {
                                             BrandProductList(
                                                 onPressed: (p0) async {
                                                   Get.to(ProductDetailsScreen(
+                                                          expresshour:
+                                                              homeController
+                                                                  .expressHour
+                                                                  .value,
                                                           backgroundcolor:
                                                               homeAppBarColor,
                                                           brandName: "",
