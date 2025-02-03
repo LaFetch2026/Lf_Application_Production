@@ -115,43 +115,54 @@ class DoubleButtonIconNew extends StatelessWidget {
                                   ),
                                 )
                               : */
-                          ElevatedButton.icon(
-                              icon: lineColor == dividerColor
-                                  ? null
-                                  : SvgPicture.asset(buyNowSvgImage,
-                                      height: 18.sp,
-                                      width: 18.sp,
-                                      fit: BoxFit.cover),
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(0))),
-                                  side: MaterialStateProperty.all(BorderSide(
-                                      color: lineColor == dividerColor
-                                          ? homeAppBarColor
-                                          : lightPurpleColor,
-                                      width: 1.0,
-                                      style: BorderStyle.solid)),
-                                  elevation: MaterialStateProperty.all(0.0),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      lineColor == dividerColor
-                                          ? homeAppBarColor
-                                          : lightPurpleColor),
-                                  textStyle: MaterialStateProperty.all(TextStyle(
-                                      color: whiteColor,
-                                      fontSize: 13.sp,
-                                      fontFamily: fontFamily))),
-                              onPressed: () {
-                                onPressedSecond?.call();
-                              },
-                              label: Text(
-                                secondText,
-                                style: TextStyle(
-                                    fontFamily: fontFamily,
-                                    color: whiteColor,
-                                    fontSize: 13.sp),
-                              ))),
+                          lineColor == dividerColor
+                              ? ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(0))),
+                                      side: MaterialStateProperty.all(
+                                          BorderSide(
+                                              color: lineColor == dividerColor
+                                                  ? homeAppBarColor
+                                                  : lightPurpleColor,
+                                              width: 1.0,
+                                              style: BorderStyle.solid)),
+                                      elevation: MaterialStateProperty.all(0.0),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              lineColor == dividerColor
+                                                  ? homeAppBarColor
+                                                  : lightPurpleColor),
+                                      textStyle: MaterialStateProperty.all(
+                                          TextStyle(
+                                              color: whiteColor,
+                                              fontSize: 13.sp,
+                                              fontFamily: fontFamily))),
+                                  onPressed: () {
+                                    onPressedSecond?.call();
+                                  },
+                                  child: Text(
+                                    secondText,
+                                    style: TextStyle(
+                                        fontFamily: fontFamily,
+                                        color: whiteColor,
+                                        fontSize: 13.sp),
+                                  ))
+                              : ElevatedButton.icon(
+                                  icon: SvgPicture.asset(buyNowSvgImage, height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                                  style: ButtonStyle(shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))), side: MaterialStateProperty.all(BorderSide(color: lineColor == dividerColor ? homeAppBarColor : lightPurpleColor, width: 1.0, style: BorderStyle.solid)), elevation: MaterialStateProperty.all(0.0), backgroundColor: MaterialStateProperty.all(lineColor == dividerColor ? homeAppBarColor : lightPurpleColor), textStyle: MaterialStateProperty.all(TextStyle(color: whiteColor, fontSize: 13.sp, fontFamily: fontFamily))),
+                                  onPressed: () {
+                                    onPressedSecond?.call();
+                                  },
+                                  label: Text(
+                                    secondText,
+                                    style: TextStyle(
+                                        fontFamily: fontFamily,
+                                        color: whiteColor,
+                                        fontSize: 13.sp),
+                                  ))),
                 ),
               ),
             ],

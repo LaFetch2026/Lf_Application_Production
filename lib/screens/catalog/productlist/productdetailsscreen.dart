@@ -4350,7 +4350,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       : productController.productDetails["added_to_cart"] ||
                               productController.addToCart.value
                           ? DoubleButtonIconNew(
-                              lineColor: titleColor,
+                              lineColor: widget.backgroundcolor == whiteColor
+                                  ? dividerColor
+                                  : titleColor,
                               firstText: "Go to BAG".toUpperCase(),
                               secondText: "Buy Now".toUpperCase(),
                               onPressedFirst: () async {
@@ -4371,7 +4373,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               },
                               controller: productController)
                           : DoubleButtonIconNew(
-                              lineColor: titleColor,
+                              lineColor: widget.backgroundcolor == whiteColor
+                                  ? dividerColor
+                                  : titleColor,
                               firstText: widget.type == "add"
                                   ? "Add to bag".toUpperCase()
                                   : "Move to bag".toUpperCase(),
