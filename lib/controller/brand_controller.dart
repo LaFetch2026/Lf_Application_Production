@@ -27,6 +27,7 @@ class BrandController extends BaseController {
   RxBool showAllBrand = false.obs;
   RxBool isCategory = false.obs;
   List categoryList = [].obs;
+  RxInt selectIndex = 0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
   /*  @override
@@ -53,7 +54,8 @@ class BrandController extends BaseController {
             });
       } else if (type == "brand") {
         response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/brands?q=${queryText.value}"),
+            Uri.parse(
+                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&type=alphabet"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -69,11 +71,15 @@ class BrandController extends BaseController {
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          brandList = responseData["data"];
-          print(brandList.length);
-          selected.clear();
-          selected = List.generate(brandList.length, (i) => false);
+        if (type == "brand") {
+          brandList = responseData;
+        } else {
+          if (responseData["data"] != null) {
+            brandList = responseData["data"];
+            print(brandList.length);
+            selected.clear();
+            selected = List.generate(brandList.length, (i) => false);
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
