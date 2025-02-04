@@ -186,6 +186,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                 children: [
                   Stack(
                     children: [
+                      Container(
+                        // color: blue,
+                        alignment: Alignment.bottomCenter,
+                        margin: EdgeInsets.only(top: 140.sp),
+                        child: Image.asset(
+                          circleBack,
+                        ),
+                      ),
                       widget.brandbackground == ""
                           ? Image.asset(brandback,
                               height: 112.sp,
@@ -240,23 +248,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 },
                               ),
                             ),
-                      /*  Container(
-                        alignment: Alignment.bottomCenter,
-                        margin: EdgeInsets.only(top: 90.sp),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(circlesBack),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ), */
                       Container(
                         alignment: Alignment.bottomCenter,
                         margin: EdgeInsets.only(top: 90.sp),
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.white,
-                              width: 2.0.sp,
+                              color: homeAppBarColor,
+                              width: 4.0.sp,
                             ),
                             color: Colors.white,
                             shape: BoxShape.circle),
@@ -316,7 +314,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 36.sp, left: 16.sp),
+                    padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
                     child: AppText(
                       text: "All Products",
                       color: whiteColor,
@@ -328,7 +326,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   ),
                   Obx(() => productController.isProductBrand.value
                       ? Padding(
-                          padding: EdgeInsets.only(top: 16.sp, bottom: 16.sp),
+                          padding: EdgeInsets.only(
+                            top: 16.sp,
+                            bottom: 16.sp,
+                          ),
                           child: SizedBox(
                             width: double.infinity,
                             height: 220.sp,
@@ -344,12 +345,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
+                                        margin: EdgeInsets.only(left: 16.sp),
                                         color: cardBg,
                                         height: 170.sp,
                                         width: 136.sp,
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(top: 8.sp),
+                                        padding: EdgeInsets.only(
+                                            top: 8.sp, left: 16.sp),
                                         child: Container(
                                           color: cardBg,
                                           height: 16.sp,
@@ -357,7 +360,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(top: 8.sp),
+                                        padding: EdgeInsets.only(
+                                            top: 8.sp, left: 16.sp),
                                         child: Row(
                                           children: [
                                             Padding(
@@ -775,6 +779,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       productController.productSortBy.value = "";
                       productController.filterProductEnable.value = false;
                       productController.categoryFilter.value = 0;
+                      videoController.pause();
                       Get.to(BrandViewProductScreen(
                               expresshour: homeController.expressHour.value,
                               brand_id: brandController.brandId.value,

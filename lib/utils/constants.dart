@@ -241,6 +241,7 @@ const quickBack = 'assets/images/quick_back_circle.png';
 const quickBackCircle = 'assets/images/quick_back.png';
 const upDropDownSvgImage = 'assets/images/up_dropdown.svg';
 const circlesBack = 'assets/images/circles.png';
+const circleBack = 'assets/images/circle.png';
 
 class ApiConstants {
   ApiConstants._();

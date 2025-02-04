@@ -771,6 +771,9 @@ class QuickScreenState extends State<QuickScreen> {
                                                               .start,
                                                       children: [
                                                         Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 16.sp),
                                                           color: cardBg,
                                                           height: 170.sp,
                                                           width: 136.sp,
@@ -778,7 +781,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                         Padding(
                                                           padding:
                                                               EdgeInsets.only(
-                                                                  top: 8.sp),
+                                                                  top: 8.sp,
+                                                                  left: 16.sp),
                                                           child: Container(
                                                             color: cardBg,
                                                             height: 16.sp,
@@ -788,7 +792,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                         Padding(
                                                           padding:
                                                               EdgeInsets.only(
-                                                                  top: 8.sp),
+                                                                  top: 8.sp,
+                                                                  left: 16.sp),
                                                           child: Row(
                                                             children: [
                                                               Padding(

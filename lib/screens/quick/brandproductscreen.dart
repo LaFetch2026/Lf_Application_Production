@@ -52,6 +52,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
+  String categoryName = "";
 
   @override
   void initState() {
@@ -729,6 +730,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                           .filterProductEnable.value,
                                       false,
                                       widget.brand_id);
+                                  categoryName = p0;
+                                  setState(() {});
                                 },
                                 onPressedFilter: () {
                                   Get.back();
@@ -815,13 +818,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                   ),
                                 ),
                                 Visibility(
-                                  visible:
-                                      widget.genderName == "" ? false : true,
+                                  visible: categoryName.isEmpty ? false : true,
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         left: 5.sp, right: 5.sp, top: 1.sp),
                                     child: Text(
-                                      widget.genderName.toUpperCase(),
+                                      categoryName.toUpperCase(),
                                       style: TextStyle(
                                         decoration: TextDecoration.underline,
                                         fontFamily: "Franklin Gothic Regular",
