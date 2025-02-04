@@ -624,7 +624,7 @@ class ProductController extends BaseController {
     isProductBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
+      /* if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
         int id = prefs.getInt('gender')!;
         if (id == 1) {
           categoryFilter.value = 3;
@@ -633,7 +633,7 @@ class ProductController extends BaseController {
         } else {
           categoryFilter.value = 1;
         }
-      }
+      } */
       dynamic response;
       String colorString = color_ids.join(',');
       String sizeString = size_ids.join(',');

@@ -11,10 +11,12 @@ import '../common_widgets.dart';
 class BrandProductList extends StatelessWidget {
   final List list;
   final Function(int)? onPressed;
+  final double radius;
 
   const BrandProductList({
     Key? key,
     required this.list,
+    this.radius = 8.0,
     this.onPressed,
   }) : super(key: key);
 
@@ -53,8 +55,9 @@ class BrandProductList extends StatelessWidget {
                                         list[index]["images"] != null
                                     ? ClipRRect(
                                         borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(8.sp),
-                                            topRight: Radius.circular(8.sp)),
+                                            topLeft: Radius.circular(radius.sp),
+                                            topRight:
+                                                Radius.circular(radius.sp)),
                                         child: Container(
                                           height: 170.sp,
                                           width: 136.sp,
@@ -103,6 +106,9 @@ class BrandProductList extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.only(top: 8.sp),
                                   child: Row(
+                                    mainAxisAlignment: radius == 0
+                                        ? MainAxisAlignment.center
+                                        : MainAxisAlignment.start,
                                     children: [
                                       Visibility(
                                         visible: list[index]["mrp"] != null

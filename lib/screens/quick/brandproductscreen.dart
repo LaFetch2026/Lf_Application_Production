@@ -16,7 +16,10 @@ import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_grid_black.dart';
 import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/searchscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../controller/product_controller.dart';
@@ -28,12 +31,14 @@ class BrandViewProductScreen extends StatefulWidget {
   final String genderName;
   final int brand_id;
   final String expresshour;
+  final String screen;
 
   const BrandViewProductScreen(
       {super.key,
       required this.title,
       required this.genderName,
       required this.expresshour,
+      required this.screen,
       required this.brand_id});
 
   @override
@@ -96,44 +101,211 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
         backgroundColor: homeAppBarColor,
         body: Stack(
           children: [
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Image.asset(
-                quickBackCircle,
-                height: 250.sp,
-                width: 300.sp,
+            Visibility(
+              visible: widget.screen == "brand" ? false : true,
+              child: Positioned(
+                top: 0,
+                right: 0,
+                child: Image.asset(
+                  quickBackCircle,
+                  height: 250.sp,
+                  width: 300.sp,
+                ),
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        icon: SvgPicture.asset(arrowBack,
-                            color: whiteColor,
-                            height: 15.sp,
-                            width: 15.sp,
-                            fit: BoxFit.cover),
-                        onPressed: () {
-                          Get.back();
-                        },
+                widget.screen == "quick"
+                    ? Padding(
+                        padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              icon: SvgPicture.asset(arrowBack,
+                                  color: whiteColor,
+                                  height: 15.sp,
+                                  width: 15.sp,
+                                  fit: BoxFit.cover),
+                              onPressed: () {
+                                Get.back();
+                              },
+                            ),
+                            AppText(
+                              text: widget.title,
+                              color: whiteColor,
+                              fontSize: 16,
+                              fontFamily: "Franklin Gothic Semibold",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        height: 80.sp,
+                        width: MediaQuery.of(context).size.width,
+                        color: homeAppBarColor,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 6.sp, right: 16.sp, top: 30.sp),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    IconButton(
+                                      icon: SvgPicture.asset(arrowBack,
+                                          color: whiteColor,
+                                          height: 15.sp,
+                                          width: 15.sp,
+                                          fit: BoxFit.cover),
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 0.sp),
+                                      child: AppText(
+                                        text: widget.title,
+                                        color: whiteColor,
+                                        fontSize: 16,
+                                        fontFamily: "Franklin Gothic Semibold",
+                                        textAlign: TextAlign.center,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Expanded(
+                                      child: SizedBox(
+                                        height: 0,
+                                      ),
+                                    ),
+                                    const Expanded(
+                                      child: SizedBox(
+                                        height: 0,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Navigator.push(context,
+                                            scaleIn(const SearchScreen()));
+                                        await analytics.logEvent(
+                                          name: 'search_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'search_page',
+                                          },
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 5),
+                                        child: ImageIcon(
+                                          AssetImage(searchNewImage),
+                                          color: whiteColor,
+                                          size: 22.sp,
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Get.to(const WishlistScreen());
+                                        await analytics.logEvent(
+                                          name: 'wishlist_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'wishlist_page',
+                                          },
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 5),
+                                        child: ImageIcon(
+                                          AssetImage(wishlistBottomIcon),
+                                          color: whiteColor,
+                                          size: 18.sp,
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Navigator.push(context,
+                                            scaleIn(const CartScreen()));
+                                        await analytics.logEvent(
+                                          name: 'cart_page',
+                                          parameters: <String, Object>{
+                                            'page_name': 'cart_page',
+                                          },
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 5.sp),
+                                        child: Stack(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 3.sp),
+                                              child: Image.asset(
+                                                cartNewImage,
+                                                color: whiteColor,
+                                                height: 18.sp,
+                                                width: 18.sp,
+                                              ),
+                                            ),
+                                            Obx(() => controller
+                                                        .cartTotalValue.value !=
+                                                    0
+                                                ? Positioned(
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    child: Container(
+                                                      width: 10.sp,
+                                                      height: 10.sp,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.all(0),
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: whiteColor,
+                                                          ),
+                                                          child: Center(
+                                                            child: Text(
+                                                              controller
+                                                                  .cartTotalValue
+                                                                  .value
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 8,
+                                                                  color:
+                                                                      homeAppBarColor,
+                                                                  fontFamily:
+                                                                      "Libre Franklin Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ), // inner content
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : SizedBox(
+                                                    height: 0,
+                                                  ))
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]),
                       ),
-                      AppText(
-                        text: widget.title,
-                        color: whiteColor,
-                        fontSize: 16,
-                        fontFamily: "Franklin Gothic Semibold",
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: EdgeInsets.only(
                       left: 16.sp, top: 35.sp, right: 16.sp, bottom: 30.sp),
@@ -185,7 +357,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 const BorderSide(color: searchTextColor),
                           ),
                           counterText: "",
-                          hintText: "Search for 'Brands'",
+                          hintText: "Search for 'Product'",
                           hintStyle: TextStyle(
                               fontSize: 14.sp, color: searchTextColor),
                         ),
@@ -286,11 +458,15 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                         null
                                                                 ? ClipRRect(
                                                                     borderRadius: BorderRadius.only(
-                                                                        topLeft:
-                                                                            Radius.circular(8
+                                                                        topLeft: Radius.circular(widget.screen ==
+                                                                                "brand"
+                                                                            ? 0
+                                                                            : 8
                                                                                 .sp),
-                                                                        topRight:
-                                                                            Radius.circular(8.sp)),
+                                                                        topRight: Radius.circular(widget.screen ==
+                                                                                "brand"
+                                                                            ? 0
+                                                                            : 8.sp)),
                                                                     child:
                                                                         SizedBox(
                                                                       height: (MediaQuery.of(context).size.width /

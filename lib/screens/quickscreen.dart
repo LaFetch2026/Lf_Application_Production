@@ -997,7 +997,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                         productController
                                                             .filterProductEnable
                                                             .value = false;
+                                                        productController
+                                                            .categoryFilter
+                                                            .value = 0;
                                                         Get.to(BrandViewProductScreen(
+                                                                screen: "quick",
                                                                 expresshour:
                                                                     homeController
                                                                         .expressHour
@@ -1010,13 +1014,21 @@ class QuickScreenState extends State<QuickScreen> {
                                                                             .brandProductList[
                                                                         index]
                                                                     ["name"],
-                                                                genderName:
-                                                                    "Men"))
+                                                                genderName: ""))
                                                             ?.then(
                                                                 (value) =>
                                                                     setState(
                                                                       () {
-                                                                        productController.getHandPickedProduct(
+                                                                        productController
+                                                                            .productSortBy
+                                                                            .value = "";
+                                                                        productController
+                                                                            .filterProductEnable
+                                                                            .value = false;
+                                                                        productController
+                                                                            .categoryFilter
+                                                                            .value = 0;
+                                                                        productController.getBrandDetailsProduct(
                                                                             "",
                                                                             false,
                                                                             false,
@@ -1041,8 +1053,32 @@ class QuickScreenState extends State<QuickScreen> {
                                                       ),
                                                     ),
                                                     InkWell(
-                                                      onTap: () {
+                                                      onTap: () async {
+                                                        final prefs =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        prefs.remove(
+                                                            "brandList");
+                                                        prefs.remove(
+                                                            "colorList");
+                                                        prefs
+                                                            .remove("sizeList");
+                                                        prefs.remove("upper");
+                                                        prefs.remove("lower");
+                                                        prefs.remove("sortby");
+                                                        prefs
+                                                            .remove("category");
+                                                        productController
+                                                            .productSortBy
+                                                            .value = "";
+                                                        productController
+                                                            .filterProductEnable
+                                                            .value = false;
+                                                        productController
+                                                            .categoryFilter
+                                                            .value = 0;
                                                         Get.to(BrandViewProductScreen(
+                                                                screen: "quick",
                                                                 expresshour:
                                                                     homeController
                                                                         .expressHour
@@ -1055,13 +1091,21 @@ class QuickScreenState extends State<QuickScreen> {
                                                                             .brandProductList[
                                                                         index]
                                                                     ["name"],
-                                                                genderName:
-                                                                    "Men"))
+                                                                genderName: ""))
                                                             ?.then(
                                                                 (value) =>
                                                                     setState(
                                                                       () {
-                                                                        productController.getHandPickedProduct(
+                                                                        productController
+                                                                            .productSortBy
+                                                                            .value = "";
+                                                                        productController
+                                                                            .filterProductEnable
+                                                                            .value = false;
+                                                                        productController
+                                                                            .categoryFilter
+                                                                            .value = 0;
+                                                                        productController.getBrandDetailsProduct(
                                                                             "",
                                                                             false,
                                                                             false,
