@@ -584,8 +584,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                               BoxShape.circle,
                                                           border: Border.all(
                                                               width: 1.sp,
-                                                              color: Color(
-                                                                  0xff9CA3AF)),
+                                                              color:
+                                                                  lightgreyColor),
                                                         ),
                                                         child: Padding(
                                                           padding:
@@ -816,6 +816,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                                     BoxDecoration(
                                                                   shape: BoxShape
                                                                       .circle,
+                                                                  border: Border.all(
+                                                                      width:
+                                                                          1.sp,
+                                                                      color:
+                                                                          lightgreyColor),
                                                                 ),
                                                                 child: Padding(
                                                                   padding: EdgeInsets

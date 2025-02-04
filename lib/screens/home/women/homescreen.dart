@@ -368,7 +368,6 @@ class HomeScreenState extends State<HomeScreen> {
                 },
               );
             },
-            showGender: true,
             onPressedDropDown: () {
               if (homeController.showGenderList.value) {
                 homeController.showGenderList.value = false;
@@ -1596,8 +1595,8 @@ class HomeScreenState extends State<HomeScreen> {
                                                                     .circle,
                                                                 border: Border.all(
                                                                     width: 1.sp,
-                                                                    color: Color(
-                                                                        0xff9CA3AF)),
+                                                                    color:
+                                                                        lightgreyColor),
                                                               ),
                                                               child: Padding(
                                                                 padding:

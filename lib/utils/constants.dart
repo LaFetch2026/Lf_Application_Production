@@ -239,16 +239,17 @@ const pumaImage = 'assets/images/puma_image.png';
 const expressHourSvgImage = 'assets/images/express_hour.svg';
 const quickBack = 'assets/images/quick_back_circle.png';
 const quickBackCircle = 'assets/images/quick_back.png';
+const upDropDownSvgImage = 'assets/images/up_dropdown.svg';
 
 class ApiConstants {
   ApiConstants._();
   static const String baseUrl =
       "https://api.la-fetch.com/customer/api"; //production
 
-  static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
+  // static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
 
   // static const String baseUrl =
   // "https://staging-api.la-fetch.com/customer/api"; //staging
 
-  // static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
+  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }

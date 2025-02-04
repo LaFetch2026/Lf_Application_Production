@@ -55,7 +55,7 @@ class DummybrandList extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          DummyContainer(height: 32, width: 32),
+                                          DummyContainer(height: 48, width: 48),
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10.sp),

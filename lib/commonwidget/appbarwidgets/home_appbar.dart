@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 
 import '../../utils/constants.dart';
@@ -11,14 +12,16 @@ class HomeAppbar extends StatefulWidget {
   final Function? onPressedSearch;
   final Function? onPressedHeart;
   final Function? onPressedDropDown;
-  final bool showGender;
+  final bool showSearch;
+  final String title;
 
   const HomeAppbar(
       {Key? key,
       this.onPressedCart,
       this.onPressedHeart,
       this.onPressedSearch,
-      this.showGender = false,
+      this.showSearch = true,
+      this.title = "",
       this.onPressedDropDown})
       : super(key: key);
 
@@ -81,9 +84,21 @@ class _HomeAppbarState extends State<HomeAppbar> {
                   : SizedBox(
                       height: 0,
                     ), */
-
-              SvgPicture.asset(applogSvgImage,
-                  height: 28.sp, width: 70.sp, fit: BoxFit.cover),
+              Visibility(
+                visible: widget.title == "" ? false : true,
+                child: AppText(
+                  text: widget.title.toUpperCase(),
+                  color: homeAppBarColor,
+                  fontSize: 16,
+                  fontFamily: "Franklin Gothic Semibold",
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Visibility(
+                visible: widget.title == "" ? true : false,
+                child: SvgPicture.asset(applogSvgImage,
+                    height: 28.sp, width: 70.sp, fit: BoxFit.cover),
+              ),
               Expanded(
                 child: SizedBox(
                   height: 0,
@@ -93,14 +108,17 @@ class _HomeAppbarState extends State<HomeAppbar> {
                 padding: EdgeInsets.only(left: 25.sp),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        widget.onPressedSearch?.call();
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                        child: SvgPicture.asset(searchSvgImage,
-                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                    Visibility(
+                      visible: widget.showSearch,
+                      child: GestureDetector(
+                        onTap: () {
+                          widget.onPressedSearch?.call();
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                          child: SvgPicture.asset(searchSvgImage,
+                              height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                        ),
                       ),
                     ),
                     GestureDetector(
