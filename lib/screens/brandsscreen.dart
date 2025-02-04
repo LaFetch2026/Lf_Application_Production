@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/brandwidgits/dummy_brand_list.dart';
 import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
@@ -122,13 +123,13 @@ class BrandsScreenState extends State<BrandsScreen> {
                     showSearch: false,
                     title: "Brands",
                     onPressedHeart: () async {
-                      /*  Get.to(const CatalogScreen());
+                      Get.to(const WishlistScreen());
                       await analytics.logEvent(
-                        name: 'catalog_page',
+                        name: 'wishlist_page',
                         parameters: <String, Object>{
-                          'page_name': 'catalog_page',
+                          'page_name': 'wishlist_page',
                         },
-                      ); */
+                      );
                     },
                     onPressedCart: () async {
                       Get.to(const CartScreen());

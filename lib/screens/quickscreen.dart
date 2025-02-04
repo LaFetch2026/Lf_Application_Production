@@ -60,6 +60,7 @@ class QuickScreenState extends State<QuickScreen> {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
       productController.getBrandProductData();
+      setState(() {});
     });
   }
 
@@ -237,6 +238,8 @@ class QuickScreenState extends State<QuickScreen> {
                         print(value);
                         if (value is RawKeyDownEvent) {
                           productController.getBrandProductData();
+                          productController.brandController.clear();
+                          setState(() {});
                         }
                       },
                       child: TextField(
@@ -279,378 +282,438 @@ class QuickScreenState extends State<QuickScreen> {
                     ),
                   ),
                 ),
-                Obx(() => homeController.isBanner2.value
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.sp),
-                        child: SizedBox(
-                          height: 128.sp,
-                          width: double.infinity,
-                          child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: 5,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (ctx, index) {
-                                return Container(
-                                  height: 128.sp,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    color: cardBg,
-                                  ),
-                                );
-                              }),
-                        ))
-                    : homeController.banner2List.isNotEmpty
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 24.sp),
-                                child: CarouselSlider.builder(
-                                  itemCount: homeController.banner2List.length,
-                                  options: CarouselOptions(
-                                    height: 128.sp,
-                                    viewportFraction: 1.0,
-                                    aspectRatio: 2.0,
-                                    autoPlay: true,
-                                    onPageChanged: (index, reason) {
-                                      homeController.currentPage.value = index;
-                                      homeController.update();
-                                    },
-                                    autoPlayInterval:
-                                        const Duration(seconds: 3),
-                                    enlargeCenterPage: true,
-                                  ),
-                                  itemBuilder: (BuildContext context,
-                                          int itemIndex, int pageViewIndex) =>
-                                      GestureDetector(
-                                    onTap: () async {
-                                      homeController.bannerTag1Id.clear();
-                                      homeController.bannerCategory1Id.clear();
-                                      productController.productCategory.clear();
-                                      productController.productTags.clear();
-
-                                      for (var i = 0;
-                                          i <
-                                              homeController
-                                                  .banner2List[itemIndex]
-                                                      ["tags"]
-                                                  .length;
-                                          i++) {
-                                        homeController.bannerTag1Id.add(
-                                            homeController
-                                                    .banner2List[itemIndex]
-                                                ["tags"][i]["id"]);
-                                      }
-                                      for (var i = 0;
-                                          i <
-                                              homeController
-                                                  .banner2List[itemIndex]
-                                                      ["categories"]
-                                                  .length;
-                                          i++) {
-                                        homeController.bannerCategory1Id.add(
-                                            homeController
-                                                    .banner2List[itemIndex]
-                                                ["categories"][i]["id"]);
-                                      }
-                                      productController.productCategory =
-                                          homeController.bannerCategory1Id;
-                                      productController.productTags =
-                                          homeController.bannerTag1Id;
-                                      Navigator.push(
-                                          context,
-                                          scaleIn(
-                                            CategoryProductScreen(
-                                              genderName: "",
-                                              categoryName: homeController
-                                                      .banner2List[itemIndex]
-                                                  ["name"],
-                                              categoryId: 0,
-                                              brandId: 0,
-                                              genderType: homeController
-                                                  .homeGenderValue.value,
-                                              tagIds:
-                                                  homeController.bannerTag1Id,
-                                              categoryList: homeController
-                                                  .bannerCategory1Id,
-                                            ),
-                                          ));
-                                      await analytics.logEvent(
-                                        name: 'banner_home_page',
-                                        parameters: <String, Object>{
-                                          'page_name': 'banner_home_page',
-                                        },
-                                      );
-                                    },
-                                    child: CachedNetworkImage(
-                                      cacheManager: CacheManager(Config(
-                                          "customCacheKey",
-                                          stalePeriod: const Duration(days: 15),
-                                          maxNrOfCacheObjects: 100)),
-                                      fit: BoxFit.fill,
-                                      imageUrl: homeController
-                                          .banner2List[itemIndex]["image"],
-                                      height: 128.sp,
-                                      width: MediaQuery.of(context).size.width,
-                                      progressIndicatorBuilder:
-                                          (context, url, downloadProgress) =>
-                                              Center(
-                                        child: Container(
-                                          height: 128.sp,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          decoration: BoxDecoration(
-                                            color: cardBg,
-                                          ),
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        downloadImage,
-                                        height: 128.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        : const SizedBox(
-                            height: 0,
-                          )),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 24.sp),
-                  child: Container(
-                    height: 30.sp,
-                    color: expressDeliveryBanner,
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.sp),
-                      child: Marquee(
-                        text:
-                            'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN 30 MINS ✦ MORE THAN 50 HOMEGROWN BRANDS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.sp,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                        ),
-                        scrollAxis: Axis.horizontal,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        blankSpace: 20.0,
-                        velocity: 100.0,
-                        pauseAfterRound: Duration(seconds: 1),
-                        startPadding: 10.0,
-                        accelerationDuration: Duration(seconds: 1),
-                        accelerationCurve: Curves.linear,
-                        decelerationDuration: Duration(milliseconds: 500),
-                        decelerationCurve: Curves.easeOut,
-                      ),
-                    ),
-                  ),
-                ),
-                Obx(() => homeController.isBrand.value
-                    ? Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 24.sp, left: 16.sp, right: 16.sp),
-                                child: Container(
-                                  height: 20.sp,
-                                  width: 120.sp,
-                                  decoration: BoxDecoration(
-                                    color: cardBg,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                top: 8.sp,
-                                bottom: 16.sp,
-                              ),
+                Obx(() => Visibility(
+                      visible: productController.brandController.text
+                              .toString()
+                              .trim()
+                              .isEmpty
+                          ? true
+                          : false,
+                      child: homeController.isBanner2.value
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24.sp),
                               child: SizedBox(
-                                height: 100.sp,
+                                height: 128.sp,
+                                width: double.infinity,
                                 child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     itemCount: 5,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder: (ctx, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(right: 12.sp),
-                                        child: Container(
-                                          height: 80.sp,
-                                          width: 80.sp,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: cardBg,
-                                          ),
+                                      return Container(
+                                        height: 128.sp,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: cardBg,
                                         ),
                                       );
                                     }),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : homeController.brandList.isNotEmpty
-                        ? Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: 24.sp, left: 16.sp, right: 16.sp),
-                                child: Row(
+                              ))
+                          : homeController.banner2List.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: SvgPicture.asset(
-                                        leftLineSvgImage,
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 24.sp),
+                                      child: CarouselSlider.builder(
+                                        itemCount:
+                                            homeController.banner2List.length,
+                                        options: CarouselOptions(
+                                          height: 128.sp,
+                                          viewportFraction: 1.0,
+                                          aspectRatio: 2.0,
+                                          autoPlay: true,
+                                          onPageChanged: (index, reason) {
+                                            homeController.currentPage.value =
+                                                index;
+                                            homeController.update();
+                                          },
+                                          autoPlayInterval:
+                                              const Duration(seconds: 3),
+                                          enlargeCenterPage: true,
+                                        ),
+                                        itemBuilder: (BuildContext context,
+                                                int itemIndex,
+                                                int pageViewIndex) =>
+                                            GestureDetector(
+                                          onTap: () async {
+                                            homeController.bannerTag1Id.clear();
+                                            homeController.bannerCategory1Id
+                                                .clear();
+                                            productController.productCategory
+                                                .clear();
+                                            productController.productTags
+                                                .clear();
+
+                                            for (var i = 0;
+                                                i <
+                                                    homeController
+                                                        .banner2List[itemIndex]
+                                                            ["tags"]
+                                                        .length;
+                                                i++) {
+                                              homeController.bannerTag1Id.add(
+                                                  homeController.banner2List[
+                                                          itemIndex]["tags"][i]
+                                                      ["id"]);
+                                            }
+                                            for (var i = 0;
+                                                i <
+                                                    homeController
+                                                        .banner2List[itemIndex]
+                                                            ["categories"]
+                                                        .length;
+                                                i++) {
+                                              homeController.bannerCategory1Id
+                                                  .add(homeController
+                                                              .banner2List[
+                                                          itemIndex]
+                                                      ["categories"][i]["id"]);
+                                            }
+                                            productController.productCategory =
+                                                homeController
+                                                    .bannerCategory1Id;
+                                            productController.productTags =
+                                                homeController.bannerTag1Id;
+                                            Navigator.push(
+                                                context,
+                                                scaleIn(
+                                                  CategoryProductScreen(
+                                                    genderName: "",
+                                                    categoryName: homeController
+                                                            .banner2List[
+                                                        itemIndex]["name"],
+                                                    categoryId: 0,
+                                                    brandId: 0,
+                                                    genderType: homeController
+                                                        .homeGenderValue.value,
+                                                    tagIds: homeController
+                                                        .bannerTag1Id,
+                                                    categoryList: homeController
+                                                        .bannerCategory1Id,
+                                                  ),
+                                                ));
+                                            await analytics.logEvent(
+                                              name: 'banner_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name': 'banner_home_page',
+                                              },
+                                            );
+                                          },
+                                          child: CachedNetworkImage(
+                                            cacheManager: CacheManager(Config(
+                                                "customCacheKey",
+                                                stalePeriod:
+                                                    const Duration(days: 15),
+                                                maxNrOfCacheObjects: 100)),
+                                            fit: BoxFit.fill,
+                                            imageUrl: homeController
+                                                    .banner2List[itemIndex]
+                                                ["image"],
+                                            height: 128.sp,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                Center(
+                                              child: Container(
+                                                height: 128.sp,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                  color: cardBg,
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              downloadImage,
+                                              height: 128.sp,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : const SizedBox(
+                                  height: 0,
+                                ),
+                    )),
+                Obx(() => Visibility(
+                      visible: productController.brandController.text
+                              .toString()
+                              .trim()
+                              .isEmpty
+                          ? true
+                          : false,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 24.sp),
+                        child: Container(
+                          height: 30.sp,
+                          color: expressDeliveryBanner,
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5.sp),
+                            child: Marquee(
+                              text:
+                                  'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN ${homeController.expressHour.value} HRS ✦ MORE THAN 50 HOMEGROWN BRANDS',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                              ),
+                              scrollAxis: Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              blankSpace: 20.0,
+                              velocity: 100.0,
+                              pauseAfterRound: Duration(seconds: 1),
+                              startPadding: 10.0,
+                              accelerationDuration: Duration(seconds: 1),
+                              accelerationCurve: Curves.linear,
+                              decelerationDuration: Duration(milliseconds: 500),
+                              decelerationCurve: Curves.easeOut,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
+                Obx(() => Visibility(
+                      visible: productController.brandController.text
+                              .toString()
+                              .trim()
+                              .isEmpty
+                          ? true
+                          : false,
+                      child: homeController.isBrand.value
+                          ? Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 24.sp,
+                                          left: 16.sp,
+                                          right: 16.sp),
+                                      child: Container(
+                                        height: 20.sp,
+                                        width: 120.sp,
+                                        decoration: BoxDecoration(
+                                          color: cardBg,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      top: 8.sp,
+                                      bottom: 16.sp,
+                                    ),
+                                    child: SizedBox(
+                                      height: 100.sp,
+                                      child: ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount: 5,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (ctx, index) {
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 12.sp),
+                                              child: Container(
+                                                height: 80.sp,
+                                                width: 80.sp,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: cardBg,
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : homeController.brandList.isNotEmpty
+                              ? Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 24.sp,
+                                          left: 16.sp,
+                                          right: 16.sp),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: SvgPicture.asset(
+                                              leftLineSvgImage,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.sp),
+                                            child: AppText(
+                                              text: "Featured brands"
+                                                  .toUpperCase(),
+                                              fontFamily: "Franklin Gothic",
+                                              color:
+                                                  expressDeliveryFeaturedBrandsColor,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: SvgPicture.asset(
+                                              rightLineSvgImage,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.sp),
-                                      child: AppText(
-                                        text: "Featured brands".toUpperCase(),
-                                        fontFamily: "Franklin Gothic",
-                                        color:
-                                            expressDeliveryFeaturedBrandsColor,
-                                        fontSize: 16,
+                                      padding: EdgeInsets.only(
+                                        top: 8.sp,
+                                        bottom: 16.sp,
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: SvgPicture.asset(
-                                        rightLineSvgImage,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: 8.sp,
-                                  bottom: 16.sp,
-                                ),
-                                child: SizedBox(
-                                  height: 100.sp,
-                                  child: ListView.builder(
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount:
-                                          homeController.brandList.length,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (ctx, index) {
-                                        return homeController.brandList[index]
-                                                    ["logo"] !=
-                                                null
-                                            ? GestureDetector(
-                                                onTap: () {
-                                                  Get.to(BrandsScreen(
-                                                    screen: "search",
-                                                    logo: homeController
-                                                            .brandList[index]
-                                                        ["logo"],
-                                                    backImage: homeController
-                                                                    .brandList[
-                                                                index][
-                                                            "background_image"] ??
-                                                        "",
-                                                    name: homeController
-                                                            .brandList[index]
-                                                        ["name"],
-                                                    brandId: homeController
-                                                        .brandList[index]["id"],
-                                                  ))?.then((value) => setState(
-                                                        () {
-                                                          homeController
-                                                              .getBrandData();
-                                                        },
-                                                      ));
-                                                },
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 16.sp),
-                                                  child: Container(
-                                                    height: 80.sp,
-                                                    width: 80.sp,
-                                                    child: CircleAvatar(
-                                                      backgroundColor:
-                                                          whiteColor,
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          border: Border.all(
-                                                              width: 1.sp,
-                                                              color:
-                                                                  lightgreyColor),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  16.0.sp),
-                                                          child:
-                                                              CachedNetworkImage(
-                                                            height: 80.sp,
-                                                            width: 80.sp,
-                                                            cacheManager: CacheManager(Config(
-                                                                "customCacheKey",
-                                                                stalePeriod:
-                                                                    const Duration(
-                                                                        days:
-                                                                            15),
-                                                                maxNrOfCacheObjects:
-                                                                    100)),
-                                                            fit: BoxFit.contain,
-                                                            imageUrl: homeController
-                                                                    .brandList[
-                                                                index]["logo"],
-                                                            errorWidget:
-                                                                (context, url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                              downloadImage,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                              height: 80.sp,
-                                                              width: 80.sp,
+                                      child: SizedBox(
+                                        height: 100.sp,
+                                        child: ListView.builder(
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            itemCount:
+                                                homeController.brandList.length,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (ctx, index) {
+                                              return homeController
+                                                              .brandList[index]
+                                                          ["logo"] !=
+                                                      null
+                                                  ? GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(BrandsScreen(
+                                                          screen: "search",
+                                                          logo: homeController
+                                                                  .brandList[
+                                                              index]["logo"],
+                                                          backImage: homeController
+                                                                          .brandList[
+                                                                      index][
+                                                                  "background_image"] ??
+                                                              "",
+                                                          name: homeController
+                                                                  .brandList[
+                                                              index]["name"],
+                                                          brandId: homeController
+                                                                  .brandList[
+                                                              index]["id"],
+                                                        ))?.then(
+                                                            (value) => setState(
+                                                                  () {
+                                                                    homeController
+                                                                        .getBrandData();
+                                                                  },
+                                                                ));
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 16.sp),
+                                                        child: Container(
+                                                          height: 80.sp,
+                                                          width: 80.sp,
+                                                          child: CircleAvatar(
+                                                            backgroundColor:
+                                                                whiteColor,
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border: Border.all(
+                                                                    width: 1.sp,
+                                                                    color:
+                                                                        lightgreyColor),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(16.0
+                                                                            .sp),
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  height: 80.sp,
+                                                                  width: 80.sp,
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  imageUrl: homeController
+                                                                              .brandList[
+                                                                          index]
+                                                                      ["logo"],
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    downloadImage,
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                    height:
+                                                                        80.sp,
+                                                                    width:
+                                                                        80.sp,
+                                                                  ),
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 12.sp),
-                                                child: CircleAvatar(
-                                                  child: Image.asset(
-                                                      dummyWishlistImage,
-                                                      height: 80.sp,
-                                                      width: 80.sp,
-                                                      fit: BoxFit.cover),
-                                                ),
-                                              );
-                                      }),
+                                                    )
+                                                  : Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 12.sp),
+                                                      child: CircleAvatar(
+                                                        child: Image.asset(
+                                                            dummyWishlistImage,
+                                                            height: 80.sp,
+                                                            width: 80.sp,
+                                                            fit: BoxFit.cover),
+                                                      ),
+                                                    );
+                                            }),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 16.sp,
+                                          right: 16.sp,
+                                          bottom: 24.sp),
+                                      child: SvgPicture.asset(
+                                        fullLineSvgImage,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : SizedBox(
+                                  height: 0,
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 16.sp, right: 16.sp, bottom: 24.sp),
-                                child: SvgPicture.asset(
-                                  fullLineSvgImage,
-                                  width: MediaQuery.of(context).size.width,
-                                ),
-                              ),
-                            ],
-                          )
-                        : SizedBox(
-                            height: 0,
-                          )),
+                    )),
                 Obx(() => productController.isBrand.value
                     ? Padding(
                         padding: EdgeInsets.only(

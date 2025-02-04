@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -11,6 +11,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
 import 'package:lafetch/commonwidget/brandwidgits/dummy_brandall.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_list.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../commonwidget/app_text.dart';
@@ -22,7 +23,6 @@ import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
-import '../searchscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
   final String title;
@@ -158,12 +158,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       },
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: colorPrimary,
+        backgroundColor: homeAppBarColor,
         body: Column(
           children: [
             AllBrandAppbar(
-              text: widget.title,
-              onPressedback: () {
+              onPressedBack: () {
                 print(widget.screen);
                 if (widget.screen == "search") {
                   videoController.pause();
@@ -172,14 +171,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   brandController.showAllBrand.value = false;
                 }
               },
-              onPressedSearch: () async {
-                Get.to(const SearchScreen());
-                await analytics.logEvent(
-                  name: 'search_page',
-                  parameters: <String, Object>{
-                    'page_name': 'search_page',
-                  },
-                );
+              onPressedShare: () async {},
+              onPressedHeart: () {
+                Get.to(const WishlistScreen());
               },
               onPressedCart: () async {
                 Get.to(const CartScreen());
@@ -224,7 +218,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 ),
                               ) */
                             Container(
-                                height: 160.sp,
+                                height: 140.sp,
                                 width: double.infinity,
                                 child: FutureBuilder(
                                   future: _initializeVideoPlayerFuture,
@@ -252,9 +246,19 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   },
                                 ),
                               ),
+                        /*  Container(
+                          alignment: Alignment.bottomCenter,
+                          margin: EdgeInsets.only(top: 90.sp),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(circlesBack),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ), */
                         Container(
                           alignment: Alignment.bottomCenter,
-                          margin: EdgeInsets.only(top: 110.sp),
+                          margin: EdgeInsets.only(top: 90.sp),
                           decoration: BoxDecoration(
                               border: Border.all(
                                 color: Colors.white,
@@ -283,7 +287,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                     Obx(

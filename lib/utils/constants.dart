@@ -240,6 +240,7 @@ const expressHourSvgImage = 'assets/images/express_hour.svg';
 const quickBack = 'assets/images/quick_back_circle.png';
 const quickBackCircle = 'assets/images/quick_back.png';
 const upDropDownSvgImage = 'assets/images/up_dropdown.svg';
+const circlesBack = 'assets/images/circles.png';
 
 class ApiConstants {
   ApiConstants._();

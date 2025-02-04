@@ -2992,6 +2992,8 @@ class ProductController extends BaseController {
           Get.back();
           /* getBrandExpressProductData(
               brand_id.value, expressSortBy.value, filterExpressEnable.value); */
+          getBrandProductData();
+          FocusScope.of(context).unfocus();
         }
         if (screenType == "express") {
           getBrandExpressProductData(
