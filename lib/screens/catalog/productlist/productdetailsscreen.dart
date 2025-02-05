@@ -4478,7 +4478,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   firstText: "Go to BAG".toUpperCase(),
                                   secondText: "Buy Now".toUpperCase(),
                                   onPressedFirst: () async {
-                                    Get.to(CartScreen());
+                                    Get.to(CartScreen(
+                                      backgroundcolor: widget.backgroundcolor,
+                                    ));
                                     await analytics.logEvent(
                                       name: 'productDetails_btnGotocart',
                                       parameters: <String, Object>{
@@ -4492,7 +4494,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     if (productController
                                         .checkDetailsValidation()) {
                                       productController.callAddtoCart(
-                                          1, "buy now");
+                                          1, "buy now", widget.backgroundcolor);
                                     }
                                   },
                                   controller: productController)
@@ -4509,7 +4511,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     if (widget.type == "add") {
                                       if (productController
                                           .checkDetailsValidation()) {
-                                        productController.callAddtoCart(1, "");
+                                        productController.callAddtoCart(
+                                            1, "", widget.backgroundcolor);
                                       }
                                     } else {
                                       if (productController
@@ -4537,7 +4540,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     if (productController
                                         .checkDetailsValidation()) {
                                       productController.callAddtoCart(
-                                          1, "buy now");
+                                          1, "buy now", widget.backgroundcolor);
                                     }
                                   },
                                   controller: productController)),

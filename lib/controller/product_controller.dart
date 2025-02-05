@@ -2702,7 +2702,7 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(int quantity, String type) async {
+  callAddtoCart(int quantity, String type, Color background) async {
     showLoading();
     isReorder.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -2723,7 +2723,9 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         addToCart.value = true;
         if (type == "reorder") {
-          Get.to(CartScreen());
+          Get.to(CartScreen(
+            backgroundcolor: background,
+          ));
           reorderSelected.clear();
           reorderSelected = List.generate(50, (i) => false).obs;
         } /*  else {

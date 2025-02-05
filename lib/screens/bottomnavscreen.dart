@@ -517,7 +517,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                 ],
               ),
       ),
-      body: _currentIndex == 5 ? CartScreen() : screen[_currentIndex],
+      body: _currentIndex == 5
+          ? CartScreen(
+              backgroundcolor: homeAppBarColor,
+            )
+          : screen[_currentIndex],
     );
   }
 }
