@@ -8,6 +8,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
 import 'package:lafetch/commonwidget/brandwidgits/horizontal_category_list.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/wishlist_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
@@ -15,7 +16,6 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../controller/catalog_controller.dart';
-import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 import '../searchscreen.dart';
@@ -42,7 +42,6 @@ class CatalogDetailsScreen extends StatefulWidget {
 
 class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   final controller = Get.put(CatalogController());
-  final productController = Get.put(ProductController());
   final cartController = Get.put(CartController());
   final wishlistController = Get.put(WishlistController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -51,11 +50,9 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
-        (_) => controller.getCategoryData(widget.genderType, widget.catalogId));
+        (_) => controller.getCategoryProductData(widget.catalogId));
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.id.value = 0); */
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false, 0));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
@@ -82,13 +79,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               text: widget.title,
               onPressedSearch: () async {
                 Get.to(const SearchScreen())?.then((value) => setState(
-                      () {
-                        productController.getHandPickedProduct(
-                            productController.productSortBy.value,
-                            productController.filterProductEnable.value,
-                            false,
-                            productController.tagId.value);
-                      },
+                      () {},
                     ));
                 analytics
                     .logEvent(name: "search_page", parameters: <String, Object>{
@@ -309,232 +300,227 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                               ),
                             ))
                */
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.sp),
-                    child: ListView.builder(
-                        primary: false,
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        itemCount: controller.catalogList.length,
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (ctx, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: 16.sp),
-                            child: Column(
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    Navigator.push(
-                                        context,
-                                        scaleIn(CategoryProductScreen(
-                                            categoryName: controller
-                                                .catalogList[index]["name"],
-                                            genderName: widget.catalogText,
-                                            categoryId: controller
-                                                .catalogList[index]["id"],
-                                            brandId: 0,
-                                            genderType: widget.genderType,
-                                            categoryList: [],
-                                            tagIds: const [])));
-                                    await analytics.logEvent(
-                                      name: 'categories_home_page',
-                                      parameters: <String, Object>{
-                                        'page_name': 'categories_home_page',
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    // color: blue,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 16.sp,
-                                        right: 16.sp,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                  Obx(() => controller.isCategory.value
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 32.sp),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  right: 16.sp,
+                                ),
+                                child: DummyContainer(height: 24, width: 100),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 16.sp,
+                                horizontal: 16.sp,
+                              ),
+                              child: SizedBox(
+                                height: 250.sp,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Column(
                                         children: [
-                                          AppText(
-                                            text: controller.catalogList[index]
-                                                    ["name"]
-                                                .toUpperCase(),
-                                            color: blackColor,
-                                            fontSize: 20,
-                                            fontFamily:
-                                                "Franklin Gothic Semibold",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          Expanded(
-                                              child: SizedBox(
-                                            width: 0,
-                                          )),
-                                          SvgPicture.asset(
-                                            color: homeAppBarColor,
-                                            rightArrowSvgImage,
-                                            height: 11.sp,
-                                            width: 7.sp,
+                                          Container(
+                                            width: 122.sp,
+                                            height: 250.sp,
+                                            margin:
+                                                EdgeInsets.only(right: 5.sp),
+                                            color: Colors.white,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  height: 150.sp,
+                                                  width: 122.sp,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black
+                                                        .withOpacity(0.04),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10.sp,
+                                                      vertical: 5.sp),
+                                                  child: Container(
+                                                    height: 10.sp,
+                                                    width: 102.sp,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black
+                                                          .withOpacity(0.04),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 10.sp,
+                                                      left: 10.sp,
+                                                      right: 1.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        height: 10.sp,
+                                                        width: 50.sp,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.04),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 5.sp),
+                                                        child: Container(
+                                                          height: 10.sp,
+                                                          width: 50.sp,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.04),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 10.sp,
+                                                      left: 10.sp,
+                                                      right: 10.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        height: 14.sp,
+                                                        width: 14.sp,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.04),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
+                                                        child: Container(
+                                                          height: 10.sp,
+                                                          width: 50.sp,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.04),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Obx(() => productController.isHandPicked.value
-                                    ? Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 16.sp),
-                                        child: SizedBox(
-                                          height: 250.sp,
-                                          width: double.infinity,
-                                          child: ListView.builder(
-                                              shrinkWrap: true,
-                                              primary: false,
-                                              physics:
-                                                  const BouncingScrollPhysics(),
-                                              itemCount: 5,
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder: (ctx, index) {
-                                                return Column(
-                                                  children: [
-                                                    Container(
-                                                      width: 122.sp,
-                                                      height: 250.sp,
-                                                      margin: EdgeInsets.only(
-                                                          right: 5.sp),
-                                                      color: Colors.white,
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            height: 150.sp,
-                                                            width: 122.sp,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.04),
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10.sp,
-                                                                    vertical:
-                                                                        5.sp),
-                                                            child: Container(
-                                                              height: 10.sp,
-                                                              width: 102.sp,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        0.04),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10.sp,
-                                                                    left: 10.sp,
-                                                                    right:
-                                                                        1.sp),
-                                                            child: Row(
-                                                              children: [
-                                                                Container(
-                                                                  height: 10.sp,
-                                                                  width: 50.sp,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.04),
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              5.sp),
-                                                                  child:
-                                                                      Container(
-                                                                    height:
-                                                                        10.sp,
-                                                                    width:
-                                                                        50.sp,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              0.04),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 10.sp,
-                                                                    left: 10.sp,
-                                                                    right:
-                                                                        10.sp),
-                                                            child: Row(
-                                                              children: [
-                                                                Container(
-                                                                  height: 14.sp,
-                                                                  width: 14.sp,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.04),
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              5.sp),
-                                                                  child:
-                                                                      Container(
-                                                                    height:
-                                                                        10.sp,
-                                                                    width:
-                                                                        50.sp,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              0.04),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              }),
+                                      );
+                                    }),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(top: 16.sp),
+                          child: ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              physics: const ScrollPhysics(),
+                              itemCount: controller.categoryProductList.length,
+                              padding: EdgeInsets.zero,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (ctx, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(top: 16.sp),
+                                  child: Column(
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
+                                          Navigator.push(
+                                              context,
+                                              scaleIn(CategoryProductScreen(
+                                                  categoryName: controller
+                                                          .categoryProductList[
+                                                      index]["name"],
+                                                  genderName:
+                                                      widget.catalogText,
+                                                  categoryId: controller
+                                                          .categoryProductList[
+                                                      index]["id"],
+                                                  brandId: 0,
+                                                  genderType: widget.genderType,
+                                                  categoryList: [],
+                                                  tagIds: const [])));
+                                          await analytics.logEvent(
+                                            name: 'categories_home_page',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'categories_home_page',
+                                            },
+                                          );
+                                        },
+                                        child: Container(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              left: 16.sp,
+                                              right: 16.sp,
+                                            ),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                AppText(
+                                                  text: controller
+                                                      .categoryProductList[
+                                                          index]["name"]
+                                                      .toUpperCase(),
+                                                  color: blackColor,
+                                                  fontSize: 20,
+                                                  fontFamily:
+                                                      "Franklin Gothic Semibold",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                                Expanded(
+                                                    child: SizedBox(
+                                                  width: 0,
+                                                )),
+                                                SvgPicture.asset(
+                                                  color: homeAppBarColor,
+                                                  rightArrowSvgImage,
+                                                  height: 11.sp,
+                                                  width: 7.sp,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                      )
-                                    : Padding(
+                                      ),
+                                      Padding(
                                         padding: EdgeInsets.symmetric(
                                             vertical: 16.sp),
                                         child: HorizontalCategoryList(
@@ -555,21 +541,22 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                               },
                                             );
                                           },
-                                          list: productController
-                                              .handPickedProductList,
+                                          list: controller
+                                                  .categoryProductList[index]
+                                              ["products"],
                                           onPressedHeart:
                                               (productId, p1) async {
-                                            if (productController
-                                                    .handPickedProductList[p1]
+                                            if (controller.categoryProductList[
+                                                    index]["products"][p1]
                                                 ["wishlisted"]) {
-                                              productController
-                                                      .handPickedProductList[p1]
+                                              controller.categoryProductList[
+                                                      index]["products"][p1]
                                                   ["wishlisted"] = false;
                                               setState(() {});
                                               controller.callAddProductToWishlist(
-                                                  productController
-                                                          .handPickedProductList[
-                                                      p1]["wishlist_id"],
+                                                  controller.categoryProductList[
+                                                          index]["products"][p1]
+                                                      ["wishlist_id"],
                                                   productId);
                                             } else {
                                               scaffoldKey.currentState
@@ -578,8 +565,9 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                           controller:
                                                               wishlistController,
                                                           onPressed: (p0) {
-                                                            productController
-                                                                    .handPickedProductList[p1]
+                                                            controller.categoryProductList[
+                                                                        index][
+                                                                    "products"][p1]
                                                                 [
                                                                 "wishlisted"] = true;
                                                             setState(() {});
@@ -602,16 +590,16 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                             }
                                           },
                                         ),
-                                      )),
-                                Container(
-                                  color: lightgreyColor,
-                                  height: 16.sp,
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                  )
+                                      ),
+                                      Container(
+                                        color: lightgreyColor,
+                                        height: 16.sp,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ))
                 ],
               ),
             ),

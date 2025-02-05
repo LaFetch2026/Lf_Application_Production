@@ -14,7 +14,7 @@ class CatalogController extends BaseController {
   RxBool isCatalog = false.obs;
   List catalogList = [].obs;
   RxBool isCategory = false.obs;
-  List categoryList = [].obs;
+  List categoryProductList = [].obs;
 
   getCatalogData(int type) async {
     isCatalog.value = true;
@@ -49,22 +49,21 @@ class CatalogController extends BaseController {
     isCatalog.value = false;
   }
 
-  getCategoryData(int genderType, int catalogId) async {
+  getCategoryProductData(int catalogId) async {
     isCategory.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/categories?type=popular&gender_type=$genderType&catalog_id=$catalogId"),
+          Uri.parse("${ApiConstants.baseUrl}/catalogs/$catalogId"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
+        if (responseData["categories"] != null) {
           print(responseData);
-          categoryList = responseData["data"];
+          categoryProductList = responseData["categories"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -98,8 +97,11 @@ class CatalogController extends BaseController {
           "Authorization": "Bearer ${prefs.getString('token')} ",
         },
       );
-      // var responseData = jsonDecode(response.body);
+      var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        if (responseData["wishlisted"]) {
+          Get.close(1);
+        }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

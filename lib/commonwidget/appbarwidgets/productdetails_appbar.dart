@@ -31,8 +31,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
       color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(
-              left: 6.sp, right: 16.sp, top: 56.sp, bottom: 16.sp
+          padding: EdgeInsets.only(right: 16.sp, top: 56.sp, bottom: 16.sp
               // top: Platform.isAndroid ? 30.sp : 40.sp
               ),
           child: Row(
