@@ -22,6 +22,7 @@ import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../commonwidget/app_text.dart';
@@ -139,9 +140,7 @@ class CartScreenState extends State<CartScreen> {
           CartAppbar(
             text: "Bag",
             onPressedWishlist: () {
-              Get.off(BottomNavScreen(
-                index: 2,
-              ));
+              Get.to(WishlistScreen());
             },
           ),
           Container(

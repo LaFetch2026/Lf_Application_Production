@@ -8,9 +8,9 @@ import 'package:lafetch/commonwidget/appbarwidgets/shopwishlist_appbar.dart';
 import 'package:lafetch/commonwidget/paymentwidgets/paymentfailwidget.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../controller/cart_controller.dart';
 import '../utils/constants.dart';
-import 'bottomnavscreen.dart';
 
 class PaymentSuccessScreen extends StatefulWidget {
   final String text1;
@@ -59,9 +59,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                 }
               },
               onPressedheart: () async {
-                Get.to(const BottomNavScreen(
-                  index: 2,
-                ));
+                Get.to(const WishlistScreen());
                 await analytics.logEvent(
                   name: 'catalog_page',
                   parameters: <String, Object>{

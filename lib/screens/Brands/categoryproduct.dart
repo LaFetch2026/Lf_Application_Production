@@ -16,6 +16,7 @@ import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 //import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
@@ -154,9 +155,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 "page_name": "search_page",
               });
             }, onPressedHeart: () async {
-              Get.to(const BottomNavScreen(
-                index: 2,
-              ))?.then((value) => setState(
+              Get.to(WishlistScreen())?.then((value) => setState(
                     () {
                       controller.getCartData();
                     },

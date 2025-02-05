@@ -4,12 +4,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import '../../commonwidget/common_widgets.dart';
 import '../../controller/profile_controller.dart';
-import '../bottomnavscreen.dart';
 
 class ConfirmDeleteScreen extends StatefulWidget {
   const ConfirmDeleteScreen({
@@ -33,9 +33,7 @@ class ConfirmDeleteScreenState extends State<ConfirmDeleteScreen> {
           SaveAddressAppbar(
             text: "Confirm Deletion",
             onPressedWishlist: () {
-              Get.off(BottomNavScreen(
-                index: 2,
-              ));
+              Get.to(WishlistScreen());
             },
           ),
           Divider(

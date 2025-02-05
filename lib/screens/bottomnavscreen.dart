@@ -7,11 +7,11 @@ import 'package:get/get.dart';
 import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
+import 'package:lafetch/screens/catalogscreen.dart';
 //import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/home/women/homescreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/quickscreen.dart';
-import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +36,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     const BrandsScreen(
       screen: "home",
     ),
-    const WishlistScreen(),
+    const CatalogScreen(),
     const AccountScreen(),
     const QuickScreen(),
   ];
@@ -53,13 +53,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       const BrandsScreen(
         screen: "home",
       ),
-      WishlistScreen(
-        onPressed: () {
-          setState(() {
-            _currentIndex = 0;
-          });
-        },
-      ),
+      CatalogScreen(),
       AccountScreen(onPressed: () {
         changeTab(2);
       }),

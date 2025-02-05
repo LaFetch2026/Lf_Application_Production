@@ -4,9 +4,9 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/catalog_appbar.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/screens/catalog/women_catalog.dart';
-import 'package:lafetch/screens/searchscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
 import 'cartscreen.dart';
@@ -37,7 +37,7 @@ class CatalogScreenState extends State<CatalogScreen> {
         backgroundColor: whiteColor,
         body: Column(
           children: [
-            CatalogAppbar(
+            /*   CatalogAppbar(
               text: "Catalog",
               onPressedSearch: () async {
                 Get.to(const SearchScreen());
@@ -52,6 +52,28 @@ class CatalogScreenState extends State<CatalogScreen> {
                     .logEvent(name: "cart_page", parameters: <String, Object>{
                   "page_name": "cart_page",
                 });
+              },
+            ), */
+            HomeAppbar(
+              showSearch: false,
+              title: "Category",
+              onPressedHeart: () async {
+                Get.to(const WishlistScreen());
+                await analytics.logEvent(
+                  name: 'wishlist_page',
+                  parameters: <String, Object>{
+                    'page_name': 'wishlist_page',
+                  },
+                );
+              },
+              onPressedCart: () async {
+                Get.to(const CartScreen());
+                await analytics.logEvent(
+                  name: 'cart_page',
+                  parameters: <String, Object>{
+                    'page_name': 'cart_page',
+                  },
+                );
               },
             ),
             PreferredSize(

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/accountwidgets/profilebottom.dart';
 import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
 import 'package:lafetch/commonwidget/accountwidgets/supportwidgets.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_account.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/home_controller.dart';
@@ -18,6 +19,7 @@ import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/app_text.dart';
@@ -46,6 +48,7 @@ class AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Get.offAll(const BottomNavScreen(
@@ -54,10 +57,10 @@ class AccountScreenState extends State<AccountScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Column(
           children: [
-            Padding(
+            /*   Padding(
               padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -102,6 +105,29 @@ class AccountScreenState extends State<AccountScreen> {
                 ],
               ),
             ),
+           */
+            HomeAppbar(
+              showSearch: false,
+              title: "Profile",
+              onPressedHeart: () async {
+                Get.to(const WishlistScreen());
+                await analytics.logEvent(
+                  name: 'wishlist_page',
+                  parameters: <String, Object>{
+                    'page_name': 'wishlist_page',
+                  },
+                );
+              },
+              onPressedCart: () async {
+                Get.to(const CartScreen());
+                await analytics.logEvent(
+                  name: 'cart_page',
+                  parameters: <String, Object>{
+                    'page_name': 'cart_page',
+                  },
+                );
+              },
+            ),
             Obx(
               () => controller.isProfile.value
                   ? DummyAccount()
@@ -118,8 +144,10 @@ class AccountScreenState extends State<AccountScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.sp, vertical: 20.sp),
+                                      padding: EdgeInsets.only(
+                                          left: 16.sp,
+                                          bottom: 20.sp,
+                                          right: 16.sp),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -412,7 +440,7 @@ class AccountScreenState extends State<AccountScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    widget.onPressed?.call();
+                                    Get.to(WishlistScreen());
                                     await analytics.logEvent(
                                       name: 'wishlist_page',
                                       parameters: <String, Object>{
@@ -612,7 +640,7 @@ class AccountScreenState extends State<AccountScreen> {
                                           },
                                         );
                                       },
-                                      backgroundColor: whiteTextColor,
+                                      backgroundColor: whiteColor,
                                       borderColor: redColor),
                                 ),
                                 const ProfileBottom(

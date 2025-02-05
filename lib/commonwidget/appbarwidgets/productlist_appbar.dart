@@ -11,12 +11,16 @@ class ProductAppbar extends StatefulWidget {
   final Function? onPressedCart;
   final Function? onPressedHeart;
   final bool isHandPicked;
+  final bool isWishlist;
+  final String text;
 
   const ProductAppbar(
       {Key? key,
       this.onPressedSearch,
+      this.isWishlist = true,
       this.onPressedCart,
       this.onPressedHeart,
+      this.text = "",
       this.isHandPicked = false})
       : super(key: key);
 
@@ -51,7 +55,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 child: Padding(
                   padding: EdgeInsets.only(left: 0.sp),
                   child: AppText(
-                    text: "HANDPICKED FOR YOU",
+                    text: widget.text,
                     color: homeAppBarColor,
                     fontSize: 16,
                     fontFamily: "Franklin Gothic Semibold",
@@ -95,16 +99,19 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  widget.onPressedHeart?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: ImageIcon(
-                    AssetImage(wishlistBottomIcon),
-                    color: homeAppBarColor,
-                    size: 18.sp,
+              Visibility(
+                visible: widget.isWishlist,
+                child: GestureDetector(
+                  onTap: () {
+                    widget.onPressedHeart?.call();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: ImageIcon(
+                      AssetImage(wishlistBottomIcon),
+                      color: homeAppBarColor,
+                      size: 18.sp,
+                    ),
                   ),
                 ),
               ),

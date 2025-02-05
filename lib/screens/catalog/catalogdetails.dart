@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/catalog_appbar.dart';
 import '../../controller/catalog_controller.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
@@ -38,6 +40,7 @@ class CatalogDetailsScreen extends StatefulWidget {
 class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   final controller = Get.put(CatalogController());
   final productController = Get.put(ProductController());
+  final cartController = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -55,7 +58,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          CatalogAppbar(
+          /*  CatalogAppbar(
             text: widget.title,
             onPressedSearch: () {
               Get.to(const SearchScreen());
@@ -63,7 +66,48 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
             onPressedCart: () {
               Get.to(const CartScreen());
             },
-          ),
+          ), */
+          ProductAppbar(
+              text: widget.title,
+              onPressedSearch: () async {
+                Get.to(const SearchScreen())?.then((value) => setState(
+                      () {
+                        productController.getHandPickedProduct(
+                            productController.productSortBy.value,
+                            productController.filterProductEnable.value,
+                            false,
+                            productController.tagId.value);
+                      },
+                    ));
+                analytics
+                    .logEvent(name: "search_page", parameters: <String, Object>{
+                  "page_name": "search_page",
+                });
+              },
+              isHandPicked: true,
+              onPressedHeart: () async {
+                Get.to(const WishlistScreen())?.then((value) => setState(
+                      () {
+                        cartController.getCartData();
+                      },
+                    ));
+                analytics.logEvent(
+                    name: "wishlist_page",
+                    parameters: <String, Object>{
+                      "page_name": "wishlist_page",
+                    });
+              },
+              onPressedCart: () async {
+                Get.to(const CartScreen())?.then((value) => setState(
+                      () {
+                        cartController.getCartData();
+                      },
+                    ));
+                analytics
+                    .logEvent(name: "cart_page", parameters: <String, Object>{
+                  "page_name": "cart_page",
+                });
+              }),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -112,7 +156,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                           AppText(
                             text: widget.title,
                             color: appbarText,
-                            fontSize: 22,
+                            fontSize: 16,
                             fontFamily: "Franklin Gothic Regular",
                             fontWeight: FontWeight.w400,
                           ),

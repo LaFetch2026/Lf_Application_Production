@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/cart_controller.dart';
-import 'package:lafetch/screens/bottomnavscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../screens/Brands/categoryproduct.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
@@ -56,9 +56,7 @@ class BottomCouponState extends State<BottomCoupon> {
           SaveAddressAppbar(
             text: "Apply Coupon",
             onPressedWishlist: () {
-              Get.off(BottomNavScreen(
-                index: 2,
-              ));
+              Get.to(WishlistScreen());
             },
           ),
           Container(

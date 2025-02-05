@@ -10,8 +10,8 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/controller/profile_controller.dart';
-import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../commonwidget/common_widgets.dart';
 import '../../controller/shipaddress_controller.dart';
@@ -66,9 +66,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
           SaveAddressAppbar(
             text: "Select Address",
             onPressedWishlist: () {
-              Get.off(BottomNavScreen(
-                index: 2,
-              ));
+              Get.to(WishlistScreen());
             },
           ),
           Container(

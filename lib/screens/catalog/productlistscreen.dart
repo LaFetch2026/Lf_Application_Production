@@ -4,9 +4,11 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/catalog_product_appbar.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
+import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
 import 'package:lafetch/screens/searchscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../controller/product_controller.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
@@ -31,6 +33,7 @@ class ProductListScreen extends StatefulWidget {
 
 class ProductListScreenState extends State<ProductListScreen> {
   final productController = Get.put(ProductController());
+  final cartController = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final List<Tab> _tabs = [];
   int categoryId = 0;
@@ -85,14 +88,41 @@ class ProductListScreenState extends State<ProductListScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CatalogProductAppbar(
+            /*  CatalogProductAppbar(
               onPressedSearch: () {
                 Get.to(const SearchScreen());
               },
               onPressedCart: () {
                 Get.to(const CartScreen());
               },
-            ),
+            ), */
+            ProductAppbar(onPressedSearch: () async {
+              Get.to(const SearchScreen());
+              analytics
+                  .logEvent(name: "search_page", parameters: <String, Object>{
+                "page_name": "search_page",
+              });
+            }, onPressedHeart: () async {
+              Get.to(WishlistScreen())?.then((value) => setState(
+                    () {
+                      cartController.getCartData();
+                    },
+                  ));
+              analytics
+                  .logEvent(name: "wishlist_page", parameters: <String, Object>{
+                "page_name": "wishlist_page",
+              });
+            }, onPressedCart: () async {
+              Get.to(const CartScreen())?.then((value) => setState(
+                    () {
+                      cartController.getCartData();
+                    },
+                  ));
+              analytics
+                  .logEvent(name: "cart_page", parameters: <String, Object>{
+                "page_name": "cart_page",
+              });
+            }),
             PreferredSize(
               preferredSize: Size.fromHeight(40.sp),
               child: Align(
